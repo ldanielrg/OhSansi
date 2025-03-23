@@ -1,15 +1,15 @@
 import React from 'react';
 import '../styles/Caja.css';
 
-const Caja = ({ titulo, children }) => {
+const Caja = ({ titulo, width = '80%', children }) => {
     return (
-        <div className="caja-container">
+        <div className="caja-container" style={{ width }}>
             {/* Franja Azul (Encabezado) */}
             <div className="caja-header">
                 {titulo}
             </div>
 
-            {/* Cuerpo (Contenido Dinámico) */}
+            {/* Cuerpo del contenido */}
             <div className="caja-body">
                 {children}
             </div>
