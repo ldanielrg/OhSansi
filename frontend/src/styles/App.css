@@ -1,0 +1,29 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #E1F4FF;
+  margin: 0;      /* Elimina el margen */
+  padding: 0;     /* Elimina el relleno */
+  width: 100vw;   /* Ancho completo de la ventana */
+  height: 100vh;  /* Altura completa de la ventana */
+  overflow-x: hidden; /* Evita el scroll horizontal */
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;    /* Ancho completo */
+  height: 100vh;  /* Altura completa */
+}
+
+.content {
+  display: flex;
+  width: 100%;    /* Ocupará el 100% del ancho */
+  flex-grow: 1;   /* Permite que el contenido se expanda */
+}
+
+main {
+  width: 100%;
+  padding: 0;
+  height: 100%;
+  background-color: #E1F4FF;
+}

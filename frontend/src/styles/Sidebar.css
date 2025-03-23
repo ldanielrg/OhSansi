@@ -1,0 +1,30 @@
+.sidebar {
+    background-color: #52C0FF;
+    width: 15%;
+    height: 100vh;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #ffff;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #ffff;
+    display: block;
+    padding: 10px 0;
+    font-weight: 600;
+    padding-left: 8%;
+    transition: 0.2s;
+}
+
+.sidebar a:hover {
+    background-color: #ffff;
+    color: #52C0FF;
+    border-radius: 5px;
+    transition: 0.2s;
+}

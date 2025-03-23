@@ -1,0 +1,25 @@
+.header {
+    width: 100%;
+    height: 150px;
+    text-align: center;
+    background-color: #ffffff;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+}
+.logo{
+    width: 85px;
+    height: 85px;
+}
+.titulo-olimpiadas{
+    margin: 10px;
+    color: #52C0FF;
+    font-size: 35px;
+}
+.letras-edicion{
+    margin: 0;
+    color: #828897;
+    text-align: start;
+    padding-left: 3%;
+}
