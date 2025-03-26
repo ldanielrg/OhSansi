@@ -6,6 +6,8 @@ import Sidebar from './components/SideBar';
 import Footer from './components/Footer';
 import Caja from './components/Caja'; // Importación del componente Caja
 
+import Login from './pages/login';
+
 import Home from './pages/Home';
 import './styles/App.css';
 
@@ -19,6 +21,7 @@ function App() {
                     <main>
                         <Routes>
                             <Route path="/" element={<Home />} />
+                            <Route path="/login" element={<Login />} />
                         </Routes>
                     </main>
                 </div>

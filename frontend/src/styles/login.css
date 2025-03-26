@@ -1,0 +1,52 @@
+.caja-container {
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 400px;
+}
+
+.caja-header {
+    background-color: #4CC4FF;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px 20px;
+    font-size: 18px;
+}
+
+.caja-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.caja-body label {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.caja-body input {
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: #e0f7ff;
+    width: 100%;
+}
+
+.caja-body button {
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: #4CC4FF;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.caja-body button:hover {
+    background-color: #3bb1e6;
+}
