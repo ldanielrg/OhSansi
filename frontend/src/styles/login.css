@@ -50,3 +50,48 @@
 .caja-body button:hover {
     background-color: #3bb1e6;
 }
+
+
+
+/*Para mi barra de ROLES*/
+.login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0;
+    background-color: #e6f6ff;
+    min-height: 100vh;
+}
+.login-form-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%;
+}
+/* BARRA DE ROLES - ocupa 100% del ancho y se pega al header */
+.barra-roles-wrapper {
+    width: 100%;
+    background-color: #e6f6ff;
+    padding: 0; /* quitamos espacio */
+    margin: 0;
+}
+
+/* Hacemos que el componente RoleTabs se expanda */
+.role-tabs-wrapper {
+    width: 100%;
+    background-color: #3BAFF0;
+    padding: 10px 20px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: center;
+}
+
+/* Esto asegura que los botones se vean bien dentro */
+.role-tabs {
+    display: grid;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    grid-template-columns: repeat(7, 1fr); /* 7 botones */
+    width: 100%;
+}

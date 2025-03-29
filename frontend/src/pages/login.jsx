@@ -43,17 +43,22 @@ const Login = () => {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px' }}>
-            <RoleTabs
-                roles={roles}
-                activeRole={rolActivo}
-                onSelect={setRolActivo}
-            />
+        <div className="login-page">
+            {/* Barra de roles debajo del header */}
+            <div className="barra-roles-wrapper">
+                <RoleTabs
+                    roles={roles}
+                    activeRole={rolActivo}
+                    onSelect={setRolActivo}
+                />
+            </div>
 
-            {/* Contenido principal */}
-            <Caja titulo="Iniciar Sesión">
-                {renderContenidoPorRol()}
-            </Caja>
+            {/* Formulario dinámico */}
+            <div className="login-form-wrapper">
+                <Caja titulo="Iniciar Sesión">
+                    {renderContenidoPorRol()}
+                </Caja>
+            </div>
         </div>
     );
 };
