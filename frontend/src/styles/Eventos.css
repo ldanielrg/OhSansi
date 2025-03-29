@@ -1,0 +1,13 @@
+.contenedor-cronograma-convocatoria{
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+}
+.cont-form-cronograma{
+    flex: 1;
+    padding: 1rem;
+    box-sizing: border-box; /* Importante para que padding no rompa el layout */
+}
+h2{
+    padding-left: 0.7em;
+}

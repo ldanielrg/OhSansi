@@ -1,0 +1,14 @@
+
+.contenedor-secciones-form{
+    display: flex;
+    gap: 1rem;
+}
+.seccion-form{
+    flex: 1; /* 🔁 Ocupa el mismo espacio que sus hermanos */
+    padding: 1rem;
+    box-sizing: border-box; /* Importante para que padding no rompa el layout */
+}
+.checkbox-multiple-generos{
+    display: flex;
+    flex-direction: row;
+}
