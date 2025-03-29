@@ -2,7 +2,7 @@ import React from 'react';
 
 const FormGeneral = () => {
     return (
-        <form>
+        <form className="formulario-login">
             <div>
                 <label>Usuario</label>
                 <input type="text" name="Usuario" />
@@ -11,7 +11,10 @@ const FormGeneral = () => {
                 <label>Contraseña</label>
                 <input type="password" name="password" />
             </div>
-            <button type="submit">Ingresar</button>
+            <div className="boton-login-wrapper">
+                <button type="submit">Ingresar</button>
+            </div> 
+            
         </form>
     );
 };

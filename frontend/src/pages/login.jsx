@@ -21,7 +21,7 @@ const Login = () => {
     const renderContenidoPorRol = () => {
         switch (rolActivo) {
             case 'administrador':
-                return <form className="login-form">
+                return <form className="formulario-login">
                 <div>
                     <label>Usuario</label>
                     <input type="text" name="usuario" />
@@ -34,7 +34,9 @@ const Login = () => {
                     <label>Contraseña</label>
                     <input type="password" name="password" />
                 </div>
-                <button type="submit">Ingresar</button>
+                <div className="boton-login-wrapper">
+                    <button type="submit">Ingresar</button>
+                </div>
             </form>
             default:
                 return <FormGeneral />;

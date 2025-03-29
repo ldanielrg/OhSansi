@@ -95,3 +95,33 @@
     grid-template-columns: repeat(7, 1fr); /* 7 botones */
     width: 100%;
 }
+
+
+.formulario-login {
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Alinea el botón a la derecha y separa del input */
+.boton-login-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.boton-login-wrapper button {
+    padding: 10px 16px;
+    background-color: #4CC4FF;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.boton-login-wrapper button:hover {
+    background-color: #3bb1e6;
+}
