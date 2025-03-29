@@ -1,15 +1,20 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 import Header from './components/Header';
 import Sidebar from './components/SideBar';
 import Footer from './components/Footer';
-import Caja from './components/Caja'; // Importación del componente Caja
+import RoleTabs from './components/RoleTabs';
 
 import Login from './pages/login';
+import PrivateRoute from './components/PrivateRoute';
+import { AuthProvider, useAuth } from './context/AuthContext';
+
 
 import Home from './pages/Home';
 import './styles/App.css';
+
+
 
 function App() {
     return (
