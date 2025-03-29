@@ -20,3 +20,15 @@
 .nombre-registro{
     font-size: 1em;
 }
+.radio-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.radio-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8em;
+}
+
+

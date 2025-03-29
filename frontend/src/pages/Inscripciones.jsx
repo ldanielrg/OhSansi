@@ -44,27 +44,91 @@ const Inscripciones = () => {
                         />
                         <RegistroForm label='CI/Pasaporte' name='ci/pasaporte'></RegistroForm>
                         <RegistroForm 
-                        label='Año de escolaridad' 
-                        name='año de escolaridad' 
-                        type='select'
-                        options={[
-                            { value: '', label: 'Seleccione el curso' },
-                                { value: 'arani', label: 'Arani' },
-                                { value: 'arque', label: 'Arque' },
-                                { value: 'ayopaya', label: 'Ayopaya' },
-                                { value: 'bolivar', label: 'Bolivar' },
-                                { value: 'capinota', label: 'Capinota' },
-                                { value: 'carrasco', label: 'Carrasco' },
+                            label='Año de escolaridad' 
+                            name='año de escolaridad' 
+                            type='select'
+                            options={[
+                                { value: '', label: 'Seleccione el curso' },
+                                    { value: 'arani', label: 'Arani' },
+                                    { value: 'arque', label: 'Arque' },
+                                    { value: 'ayopaya', label: 'Ayopaya' },
+                                    { value: 'bolivar', label: 'Bolivar' },
+                                    { value: 'capinota', label: 'Capinota' },
+                                    { value: 'carrasco', label: 'Carrasco' },
                         ]}
                         />
+                        <RegistroForm 
+                        label='Categoria' 
+                        name='categoria'
+                        type='select'
+                        options={[
+                            {value: '',label: 'Seleccione su categoria'},
+                            {value: 'astronomia y astrofisica', label: 'Astronomia y Astrofisica'},
+                            {value: 'biologia', label: 'Biologia'},
+                            {value: 'fisica', label: 'Fisica'},
+                            {value: 'informatica', label: 'Informatica'},
+                            {value: 'matematica', label: 'Matematica'},
+                            {value: 'quimica', label: 'Quimica'},
+                            {value: 'robotica', label: 'Robotica'}
+                        ]}
+                        />    
                     </section>
 
                     <section className='seccion-form'>
                         <RegistroForm label='Fecha de nacimiento' type='date'></RegistroForm>
+                        <RegistroForm
+                            label="Género"
+                            name="genero"
+                            type="radio"
+                            options={[
+                                { value: 'masculino', label: 'Masculino' },
+                                { value: 'femenino', label: 'Femenino' }
+                            ]}
+                        />
+                        <RegistroForm 
+                            label='Unidad Educativa' 
+                            name='unidad educativa'
+                            type='select'
+                            options={[
+                                {value: '',label: 'Seleccione su categoria'},
+                                {value: 'astronomia y astrofisica', label: 'Astronomia y Astrofisica'},
+                                {value: 'biologia', label: 'Biologia'},
+                                {value: 'fisica', label: 'Fisica'},
+                                {value: 'informatica', label: 'Informatica'},
+                                {value: 'matematica', label: 'Matematica'},
+                                {value: 'quimica', label: 'Quimica'},
+                                {value: 'robotica', label: 'Robotica'}
+                                ]}
+                        />
+
+                        <RegistroForm 
+                        label='Complemento (opcional)'
+                        name='complemento ci'
+                        />
+                        <RegistroForm
+                        label='Área'
+                        name='area'
+                        type='select'
+                        options={[
+                            {value: '',label: 'Seleccione su categoria'},
+                            {value: 'astronomia y astrofisica', label: 'Astronomia y Astrofisica'},
+                            {value: 'biologia', label: 'Biologia'},
+                            {value: 'fisica', label: 'Fisica'},
+                            {value: 'informatica', label: 'Informatica'},
+                            {value: 'matematica', label: 'Matematica'},
+                            {value: 'quimica', label: 'Quimica'},
+                            {value: 'robotica', label: 'Robotica'}
+                            ]}
+                        />
+
                     </section>
 
 
                 </div>
+            </Caja>
+
+            <Caja titulo='Estudiantes inscritos'>
+
             </Caja>
         </div>
     );
