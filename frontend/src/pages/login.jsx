@@ -4,11 +4,16 @@ import '../styles/login.css';
 
 import FormGeneral from '../components/formularios/formGeneral';
 import RoleTabs from '../components/RoleTabs';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const Login = () => {
-
-    //Esto es para ver qué tipo de rol está activo y mostrar formulario que le corresponde
+    //Esto es para ver qué tipo de rol está activo (según RoleTabs) y mostrar formulario que le corresponde
     const [rolActivo, setRolActivo] = useState('administrador');
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
     const roles = [
         { clave: 'tutor', nombre: 'Tutor' },
         { clave: 'director', nombre: 'Director' },
@@ -18,28 +23,40 @@ const Login = () => {
         { clave: 'inscripciones', nombre: 'Adm. de inscripción' },
         { clave: 'organizadores', nombre: 'Organizadores' }
     ];
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        login(rolActivo);     // guardar sesión + rol actual
+        navigate('/');        // redirigir al inicio u otra ruta
+    };
+
     const renderContenidoPorRol = () => {
         switch (rolActivo) {
             case 'administrador':
-                return <form className="formulario-login">
-                <div>
-                    <label>Usuario</label>
-                    <input type="text" name="usuario" />
-                </div>
-                <div>
-                    <label>Correo</label>
-                    <input type="email" name="correo" />
-                </div>
-                <div>
-                    <label>Contraseña</label>
-                    <input type="password" name="password" />
-                </div>
-                <div className="boton-login-wrapper">
-                    <button type="submit">Ingresar</button>
-                </div>
-            </form>
+                return (
+                    <form className="formulario-login" onSubmit={handleSubmit}>
+                        <div>
+                            <label>Usuario</label>
+                            <input type="text" name="usuario" />
+                        </div>
+                        <div>
+                            <label>Correo</label>
+                            <input type="email" name="correo" />
+                        </div>
+                        <div>
+                            <label>Contraseña</label>
+                            <input type="password" name="password" />
+                        </div>
+                        <div className="boton-login-wrapper">
+                            <button type="submit">Ingresar</button>
+                        </div>
+                    </form>
+                );
             default:
-                return <FormGeneral />;
+                return <FormGeneral onSubmit={() => {
+                    login(rolActivo);
+                    navigate('/');
+                }} />;
                 
         }
     };
