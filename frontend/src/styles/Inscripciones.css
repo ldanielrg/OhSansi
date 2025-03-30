@@ -16,7 +16,9 @@
 .tabla-inscritos {
     margin-top: 1.5rem;
     width: 100%;
+    min-height: 200px;
 }
+
 
 .btn-delete {
     background-color: #ff4d4f;
@@ -31,3 +33,4 @@
 .btn-delete:hover {
     background-color: #d9363e;
 }
+
