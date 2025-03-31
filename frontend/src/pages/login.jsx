@@ -13,6 +13,8 @@ const Login = () => {
     const [rolActivo, setRolActivo] = useState('administrador');
     const { login } = useAuth();
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const roles = [
         { clave: 'tutor', nombre: 'Tutor' },
@@ -24,28 +26,43 @@ const Login = () => {
         { clave: 'organizadores', nombre: 'Organizadores' }
     ];
 
-    const handleSubmit = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        login(rolActivo);     // guardar sesión + rol actual
-        navigate('/');        // redirigir al inicio u otra ruta
-    };
+        const res = await login(email, password);
+        if (res.success) {
+          alert('Bienvenido');
+          navigate('/');
+        } else {
+          alert(res.message);
+        }
+      };
 
     const renderContenidoPorRol = () => {
         switch (rolActivo) {
             case 'administrador':
                 return (
-                    <form className="formulario-login" onSubmit={handleSubmit}>
+                    <form className="formulario-login" onSubmit={handleLogin}>
                         <div>
                             <label>Usuario</label>
                             <input type="text" name="usuario" />
                         </div>
                         <div>
                             <label>Correo</label>
-                            <input type="email" name="correo" />
+                            <input
+                            type="email"
+                            name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            />
                         </div>
                         <div>
                             <label>Contraseña</label>
-                            <input type="password" name="password" />
+                            <input
+                                type="password"
+                                name="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                />
                         </div>
                         <div className="boton-login-wrapper">
                             <button type="submit">Ingresar</button>
@@ -72,7 +89,6 @@ const Login = () => {
                 />
             </div>
 
-            {/* Formulario dinámico */}
             <div className="login-form-wrapper">
                 <Caja titulo="Iniciar Sesión">
                     {renderContenidoPorRol()}

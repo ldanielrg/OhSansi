@@ -4,8 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/Sidebar.css';
 
 const Sidebar = () => {
-    const { isAuthenticated, rol } = useAuth();
-    const esAdmin = rol === 'administrador';
+    const { user, roles } = useAuth();
+    const isAuthenticated = !!user;
+    const esAdmin = roles.includes('Admin');
 
     return (
         <nav className="sidebar">
@@ -18,7 +19,7 @@ const Sidebar = () => {
                         <li><Link to="/contactos">Contactos</Link></li>
                         <li><Link to="/login" className="active-button">Login &gt;</Link></li>
                         <li><Link to="/eventos">Eventos</Link></li>
-                        <li><Link to="/faq">Preguntas Frecuentes</Link></li>
+                        <li><Link to="/faq">VISTA PARA OTROS ROLES</Link></li>
                     </>
                 ) : esAdmin ? (
                     <>
@@ -38,7 +39,15 @@ const Sidebar = () => {
                         <li><Link to="/añadir-ue">Añadir UE</Link></li>
                     </>
                 ) : (
-                    <li>Vista para otro rol</li>
+                    <>
+                        <li><Link to="/">Inicio</Link></li>
+                        <li><Link to="/inscripciones">Inscripciones</Link></li>
+                        <li><Link to="/noticias">Noticias</Link></li>
+                        <li><Link to="/contactos">Contactos</Link></li>
+                        <li><Link to="/login" className="active-button">Login &gt;</Link></li>
+                        <li><Link to="/eventos">Eventos</Link></li>
+                        <li><Link to="/faq">Preguntas Frecuentes</Link></li>
+                    </>
                 )}
             </ul>
         </nav>
