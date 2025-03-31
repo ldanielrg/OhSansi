@@ -1,18 +1,49 @@
-.contenedor-cronograma-convocatoria{
+.page-container {
+    padding: 20px;
+  }
+  
+  /* Estilos para las "cajas" */
+  .caja-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin: 30px auto;
+    max-width: 1200px; /* Ajusta según tus necesidades */
+  }
+  
+  .caja-header {
+    background-color: #66c2ff;
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-size: 1.4rem;
+  }
+  
+  .caja-body {
+    padding: 20px;
+    color: #333;
+    font-size: 16px;
+  }
+  
+  /* Para el contenedor del cronograma y la convocatoria */
+  .contenedor-cronograma-convocatoria {
     display: flex;
     flex-direction: row;
     gap: 1em;
-}
-.cont-form-cronograma{
+  }
+  
+  .cont-form-cronograma {
     flex: 1;
     padding: 1rem;
     box-sizing: border-box; /* Importante para que padding no rompa el layout */
-}
-h2{
-    padding-left: 0.7em;
-}
-
-.tabla-eventos {
+  }
+  
+  /* Tabla de eventos */
+  .tabla-eventos {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
@@ -35,9 +66,11 @@ h2{
     background-color: #d2ebff !important;
   }
   
-  /* Contenedor de botones de acción */
+  /* Botones de acción */
   .acciones-eventos {
     margin-top: 1rem;
     display: flex;
     gap: 1rem;
+    justify-content: flex-start;
   }
+  
