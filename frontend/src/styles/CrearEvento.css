@@ -1,7 +1,7 @@
 /* Contenedor global de la página */
 .crear-evento-page {
   padding: 20px;
-  background-color: #f9f9f9; /* Color de fondo general, opcional */
+  background-color: #E4F5FF; /* Color de fondo general, opcional */
   min-height: 100vh; /* Para ocupar toda la pantalla vertical */
 }
 

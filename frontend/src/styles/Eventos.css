@@ -1,7 +1,12 @@
 /* Contenedor general de la página */
+
+:root{
+  background-color: #E4F5FF;
+}
+
 .eventos-page {
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #E4F5FF;
   min-height: 100vh; /* Para ocupar toda la pantalla */
 }
 
