@@ -167,17 +167,21 @@ const Inscripciones = () => {
 
             <Caja titulo='Estudiantes inscritos'>
                 <div className="ag-theme-alpine tabla-inscritos">
-                <AgGridReact
-    modules={[ClientSideRowModelModule]} // 👈 ¡esto es lo nuevo!
-    rowData={rowData}
-    columnDefs={columnDefs}
-    domLayout="autoHeight"
-    pagination={true}
-    paginationPageSize={5}
-    defaultColDef={{ resizable: true }}
-    animateRows={true}
-/>
-
+                    <AgGridReact
+                        modules={[ClientSideRowModelModule]} 
+                        rowData={rowData}
+                        columnDefs={columnDefs}
+                        domLayout="autoHeight"
+                        pagination={true}
+                        paginationPageSize={5}
+                        defaultColDef={{ resizable: true }}
+                        animateRows={true}
+                    />
+                    <div className='contenedor-botones-tabla-est-inscritos'>
+                        <BotonForm texto='Editar'/>
+                        <BotonForm texto='Eliminar'/>                       
+                    </div>
+                    
                 </div>
             </Caja>
         </div>
