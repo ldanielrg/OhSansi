@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Eventos.css';
+import '../styles/Eventos.css'; // Ajusta la ruta según tu estructura
 
 const Eventos = () => {
   const [eventos, setEventos] = useState([
@@ -25,6 +25,7 @@ const Eventos = () => {
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
   const navigate = useNavigate();
 
+  // Navegar a la página de creación de evento
   const handleCrearEvento = () => {
     navigate("/crear-evento");
   };
@@ -32,12 +33,12 @@ const Eventos = () => {
   const handleVerEvento = () => {
     if (!eventoSeleccionado) return;
     alert(`Mostrando detalles del evento: ${eventoSeleccionado.nombre}`);
-    // Podrías redirigir a /eventos/:id/ver o mostrar un modal
+    // Podrías redirigir a /eventos/:id/ver o abrir un modal
   };
 
   const handleEditarEvento = () => {
     if (!eventoSeleccionado) return;
-    const hoy = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+    const hoy = new Date().toISOString().split("T")[0];
     if (hoy >= eventoSeleccionado.fechaInicio && hoy <= eventoSeleccionado.fechaFin) {
       alert(`Editando evento: ${eventoSeleccionado.nombre}`);
       navigate(`/editar-evento/${eventoSeleccionado.id}`);
@@ -56,22 +57,11 @@ const Eventos = () => {
   };
 
   return (
-    <div className="page-container">
-      {/* Bloque de creación rápida (o parcial) de un nuevo evento 
-      <div className="caja-container">
-        <div className="caja-header">Crear nuevo evento</div>
-        <div className="caja-body">
-          <p>
-            Aquí podrías mostrar un formulario breve para crear o pre-crear un evento.
-            Sin embargo, el formulario completo se encuentra en <strong>CrearEvento</strong>.
-          </p>
-        </div>
-      </div>
-
-      {/* Bloque de eventos creados */}
-      <div className="caja-container">
-        <div className="caja-header">Eventos Creados</div>
-        <div className="caja-body">
+    <div className="eventos-page">
+      {/* Contenedor para la lista de eventos */}
+      <div className="eventos-container">
+        <div className="eventos-header">Lista de Eventos</div>
+        <div className="eventos-body">
           <table className="tabla-eventos">
             <thead>
               <tr>
@@ -87,9 +77,7 @@ const Eventos = () => {
                 <tr
                   key={evento.id}
                   onClick={() => setEventoSeleccionado(evento)}
-                  className={
-                    eventoSeleccionado?.id === evento.id ? "fila-seleccionada" : ""
-                  }
+                  className={eventoSeleccionado?.id === evento.id ? "fila-seleccionada" : ""}
                 >
                   <td>{evento.nombre}</td>
                   <td>{evento.fechaInicio}</td>
@@ -100,34 +88,32 @@ const Eventos = () => {
               ))}
             </tbody>
           </table>
-          
-          <div className="acciones-eventos">
-            <button 
-              className="nav-link" 
-              onClick={handleCrearEvento}
-            >
+
+          {/* Botones de acción */}
+          <div className="eventos-acciones">
+            <button className="btn-primary" onClick={handleCrearEvento}>
               Crear
             </button>
 
-            <button 
-              className="nav-link" 
-              onClick={handleEditarEvento} 
+            <button
+              className="btn-primary"
+              onClick={handleEditarEvento}
               disabled={!eventoSeleccionado}
             >
               Editar
             </button>
 
-            <button 
-              className="nav-link" 
-              onClick={handleVerEvento} 
+            <button
+              className="btn-primary"
+              onClick={handleVerEvento}
               disabled={!eventoSeleccionado}
             >
               Ver
             </button>
 
-            <button 
-              className="nav-link" 
-              onClick={handleEliminarEvento} 
+            <button
+              className="btn-primary"
+              onClick={handleEliminarEvento}
               disabled={!eventoSeleccionado}
             >
               Eliminar
