@@ -35,7 +35,8 @@ const Login = () => {
         } else {
           alert(res.message);
         }
-      };
+    };
+
 
     const renderContenidoPorRol = () => {
         switch (rolActivo) {

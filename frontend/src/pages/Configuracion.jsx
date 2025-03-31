@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import Caja from '../components/Caja';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Configuracion.css';
+import api from '../api/axios';
+
 
 const opciones = [
+  'Admin',
   'Director',
   'Docente',
   'Tutor',
-  'Adm. Inscripciones',
-  'Cajas',
+  'Adm. Inscripcion',
+  'Caja',
   'Organizador',
-  'Auxiliares',
-  'Administradores'
+  'Aux'
 ];
 
 const Configuracion = () => {
@@ -34,10 +36,40 @@ const Configuracion = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí puedes enviar la data al backend o validarla
-    console.log('Cuenta creada:', { tipoCuenta, ...formData });
+  
+    // Validación simple
+    if (formData.password !== formData.confirmarPassword) {
+      alert('Las contraseñas no coinciden');
+      return;
+    }
+  
+    try {
+      const response = await api.post('/crear-cuenta', {
+        nombres: formData.nombres,
+        apellidos: formData.apellidos,
+        correo: formData.correo,
+        celular: formData.celular,
+        password: formData.password,
+        rol: tipoCuenta, // mandamos el tipo de cuenta como rol
+      });
+  
+      alert('Cuenta creada exitosamente');
+      // Reiniciar el formulario
+      setFormData({
+        nombres: '',
+        apellidos: '',
+        correo: '',
+        celular: '',
+        password: '',
+        confirmarPassword: ''
+      });
+      setTipoCuenta('');
+    } catch (error) {
+      console.error(error.response?.data || error);
+      alert('Hubo un error al crear la cuenta');
+    }
   };
 
   return (
