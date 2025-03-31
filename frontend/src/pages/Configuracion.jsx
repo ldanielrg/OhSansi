@@ -6,14 +6,14 @@ import api from '../api/axios';
 
 
 const opciones = [
+  'Admin',
   'Director',
   'Docente',
   'Tutor',
-  'Adm. Inscripciones',
-  'Cajas',
+  'Adm. Inscripcion',
+  'Caja',
   'Organizador',
-  'Auxiliares',
-  'Administradores'
+  'Aux'
 ];
 
 const Configuracion = () => {
@@ -55,7 +55,7 @@ const Configuracion = () => {
         rol: tipoCuenta, // mandamos el tipo de cuenta como rol
       });
   
-      alert('Cuenta creada exitosamente ✅');
+      alert('Cuenta creada exitosamente');
       // Reiniciar el formulario
       setFormData({
         nombres: '',
