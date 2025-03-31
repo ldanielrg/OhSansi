@@ -1,0 +1,127 @@
+.caja-container {
+    /*margin: 0 auto;*/
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    /*max-width: 400px;*/
+}
+
+.caja-header {
+    background-color: #4CC4FF;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px 20px;
+    font-size: 18px;
+}
+
+.caja-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.caja-body label {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.caja-body input {
+    padding: 10px;
+    /*border: none;*/
+    border-radius: 20px;
+    background-color: #e0f7ff;
+    width: 100%;
+}
+
+.caja-body button {
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: #4CC4FF;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.caja-body button:hover {
+    background-color: #3bb1e6;
+}
+
+
+
+/*Para mi barra de ROLES*/
+.login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0;
+    background-color: #e6f6ff;
+    min-height: 100vh;
+}
+.login-form-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%;
+}
+/* BARRA DE ROLES - ocupa 100% del ancho y se pega al header */
+.barra-roles-wrapper {
+    width: 100%;
+    background-color: #e6f6ff;
+    padding: 0; /* quitamos espacio */
+    margin: 0;
+}
+
+/* Hacemos que el componente RoleTabs se expanda */
+.role-tabs-wrapper {
+    width: 100%;
+    background-color: #3BAFF0;
+    padding: 10px 20px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: center;
+}
+
+/* Esto asegura que los botones se vean bien dentro */
+.role-tabs {
+    display: grid;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    grid-template-columns: repeat(7, 1fr); /* 7 botones */
+    width: 100%;
+}
+
+
+.formulario-login {
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Alinea el botón a la derecha y separa del input */
+.boton-login-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.boton-login-wrapper button {
+    padding: 10px 16px;
+    background-color: #4CC4FF;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.boton-login-wrapper button:hover {
+    background-color: #3bb1e6;
+}
