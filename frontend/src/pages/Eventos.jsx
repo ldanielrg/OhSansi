@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Si usas React Router
 import '../styles/Eventos.css';
 import Caja from '../components/Caja';
 import RegistroForm from '../components/RegistroForm';
