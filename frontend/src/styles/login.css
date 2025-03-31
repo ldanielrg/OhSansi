@@ -1,10 +1,10 @@
 .caja-container {
-    margin: 0 auto;
+    /*margin: 0 auto;*/
     background-color: white;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    max-width: 400px;
+    /*max-width: 400px;*/
 }
 
 .caja-header {
@@ -30,7 +30,7 @@
 
 .caja-body input {
     padding: 10px;
-    border: none;
+    /*border: none;*/
     border-radius: 20px;
     background-color: #e0f7ff;
     width: 100%;

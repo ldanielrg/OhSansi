@@ -57,7 +57,7 @@ const Login = () => {
 
             {/* Formulario dinámico */}
             <div className="login-form-wrapper">
-                <Caja titulo="Iniciar Sesión">
+                <Caja titulo="Iniciar Sesión" width='28%'>
                     {renderContenidoPorRol()}
                 </Caja>
             </div>
