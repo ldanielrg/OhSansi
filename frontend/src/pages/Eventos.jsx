@@ -68,16 +68,91 @@ const Eventos = () => {
   // Función para manejar el clic en "Eliminar"
   const handleEliminarEvento = () => {
     if (!eventoSeleccionado) return;
-    const confirmacion = window.confirm(`¿Deseas eliminar el evento "${eventoSeleccionado.nombre}"?`);
+    const confirmacion = window.confirm(
+      `¿Deseas eliminar el evento "${eventoSeleccionado.nombre}"?`
+    );
     if (confirmacion) {
       // Eliminar del estado
-      setEventos((prev) => prev.filter((ev) => ev.id !== eventoSeleccionado.id));
+      setEventos((prev) =>
+        prev.filter((ev) => ev.id !== eventoSeleccionado.id)
+      );
       setEventoSeleccionado(null);
     }
-  }; 
-  
+  };
 
-  return <></>;
+  return (
+    <>
+      <div className="page-container">
+        {/* Sección de creación rápida (o parcial) de un nuevo evento */}
+        <Caja titulo="Crear nuevo evento">
+          <h2>Cronograma</h2>
+          <div className="contenedor-cronograma-convocatoria">
+            <section className="cont-form-cronograma">
+              <RegistroForm label="Nombre del evento" />
+              <RegistroForm label="Fecha de inicio" type="date" />
+              <RegistroForm label="Fecha de Preinscripción" type="date" />
+            </section>
+            <section className="cont-form-cronograma">
+              <RegistroForm label="Duración (días)" />
+              <RegistroForm label="Fecha fin" type="date" />
+              <RegistroForm label="Fecha de Inscripción" type="date" />
+            </section>
+          </div>
+        </Caja>
+
+        {/* Sección de eventos creados */}
+        <Caja titulo="Eventos Creados">
+          <table className="tabla-eventos">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Fecha Preinscripción</th>
+                <th>Fecha Inscripción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {eventos.map((evento) => (
+                <tr
+                  key={evento.id}
+                  onClick={() => setEventoSeleccionado(evento)}
+                  className={
+                    eventoSeleccionado?.id === evento.id
+                      ? "fila-seleccionada"
+                      : ""
+                  }
+                >
+                  <td>{evento.nombre}</td>
+                  <td>{evento.fechaInicio}</td>
+                  <td>{evento.fechaFin}</td>
+                  <td>{evento.fechaPreinscripcion}</td>
+                  <td>{evento.fechaInscripcion}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Botones de acciones (Crear, Editar, Ver, Eliminar) */}
+          <div className="acciones-eventos">
+            <button onClick={handleCrearEvento}>Crear</button>
+            <button onClick={handleEditarEvento} disabled={!eventoSeleccionado}>
+              Editar
+            </button>
+            <button onClick={handleVerEvento} disabled={!eventoSeleccionado}>
+              Ver
+            </button>
+            <button
+              onClick={handleEliminarEvento}
+              disabled={!eventoSeleccionado}
+            >
+              Eliminar
+            </button>
+          </div>
+        </Caja>
+      </div>
+    </>
+  );
 };
 
 export default Eventos;
