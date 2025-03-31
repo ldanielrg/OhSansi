@@ -1,8 +1,11 @@
 import React from 'react';
 
-const FormGeneral = () => {
+const FormGeneral = ({ onSubmit }) => {
     return (
-        <form className="formulario-login">
+        <form className="formulario-login" onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+        }}>
             <div>
                 <label>Usuario</label>
                 <input type="text" name="Usuario" />
