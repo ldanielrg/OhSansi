@@ -1,0 +1,76 @@
+.pagina-configuracion {
+  background-color: #e3f4ff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.selector-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+.selector-tipo-cuenta {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #2e2e38;
+  color: white;
+}
+
+.formulario-cuenta {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex: 1;
+}
+
+.form-column input {
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: 1px solid #d1ecf1;
+  background-color: #d8f3ff;
+}
+
+.form-botones {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.botones-configuracion {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.boton-volver {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.boton-crear {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
