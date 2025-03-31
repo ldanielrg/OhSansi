@@ -13,6 +13,7 @@ import Inscripciones from './pages/Inscripciones';
 import Eventos from './pages/Eventos';
 import Home from './pages/Home';
 import './styles/App.css';
+import CrearEvento from './components/CrearEvento';
 
 
 
@@ -29,6 +30,7 @@ function App() {
                             <Route path="/login" element={<Login />} />
                             <Route path="/inscripciones" element={<Inscripciones />} />
                             <Route path='/Eventos' element={<Eventos />}/>
+                            <Route path="/crear-evento" element={<CrearEvento />} />
                         </Routes>
                     </main>
                 </div>

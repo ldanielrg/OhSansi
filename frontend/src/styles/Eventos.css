@@ -2,8 +2,8 @@
     padding: 20px;
   }
   
-  /* Estilos para las "cajas" */
-  .caja-container {
+  /* Estilos para contenedor principal del bloque de eventos */
+  .evento-container {
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -12,7 +12,7 @@
     max-width: 1200px; /* Ajusta según tus necesidades */
   }
   
-  .caja-header {
+  .evento-header {
     background-color: #66c2ff;
     color: #ffffff;
     text-align: center;
@@ -23,13 +23,13 @@
     font-size: 1.4rem;
   }
   
-  .caja-body {
+  .evento-body {
     padding: 20px;
     color: #333;
     font-size: 16px;
   }
   
-  /* Para el contenedor del cronograma y la convocatoria */
+  /* Contenedor para cronograma y convocatoria */
   .contenedor-cronograma-convocatoria {
     display: flex;
     flex-direction: row;
@@ -39,7 +39,7 @@
   .cont-form-cronograma {
     flex: 1;
     padding: 1rem;
-    box-sizing: border-box; /* Importante para que padding no rompa el layout */
+    box-sizing: border-box;
   }
   
   /* Tabla de eventos */
@@ -61,7 +61,7 @@
     cursor: pointer;
   }
   
-  /* Fila seleccionada */
+  /* Fila seleccionada en la tabla */
   .fila-seleccionada {
     background-color: #d2ebff !important;
   }
@@ -71,6 +71,10 @@
     margin-top: 1rem;
     display: flex;
     gap: 1rem;
-    justify-content: flex-start;
+    
+  }
+
+  .nav-link {
+    background-color: #66c2ff;
   }
   

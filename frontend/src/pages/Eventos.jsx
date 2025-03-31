@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'; // Si usas React Router
 import '../styles/Eventos.css'; // Aquí colocarías tus estilos, incluyendo .evento-container, .evento-header, .evento-body
 import RegistroForm from '../components/RegistroForm'; // Ajusta la ruta si difiere en tu proyecto
 
+
 const Eventos = () => {
   // Estado local de ejemplo para eventos creados
   const [eventos, setEventos] = useState([
@@ -116,10 +117,10 @@ const Eventos = () => {
           </table>
 
           <div className="acciones-eventos">
-            <button onClick={handleCrearEvento}>Crear</button>
-            <button onClick={handleEditarEvento} disabled={!eventoSeleccionado}>Editar</button>
-            <button onClick={handleVerEvento} disabled={!eventoSeleccionado}>Ver</button>
-            <button onClick={handleEliminarEvento} disabled={!eventoSeleccionado}>Eliminar</button>
+            <button className="nav-link" onClick={handleCrearEvento}>Crear</button>
+            <button className='nav-link' onClick={handleEditarEvento} disabled={!eventoSeleccionado}>Editar</button>
+            <button className='nav-link' onClick={handleVerEvento} disabled={!eventoSeleccionado}>Ver</button>
+            <button className='nav-link' onClick={handleEliminarEvento} disabled={!eventoSeleccionado}>Eliminar</button>
           </div>
         </div>
       </div>

@@ -1,0 +1,93 @@
+.page-container {
+    padding: 20px;
+  }
+  
+  /* Contenedor principal para cada bloque */
+  .evento-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin: 30px auto;
+    max-width: 1200px;
+  }
+  
+  /* Encabezado del bloque */
+  .evento-header {
+    background-color: #66c2ff;
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-size: 1.4rem;
+  }
+  
+  /* Cuerpo del bloque */
+  .evento-body {
+    padding: 20px;
+    color: #333;
+    font-size: 16px;
+  }
+  
+  /* Contenedor para el cronograma y la convocatoria */
+  .contenedor-cronograma-convocatoria {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+  }
+  
+  .cont-form-cronograma {
+    flex: 1;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  /* Fila para cada participante */
+  .participante-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .participante-row input,
+  .participante-row select {
+    padding: 8px;
+    font-size: 1rem;
+  }
+  
+  /* Botón con clase nav-link */
+  .nav-link {
+    background-color: #66c2ff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+  }
+  
+  .nav-link:hover {
+    background-color: #4da6ff;
+  }
+  
+  /* Responsive para los botones */
+  @media (max-width: 768px) {
+    .nav-link {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* Opcional: Responsividad para el layout del cronograma/convocatoria */
+  @media (max-width: 768px) {
+    .contenedor-cronograma-convocatoria {
+      flex-direction: column;
+    }
+  }
+  
