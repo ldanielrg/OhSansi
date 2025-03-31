@@ -19,6 +19,11 @@
     min-height: 200px;
 }
 
+.contenedor-boton-registrar-est{
+    display: flex;
+    justify-content: end;
+}
+
 .contenedor-botones-tabla-est-inscritos{
     display: flex;
     justify-content: end;

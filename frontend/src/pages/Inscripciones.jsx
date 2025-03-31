@@ -159,8 +159,9 @@ const Inscripciones = () => {
                                 { value: 'biologia', label: 'Biología' }
                             ]}
                         />
-
-                        <BotonForm texto="Registrar" onClick={handleRegistrar} />
+                        <div className='contenedor-boton-registrar-est'>
+                            <BotonForm texto="Registrar" onClick={handleRegistrar} />    
+                        </div>
                     </section>
                 </div>
             </Caja>

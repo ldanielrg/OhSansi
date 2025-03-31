@@ -8,6 +8,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 1rem;
+    margin-top: 10px;
 }
 
 .boton-personalizado:hover {
