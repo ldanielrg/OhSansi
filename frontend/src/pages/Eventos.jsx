@@ -65,7 +65,16 @@ const Eventos = () => {
       );
     }
   };
-
+  // Función para manejar el clic en "Eliminar"
+  const handleEliminarEvento = () => {
+    if (!eventoSeleccionado) return;
+    const confirmacion = window.confirm(`¿Deseas eliminar el evento "${eventoSeleccionado.nombre}"?`);
+    if (confirmacion) {
+      // Eliminar del estado
+      setEventos((prev) => prev.filter((ev) => ev.id !== eventoSeleccionado.id));
+      setEventoSeleccionado(null);
+    }
+  }; 
   
 
   return <></>;
