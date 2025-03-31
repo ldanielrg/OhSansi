@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Si usas React Router
-import '../styles/Eventos.css'; // Aquí colocarías tus estilos, incluyendo .evento-container, .evento-header, .evento-body
-import RegistroForm from '../components/RegistroForm'; // Ajusta la ruta si difiere en tu proyecto
-
+import { useNavigate } from 'react-router-dom';
+import '../styles/Eventos.css';
 
 const Eventos = () => {
-  // Estado local de ejemplo para eventos creados
   const [eventos, setEventos] = useState([
     {
       id: 1,
@@ -25,26 +22,22 @@ const Eventos = () => {
     },
   ]);
 
-  // Estado para la selección de fila en la tabla
   const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
-
   const navigate = useNavigate();
 
-  // Crear nuevo evento: redirección a la página de creación
   const handleCrearEvento = () => {
     navigate("/crear-evento");
   };
 
-  // Ver evento (ejemplo simple con alert; puedes redirigir o usar un modal)
   const handleVerEvento = () => {
     if (!eventoSeleccionado) return;
     alert(`Mostrando detalles del evento: ${eventoSeleccionado.nombre}`);
+    // Podrías redirigir a /eventos/:id/ver o mostrar un modal
   };
 
-  // Editar evento (solo si la fecha actual está dentro del rango)
   const handleEditarEvento = () => {
     if (!eventoSeleccionado) return;
-    const hoy = new Date().toISOString().split("T")[0]; // Formato "YYYY-MM-DD"
+    const hoy = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
     if (hoy >= eventoSeleccionado.fechaInicio && hoy <= eventoSeleccionado.fechaFin) {
       alert(`Editando evento: ${eventoSeleccionado.nombre}`);
       navigate(`/editar-evento/${eventoSeleccionado.id}`);
@@ -53,7 +46,6 @@ const Eventos = () => {
     }
   };
 
-  // Eliminar evento
   const handleEliminarEvento = () => {
     if (!eventoSeleccionado) return;
     const confirmacion = window.confirm(`¿Deseas eliminar el evento "${eventoSeleccionado.nombre}"?`);
@@ -65,38 +57,29 @@ const Eventos = () => {
 
   return (
     <div className="page-container">
-      {/* Bloque: Crear nuevo evento 
-      <div className="evento-container">
-        <div className="evento-header">Crear nuevo evento</div>
-        <div className="evento-body">
-          <h2>Cronograma</h2>
-          <div className="contenedor-cronograma-convocatoria">
-            <section className="cont-form-cronograma">
-              <RegistroForm label="Nombre del evento" />
-              <RegistroForm label="Fecha de inicio" type="date" />
-              <RegistroForm label="Fecha de Preinscripción" type="date" />
-            </section>
-            <section className="cont-form-cronograma">
-              <RegistroForm label="Duración (días)" />
-              <RegistroForm label="Fecha fin" type="date" />
-              <RegistroForm label="Fecha de Inscripción" type="date" />
-            </section>
-          </div>
+      {/* Bloque de creación rápida (o parcial) de un nuevo evento 
+      <div className="caja-container">
+        <div className="caja-header">Crear nuevo evento</div>
+        <div className="caja-body">
+          <p>
+            Aquí podrías mostrar un formulario breve para crear o pre-crear un evento.
+            Sin embargo, el formulario completo se encuentra en <strong>CrearEvento</strong>.
+          </p>
         </div>
       </div>
-      */}
-      {/* Bloque: Eventos creados */}
-      <div className="evento-container">
-        <div className="evento-header">Eventos Creados</div>
-        <div className="evento-body">
+
+      {/* Bloque de eventos creados */}
+      <div className="caja-container">
+        <div className="caja-header">Eventos Creados</div>
+        <div className="caja-body">
           <table className="tabla-eventos">
             <thead>
               <tr>
                 <th>Nombre</th>
                 <th>Fecha Inicio</th>
                 <th>Fecha Fin</th>
-                <th>Fecha Preinscripción</th>
-                <th>Fecha Inscripción</th>
+                <th>Preinscripción</th>
+                <th>Inscripción</th>
               </tr>
             </thead>
             <tbody>
@@ -104,7 +87,9 @@ const Eventos = () => {
                 <tr
                   key={evento.id}
                   onClick={() => setEventoSeleccionado(evento)}
-                  className={eventoSeleccionado?.id === evento.id ? "fila-seleccionada" : ""}
+                  className={
+                    eventoSeleccionado?.id === evento.id ? "fila-seleccionada" : ""
+                  }
                 >
                   <td>{evento.nombre}</td>
                   <td>{evento.fechaInicio}</td>
@@ -115,12 +100,38 @@ const Eventos = () => {
               ))}
             </tbody>
           </table>
-
+          
           <div className="acciones-eventos">
-            <button className="nav-link" onClick={handleCrearEvento}>Crear</button>
-            <button className='nav-link' onClick={handleEditarEvento} disabled={!eventoSeleccionado}>Editar</button>
-            <button className='nav-link' onClick={handleVerEvento} disabled={!eventoSeleccionado}>Ver</button>
-            <button className='nav-link' onClick={handleEliminarEvento} disabled={!eventoSeleccionado}>Eliminar</button>
+            <button 
+              className="nav-link" 
+              onClick={handleCrearEvento}
+            >
+              Crear
+            </button>
+
+            <button 
+              className="nav-link" 
+              onClick={handleEditarEvento} 
+              disabled={!eventoSeleccionado}
+            >
+              Editar
+            </button>
+
+            <button 
+              className="nav-link" 
+              onClick={handleVerEvento} 
+              disabled={!eventoSeleccionado}
+            >
+              Ver
+            </button>
+
+            <button 
+              className="nav-link" 
+              onClick={handleEliminarEvento} 
+              disabled={!eventoSeleccionado}
+            >
+              Eliminar
+            </button>
           </div>
         </div>
       </div>

@@ -2,8 +2,8 @@
     padding: 20px;
   }
   
-  /* Contenedor principal para cada bloque */
-  .evento-container {
+  /* Estilos de la 'caja' */
+  .caja-container {
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -12,8 +12,7 @@
     max-width: 1200px;
   }
   
-  /* Encabezado del bloque */
-  .evento-header {
+  .caja-header {
     background-color: #66c2ff;
     color: #ffffff;
     text-align: center;
@@ -24,14 +23,13 @@
     font-size: 1.4rem;
   }
   
-  /* Cuerpo del bloque */
-  .evento-body {
+  .caja-body {
     padding: 20px;
     color: #333;
     font-size: 16px;
   }
   
-  /* Contenedor para el cronograma y la convocatoria */
+  /* Layout para el cronograma */
   .contenedor-cronograma-convocatoria {
     display: flex;
     flex-direction: row;
@@ -44,20 +42,67 @@
     box-sizing: border-box;
   }
   
-  /* Fila para cada participante */
-  .participante-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+  /* Área de texto */
+  .caja-body textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    color: #333;
+    background-color: #fff;
+    font-size: 1rem;
+    border-radius: 4px;
+    resize: vertical;
   }
   
-  .participante-row input,
-  .participante-row select {
+  /* Sección de áreas */
+  .area-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .area-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .area-col label {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  
+  .area-col input {
     padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
     font-size: 1rem;
   }
   
-  /* Botón con clase nav-link */
+  .area-col-rango {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .area-col-rango label {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  
+  .rango-agrupado {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+  }
+  
+  .rango-agrupado select {
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Botón nav-link (reutilizado de Eventos.css) */
   .nav-link {
     background-color: #66c2ff;
     color: #fff;
@@ -65,29 +110,12 @@
     border: none;
     border-radius: 5px;
     text-decoration: none;
-    display: inline-block;
     cursor: pointer;
     text-align: center;
     transition: background-color 0.3s ease;
-    margin-top: 10px;
   }
   
   .nav-link:hover {
     background-color: #4da6ff;
-  }
-  
-  /* Responsive para los botones */
-  @media (max-width: 768px) {
-    .nav-link {
-      padding: 8px 16px;
-      font-size: 0.9rem;
-    }
-  }
-  
-  /* Opcional: Responsividad para el layout del cronograma/convocatoria */
-  @media (max-width: 768px) {
-    .contenedor-cronograma-convocatoria {
-      flex-direction: column;
-    }
   }
   

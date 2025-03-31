@@ -16,48 +16,56 @@ const CrearEvento = () => {
 
   // Estados para la convocatoria
   const [presentacion, setPresentacion] = useState('');
-  const [participantes, setParticipantes] = useState([{ materia: '', rango: '' }]);
+  const [areas, setAreas] = useState([
+    { 
+      nombre: '', 
+      inicioAno: '', 
+      inicioNivel: '', 
+      finalAno: '', 
+      finalNivel: '' 
+    },
+  ]);
   const [requisitos, setRequisitos] = useState('');
   const [inscripcion, setInscripcion] = useState('');
 
   const navigate = useNavigate();
 
-  // Agregar una nueva fila para participante
-  const handleAddParticipante = () => {
-    setParticipantes([...participantes, { materia: '', rango: '' }]);
+  // Agregar una nueva fila de área
+  const handleAddArea = () => {
+    setAreas([...areas, { nombre: '', inicioAno: '', inicioNivel: '', finalAno: '', finalNivel: '' }]);
   };
 
-  // Actualizar participante
-  const handleParticipanteChange = (index, field, value) => {
-    const newParticipantes = [...participantes];
-    newParticipantes[index][field] = value;
-    setParticipantes(newParticipantes);
+  // Actualizar datos de un área
+  const handleAreaChange = (index, field, value) => {
+    const newAreas = [...areas];
+    newAreas[index][field] = value;
+    setAreas(newAreas);
   };
 
-  // Manejar el envío del formulario
+  // Manejar el envío
   const handleSubmit = (e) => {
     e.preventDefault();
     const eventoData = {
       cronograma,
       convocatoria: {
         presentacion,
-        participantes,
+        areas,
         requisitos,
         inscripcion,
       },
     };
     console.log("Evento creado:", eventoData);
-    // Aquí llamarías a tu API o almacenas en estado global
+    // Aquí llamarías a tu API
     navigate('/eventos');
   };
 
   return (
     <div className="page-container">
       <form onSubmit={handleSubmit}>
-        {/* Sección de Cronograma */}
-        <div className="evento-container">
-          <div className="evento-header">Cronograma</div>
-          <div className="evento-body">
+        {/* Bloque: Cronograma */}
+        <div className="caja-container">
+          <div className="caja-header">Cronograma</div>
+          <div className="caja-body">
             <div className="contenedor-cronograma-convocatoria">
               <section className="cont-form-cronograma">
                 <RegistroForm 
@@ -101,10 +109,10 @@ const CrearEvento = () => {
           </div>
         </div>
 
-        {/* Sección de Convocatoria */}
-        <div className="evento-container">
-          <div className="evento-header">Convocatoria</div>
-          <div className="evento-body">
+        {/* Bloque: Convocatoria */}
+        <div className="caja-container">
+          <div className="caja-header">Convocatoria</div>
+          <div className="caja-body">
             {/* Presentación */}
             <h3>Presentación</h3>
             <textarea
@@ -112,44 +120,88 @@ const CrearEvento = () => {
               value={presentacion}
               onChange={(e) => setPresentacion(e.target.value)}
               rows="4"
-              style={{ width: "100%" }}
-            ></textarea>
+              style={{ width: '100%', marginBottom: '1rem' }}
+            />
 
-            {/* Participantes */}
-            <h3>Participantes</h3>
-            {participantes.map((part, index) => (
-              <div key={index} className="participante-row">
-                <input
-                  type="text"
-                  placeholder="Materia (ej. Biología)"
-                  value={part.materia}
-                  onChange={(e) => handleParticipanteChange(index, 'materia', e.target.value)}
-                />
-                <select
-                  value={part.rango}
-                  onChange={(e) => handleParticipanteChange(index, 'rango', e.target.value)}
-                >
-                  <option value="">Selecciona rango</option>
-                  <option value="primaria_1_6">1ro a 6to de primaria</option>
-                  <option value="secundaria_1_6">1ro a 6to de secundaria</option>
-                  <option value="secundaria_2_6">2do a 6to de secundaria</option>
-                  <option value="primaria5_secundaria6">5to de primaria a 6to de secundaria</option>
-                </select>
+            {/* Áreas */}
+            <h3>Áreas</h3>
+            {areas.map((area, index) => (
+              <div key={index} className="area-row">
+                <div className="area-col">
+                  <label>Nombre del Área</label>
+                  <input
+                    type="text"
+                    value={area.nombre}
+                    onChange={(e) => handleAreaChange(index, 'nombre', e.target.value)}
+                    placeholder="Ej. Biología"
+                  />
+                </div>
+                <div className="area-col-rango">
+                  <label>Rango Inicial</label>
+                  <div className="rango-agrupado">
+                    <select
+                      value={area.inicioAno}
+                      onChange={(e) => handleAreaChange(index, 'inicioAno', e.target.value)}
+                    >
+                      <option value="">Año</option>
+                      {[1, 2, 3, 4, 5, 6].map(num => (
+                        <option key={num} value={num}>{num}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={area.inicioNivel}
+                      onChange={(e) => handleAreaChange(index, 'inicioNivel', e.target.value)}
+                    >
+                      <option value="">Nivel</option>
+                      <option value="Primaria">Primaria</option>
+                      <option value="Secundaria">Secundaria</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="area-col-rango">
+                  <label>Rango Final</label>
+                  <div className="rango-agrupado">
+                    <select
+                      value={area.finalAno}
+                      onChange={(e) => handleAreaChange(index, 'finalAno', e.target.value)}
+                    >
+                      <option value="">Año</option>
+                      {[1, 2, 3, 4, 5, 6].map(num => (
+                        <option key={num} value={num}>{num}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={area.finalNivel}
+                      onChange={(e) => handleAreaChange(index, 'finalNivel', e.target.value)}
+                    >
+                      <option value="">Nivel</option>
+                      <option value="Primaria">Primaria</option>
+                      <option value="Secundaria">Secundaria</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             ))}
-            <button type="button" className="nav-link" onClick={handleAddParticipante}>Agregar Participante</button>
+            <button 
+              type="button" 
+              className="nav-link" 
+              onClick={handleAddArea}
+              style={{ marginTop: '10px' }}
+            >
+              Agregar Área
+            </button>
 
             {/* Requisitos */}
-            <h3>Requisitos</h3>
+            <h3 style={{ marginTop: '1.5rem' }}>Requisitos</h3>
             <textarea
               placeholder={`Ejemplos:
-• Ser estudiante de nivel primaria o secundaria en el sistema de Educación Regular del Estado Plurinacional de Bolivia.
+• Ser estudiante de nivel primaria o secundaria en el sistema de Educación Regular.
 • Ser postulante máximo en dos áreas de la Olimpiada.`}
               value={requisitos}
               onChange={(e) => setRequisitos(e.target.value)}
               rows="4"
-              style={{ width: "100%" }}
-            ></textarea>
+              style={{ width: '100%', marginBottom: '1rem' }}
+            />
 
             {/* Inscripción */}
             <h3>Inscripción</h3>
@@ -158,8 +210,8 @@ const CrearEvento = () => {
               value={inscripcion}
               onChange={(e) => setInscripcion(e.target.value)}
               rows="3"
-              style={{ width: "100%" }}
-            ></textarea>
+              style={{ width: '100%', marginBottom: '1rem' }}
+            />
           </div>
         </div>
 

@@ -2,17 +2,17 @@
     padding: 20px;
   }
   
-  /* Estilos para contenedor principal del bloque de eventos */
-  .evento-container {
+  /* Estilos de la 'caja' */
+  .caja-container {
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     margin: 30px auto;
-    max-width: 1200px; /* Ajusta según tus necesidades */
+    max-width: 1200px;
   }
   
-  .evento-header {
+  .caja-header {
     background-color: #66c2ff;
     color: #ffffff;
     text-align: center;
@@ -23,23 +23,10 @@
     font-size: 1.4rem;
   }
   
-  .evento-body {
+  .caja-body {
     padding: 20px;
     color: #333;
     font-size: 16px;
-  }
-  
-  /* Contenedor para cronograma y convocatoria */
-  .contenedor-cronograma-convocatoria {
-    display: flex;
-    flex-direction: row;
-    gap: 1em;
-  }
-  
-  .cont-form-cronograma {
-    flex: 1;
-    padding: 1rem;
-    box-sizing: border-box;
   }
   
   /* Tabla de eventos */
@@ -61,7 +48,7 @@
     cursor: pointer;
   }
   
-  /* Fila seleccionada en la tabla */
+  /* Fila seleccionada */
   .fila-seleccionada {
     background-color: #d2ebff !important;
   }
@@ -71,10 +58,28 @@
     margin-top: 1rem;
     display: flex;
     gap: 1rem;
-    
-  }
-
-  .nav-link {
-    background-color: #66c2ff;
   }
   
+  /* Botón con clase nav-link */
+  .nav-link {
+    background-color: #66c2ff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Efecto hover */
+  .nav-link:hover {
+    background-color: #4da6ff;
+  }
+  
+  /* Cuando un botón está deshabilitado, se ve semi-opaco */
+  .nav-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
