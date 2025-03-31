@@ -11,9 +11,9 @@ import Home from './pages/Home';
 import './styles/App.css';
 import ProtectedRoute from './context/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
-
 import Configuracion from './pages/Configuracion';
 
+import Logout from './pages/logout'
 
 function App() {
     return (
@@ -29,6 +29,7 @@ function App() {
                                 <Route path="/login" element={<Login />} />
                                 <Route path="/inscripciones" element={<Inscripciones />} />
                                 <Route path='/Eventos' element={<Eventos />}/>
+                                <Route path='/logout' element={<Logout />}/>
                                 {/* Ruta de acceso denegado (opcional) 
                                 <Route path="/no-autorizado" element={<NoAutorizado />} />*/}
 
