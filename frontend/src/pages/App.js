@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Eventos from './pages/Eventos';
-import CrearEvento from './pages/CrearEvento';
-import EditarEvento from './pages/EditarEvento';
-import VerEvento from './pages/VerEvento';
+import CrearEvento from './components/CrearEvento';
+import EditarEvento from './components/EditarEvento';
+import VerEvento from './components/VerEvento';
 
 function App() {
   // Aquí mantenemos la lista de eventos en un estado global

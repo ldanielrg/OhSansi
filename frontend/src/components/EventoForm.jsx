@@ -12,7 +12,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
     fechaFin: '',
     fechaInscripcion: '',
   });
-
   // Estados para convocatoria
   const [presentacion, setPresentacion] = useState('');
   const [areas, setAreas] = useState([
@@ -21,7 +20,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
   const [requisitos, setRequisitos] = useState('');
   const [inscripcion, setInscripcion] = useState('');
 
-  // Al montar o cuando cambie initialData, cargamos los datos en el estado (para editar o ver).
   useEffect(() => {
     if (initialData) {
       setCronograma(initialData.cronograma || {});
@@ -32,26 +30,19 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
     }
   }, [initialData]);
 
-  // Función para agregar un bloque "Área"
   const handleAddArea = () => {
-    setAreas([
-      ...areas,
-      { nombre: '', inicioAno: '', inicioNivel: '', finalAno: '', finalNivel: '' },
-    ]);
+    setAreas([...areas, { nombre: '', inicioAno: '', inicioNivel: '', finalAno: '', finalNivel: '' }]);
   };
 
-  // Manejo de cambios en las áreas
   const handleAreaChange = (index, field, value) => {
     const newAreas = [...areas];
     newAreas[index][field] = value;
     setAreas(newAreas);
   };
 
-  // Enviar formulario (solo se hace en modo "create" o "edit")
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (mode === 'view') return; // En modo ver no hacemos nada
-
+    if (mode === 'view') return;
     const eventoData = {
       cronograma,
       convocatoria: {
@@ -64,7 +55,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
     onSubmit(eventoData);
   };
 
-  // Verificamos si estamos en modo "view" para deshabilitar inputs
   const isViewMode = (mode === 'view');
 
   return (
@@ -74,7 +64,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
         <div className="cronograma-header">Cronograma</div>
         <div className="cronograma-body">
           <div className="contenedor-cronograma">
-            {/* Columna 1 */}
             <section className="form-col">
               <div className="registro-form-field">
                 <label className="nombre-registro">Nombre del evento</label>
@@ -88,7 +77,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   }
                 />
               </div>
-
               <div className="registro-form-field">
                 <label className="nombre-registro">Fecha de inicio</label>
                 <input
@@ -101,7 +89,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   }
                 />
               </div>
-
               <div className="registro-form-field">
                 <label className="nombre-registro">Fecha de Preinscripción</label>
                 <input
@@ -115,8 +102,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                 />
               </div>
             </section>
-
-            {/* Columna 2 */}
             <section className="form-col">
               <div className="registro-form-field">
                 <label className="nombre-registro">Duración (días)</label>
@@ -130,7 +115,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   }
                 />
               </div>
-
               <div className="registro-form-field">
                 <label className="nombre-registro">Fecha fin</label>
                 <input
@@ -143,7 +127,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   }
                 />
               </div>
-
               <div className="registro-form-field">
                 <label className="nombre-registro">Fecha de Inscripción</label>
                 <input
@@ -165,7 +148,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
       <div className="convocatoria-container">
         <div className="convocatoria-header">Convocatoria</div>
         <div className="convocatoria-body">
-          {/* Presentación */}
           <h3>Presentación</h3>
           <div className="registro-form-field">
             <textarea
@@ -178,7 +160,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
             />
           </div>
 
-          {/* Áreas */}
           <h3>Áreas</h3>
           {areas.map((area, index) => (
             <div key={index} className="area-item">
@@ -193,7 +174,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   onChange={(e) => handleAreaChange(index, 'nombre', e.target.value)}
                 />
               </div>
-
               <div className="registro-form-field">
                 <label className="nombre-registro">Rango Inicial</label>
                 <div className="rango-grupo">
@@ -204,7 +184,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                     onChange={(e) => handleAreaChange(index, 'inicioAno', e.target.value)}
                   >
                     <option value="">Año</option>
-                    {[1, 2, 3, 4, 5, 6].map(num => (
+                    {[1,2,3,4,5,6].map(num => (
                       <option key={num} value={num}>{num}</option>
                     ))}
                   </select>
@@ -220,7 +200,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   </select>
                 </div>
               </div>
-
               <div className="registro-form-field">
                 <label className="nombre-registro">Rango Final</label>
                 <div className="rango-grupo">
@@ -231,7 +210,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                     onChange={(e) => handleAreaChange(index, 'finalAno', e.target.value)}
                   >
                     <option value="">Año</option>
-                    {[1, 2, 3, 4, 5, 6].map(num => (
+                    {[1,2,3,4,5,6].map(num => (
                       <option key={num} value={num}>{num}</option>
                     ))}
                   </select>
@@ -249,19 +228,12 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
               </div>
             </div>
           ))}
-          {/* Solo mostramos botón "Agregar Área" si no es modo 'view' */}
           {(!isViewMode) && (
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={handleAddArea}
-              style={{ marginTop: '0.8rem' }}
-            >
+            <button type="button" className="btn-primary" onClick={handleAddArea} style={{ marginTop: '0.8rem' }}>
               Agregar Área
             </button>
           )}
 
-          {/* Requisitos */}
           <h3 style={{ marginTop: '1.5rem' }}>Requisitos</h3>
           <div className="registro-form-field">
             <textarea
@@ -276,7 +248,6 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
             />
           </div>
 
-          {/* Inscripción */}
           <h3>Inscripción</h3>
           <div className="registro-form-field">
             <textarea
@@ -291,16 +262,13 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
         </div>
       </div>
 
-      {/* Botones finales */}
       <div className="eventoform-footer">
-        {/* Botón "Guardar" aparece solo si estamos en modo crear o editar */}
         {(mode === 'create' || mode === 'edit') && (
           <button type="submit" className="btn-primary" style={{ marginRight: '1rem' }}>
             Guardar
           </button>
         )}
-        {/* Botón Salir (onCancel) */}
-        <button type="button" className="btn-secondary" onClick={onCancel}>
+        <button type="button" className="btn-primary" onClick={onCancel}>
           Salir
         </button>
       </div>
