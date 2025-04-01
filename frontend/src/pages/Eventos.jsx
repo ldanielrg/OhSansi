@@ -1,113 +1,108 @@
-import React, { useState } from 'react';
+// pages/Eventos.jsx
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Eventos.css'; // Ajusta la ruta según tu estructura
+import '../styles/Eventos.css';
 
 const Eventos = () => {
-  const [eventos, setEventos] = useState([
-    {
-      id: 1,
-      nombre: "Olimpiada de Matemáticas",
-      fechaInicio: "2023-04-10",
-      fechaFin: "2023-04-15",
-      fechaPreinscripcion: "2023-04-01",
-      fechaInscripcion: "2023-04-05",
-    },
-    {
-      id: 2,
-      nombre: "Olimpiada de Física",
-      fechaInicio: "2023-05-01",
-      fechaFin: "2023-05-06",
-      fechaPreinscripcion: "2023-04-20",
-      fechaInscripcion: "2023-04-25",
-    },
-  ]);
-
-  const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const navigate = useNavigate();
 
-  // Navegar a la página de creación de evento
-  const handleCrearEvento = () => {
-    navigate("/crear-evento");
-  };
+  // Cargar eventos de localStorage al montar
+  useEffect(() => {
+    const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+    setEvents(storedEvents);
+  }, []);
 
-  const handleVerEvento = () => {
-    if (!eventoSeleccionado) return;
-    navigate(`/ver-evento/${eventoSeleccionado.id}`);
+  const handleCrearEvento = () => {
+    navigate('/crear-evento');
   };
 
   const handleEditarEvento = () => {
-    if (!eventoSeleccionado) return;
-    navigate(`/editar-evento/${eventoSeleccionado.id}`);
+    if (!selectedEvent) return;
+    navigate(`/editar-evento/${selectedEvent.id}`);
+  };
+
+  const handleVerEvento = () => {
+    if (!selectedEvent) return;
+    navigate(`/ver-evento/${selectedEvent.id}`);
   };
 
   const handleEliminarEvento = () => {
-    if (!eventoSeleccionado) return;
-    const confirmacion = window.confirm(`¿Deseas eliminar el evento "${eventoSeleccionado.nombre}"?`);
+    if (!selectedEvent) return;
+    const confirmacion = window.confirm(
+      `¿Deseas eliminar el evento "${selectedEvent.cronograma?.nombre}"?`
+    );
     if (confirmacion) {
-      setEventos(prev => prev.filter(ev => ev.id !== eventoSeleccionado.id));
-      setEventoSeleccionado(null);
+      // Filtramos el evento eliminado
+      const updatedEvents = events.filter(ev => ev.id !== selectedEvent.id);
+      setEvents(updatedEvents);
+      localStorage.setItem('events', JSON.stringify(updatedEvents));
+      setSelectedEvent(null);
     }
   };
 
   return (
     <div className="eventos-page">
-      {/* Contenedor para la lista de eventos */}
       <div className="eventos-container">
         <div className="eventos-header">Lista de Eventos</div>
         <div className="eventos-body">
-          <table className="tabla-eventos">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Fecha Inicio</th>
-                <th>Fecha Fin</th>
-                <th>Preinscripción</th>
-                <th>Inscripción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {eventos.map((evento) => (
-                <tr
-                  key={evento.id}
-                  onClick={() => setEventoSeleccionado(evento)}
-                  className={eventoSeleccionado?.id === evento.id ? "fila-seleccionada" : ""}
-                >
-                  <td>{evento.nombre}</td>
-                  <td>{evento.fechaInicio}</td>
-                  <td>{evento.fechaFin}</td>
-                  <td>{evento.fechaPreinscripcion}</td>
-                  <td>{evento.fechaInscripcion}</td>
+          {events.length > 0 ? (
+            <table className="tabla-eventos">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Fecha Inicio</th>
+                  <th>Fecha Fin</th>
+                  <th>Preinscripción</th>
+                  <th>Inscripción</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {events.map(evento => (
+                  <tr
+                    key={evento.id}
+                    onClick={() => setSelectedEvent(evento)}
+                    className={
+                      selectedEvent?.id === evento.id ? 'fila-seleccionada' : ''
+                    }
+                  >
+                    <td>{evento.cronograma?.nombre}</td>
+                    <td>{evento.cronograma?.fechaInicio}</td>
+                    <td>{evento.cronograma?.fechaFin}</td>
+                    <td>{evento.cronograma?.fechaPreinscripcion}</td>
+                    <td>{evento.cronograma?.fechaInscripcion}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No hay eventos creados.</p>
+          )}
 
           {/* Botones de acción */}
           <div className="eventos-acciones">
             <button className="btn-primary" onClick={handleCrearEvento}>
               Crear
             </button>
-
             <button
               className="btn-primary"
               onClick={handleEditarEvento}
-              disabled={!eventoSeleccionado}
+              disabled={!selectedEvent}
             >
               Editar
             </button>
-
             <button
               className="btn-primary"
               onClick={handleVerEvento}
-              disabled={!eventoSeleccionado}
+              disabled={!selectedEvent}
             >
               Ver
             </button>
-
             <button
               className="btn-primary"
               onClick={handleEliminarEvento}
-              disabled={!eventoSeleccionado}
+              disabled={!selectedEvent}
             >
               Eliminar
             </button>

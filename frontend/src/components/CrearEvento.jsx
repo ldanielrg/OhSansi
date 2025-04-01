@@ -7,12 +7,19 @@ function CrearEvento() {
   const navigate = useNavigate();
 
   const handleCreateSubmit = (eventoData) => {
-    // Recuperar eventos almacenados
+    // 1. Leer los eventos ya guardados en localStorage
     const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
-    // Generar un ID único (por ejemplo, usando Date.now())
+
+    // 2. Crear un objeto con ID único (por ejemplo, usando Date.now())
     const newEvent = { id: Date.now(), ...eventoData };
+
+    // 3. Actualizamos el array con el nuevo evento
     const updatedEvents = [...storedEvents, newEvent];
+
+    // 4. Guardar el array actualizado en localStorage
     localStorage.setItem('events', JSON.stringify(updatedEvents));
+
+    // 5. Ir a la lista de eventos
     navigate('/eventos');
   };
 
