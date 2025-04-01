@@ -32,19 +32,12 @@ const Eventos = () => {
 
   const handleVerEvento = () => {
     if (!eventoSeleccionado) return;
-    alert(`Mostrando detalles del evento: ${eventoSeleccionado.nombre}`);
-    // Podrías redirigir a /eventos/:id/ver o abrir un modal
+    navigate(`/ver-evento/${eventoSeleccionado.id}`);
   };
 
   const handleEditarEvento = () => {
     if (!eventoSeleccionado) return;
-    const hoy = new Date().toISOString().split("T")[0];
-    if (hoy >= eventoSeleccionado.fechaInicio && hoy <= eventoSeleccionado.fechaFin) {
-      alert(`Editando evento: ${eventoSeleccionado.nombre}`);
-      navigate(`/editar-evento/${eventoSeleccionado.id}`);
-    } else {
-      alert("Este evento ya no se puede editar (fuera del rango del cronograma).");
-    }
+    navigate(`/editar-evento/${eventoSeleccionado.id}`);
   };
 
   const handleEliminarEvento = () => {
