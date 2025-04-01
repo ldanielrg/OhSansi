@@ -224,8 +224,8 @@ const Inscripciones = () => {
           responsive
         />
         <div className='contenedor-botones-tabla-est-inscritos'>
-          <BotonForm texto='Editar' onClick={handleEditar} />
-          <BotonForm texto='Eliminar' onClick={handleEliminar} />
+          <BotonForm className='botones-editar-eliminar-tabla-est' texto='Editar' onClick={handleEditar} />
+          <BotonForm className='botones-editar-eliminar-tabla-est' texto='Eliminar' onClick={handleEliminar} />
         </div>
       </Caja>
     </div>

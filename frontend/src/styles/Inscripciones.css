@@ -29,3 +29,7 @@
     justify-content: end;
     gap: 10px;
 }
+.botones-editar-eliminar-tabla-est{
+    background-color: #E1F4FF !important;
+    color: #52C0FF !important;
+}
