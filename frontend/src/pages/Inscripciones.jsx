@@ -43,7 +43,7 @@ const Inscripciones = () => {
     { name: 'CI/Pasaporte', selector: row => row.ci },
     { name: 'Curso', selector: row => row.curso },
     { name: 'Categoría', selector: row => row.categoria },
-    { name: 'Fecha Nacimiento', selector: row => row.fechaNac }
+    { name: 'Área', selector: row => row.area }
   ];
 
   const customStyles = {
@@ -51,7 +51,7 @@ const Inscripciones = () => {
       style: {
         backgroundColor: '#E1F4FF',
         color: 'black',
-        fontWeight: 'bold',
+        fontWeight: 'semibold',
         fontSize: '14px',
       },
     },
@@ -104,6 +104,20 @@ const Inscripciones = () => {
     setFormData({ ...formData, ...seleccionado });
     setEditIndex(index);
     setModoEdicion(true);
+  };
+  
+  const handleEliminar = () => {
+    if (selectedRows.length === 0) {
+      alert('Por favor selecciona al menos un registro para eliminar.');
+      return;
+    }
+  
+    const nuevosDatos = rowData.filter(
+      row => !selectedRows.some(sel => sel.ci === row.ci)
+    );
+  
+    setRowData(nuevosDatos);
+    setSelectedRows([]); // limpia selección
   };
   
 
@@ -182,8 +196,13 @@ const Inscripciones = () => {
               onChange={setFormData}
               options={[
                 { value: '', label: 'Seleccione el área' },
-                { value: 'informatica', label: 'Informática' },
-                { value: 'biologia', label: 'Biología' }
+                { value: 'astronomia y astrofisica', label: 'Astronomia y Astrofisica' },
+                { value: 'biologia', label: 'Biología' },
+                { value: 'fisica', label: 'Fisica' },
+                { value: 'informática', label: 'Informática' },
+                { value: 'matematicas', label: 'Matemáticas' },
+                { value: 'quimica', label: 'Quimica' },
+                { value: 'robótica', label: 'Robótica' }
               ]}
             />
             <div className='contenedor-boton-registrar-est'>
@@ -206,7 +225,7 @@ const Inscripciones = () => {
         />
         <div className='contenedor-botones-tabla-est-inscritos'>
           <BotonForm texto='Editar' onClick={handleEditar} />
-          <BotonForm texto='Eliminar' />
+          <BotonForm texto='Eliminar' onClick={handleEliminar} />
         </div>
       </Caja>
     </div>
