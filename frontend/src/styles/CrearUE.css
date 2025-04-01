@@ -1,0 +1,125 @@
+.crear-ue-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 700px;
+    margin: 40px auto;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .titulo-box {
+    background-color: #4cb4f5;
+    color: white;
+    text-align: center;
+    padding: 12px 20px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin: -30px -30px 30px;
+  }
+  
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 25px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .ancho-input {
+    max-width: 300px;
+  }
+  
+  .form-group label {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #4cb4f5;  
+    margin-left: 8px;
+  }
+  
+  input[type="text"] {
+    width: 100%;
+    padding: 10px 16px;
+    border: 2px solid #a0c8f0;
+    background-color: #e6f4ff;
+    color: #4cb4f5;
+    border-radius: 999px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+  }
+  
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #3498db;
+    color: #0e0d0d;
+  }
+  
+  .select-react {
+    font-size: 16px;
+    color: #3498db;
+  }
+  
+  .select-react .react-select__control {
+    border: 2px solid #a0c8f0 !important;
+    background-color: #e6f4ff;
+    color: #3498db;
+    border-radius: 999px !important;
+    padding: 2px;
+    box-shadow: none !important;
+    min-height: 42px;
+  }
+  
+  .select-react .react-select__menu {
+    background-color: #fff;
+    border: 1px solid #3498db;
+    color: #3498db;
+    border-radius: 10px;
+    margin-top: 5px;
+    z-index: 10;
+  }
+  
+  .crear-ue-botones {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 10px;
+    color: #c0392b;
+  }
+  
+  .btn-cancelar,
+  .btn-guardar {
+    padding: 12px 32px;
+    font-size: 15px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-cancelar {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .btn-guardar {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .btn-cancelar:hover {
+    background-color: #c0392b;
+  }
+  
+  .btn-guardar:hover {
+    background-color: #2980b9;
+  }
+  

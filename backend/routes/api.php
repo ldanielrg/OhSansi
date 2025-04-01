@@ -5,6 +5,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CuentaController;
 
+//AGREGUE YO
+use App\Http\Controllers\DepartamentoController;
+use App\Http\Controllers\MunicipioController;
+use App\Http\Controllers\UnidadEducativaController;
+
+Route::get('/departamentos', [DepartamentoController::class, 'index']);
+Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
+Route::post('/unidad-educativa', [UnidadEducativaController::class, 'store']);
+
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
 //})->middleware('auth:sanctum');
