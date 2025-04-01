@@ -19,18 +19,17 @@
     min-height: 200px;
 }
 
-
-.btn-delete {
-    background-color: #ff4d4f;
-    color: white;
-    border: none;
-    padding: 4px 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    font-weight: bold;
+.contenedor-boton-registrar-est{
+    display: flex;
+    justify-content: end;
 }
 
-.btn-delete:hover {
-    background-color: #d9363e;
+.contenedor-botones-tabla-est-inscritos{
+    display: flex;
+    justify-content: end;
+    gap: 10px;
 }
-
+.botones-editar-eliminar-tabla-est{
+    background-color: #E1F4FF !important;
+    color: #52C0FF !important;
+}
