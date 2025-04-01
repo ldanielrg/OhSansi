@@ -2,15 +2,28 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-class AdminSeeder extends Seeder
+use App\Models\User;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
+
+class UsuarioSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function run()
     {
-        //
+        // Crear el rol (si no existe)
+        $rol = Role::firstOrCreate(['name' => 'admin']);
+
+        // Crear el usuario
+        $usuario = User::firstOrCreate(
+            ['email' => 'admin@ejemplo.com'],
+            [
+                'name' => 'Administrador',
+                'password' => Hash::make('password123')
+            ]
+        );
+
+        // Asignar el rol al usuario
+        $usuario->assignRole($rol);
     }
 }

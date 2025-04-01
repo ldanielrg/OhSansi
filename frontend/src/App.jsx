@@ -14,6 +14,7 @@ import { AuthProvider } from './context/AuthContext';
 import Configuracion from './pages/Configuracion';
 
 import Logout from './pages/logout'
+import CrearUE from './pages/CrearUE'; {/* AGREGUE YO*/}
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function App() {
                                 <Route path="/no-autorizado" element={<NoAutorizado />} />*/}
 
                                 {/* RUTA PROTEGIDA: solo admin */}
+                                <Route path="/crear-ue" element={<CrearUE />} /> {/* AGREGUE YO*/}
                                 <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
                                     <Route path="/configuracion" element={<Configuracion />} />
                                 </Route>
