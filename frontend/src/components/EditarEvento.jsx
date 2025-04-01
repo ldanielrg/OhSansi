@@ -1,7 +1,7 @@
 // EditarEvento.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import EventoForm from '../components/EventoForm';
+import EventoForm from './EventoForm';
 
 function EditarEvento() {
   const { id } = useParams(); // ID del evento a editar
