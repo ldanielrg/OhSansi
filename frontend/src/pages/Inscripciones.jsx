@@ -99,8 +99,11 @@ const Inscripciones = () => {
       return;
     }
   
+    const confirmado = window.confirm('¿Estás seguro de que deseas editar este registro?');
+    if (!confirmado) return;
+  
     const seleccionado = selectedRows[0];
-    const index = rowData.findIndex(est => est.ci === seleccionado.ci); // o por algún otro campo único
+    const index = rowData.findIndex(est => est.ci === seleccionado.ci);
     setFormData({ ...formData, ...seleccionado });
     setEditIndex(index);
     setModoEdicion(true);
@@ -111,6 +114,9 @@ const Inscripciones = () => {
       alert('Por favor selecciona al menos un registro para eliminar.');
       return;
     }
+  
+    const confirmado = window.confirm('¿Estás seguro de que deseas eliminar el/los registro(s) seleccionado(s)?');
+    if (!confirmado) return;
   
     const nuevosDatos = rowData.filter(
       row => !selectedRows.some(sel => sel.ci === row.ci)
