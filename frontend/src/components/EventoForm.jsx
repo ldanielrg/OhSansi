@@ -1,9 +1,8 @@
-// EventoForm.jsx
+// src/components/EventoForm.jsx
 import React, { useState, useEffect } from 'react';
 import '../styles/EventoForm.css';
 
 function EventoForm({ mode, initialData, onSubmit, onCancel }) {
-  // Estados para cronograma
   const [cronograma, setCronograma] = useState({
     nombre: '',
     fechaInicio: '',
@@ -12,13 +11,16 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
     fechaFin: '',
     fechaInscripcion: '',
   });
-  // Estados para convocatoria
+
   const [presentacion, setPresentacion] = useState('');
   const [areas, setAreas] = useState([
     { nombre: '', inicioAno: '', inicioNivel: '', finalAno: '', finalNivel: '' },
   ]);
   const [requisitos, setRequisitos] = useState('');
   const [inscripcion, setInscripcion] = useState('');
+
+  // Para manejar errores de validación
+  const [errors, setErrors] = useState([]);
 
   useEffect(() => {
     if (initialData) {
@@ -30,19 +32,64 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
     }
   }, [initialData]);
 
-  const handleAddArea = () => {
-    setAreas([...areas, { nombre: '', inicioAno: '', inicioNivel: '', finalAno: '', finalNivel: '' }]);
+  const isViewMode = (mode === 'view');
+  const isEditOrCreate = (mode === 'edit' || mode === 'create');
+
+  // Validaciones
+  const validate = () => {
+    let validationErrors = [];
+
+    // 1. Campos obligatorios en cronograma
+    if (!cronograma.nombre.trim()) {
+      validationErrors.push('El nombre del evento es obligatorio.');
+    }
+    if (!cronograma.fechaInicio) {
+      validationErrors.push('La fecha de inicio es obligatoria.');
+    }
+    if (!cronograma.fechaFin) {
+      validationErrors.push('La fecha fin es obligatoria.');
+    }
+    // Comprobar coherencia: fechaInicio <= fechaFin
+    if (cronograma.fechaInicio && cronograma.fechaFin) {
+      if (cronograma.fechaInicio > cronograma.fechaFin) {
+        validationErrors.push('La fecha de inicio no puede ser mayor que la fecha fin.');
+      }
+    }
+
+    // 2. Presentación obligatoria
+    if (!presentacion.trim()) {
+      validationErrors.push('La presentación de la convocatoria es obligatoria.');
+    }
+
+    // 3. Validar áreas: que tengan nombre
+    areas.forEach((area, idx) => {
+      if (!area.nombre.trim()) {
+        validationErrors.push(`El área #${idx + 1} necesita un nombre.`);
+      }
+    });
+
+    // 4. Validar otros campos obligatorios si deseas (requisitos, inscripcion, etc.)
+    // Ejemplo:
+    if (!requisitos.trim()) {
+      validationErrors.push('Los requisitos son obligatorios.');
+    }
+    if (!inscripcion.trim()) {
+      validationErrors.push('La sección de inscripción es obligatoria.');
+    }
+
+    setErrors(validationErrors);
+    return validationErrors.length === 0; // true si no hay errores
   };
 
-  const handleAreaChange = (index, field, value) => {
-    const newAreas = [...areas];
-    newAreas[index][field] = value;
-    setAreas(newAreas);
-  };
-
+  // Manejar submit
   const handleSubmit = (e) => {
     e.preventDefault();
     if (mode === 'view') return;
+
+    // Correr validaciones
+    const isValid = validate();
+    if (!isValid) return; // Si hay errores, no llamamos onSubmit
+
     const eventoData = {
       cronograma,
       convocatoria: {
@@ -55,11 +102,32 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
     onSubmit(eventoData);
   };
 
-  const isViewMode = (mode === 'view');
+  // Agregar un área
+  const handleAddArea = () => {
+    setAreas([...areas, { nombre: '', inicioAno: '', inicioNivel: '', finalAno: '', finalNivel: '' }]);
+  };
+
+  // Cambiar valores en un área
+  const handleAreaChange = (index, field, value) => {
+    const newAreas = [...areas];
+    newAreas[index][field] = value;
+    setAreas(newAreas);
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Bloque: Cronograma */}
+      {/* Mensajes de error */}
+      {errors.length > 0 && (
+        <div className="error-panel">
+          <ul>
+            {errors.map((err, idx) => (
+              <li key={idx}>{err}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Bloque CRONOGRAMA */}
       <div className="cronograma-container">
         <div className="cronograma-header">Cronograma</div>
         <div className="cronograma-body">
@@ -72,11 +140,10 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   className="input-registro"
                   disabled={isViewMode}
                   value={cronograma.nombre}
-                  onChange={(e) =>
-                    setCronograma({ ...cronograma, nombre: e.target.value })
-                  }
+                  onChange={(e) => setCronograma({ ...cronograma, nombre: e.target.value })}
                 />
               </div>
+
               <div className="registro-form-field">
                 <label className="nombre-registro">Fecha de inicio</label>
                 <input
@@ -84,11 +151,10 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   className="input-registro"
                   disabled={isViewMode}
                   value={cronograma.fechaInicio}
-                  onChange={(e) =>
-                    setCronograma({ ...cronograma, fechaInicio: e.target.value })
-                  }
+                  onChange={(e) => setCronograma({ ...cronograma, fechaInicio: e.target.value })}
                 />
               </div>
+
               <div className="registro-form-field">
                 <label className="nombre-registro">Fecha de Preinscripción</label>
                 <input
@@ -96,12 +162,11 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   className="input-registro"
                   disabled={isViewMode}
                   value={cronograma.fechaPreinscripcion}
-                  onChange={(e) =>
-                    setCronograma({ ...cronograma, fechaPreinscripcion: e.target.value })
-                  }
+                  onChange={(e) => setCronograma({ ...cronograma, fechaPreinscripcion: e.target.value })}
                 />
               </div>
             </section>
+
             <section className="form-col">
               <div className="registro-form-field">
                 <label className="nombre-registro">Duración (días)</label>
@@ -110,11 +175,10 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   className="input-registro"
                   disabled={isViewMode}
                   value={cronograma.duracion}
-                  onChange={(e) =>
-                    setCronograma({ ...cronograma, duracion: e.target.value })
-                  }
+                  onChange={(e) => setCronograma({ ...cronograma, duracion: e.target.value })}
                 />
               </div>
+
               <div className="registro-form-field">
                 <label className="nombre-registro">Fecha fin</label>
                 <input
@@ -122,11 +186,10 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   className="input-registro"
                   disabled={isViewMode}
                   value={cronograma.fechaFin}
-                  onChange={(e) =>
-                    setCronograma({ ...cronograma, fechaFin: e.target.value })
-                  }
+                  onChange={(e) => setCronograma({ ...cronograma, fechaFin: e.target.value })}
                 />
               </div>
+
               <div className="registro-form-field">
                 <label className="nombre-registro">Fecha de Inscripción</label>
                 <input
@@ -134,9 +197,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   className="input-registro"
                   disabled={isViewMode}
                   value={cronograma.fechaInscripcion}
-                  onChange={(e) =>
-                    setCronograma({ ...cronograma, fechaInscripcion: e.target.value })
-                  }
+                  onChange={(e) => setCronograma({ ...cronograma, fechaInscripcion: e.target.value })}
                 />
               </div>
             </section>
@@ -144,7 +205,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
         </div>
       </div>
 
-      {/* Bloque: Convocatoria */}
+      {/* Bloque CONVOCATORIA */}
       <div className="convocatoria-container">
         <div className="convocatoria-header">Convocatoria</div>
         <div className="convocatoria-body">
@@ -174,6 +235,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   onChange={(e) => handleAreaChange(index, 'nombre', e.target.value)}
                 />
               </div>
+              {/* Rango inicial */}
               <div className="registro-form-field">
                 <label className="nombre-registro">Rango Inicial</label>
                 <div className="rango-grupo">
@@ -200,6 +262,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   </select>
                 </div>
               </div>
+              {/* Rango final */}
               <div className="registro-form-field">
                 <label className="nombre-registro">Rango Final</label>
                 <div className="rango-grupo">
@@ -228,8 +291,13 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
               </div>
             </div>
           ))}
-          {(!isViewMode) && (
-            <button type="button" className="btn-primary" onClick={handleAddArea} style={{ marginTop: '0.8rem' }}>
+          {!isViewMode && (
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={handleAddArea}
+              style={{ marginTop: '0.8rem' }}
+            >
               Agregar Área
             </button>
           )}
@@ -239,9 +307,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
             <textarea
               className="input-registro"
               rows="4"
-              placeholder={`Ejemplos:
-• Ser estudiante de nivel primaria o secundaria...
-• Ser postulante máximo en dos áreas...`}
+              placeholder="Ejemplos de requisitos..."
               disabled={isViewMode}
               value={requisitos}
               onChange={(e) => setRequisitos(e.target.value)}
@@ -253,7 +319,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
             <textarea
               className="input-registro"
               rows="3"
-              placeholder="Introduce los pasos a seguir para inscribirse..."
+              placeholder="Pasos para inscribirse..."
               disabled={isViewMode}
               value={inscripcion}
               onChange={(e) => setInscripcion(e.target.value)}
@@ -262,8 +328,9 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
         </div>
       </div>
 
+      {/* Botones footer (Guardar y Salir) */}
       <div className="eventoform-footer">
-        {(mode === 'create' || mode === 'edit') && (
+        {isEditOrCreate && (
           <button type="submit" className="btn-primary" style={{ marginRight: '1rem' }}>
             Guardar
           </button>
@@ -277,4 +344,3 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
 }
 
 export default EventoForm;
-

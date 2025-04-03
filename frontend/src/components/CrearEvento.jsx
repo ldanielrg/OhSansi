@@ -1,28 +1,27 @@
-// CrearEvento.jsx
+// src/pages/CrearEvento.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import EventoForm from '../components/EventoForm';
 
+// Crear una convocatoria nueva
 function CrearEvento() {
   const navigate = useNavigate();
 
+  // Manejar guardado
   const handleCreateSubmit = (eventoData) => {
-    // 1. Leer los eventos ya guardados en localStorage
+    // Leer registros actuales
     const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
-
-    // 2. Crear un objeto con ID único (por ejemplo, usando Date.now())
+    // Generar un ID único
     const newEvent = { id: Date.now(), ...eventoData };
-
-    // 3. Actualizamos el array con el nuevo evento
+    // Actualizar array
     const updatedEvents = [...storedEvents, newEvent];
-
-    // 4. Guardar el array actualizado en localStorage
+    // Guardar en localStorage
     localStorage.setItem('events', JSON.stringify(updatedEvents));
-
-    // 5. Ir a la lista de eventos
+    // Volver a la lista
     navigate('/eventos');
   };
 
+  // Cancelar
   const handleCancel = () => {
     navigate('/eventos');
   };
