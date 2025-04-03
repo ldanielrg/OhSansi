@@ -59,6 +59,7 @@ const Inscripciones = () => {
 
   const handleRegistrar = () => {
     const { nombre, rude, provincia, ci, curso, categoria, fechaNac } = formData;
+  
     if (!nombre || !rude || !provincia || !ci || !curso || !categoria || !fechaNac) {
       alert('Por favor completa todos los campos obligatorios.');
       return;
@@ -76,6 +77,9 @@ const Inscripciones = () => {
       setRowData((prev) => [...prev, formData]);
     }
   
+    // Mostrar notificación de éxito
+    alert('Registro realizado correctamente.');
+  
     // Limpiar formulario
     setFormData({
       nombre: '',
@@ -91,6 +95,7 @@ const Inscripciones = () => {
       area: ''
     });
   };
+  
   
 
   const handleEditar = () => {
