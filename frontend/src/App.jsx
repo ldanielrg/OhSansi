@@ -20,9 +20,9 @@ import CrearEvento from "./components/CrearEvento";
 import EditarEvento from "./components/EditarEvento";
 import VerEvento from "./components/VerEvento";
 
+import Logout from './pages/logout'
+import CrearUE from './pages/CrearUE'; {/* AGREGUE YO*/}
 import Configuracion from "./pages/Configuracion";
-
-import Logout from "./pages/logout";
 
 function App() {
   return (
@@ -41,12 +41,13 @@ function App() {
                 <Route path="/crear-evento" element={<CrearEvento />} />
                 <Route path="/editar-evento/:id" element={<EditarEvento />} />
                 <Route path="/ver-evento/:id" element={<VerEvento />} />
-
+                <Route path="/crear-ue" element={<CrearUE />} /> {/* AGREGUE YO*/}
                 <Route path="/logout" element={<Logout />} />
                 {/* Ruta de acceso denegado (opcional) 
                                 <Route path="/no-autorizado" element={<NoAutorizado />} />*/}
 
                 {/* RUTA PROTEGIDA: solo admin */}
+                
                 <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
                   <Route path="/configuracion" element={<Configuracion />} />
                 </Route>
