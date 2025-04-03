@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import '../styles/Inscripciones.css';
 import Caja from '../components/Caja';
 import RegistroForm from '../components/RegistroForm';
@@ -19,9 +19,9 @@ const Inscripciones = () => {
     complemento: '',
     area: ''
   });
-  const [editIndex, setEditIndex] = useState(null); // ← guarda índice a editar
-  const [modoEdicion, setModoEdicion] = useState(false); // ← si estás en edición
-  
+
+  const [editIndex, setEditIndex] = useState(null);
+  const [modoEdicion, setModoEdicion] = useState(false);
   const [rowData, setRowData] = useState([
     {
       nombre: 'Juan Lopez',
@@ -35,6 +35,7 @@ const Inscripciones = () => {
   ]);
 
   const [selectedRows, setSelectedRows] = useState([]);
+  const selectedRowsRef = useRef([]);
 
   const columns = [
     { name: 'Nombre Completo', selector: row => row.nombre, sortable: true },
@@ -59,28 +60,24 @@ const Inscripciones = () => {
 
   const handleRegistrar = () => {
     const { nombre, rude, provincia, ci, curso, categoria, fechaNac } = formData;
-  
+
     if (!nombre || !rude || !provincia || !ci || !curso || !categoria || !fechaNac) {
       alert('Por favor completa todos los campos obligatorios.');
       return;
     }
-  
+
     if (modoEdicion && editIndex !== null) {
-      // 🔁 Actualizar registro existente
       const nuevosDatos = [...rowData];
       nuevosDatos[editIndex] = formData;
       setRowData(nuevosDatos);
       setModoEdicion(false);
       setEditIndex(null);
     } else {
-      // ➕ Registrar nuevo
       setRowData((prev) => [...prev, formData]);
     }
-  
-    // Mostrar notificación de éxito
+
     alert('Registro realizado correctamente.');
-  
-    // Limpiar formulario
+
     setFormData({
       nombre: '',
       rude: '',
@@ -95,42 +92,49 @@ const Inscripciones = () => {
       area: ''
     });
   };
-  
-  
 
   const handleEditar = () => {
-    if (selectedRows.length === 0) {
+    const seleccionActual = selectedRowsRef.current;
+
+    if (seleccionActual.length === 0) {
       alert('Por favor selecciona un registro para editar.');
       return;
     }
-  
+
+    if (seleccionActual.length > 1) {
+      alert('Solo puedes editar un registro a la vez.');
+      return;
+    }
+
     const confirmado = window.confirm('¿Estás seguro de que deseas editar este registro?');
     if (!confirmado) return;
-  
-    const seleccionado = selectedRows[0];
+
+    const seleccionado = seleccionActual[0];
     const index = rowData.findIndex(est => est.ci === seleccionado.ci);
     setFormData({ ...formData, ...seleccionado });
     setEditIndex(index);
     setModoEdicion(true);
   };
-  
+
   const handleEliminar = () => {
-    if (selectedRows.length === 0) {
+    const seleccionActual = selectedRowsRef.current;
+
+    if (seleccionActual.length === 0) {
       alert('Por favor selecciona al menos un registro para eliminar.');
       return;
     }
-  
+
     const confirmado = window.confirm('¿Estás seguro de que deseas eliminar el/los registro(s) seleccionado(s)?');
     if (!confirmado) return;
-  
+
     const nuevosDatos = rowData.filter(
-      row => !selectedRows.some(sel => sel.ci === row.ci)
+      row => !seleccionActual.some(sel => sel.ci === row.ci)
     );
-  
+
     setRowData(nuevosDatos);
-    setSelectedRows([]); // limpia selección
+    setSelectedRows([]);
+    selectedRowsRef.current = [];
   };
-  
 
   return (
     <div className="page-container">
@@ -217,8 +221,7 @@ const Inscripciones = () => {
               ]}
             />
             <div className='contenedor-boton-registrar-est'>
-            <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
-
+              <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
             </div>
           </section>
         </div>
@@ -229,7 +232,10 @@ const Inscripciones = () => {
           columns={columns}
           data={rowData}
           selectableRows
-          onSelectedRowsChange={({ selectedRows }) => setSelectedRows(selectedRows)}
+          onSelectedRowsChange={({ selectedRows }) => {
+            setSelectedRows(selectedRows);
+            selectedRowsRef.current = selectedRows;
+          }}
           customStyles={customStyles}
           pagination
           responsive
