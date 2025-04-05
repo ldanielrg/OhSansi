@@ -22,17 +22,7 @@ const Inscripciones = () => {
 
   const [editIndex, setEditIndex] = useState(null);
   const [modoEdicion, setModoEdicion] = useState(false);
-  const [rowData, setRowData] = useState([
-    {
-      nombre: 'Juan Lopez',
-      rude: '12345678',
-      provincia: 'Cercado',
-      ci: '7894561',
-      curso: '6to',
-      categoria: 'Matematica',
-      fechaNac: '2009-04-10'
-    }
-  ]);
+  const [rowData, setRowData] = useState([]);
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleClearSelected, setToggleClearSelected] = useState(false);
@@ -209,7 +199,7 @@ const Inscripciones = () => {
                 { value: 'quillacollo', label: 'Quillacollo' },
               ]}
             />
-            <RegistroForm label='CI/Pasaporte' name='ci' value={formData.ci} onChange={setFormData} />
+            <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
             <RegistroForm
               label='Nivel/Categoria'
               name='curso'
