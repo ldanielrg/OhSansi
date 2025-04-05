@@ -211,29 +211,18 @@ const Inscripciones = () => {
             />
             <RegistroForm label='CI/Pasaporte' name='ci' value={formData.ci} onChange={setFormData} />
             <RegistroForm
-              label='Año de escolaridad'
+              label='Nivel/Categoria'
               name='curso'
               type='select'
               value={formData.curso}
               onChange={setFormData}
               options={[
-                { value: '', label: 'Seleccione el curso' },
+                { value: '', label: 'Seleccione un nivel/categoria' },
                 { value: '6to', label: '6to' },
                 { value: '5to', label: '5to' },
               ]}
             />
-            <RegistroForm
-              label='Categoria'
-              name='categoria'
-              type='select'
-              value={formData.categoria}
-              onChange={setFormData}
-              options={[
-                { value: '', label: 'Seleccione su categoria' },
-                { value: 'matematica', label: 'Matematica' },
-                { value: 'quimica', label: 'Quimica' }
-              ]}
-            />
+
           </section>
 
           <section className='seccion-form'>
