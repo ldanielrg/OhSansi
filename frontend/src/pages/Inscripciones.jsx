@@ -35,6 +35,7 @@ const Inscripciones = () => {
   ]);
 
   const [selectedRows, setSelectedRows] = useState([]);
+  const [toggleClearSelected, setToggleClearSelected] = useState(false);
   const selectedRowsRef = useRef([]);
 
   const columns = [
@@ -59,10 +60,46 @@ const Inscripciones = () => {
   };
 
   const handleRegistrar = () => {
-    const { nombre, rude, provincia, ci, curso, categoria, fechaNac } = formData;
+    const {
+      nombre, rude, provincia, ci, curso,
+      categoria, fechaNac, genero, unidadEducativa, complemento, area
+    } = formData;
 
-    if (!nombre || !rude || !provincia || !ci || !curso || !categoria || !fechaNac) {
-      alert('Por favor completa todos los campos obligatorios.');
+    if (nombre.length < 6) {
+      alert('El nombre debe tener al menos 6 caracteres.');
+      return;
+    }
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
+      alert('El nombre solo puede contener letras y espacios.');
+      return;
+    }
+    if (nombre.length > 60) {
+      alert('El nombre no puede superar los 60 caracteres.');
+      return;
+    }
+
+    if (!/^\d{1,16}$/.test(rude)) {
+      alert('El RUDE debe contener solo números y como máximo 16 dígitos.');
+      return;
+    }
+
+    if (!/^\d{1,8}$/.test(ci)) {
+      alert('El CI/Pasaporte debe contener solo números y como máximo 8 dígitos.');
+      return;
+    }
+
+    if (complemento.length > 3) {
+      alert('El complemento del CI debe tener como máximo 3 caracteres.');
+      return;
+    }
+
+    if (unidadEducativa.length > 40) {
+      alert('El nombre de la Unidad Educativa no puede superar los 40 caracteres.');
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ.,-]*$/.test(unidadEducativa)) {
+      alert('El nombre de la Unidad Educativa contiene caracteres no válidos.');
       return;
     }
 
@@ -73,7 +110,7 @@ const Inscripciones = () => {
       setModoEdicion(false);
       setEditIndex(null);
     } else {
-      setRowData((prev) => [...prev, formData]);
+      setRowData(prev => [...prev, formData]);
     }
 
     alert('Registro realizado correctamente.');
@@ -91,6 +128,10 @@ const Inscripciones = () => {
       complemento: '',
       area: ''
     });
+
+    setSelectedRows([]);
+    selectedRowsRef.current = [];
+    setToggleClearSelected(prev => !prev);
   };
 
   const handleEditar = () => {
@@ -111,7 +152,13 @@ const Inscripciones = () => {
 
     const seleccionado = seleccionActual[0];
     const index = rowData.findIndex(est => est.ci === seleccionado.ci);
-    setFormData({ ...formData, ...seleccionado });
+
+    if (index === -1) {
+      alert('No se pudo encontrar el registro a editar.');
+      return;
+    }
+
+    setFormData({ ...seleccionado });
     setEditIndex(index);
     setModoEdicion(true);
   };
@@ -134,6 +181,7 @@ const Inscripciones = () => {
     setRowData(nuevosDatos);
     setSelectedRows([]);
     selectedRowsRef.current = [];
+    setToggleClearSelected(prev => !prev);
   };
 
   return (
@@ -232,6 +280,8 @@ const Inscripciones = () => {
           columns={columns}
           data={rowData}
           selectableRows
+          selectableRowsNoSelectAll
+          clearSelectedRows={toggleClearSelected}
           onSelectedRowsChange={({ selectedRows }) => {
             setSelectedRows(selectedRows);
             selectedRowsRef.current = selectedRows;
