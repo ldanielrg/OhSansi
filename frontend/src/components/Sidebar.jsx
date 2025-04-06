@@ -32,7 +32,7 @@ const Sidebar = () => {
         )}
         {tieneRol('Admin') && (
           <>
-            <li><Link to="/configuracion">Configuración de la cuenta</Link></li>
+            <li><Link to="/crear-cuentas">Creación de cuentas</Link></li>
             <li><Link to="/cuentas">Gestión de cuentas</Link></li>
             <li><Link to="/convocatoria">Gestión de convocatoria</Link></li>
             <li><Link to="/crear-ue">Añadir UE</Link></li>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Caja from '../components/Caja';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Configuracion.css';
+import '../styles/CrearCuentas.css';
 import api from '../api/axios';
 
 
@@ -16,7 +16,7 @@ const opciones = [
   'Aux'
 ];
 
-const Configuracion = () => {
+const CrearCuentas = () => {
   const [tipoCuenta, setTipoCuenta] = useState('');
   const [formData, setFormData] = useState({
     nombres: '',
@@ -124,4 +124,4 @@ const Configuracion = () => {
   );
 };
 
-export default Configuracion;
+export default CrearCuentas;

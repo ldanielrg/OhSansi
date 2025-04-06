@@ -22,7 +22,7 @@ import VerEvento from "./components/VerEvento";
 
 import Logout from './pages/logout'
 import CrearUE from './pages/CrearUE'; {/* AGREGUE YO*/}
-import Configuracion from "./pages/Configuracion";
+import CrearCuentas from "./pages/CrearCuentas";
 
 function App() {
   return (
@@ -49,7 +49,7 @@ function App() {
                 {/* RUTA PROTEGIDA: solo admin */}
                 
                 <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
-                  <Route path="/configuracion" element={<Configuracion />} />
+                  <Route path="/crear-cuentas" element={<CrearCuentas />} />
                 </Route>
               </Routes>
             </main>
