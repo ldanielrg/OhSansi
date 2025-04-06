@@ -4,56 +4,55 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/Sidebar.css';
 
 const Sidebar = () => {
-    const { user, roles } = useAuth();
-    const isAuthenticated = !!user;
-    const esAdmin = roles.includes('Admin');
+  const { user, roles } = useAuth();
+  const isAuthenticated = !!user;
 
-    return (
-        <nav className="sidebar">
-            <ul>
-                {!isAuthenticated ? (
-                    <>
-                        <li><Link to="/">Inicio</Link></li>
-                        <li><Link to="/inscripciones">Inscripciones</Link></li>
-                        <li><Link to="/noticias">Noticias</Link></li>
-                        <li><Link to="/contactos">Contactos</Link></li>
-                        <li><Link to="/login" className="active-button">Login &gt;</Link></li>
-                        <li><Link to="/eventos">Eventos</Link></li>
-                        <li><Link to="/faq">VISTA PARA OTROS ROLES</Link></li>
-                        <li><Link to="/crear-ue">Añadir UE</Link></li> {/** CREE YO ES PROVICIONAL */}
-                    </>
-                ) : esAdmin ? (
-                    <>
-                        <li><Link to="/">Inicio</Link></li>
-                        <li><Link to="/inscripciones">Inscripciones</Link></li>
-                        <li><Link to="/noticias">Noticias</Link></li>
-                        <li><Link to="/contactos">Contactos</Link></li>
-                        <li><Link to="/login" className="active-button">Login &gt;</Link></li>
-                        <li><Link to="/eventos">Eventos</Link></li>
-                        <li><Link to="/faq">Preguntas Frecuentes</Link></li>
-                        <li><Link to="/crear-ue">Añadir UE</Link></li>
-                        
-                        <li><Link to="/configuracion">Configuración de la cuenta</Link></li>
-                        <li><Link to="/cuentas">Gestión de cuentas</Link></li>
-                        <li><Link to="/cronograma">Gestión de cronograma</Link></li>
-                        <li><Link to="/convocatoria">Gestión de convocatoria</Link></li>
-                        <li><Link to="/inscripciones/seguimiento">Seguimiento de inscripciones</Link></li>
-                        <li><Link to="/crear-ue">Añadir UE</Link></li>
-                    </>
-                ) : (
-                    <>
-                        <li><Link to="/">Inicio</Link></li>
-                        <li><Link to="/inscripciones">Inscripciones</Link></li>
-                        <li><Link to="/noticias">Noticias</Link></li>
-                        <li><Link to="/contactos">Contactos</Link></li>
-                        <li><Link to="/login" className="active-button">Login &gt;</Link></li>
-                        <li><Link to="/eventos">Eventos</Link></li>
-                        <li><Link to="/faq">Preguntas Frecuentes</Link></li>
-                    </>
-                )}
-            </ul>
-        </nav>
-    );
+  const tieneRol = (rol) => roles.includes(rol);
+  const tieneAlgunRol = (...permitidos) => roles.some((rol) => permitidos.includes(rol));
+
+  return (
+    <nav className="sidebar">
+      <ul>
+        {/* Siempre visibles */}
+        <li><Link to="/">Inicio</Link></li>
+        <li><Link to="/noticias">Noticias</Link></li>
+        <li><Link to="/contactos">Contactos</Link></li>
+        <li><Link to="/eventos">Eventos</Link></li>
+        <li><Link to="/faq">Preguntas Frecuentes</Link></li>
+
+        {!isAuthenticated && (
+          <li><Link to="/login" className="active-button">Login &gt;</Link></li>
+        )}
+
+        {/* Solo para Admin */}
+        {tieneAlgunRol('Admin', 'Adm. Inscripcion', 'Docente', 'Tutor') && (
+          <>
+            <li><Link to="/inscripciones">Inscripciones</Link></li>
+          </>
+        )}
+        {tieneRol('Admin') && (
+          <>
+            <li><Link to="/configuracion">Configuración de la cuenta</Link></li>
+            <li><Link to="/cuentas">Gestión de cuentas</Link></li>
+            <li><Link to="/convocatoria">Gestión de convocatoria</Link></li>
+            <li><Link to="/crear-ue">Añadir UE</Link></li>
+          </>
+        )}
+
+        {/* Solo para Director */}
+        {tieneRol('Director') && (
+          <>
+            <li><Link to="/crear-docente">Añadir Docente</Link></li>
+          </>
+        )}
+
+        {/* Solo para Tutor */}
+        {tieneRol('Tutor') && (
+          <li><Link to="/perfil-estudiantes">Mis Estudiantes</Link></li>
+        )}
+      </ul>
+    </nav>
+  );
 };
 
 export default Sidebar;
