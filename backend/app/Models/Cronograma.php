@@ -31,8 +31,7 @@ class Cronograma extends Model
 	];
 
 	protected $fillable = [
-		'fecha',
-		'observacion'
+		'fecha'
 	];
 
 	public function convocatoria()

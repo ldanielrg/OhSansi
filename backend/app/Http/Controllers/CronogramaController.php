@@ -22,8 +22,19 @@ class CronogramaController extends Controller
      */
     public function store(Request $request)
     {
-        $cronograma = Cronograma::create($request->all());
+        /*$cronograma = Cronograma::create($request->all());
+        return response()->json($cronograma, 201);*/
+        \Log::info('REQUEST COMPLETO:', $request->all());
+        \Log::info('Fecha recibida:', ['fecha' => $request->input('fecha')]);
+
+
+
+        $cronograma = \App\Models\Cronograma::create([
+            'fecha' => $request->input('fecha')
+        ]);
+
         return response()->json($cronograma, 201);
+
     }
 
     /**

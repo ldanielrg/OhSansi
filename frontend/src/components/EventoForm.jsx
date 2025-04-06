@@ -1,12 +1,13 @@
 // EventoForm.jsx
 import React, { useState, useEffect } from 'react';
 import '../styles/EventoForm.css';
+import { crearCronograma } from '../api/cronogramaApi';
 
 function EventoForm({ mode, initialData, onSubmit, onCancel }) {
   // Estados para cronograma
   const [cronograma, setCronograma] = useState({
     nombre: '',
-    fechaInicio: '',
+    fecha: '',
     fechaPreinscripcion: '',
     duracion: '',
     fechaFin: '',
@@ -21,13 +22,13 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
   const [inscripcion, setInscripcion] = useState('');
 
   useEffect(() => {
-    if (initialData) {
-      setCronograma(initialData.cronograma || {});
-      setPresentacion(initialData.convocatoria?.presentacion || '');
-      setAreas(initialData.convocatoria?.areas || []);
-      setRequisitos(initialData.convocatoria?.requisitos || '');
-      setInscripcion(initialData.convocatoria?.inscripcion || '');
+    if (initialData && initialData.cronograma) {
+      setCronograma((prev) => ({
+        ...prev,
+        ...initialData.cronograma,
+      }));
     }
+    // si no hay initialData, no hacemos nada
   }, [initialData]);
 
   const handleAddArea = () => {
@@ -40,19 +41,20 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
     setAreas(newAreas);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    
     e.preventDefault();
+    console.log("cronograma:", cronograma);
+    console.log("cronograma.fecha:", cronograma.fecha);
     if (mode === 'view') return;
-    const eventoData = {
-      cronograma,
-      convocatoria: {
-        presentacion,
-        areas,
-        requisitos,
-        inscripcion,
-      },
-    };
-    onSubmit(eventoData);
+    
+    try {
+      await crearCronograma(cronograma.fecha);
+      alert('Cronograma creado con éxito');
+    } catch (error) {
+      console.error('Error al crear cronograma:', error);
+      alert('Error al crear cronograma');
+    }
   };
 
   const isViewMode = (mode === 'view');
@@ -83,9 +85,9 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   type="date"
                   className="input-registro"
                   disabled={isViewMode}
-                  value={cronograma.fechaInicio}
+                  value={cronograma.fecha}
                   onChange={(e) =>
-                    setCronograma({ ...cronograma, fechaInicio: e.target.value })
+                    setCronograma({ ...cronograma, fecha: e.target.value })
                   }
                 />
               </div>

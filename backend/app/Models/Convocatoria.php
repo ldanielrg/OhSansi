@@ -40,7 +40,6 @@ class Convocatorium extends Model
 	];
 
 	protected $fillable = [
-		'id_cronog',
 		'nombre_convocatoria',
 		'descripcion',
 		'fecha_ini',
