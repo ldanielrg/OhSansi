@@ -39,7 +39,7 @@ const CrearCuentas = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Validación simple
+    // Validación simple, para coincidencia de contraseñas
     if (formData.password !== formData.confirmarPassword) {
       alert('Las contraseñas no coinciden');
       return;
