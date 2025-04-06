@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CuentaController;
+use App\Http\Controllers\PermisoController;
 
 //AGREGUE YO
 use App\Http\Controllers\DepartamentoController;
@@ -18,7 +19,10 @@ Route::post('/unidad-educativa', [UnidadEducativaController::class, 'store']);
 //    return $request->user();
 //})->middleware('auth:sanctum');
 
+
+
+//PERMISOS Y ROLES. Toda ruta relacionada con esto se encuentra aquí:
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/crear-cuenta', [CuentaController::class, 'store']);
-
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->get('/permisos', [PermisoController::class, 'index']);
