@@ -20,6 +20,7 @@ const Sidebar = () => {
                         <li><Link to="/login" className="active-button">Login &gt;</Link></li>
                         <li><Link to="/eventos">Eventos</Link></li>
                         <li><Link to="/faq">VISTA PARA OTROS ROLES</Link></li>
+                        <li><Link to="/crear-ue">Añadir UE</Link></li> {/** CREE YO ES PROVICIONAL */}
                     </>
                 ) : esAdmin ? (
                     <>
@@ -30,13 +31,14 @@ const Sidebar = () => {
                         <li><Link to="/login" className="active-button">Login &gt;</Link></li>
                         <li><Link to="/eventos">Eventos</Link></li>
                         <li><Link to="/faq">Preguntas Frecuentes</Link></li>
+                        <li><Link to="/crear-ue">Añadir UE</Link></li>
                         
                         <li><Link to="/configuracion">Configuración de la cuenta</Link></li>
                         <li><Link to="/cuentas">Gestión de cuentas</Link></li>
                         <li><Link to="/cronograma">Gestión de cronograma</Link></li>
                         <li><Link to="/convocatoria">Gestión de convocatoria</Link></li>
                         <li><Link to="/inscripciones/seguimiento">Seguimiento de inscripciones</Link></li>
-                        <li><Link to="/añadir-ue">Añadir UE</Link></li>
+                        <li><Link to="/crear-ue">Añadir UE</Link></li>
                     </>
                 ) : (
                     <>
