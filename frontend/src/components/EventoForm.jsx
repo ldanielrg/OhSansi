@@ -92,17 +92,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Mensajes de error */}
-      {errors.length > 0 && (
-        <div className="error-panel">
-          <ul>
-            {errors.map((err, idx) => (
-              <li key={idx}>{err}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
+      
       {/* Bloque CRONOGRAMA */}
       <div className="cronograma-container">
         <div className="cronograma-header">Cronograma</div>
@@ -314,7 +304,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
 
       {/* Botones footer (Guardar y Salir) */}
       <div className="eventoform-footer">
-        {isEditOrCreate && (
+        {(mode ==='create' || mode ==='edit') && (
           <button type="submit" className="btn-primary" style={{ marginRight: '1rem' }}>
             Guardar
           </button>

@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Categorium extends Model
+class Categoria extends Model
 {
 	protected $table = 'categoria';
 	protected $primaryKey = 'id_categoria';

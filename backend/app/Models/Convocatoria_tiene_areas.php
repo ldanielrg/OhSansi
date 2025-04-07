@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class ConvocatoriaTieneArea extends Model
+class Convocatoria_tiene_areas extends Model
 {
 	protected $table = 'convocatoria_tiene_areas';
 	public $incrementing = false;

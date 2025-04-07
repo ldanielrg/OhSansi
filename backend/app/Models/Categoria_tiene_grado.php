@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class CategoriaTieneGrado extends Model
+class Categoria_tiene_grado extends Model
 {
 	protected $table = 'categoria_tiene_grado';
 	public $incrementing = false;
