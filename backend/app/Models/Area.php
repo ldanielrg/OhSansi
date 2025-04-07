@@ -25,7 +25,6 @@ class Area extends Model
 	public $timestamps = false;
 
 	protected $casts = [
-		'id_area' => 'int',
 		'activo' => 'bool'
 	];
 

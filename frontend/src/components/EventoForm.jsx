@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/EventoForm.css';
 import { crearCronograma } from '../api/cronogramaApi';
+import { obtenerAreas } from '../api/areaApi';
 
 function EventoForm({ mode, initialData, onSubmit, onCancel }) {
   // Estados para cronograma
@@ -20,6 +21,16 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
   ]);
   const [requisitos, setRequisitos] = useState('');
   const [inscripcion, setInscripcion] = useState('');
+
+  const [areasDisponibles, setAreasDisponibles] = useState([]);
+  const [areasSeleccionadas, setAreasSeleccionadas] = useState([]);
+
+  useEffect(() => {
+    obtenerAreas()
+      .then(data => setAreasDisponibles(data))
+      .catch(error => console.error('Error al obtener áreas:', error));
+  }, []);
+  
 
   useEffect(() => {
     if (initialData && initialData.cronograma) {
@@ -60,6 +71,9 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
     e.preventDefault();
     if (mode === 'view') return;
   
+    const idsSeleccionados = areas
+      .map(area => area.id_area)
+      .filter(id => id); // quita undefined o vacío
     const eventoData = {
       cronograma,
       convocatoria: {
@@ -67,6 +81,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
         areas,
         requisitos,
         inscripcion,
+        areasSeleccionadas: idsSeleccionados,
       },
     };
   
@@ -184,14 +199,20 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
             <div key={index} className="area-item">
               <div className="registro-form-field">
                 <label className="nombre-registro">Nombre del Área</label>
-                <input
-                  type="text"
+                <select
                   className="input-registro"
                   disabled={isViewMode}
-                  placeholder="Ej. Biología"
-                  value={area.nombre}
-                  onChange={(e) => handleAreaChange(index, 'nombre', e.target.value)}
-                />
+                  value={area.id_area || ''}
+                  onChange={(e) => handleAreaChange(index, 'id_area', parseInt(e.target.value))}
+                >
+                  <option value="">Seleccione un área</option>
+                  {areasDisponibles.map((a) => (
+                    <option key={a.id_area} value={a.id_area}>
+                      {a.nombre_area}
+                    </option>
+                  ))}
+                </select>
+
               </div>
               <div className="registro-form-field">
                 <label className="nombre-registro">Rango Inicial</label>

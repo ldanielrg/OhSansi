@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Convocatoria;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
  
 class ConvocatoriaController extends Controller
 {
@@ -60,4 +61,20 @@ class ConvocatoriaController extends Controller
         Convocatoria::destroy($id);
         return response()->json(null, 204);
     }
+
+    public function asignarAreas(Request $request, $idConvocatoria)
+    {
+        $areaIds = $request->input('areas'); // array de id_area
+        \Log::info('Áreas recibidas para asignar:', $request->all());
+        foreach ($areaIds as $idArea) {
+            \Log::info("Insertando area $idArea en convocatoria $idConvocatoria");
+            DB::table('convocatoria_tiene_areas')->insert([
+                'id_convocatoria' => $idConvocatoria,
+                'id_area' => $idArea, 
+            ]);
+        }
+
+        return response()->json(['message' => 'Áreas asignadas correctamente']);
+    }
+
 }
