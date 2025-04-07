@@ -41,7 +41,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
     setAreas(newAreas);
   };
 
-  const handleSubmit = async (e) => {
+  /*const handleSubmit = async (e) => {
     
     e.preventDefault();
     console.log("cronograma:", cronograma);
@@ -55,7 +55,24 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
       console.error('Error al crear cronograma:', error);
       alert('Error al crear cronograma');
     }
+  };*/
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (mode === 'view') return;
+  
+    const eventoData = {
+      cronograma,
+      convocatoria: {
+        presentacion,
+        areas,
+        requisitos,
+        inscripcion,
+      },
+    };
+  
+    onSubmit(eventoData); // delegamos el guardado al componente padre
   };
+  
 
   const isViewMode = (mode === 'view');
 

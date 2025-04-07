@@ -22,7 +22,6 @@ class Cronograma extends Model
 {
 	protected $table = 'cronograma';
 	protected $primaryKey = 'id_cronog';
-	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [

@@ -2,28 +2,36 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import EventoForm from '../components/EventoForm';
+
 import { crearCronograma } from '../api/cronogramaApi';
+import { crearConvocatoria } from '../api/convocatoriaApi';
 
 function CrearEvento() {
   const navigate = useNavigate();
 
   const handleCreateSubmit = async (eventoData) => {
     try {
-      // 1. Enviar a la API Laravel
-      const res = await crearCronograma('2025-01-01');
-      console.log('Cronograma creado en Laravel:', res);
+      // 1. Crear cronograma
+      const resCronograma = await crearCronograma(eventoData.cronograma.fecha);
+      const idCronograma = resCronograma.id_cronog;
+
+      // 2. Crear convocatoria vinculada
+      const convocatoriaPayload = {
+        descripcion: eventoData.convocatoria.presentacion,
+        id_cronog: idCronograma,
+        estado: true,
+        nombre_convocatoria: 'Convocatoria automática',
+      };
   
-      // 2. Guardar también en localStorage (si aún lo necesitas)
-      const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
-      const newEvent = { id: Date.now(), ...eventoData };
-      const updatedEvents = [...storedEvents, newEvent];
-      localStorage.setItem('events', JSON.stringify(updatedEvents));
+      const resConvocatoria = await crearConvocatoria(convocatoriaPayload);
   
-      // 3. Navegar a lista de eventos
+      console.log('Convocatoria creada:', resConvocatoria);
+      alert('Convocatoria y cronograma creados con éxito');
       navigate('/eventos');
+  
     } catch (err) {
-      console.error('Error al crear cronograma en Laravel:', err);
-      alert('Error al guardar cronograma en la base de datos');
+      console.error('Error al guardar datos:', err);
+      alert('Error al guardar datos');
     }
   };
 
