@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Caja from '../components/Caja';
 import '../styles/login.css';
 
-import FormGeneral from '../components/formularios/formGeneral';
+import FormGeneral from '../components/formularios/FormGeneral';
 import RoleTabs from '../components/RoleTabs';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
