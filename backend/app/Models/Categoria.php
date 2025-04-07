@@ -37,12 +37,12 @@ class Categoria extends Model
 
 	public function area_tiene_categoria()
 	{
-		return $this->hasMany(AreaTieneCategorium::class, 'id_categoria');
+		return $this->hasMany(Area_tiene_categoria::class, 'id_categoria');
 	}
 
 	public function categoria_tiene_grados()
 	{
-		return $this->hasMany(CategoriaTieneGrado::class, 'id_categoria');
+		return $this->hasMany(Categoria_Tiene_Grado::class, 'id_categoria');
 	}
 }
 

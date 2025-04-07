@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Cronograma;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
- 
+use Illuminate\Support\Facades\Log;
+
 class CronogramaController extends Controller
 {
     /**
@@ -24,8 +25,9 @@ class CronogramaController extends Controller
     {
         /*$cronograma = Cronograma::create($request->all());
         return response()->json($cronograma, 201);*/
-        \Log::info('REQUEST COMPLETO:', $request->all());
-        \Log::info('Fecha recibida:', ['fecha' => $request->input('fecha')]);
+        
+        Log::info('REQUEST COMPLETO:', $request->all());
+        Log::info('Fecha recibida:', ['fecha' => $request->input('fecha')]);
 
 
 

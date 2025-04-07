@@ -9,10 +9,9 @@ const ProtectedRoute = ({ allowedRoles }) => {
   // No autenticado
   if (!user) return <Navigate to="/login" />;
 
-  // No tiene el rol permitido
-  if (!roles.some((rol) => allowedRoles.includes(rol))) {
-    return <Navigate to="/no-autorizado" />; // o <p>No autorizado</p>
-  }
+  const tienePermiso = roles.some((rol) => allowedRoles.includes(rol));
+
+  if (!tienePermiso) return <Navigate to="/no-autorizado" replace />;
 
   return <Outlet />;
 };

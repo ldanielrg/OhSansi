@@ -38,6 +38,7 @@ function CrearEvento() {
   const handleCreateSubmit = async (eventoData) => {
     try {
       // 1. Crear cronograma
+      console.log(eventoData.cronograma.fecha);
       const resCronograma = await crearCronograma(eventoData.cronograma.fecha);
       const idCronograma = resCronograma.id_cronog;
   
