@@ -52,7 +52,7 @@ class Convocatoria extends Model
 
 	public function convocatoria_tiene_areas()
 	{
-		return $this->hasMany(ConvocatoriaTieneArea::class, 'id_convocatoria');
+		return $this->hasMany(Convocatoria_Tiene_Areas::class, 'id_convocatoria');
 	}
 
 	public function formularios()

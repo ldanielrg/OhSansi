@@ -45,7 +45,7 @@ class Formulario extends Model
 
 	public function convocatorium()
 	{
-		return $this->belongsTo(Convocatorium::class, 'id_convocatoria');
+		return $this->belongsTo(Convocatoria::class, 'id_convocatoria');
 	}
 
 	public function estudiantes()

@@ -33,7 +33,7 @@ class Categoria_tiene_grado extends Model
 
 	public function categoria()
 	{
-		return $this->belongsTo(Categorium::class, 'id_categoria');
+		return $this->belongsTo(Categoria::class, 'id_categoria');
 	}
 }
 

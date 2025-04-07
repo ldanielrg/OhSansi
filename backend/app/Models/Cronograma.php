@@ -35,7 +35,7 @@ class Cronograma extends Model
 
 	public function convocatoria()
 	{
-		return $this->hasMany(Convocatorium::class, 'id_cronog');
+		return $this->hasMany(Convocatoria::class, 'id_cronog');
 	}
 
 	public function eventos()

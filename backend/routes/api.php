@@ -19,9 +19,9 @@ use App\Http\Controllers\AreaController;
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
 Route::post('/unidad-educativa', [UnidadEducativaController::class, 'store']);
-Route::apiResource('eventos', EventoController::class);
-Route::apiResource('cronogramas', CronogramaController::class);
-Route::apiResource('convocatorias', ConvocatoriaController::class);
+Route::apiResource('/eventos', EventoController::class);
+Route::apiResource('/cronogramas', CronogramaController::class);
+Route::apiResource('/convocatorias', ConvocatoriaController::class);
 Route::get('/areas', [AreaController::class, 'index']);
 Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asignarAreas']);
 
