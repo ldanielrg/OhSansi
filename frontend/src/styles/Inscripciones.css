@@ -1,0 +1,35 @@
+
+.contenedor-secciones-form{
+    display: flex;
+    gap: 1rem;
+}
+.seccion-form{
+    flex: 1; /* 🔁 Ocupa el mismo espacio que sus hermanos */
+    padding: 1rem;
+    box-sizing: border-box; /* Importante para que padding no rompa el layout */
+}
+.checkbox-multiple-generos{
+    display: flex;
+    flex-direction: row;
+}
+
+.tabla-inscritos {
+    margin-top: 1.5rem;
+    width: 100%;
+    min-height: 200px;
+}
+
+.contenedor-boton-registrar-est{
+    display: flex;
+    justify-content: end;
+}
+
+.contenedor-botones-tabla-est-inscritos{
+    display: flex;
+    justify-content: end;
+    gap: 10px;
+}
+.botones-editar-eliminar-tabla-est{
+    background-color: #E1F4FF !important;
+    color: #52C0FF !important;
+}

@@ -1,0 +1,156 @@
+/* Contenedor global de la página */
+.crear-evento-page {
+  padding: 20px;
+  background-color: #E4F5FF; /* Color de fondo general, opcional */
+  min-height: 100vh; /* Para ocupar toda la pantalla vertical */
+}
+
+/* ====== Estilo para el bloque CRONOGRAMA ====== */
+.cronograma-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 20px auto;
+  max-width: 1200px;
+}
+
+.cronograma-header {
+  background-color: #66c2ff;
+  color: #ffffff;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 1.4rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.cronograma-body {
+  padding: 20px;
+  color: #333;
+  font-size: 16px;
+}
+
+/* ====== Estilo para el bloque CONVOCATORIA ====== */
+.convocatoria-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 20px auto;
+  max-width: 1200px;
+}
+
+.convocatoria-header {
+  background-color: #66c2ff;
+  color: #ffffff;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 1.4rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.convocatoria-body {
+  padding: 20px;
+  color: #333;
+  font-size: 16px;
+}
+
+/* ====== Secciones internas ====== */
+.contenedor-cronograma {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
+.form-col {
+  flex: 1;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Área item (cada bloque de áreas) */
+.area-item {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1rem;
+}
+
+/* ====== Estilos para campos del formulario ====== */
+.registro-form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  font-size: 16px;
+  color: #000; /* Aseguramos el color de la letra en negro */
+}
+
+.nombre-registro {
+  font-weight: bold;
+  margin-bottom: 0.4em;
+}
+
+/* Inputs, selects y textareas */
+.input-registro {
+  width: 90%;
+  background-color: #E4F5FF;
+  border: 0.8px solid #3498db;
+  border-radius: 20px;
+  font-size: 1em;
+  padding: 0.6em 1em;
+  color: #333;
+}
+
+/* Remover resize en textarea */
+textarea.input-registro {
+  resize: none;
+}
+
+.input-registro:focus {
+  outline: none;
+  border: 2px solid #3498db;
+  box-shadow: 0 0 3px #3498db;
+}
+
+/* Contenedor para los selects en rango (año y nivel) */
+.rango-grupo {
+  display: flex;
+  gap: 1rem;
+}
+
+/* ====== Botones ====== */
+.btn-primary {
+  background-color: #66c2ff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  font-size: 1em;
+}
+
+.btn-primary:hover {
+  background-color: #4da6ff;
+}
+
+/* Botón para submit al final */
+.crear-evento-submit {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* ====== Responsividad ====== */
+@media (max-width: 768px) {
+  .contenedor-cronograma {
+    flex-direction: column;
+  }
+
+  .input-registro {
+    width: 100%;
+  }
+}
