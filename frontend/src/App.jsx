@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 
 import Header from "./components/Header";
-import Sidebar from "./components/SideBar";
+import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import Login from "./pages/login";
 import Inscripciones from "./pages/Inscripciones";
