@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
-import '../styles/CrearUE.css';
+import '../styles/CrearUE.css'; // estilos específicos del formulario
 
 const CrearUE = () => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     nombre: '',
     rue: '',
@@ -10,6 +13,7 @@ const CrearUE = () => {
     municipio_id: ''
   });
 
+  const [errors, setErrors] = useState({});
   const [departamentos, setDepartamentos] = useState([]);
   const [municipios, setMunicipios] = useState([]);
 
@@ -35,13 +39,43 @@ const CrearUE = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+  
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.nombre.trim()) {
+      newErrors.nombre = 'Este campo es obligatorio.';
+    } else if (!form.nombre.startsWith('Unidad Educativa')) {
+      newErrors.nombre = 'Debe comenzar con "Unidad Educativa".';
+    } else if (!/^Unidad Educativa\s[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜñÑ.,-]{1,87}$/.test(form.nombre)) {
+      newErrors.nombre = 'Después de "Unidad Educativa", Debe Ingresar el nombre de la Unidad Educativa. Máximo 100 caracteres.';
+    } else if (form.nombre.length > 100) {
+      newErrors.nombre = 'Máximo 100 caracteres permitidos.';
+    }
+    
+
+    if (!form.rue.trim()) {
+      newErrors.rue = 'Este campo es obligatorio.';
+    } else if (!/^\d{1,8}$/.test(form.rue)) {
+      newErrors.rue = 'Solo números, máximo 8 dígitos.';
+    }
+
+    if (!form.departamento_id) {
+      newErrors.departamento_id = 'Selecciona un departamento.';
+    }
+
+    if (!form.municipio_id) {
+      newErrors.municipio_id = 'Selecciona un municipio.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async () => {
-    // Validación rápida en el frontend
-    if (!form.nombre || !form.rue || !form.departamento_id || !form.municipio_id) {
-      alert('Por favor, completa todos los campos antes de continuar.');
-      return;
-    }
+
+    if (!validateForm()) return;
 
     try {
       const res = await fetch('http://localhost:8000/api/unidad-educativa', {
@@ -53,12 +87,14 @@ const CrearUE = () => {
       const data = await res.json();
 
       if (res.status === 409) {
-        //  RUE duplicado
-        alert('⚠️ El RUE ingresado ya está registrado en la base de datos.\nPor favor verifica que el colegio no esté duplicado.');
+        alert('⚠️ El RUE ingresado ya existe.');
       } else if (res.ok) {
         alert('✅ Unidad Educativa creada con éxito.');
         setForm({ nombre: '', rue: '', departamento_id: '', municipio_id: '' });
         setMunicipios([]);
+        setErrors({});
+      } else if (res.status === 422) {
+        setErrors(data.errors || {});
       } else {
         alert(data.message || 'Ocurrió un error al registrar la Unidad Educativa.');
       }
@@ -68,96 +104,102 @@ const CrearUE = () => {
     }
   };
 
-  const customSelectStyles = {
-    control: (base) => ({
-      ...base,
-      backgroundColor: '#e6f4ff',
-      borderColor: '#a0c8f0',
-      borderRadius: 999,
-      paddingLeft: 10,
-      fontSize: 16,
-      minHeight: 42,
-      boxShadow: 'none',
-    }),
-    menu: (base) => ({
-      ...base,
-      borderRadius: 10,
-      border: '1px solid #3498db',
-      zIndex: 100
-    })
-  };
-
   return (
     <div className="crear-ue-container">
       <div className="titulo-box">Crear Unidad Educativa</div>
 
       <div className="form-row">
-        <div className="form-group ancho-input">
-          <label>Nombre de Unidad Educativa</label>
-          <input
-            type="text"
-            name="nombre"
-            value={form.nombre}
-            onChange={handleChange}
-          />
-        </div>
+      <div className="form-group">
+      <label>Nombre de Unidad Educativa</label>
+      <input
+        type="text"
+        name="nombre"
+        value={form.nombre}
+        onChange={handleChange}
+        placeholder="Ej: Unidad Educativa San Pedro"
+        className={`form-input ${
+          errors.nombre
+            ? 'input-error'
+            : form.nombre.startsWith('Unidad Educativa') && form.nombre.trim()
+            ? 'input-valid'
+            : ''
+        }`}
+      />
+        {errors.nombre && <span className="error-text">{errors.nombre}</span>}
+      </div>
 
-        <div className="form-group ancho-input">
-          <label>RUE</label>
-          <input
-            type="text"
-            name="rue"
-            value={form.rue}
-            onChange={handleChange}
+      <div className="form-group">
+        <label>RUE</label>
+        <input
+          type="text"
+          name="rue"
+          value={form.rue}
+          onChange={handleChange}
+          placeholder="Ej: 30302014"
+          className={`form-input ${
+          errors.rue
+            ? 'input-error'
+            : /^\d{1,8}$/.test(form.rue) && form.rue.trim()
+            ? 'input-valid'
+            : ''
+        }`}
           />
+          {errors.rue && <span className="error-text">{errors.rue}</span>}
         </div>
       </div>
 
+
       <div className="form-row">
-        <div className="form-group ancho-input">
+        <div className="form-group">
           <label>Departamento</label>
           <Select
-            className="select-react"
-            styles={customSelectStyles}
+            className="react-select"
             options={departamentos.map(dep => ({ value: dep.id, label: dep.nombre }))}
-            value={
-              departamentos.find(dep => dep.id === form.departamento_id)
-                ? {
-                    value: form.departamento_id,
-                    label: departamentos.find(dep => dep.id === form.departamento_id)?.nombre
-                  }
-                : null
+            value={departamentos.find(dep => dep.id === form.departamento_id)
+              ? {
+                  value: form.departamento_id,
+                  label: departamentos.find(dep => dep.id === form.departamento_id)?.nombre
+                }
+              : null
             }
             onChange={handleDepartamentoChange}
             placeholder="Selecciona un departamento"
           />
+          {errors.departamento_id && <span className="error-text">{errors.departamento_id}</span>}
         </div>
 
-        <div className="form-group ancho-input">
+        <div className="form-group">
           <label>Municipio</label>
           <Select
-            className="select-react"
-            styles={customSelectStyles}
+            className="react-select"
             options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))}
-            value={
-              municipios.find(mun => mun.id === form.municipio_id)
-                ? {
-                    value: form.municipio_id,
-                    label: municipios.find(mun => mun.id === form.municipio_id)?.nombre
-                  }
-                : null
+            value={municipios.find(mun => mun.id === form.municipio_id)
+              ? {
+                  value: form.municipio_id,
+                  label: municipios.find(mun => mun.id === form.municipio_id)?.nombre
+                }
+              : null
             }
             onChange={handleMunicipioChange}
             placeholder="Selecciona un municipio"
             isDisabled={!municipios.length}
           />
+          {errors.municipio_id && <span className="error-text">{errors.municipio_id}</span>}
         </div>
       </div>
 
-      <div className="crear-ue-botones">
-        <button className="btn-cancelar" onClick={() => setForm({ nombre: '', rue: '', departamento_id: '', municipio_id: '' })}>
+      <div className="form-buttons">
+        <button
+          className="btn-cancelar"
+          onClick={() => {
+            setForm({ nombre: '', rue: '', departamento_id: '', municipio_id: '' });
+            setErrors({});
+            navigate(-1);
+          }}
+        >
           Cancelar
         </button>
+
         <button className="btn-guardar" onClick={handleSubmit}>
           Añadir
         </button>

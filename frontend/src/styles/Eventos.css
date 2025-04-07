@@ -1,20 +1,15 @@
-/* Contenedor general de la página */
-
-:root{
-  background-color: #E4F5FF;
-}
+/* src/styles/Eventos.css */
 
 .eventos-page {
   padding: 20px;
-  background-color: #E4F5FF;
-  min-height: 100vh; /* Para ocupar toda la pantalla */
+  background-color: #f9f9f9;
+  min-height: 100vh;
 }
 
-/* ====== Estilo del contenedor principal de la lista de eventos ====== */
 .eventos-container {
   background-color: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   overflow: hidden;
   margin: 20px auto;
   max-width: 1200px;
@@ -27,8 +22,6 @@
   font-weight: bold;
   padding: 10px 20px;
   font-size: 1.4rem;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
 }
 
 .eventos-body {
@@ -37,7 +30,6 @@
   font-size: 16px;
 }
 
-/* ====== Tabla de eventos ====== */
 .tabla-eventos {
   width: 100%;
   border-collapse: collapse;
@@ -56,12 +48,11 @@
   cursor: pointer;
 }
 
-/* Fila seleccionada */
 .fila-seleccionada {
   background-color: #d2ebff !important;
 }
 
-/* ====== Botones de acción ====== */
+/* Botones de acción */
 .eventos-acciones {
   margin-top: 1rem;
   display: flex;
@@ -84,8 +75,37 @@
   background-color: #4da6ff;
 }
 
-/* Botón deshabilitado (opaco) */
 .btn-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Posicionar y oscurecer el fondo */
+.modal-container {
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Para que esté encima de todo */
+}
+
+/* Contenido del modal */
+.modal-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+}
+
+/* Opcional: puedes agregar estilos adicionales al texto dentro del modal */
+.modal-content p {
+  font-size: 1.1rem;
+  color: #333;
 }
