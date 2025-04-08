@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 
 import Header from "./components/Header";
-import Sidebar from "./components/SideBar";
+import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import Login from "./pages/login";
 import Inscripciones from "./pages/Inscripciones";
@@ -22,7 +22,7 @@ import VerEvento from "./components/VerEvento";
 
 import Logout from './pages/logout'
 import CrearUE from './pages/CrearUE'; {/* AGREGUE YO*/}
-import Configuracion from "./pages/Configuracion";
+import CrearCuentas from "./pages/CrearCuentas";
 
 function App() {
   return (
@@ -49,7 +49,7 @@ function App() {
                 {/* RUTA PROTEGIDA: solo admin */}
                 
                 <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
-                  <Route path="/configuracion" element={<Configuracion />} />
+                  <Route path="/crear-cuentas" element={<CrearCuentas />} />
                 </Route>
               </Routes>
             </main>

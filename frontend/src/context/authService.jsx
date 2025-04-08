@@ -36,6 +36,5 @@ export async function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   localStorage.removeItem('roles');
-
   delete api.defaults.headers.common['Authorization'];
 }

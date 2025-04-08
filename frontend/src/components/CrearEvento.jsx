@@ -1,28 +1,75 @@
-// CrearEvento.jsx
+// src/pages/CrearEvento.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import EventoForm from '../components/EventoForm';
 
+import { crearCronograma } from '../api/cronogramaApi';
+import { crearConvocatoria } from '../api/convocatoriaApi';
+import { asignarAreasAConvocatoria } from '../api/convocatoriaApi';
+
 function CrearEvento() {
   const navigate = useNavigate();
 
-  const handleCreateSubmit = (eventoData) => {
-    // 1. Leer los eventos ya guardados en localStorage
-    const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+  /*const handleCreateSubmit = async (eventoData) => {
+    try {
+      // 1. Crear cronograma
+      const resCronograma = await crearCronograma(eventoData.cronograma.fecha);
+      const idCronograma = resCronograma.id_cronog;
 
-    // 2. Crear un objeto con ID único (por ejemplo, usando Date.now())
-    const newEvent = { id: Date.now(), ...eventoData };
+      // 2. Crear convocatoria vinculada
+      const convocatoriaPayload = {
+        descripcion: eventoData.convocatoria.presentacion,
+        id_cronog: idCronograma,
+        estado: true,
+        nombre_convocatoria: 'Convocatoria automática',
+      };
+  
+      const resConvocatoria = await crearConvocatoria(convocatoriaPayload);
+  
+      console.log('Convocatoria creada:', resConvocatoria);
+      alert('Convocatoria y cronograma creados con éxito');
+      navigate('/eventos');
+  
+    } catch (err) {
+      console.error('Error al guardar datos:', err);
+      alert('Error al guardar datos');
+    }
+  };*/
+  const handleCreateSubmit = async (eventoData) => {
+    try {
+      // 1. Crear cronograma
+      console.log(eventoData.cronograma.fecha);
+      const resCronograma = await crearCronograma(eventoData.cronograma.fecha);
+      const idCronograma = resCronograma.id_cronog;
+  
+      // 2. Crear convocatoria vinculada
+      const convocatoriaPayload = {
+        descripcion: eventoData.convocatoria.presentacion,
+        id_cronog: idCronograma,
+        estado: true,
+        nombre_convocatoria: 'Convocatoria automática',
+      };
 
-    // 3. Actualizamos el array con el nuevo evento
-    const updatedEvents = [...storedEvents, newEvent];
+      const resConvocatoria = await crearConvocatoria(convocatoriaPayload);
+      const idConvocatoria = resConvocatoria.data.id_convocatoria;
+  
+      // 3. Asignar áreas seleccionadas
+      console.log("ID convocatoria:", idConvocatoria);
+      console.log("Áreas a asignar:", eventoData.convocatoria.areasSeleccionadas);
 
-    // 4. Guardar el array actualizado en localStorage
-    localStorage.setItem('events', JSON.stringify(updatedEvents));
-
-    // 5. Ir a la lista de eventos
-    navigate('/eventos');
+      await asignarAreasAConvocatoria(idConvocatoria, eventoData.convocatoria.areasSeleccionadas);
+  
+      console.log('Convocatoria creada:', resConvocatoria);
+      alert('Convocatoria, cronograma y áreas guardados con éxito');
+      navigate('/eventos');
+  
+    } catch (err) {
+      console.error('Error al guardar datos:', err);
+      alert('Error al guardar los datos');
+    }
   };
 
+  // Cancelar
   const handleCancel = () => {
     navigate('/eventos');
   };

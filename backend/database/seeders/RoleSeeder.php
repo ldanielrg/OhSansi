@@ -4,9 +4,10 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
+use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Hash;
 
 class RoleSeeder extends Seeder
 {
@@ -16,12 +17,25 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         //$role1 = Role::create(['name' => 'Admin']);
-        $role2 = Role::create(['name' => 'Director']);
-        $role3 = Role::create(['name' => 'Docente']);
-        $role4 = Role::create(['name' => 'Tutor']);
-        $role5 = Role::create(['name' => 'Adm. Inscripcion']);
-        $role6 = Role::create(['name' => 'Caja']);
-        $role7 = Role::create(['name' => 'Organizador']);
-        $role8 = Role::create(['name' => 'Aux']);
+        //$role2 = Role::create(['name' => 'Director']);
+        //$role3 = Role::create(['name' => 'Docente']);
+        //$role4 = Role::create(['name' => 'Tutor']);
+        //$role5 = Role::create(['name' => 'Adm. Inscripcion']);
+        //$role6 = Role::create(['name' => 'Caja']);
+        //$role7 = Role::create(['name' => 'Organizador']);
+        //$role8 = Role::create(['name' => 'Aux']);
+    
+        // Crear el usuario
+        $usuario = User::firstOrCreate(
+            ['email' => 'director@ejemplo.com'],
+            [
+                'name' => 'Directorej',
+                'password' => Hash::make('password123')
+            ]
+        );
+        $role1 = Role::where('name', 'Director')->first();
+        // Asignar el rol al usuario
+        $usuario->assignRole($role1);
+    
     }
 }
