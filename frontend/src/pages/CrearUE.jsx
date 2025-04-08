@@ -202,16 +202,46 @@ const CrearUE = () => {
         method: 'DELETE',
       });  
   
-      const nuevasUEs = unidadesEducativas.filter(item => item.ide !== ue.id);
+      const nuevasUEs = unidadesEducativas.filter(item => item.id !== ue.id);
   
       setUnidadesEducativas(nuevasUEs);
       setSelectedUEs([]);
-      alert('✅ "${ue.nombre}", eliminada correctamente.');
+      alert('✅ "${ue.nombre}", fue eliminada correctamente.');
     } catch (error) {
       console.error(error);
       alert('❌ Error al eliminar.');
     }
   };
+
+  const customStyles = {
+    headCells: {
+      style: {
+        backgroundColor: '#f0f8ff',  // color claro de fondo opcional (puedes quitarlo)
+        color: '#3498db',            // 🔵 texto azul
+        fontWeight: 'bold',
+        fontSize: '14px',
+        textAlign: 'center',
+        paddingLeft: '0px',          // 🔧 elimina margen a la izquierda
+        paddingRight: '0px',         // 🔧 elimina margen a la derecha
+        margin: 0,
+      },
+    },
+    headRow: {
+      style: {
+        backgroundColor: '#eaf4fe',
+        borderBottom: '1px solid #ccc',
+        padding: 0,                 // 🔧 importante para que cubra bien el scroll
+        margin: 0,
+      },
+    },
+    cells: {
+      style: {
+        fontSize: '14px',
+        textAlign: 'center',
+      },
+    },
+  };
+  
 
   return (
     <div className="crear-ue-container" id="formulario-ue">
@@ -259,10 +289,11 @@ const CrearUE = () => {
 
 
       <div className="form-row">
-        <div className="form-group">
+        <div className="form-group select-con-espacio">
           <label>Departamento</label>
           <Select
-            className="react-select"
+            className="limitar-opciones"
+            classNamePrefix="react-select"
             options={departamentos.map(dep => ({ value: dep.id, label: dep.nombre }))}
             value={departamentos.find(dep => dep.id === form.departamento_id)
               ? {
@@ -280,7 +311,8 @@ const CrearUE = () => {
         <div className="form-group">
           <label>Municipio</label>
           <Select
-            className="react-select"
+            className="limitar-opciones"
+            classNamePrefix="react-select"
             options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))}
             value={municipios.find(mun => mun.id === form.municipio_id)
               ? {
@@ -315,16 +347,22 @@ const CrearUE = () => {
         </button>
       </div>
     <div className="tabla-ue-box">
-      <h3>Unidades Educativas Registradas</h3>
-      <DataTable
-        columns={columns}
-        data={unidadesEducativas}
-        selectableRows
-        selectableRowSingle
-        onSelectedRowsChange={({ selectedRows }) => setSelectedUEs(selectedRows)}
-        pagination
-        responsive
-      />
+      <h3 className="titulo-tabla-ue">Unidades Educativas Agregadas</h3>
+
+        <DataTable
+          columns={columns}
+          data={unidadesEducativas}
+          selectableRows
+          selectableRowSingle
+          selectableRowsNoSelectAll 
+          onSelectedRowsChange={({ selectedRows }) => setSelectedUEs(selectedRows)}
+          pagination={false}
+          responsive
+          fixedHeader
+          fixedHeaderScrollHeight='300px'
+          customStyles={customStyles}
+        />
+   
       <div className="form-buttons">
         <button className="btn-editar" onClick={handleEditar}>Editar</button>
         <button className="btn-eliminar" onClick={handleEliminar}>Eliminar</button>
