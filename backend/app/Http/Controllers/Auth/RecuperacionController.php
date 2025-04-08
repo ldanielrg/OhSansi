@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
+use Illuminate\Support\Facades\Hash;
+
 class RecuperacionController extends Controller
 {
     public function enviarCodigo(Request $request)
@@ -71,6 +73,26 @@ public function verificarCodigo(Request $request)
     $user->save();
 
     return response()->json(['message' => 'Código verificado con éxito']);
+}
+
+public function restablecerContrasena(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|confirmed|min:8'
+    ]);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (!$user) {
+        return response()->json(['message' => 'Usuario no encontrado'], 404);
+    }
+
+    $user->password = Hash::make($request->password);
+    $user->codigo_recuperacion = null; // Limpieza del código
+    $user->save();
+
+    return response()->json(['message' => 'Contraseña actualizada correctamente']);
 }
 
 }
