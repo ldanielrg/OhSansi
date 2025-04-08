@@ -30,7 +30,6 @@ const Inscripciones = () => {
   const [municipios, setMunicipios] = useState([]);
   const [ue, setUe] = useState([]);
 
-
   const columns = [
     { name: 'Nombre Completo', selector: row => row.nombre, sortable: true },
     { name: 'RUDE', selector: row => row.rude },
@@ -178,17 +177,22 @@ const Inscripciones = () => {
   };
 
   useEffect(() => {
-      fetch('http://localhost:8000/api/municipios')
-        .then(res => res.json())
-        .then(data => setMunicipios(data));
+    fetch('http://localhost:8000/api/municipios')
+      .then(res => res.json())
+      .then(data => setMunicipios(data));
 
-      fetch('http://localhost:8000/api/unidades-educativas')
+    fetch('http://localhost:8000/api/unidades-educativas')
       .then(res => res.json())
       .then(data => setUe(data));
   }, []);
 
+  useEffect(() => {
+    console.log('Unidades educativas cargadas:', ue);
+  }, [ue]);
 
-
+  const opcionesFiltradas = ue
+    .filter(item => item.municipio_id === parseInt(formData.provincia))
+    .map(item => ({ value: item.id, label: item.nombre }));
 
   return (
     <div className="page-container">
@@ -220,11 +224,18 @@ const Inscripciones = () => {
               onChange={setFormData}
               options={[
                 { value: '', label: 'Seleccione un nivel/categoria' },
-                { value: '6to', label: '6to' },
-                { value: '5to', label: '5to' },
+                { value: '3ro Primaria', label: '3ro Primaria' },
+                { value: '4to Primaria', label: '4to Primaria' },
+                { value: '5to Primaria', label: '5to Primaria' },
+                { value: '6to Primaria', label: '6to Primaria' },
+                { value: '1ro Secundaria', label: '1ro Secundaria' },
+                { value: '2do Secundaria', label: '2do Secundaria' },
+                { value: '3ro Secundaria', label: '3ro Secundaria' },
+                { value: '4to Secundaria', label: '4to Secundaria' },
+                { value: '5to Secundaria', label: '5to Secundaria' },
+                { value: '6to Secundaria', label: '6to Secundaria' }
               ]}
             />
-
           </section>
 
           <section className='seccion-form'>
@@ -240,13 +251,13 @@ const Inscripciones = () => {
                 { value: 'femenino', label: 'Femenino' }
               ]}
             />
-            <RegistroForm 
-              label='Unidad Educativa' 
-              name='unidadEducativa' 
+            <RegistroForm
+              label='Unidad Educativa'
+              name='unidadEducativa'
               type='select'
-              value={formData.unidadEducativa} 
-              onChange={setFormData} 
-              options={ue.map(mun => ({ value: mun.id, label: mun.nombre }))}
+              value={formData.unidadEducativa}
+              onChange={setFormData}
+              options={opcionesFiltradas}
             />
             <RegistroForm label='Complemento (opcional)' name='complemento' value={formData.complemento} onChange={setFormData} />
             <RegistroForm
