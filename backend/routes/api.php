@@ -12,11 +12,12 @@ use App\Http\Controllers\UnidadEducativaController;
 
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
-Route::post('/unidad-educativa', [UnidadEducativaController::class, 'store']);
 
-//Route::get('/user', function (Request $request) {
-//    return $request->user();
-//})->middleware('auth:sanctum');
+Route::post('/unidad-educativa', [UnidadEducativaController::class, 'store']);
+Route::get('/unidades-educativas', [UnidadEducativaController::class, 'index']); //PARA OBTENER LOS DATOS UE
+Route::put('/unidad-educativa/{id}', [UnidadEducativaController::class, 'update']);
+Route::delete('/unidad-educativa/{id}', [UnidadEducativaController::class, 'destroy']);
+
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/crear-cuenta', [CuentaController::class, 'store']);

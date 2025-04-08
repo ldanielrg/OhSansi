@@ -16,4 +16,16 @@ class UnidadEducativa extends Model
         'id_depart',
         'id_municipio'
     ];
+
+    // RELACION CON DEPARTAMENTO
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class, 'id_depart', 'id_depart');
+    }
+
+    // RELACION CON MUNICIPIO
+    public function municipio()
+    {
+        return $this->belongsTo(Municipio::class, 'id_municipio', 'id_municipio');
+    }
 }

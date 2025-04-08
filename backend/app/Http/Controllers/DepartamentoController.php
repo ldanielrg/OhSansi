@@ -9,6 +9,9 @@ class DepartamentoController extends Controller
 {
     public function index()
     {
-        return Departamento::select('id_depart as id', 'nombre_depart as nombre')->get();
+        /**return Departamento::select('id_depart as id', 'nombre_depart as nombre')->get();*/
+        $departamentos = Departamento::select('id_depart as id', 'nombre_depart as nombre')->get();
+
+        return response()->json($departamentos);
     }
 }

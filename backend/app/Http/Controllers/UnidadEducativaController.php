@@ -7,6 +7,27 @@ use App\Models\UnidadEducativa;
 
 class UnidadEducativaController extends Controller
 {
+    // PARA OBTENER LOS DATOS DE UE /api/unidades-educativas
+    public function index()
+    {
+        $unidades = UnidadEducativa::with(['departamento', 'municipio'])->get();
+
+        $resultado = $unidades->map(function ($ue) {
+            return [
+                'id' => $ue->id_ue,
+                'nombre' => $ue->nombre_ue,
+                'rue' => $ue->rue_ue,
+                'departamento_id' => $ue->id_depart,
+                'departamento_nombre' => $ue->departamento->nombre_depart ?? '—',
+                'municipio_id' => $ue->id_municipio,
+                'municipio_nombre' => $ue->municipio->nombre_municipio ?? '—',
+            ];
+        });
+
+        return response()->json($resultado);
+    }
+
+    //CREAR NUEVA UNIDAD EDUCATIVA
     public function store(Request $request)
     {
         // Validación de campos
@@ -38,5 +59,36 @@ class UnidadEducativaController extends Controller
             'message' => 'Unidad Educativa registrada exitosamente.',
             'data' => $nuevaUE
         ], 201); // 201 Created
+    }
+
+    // EDITAR/ACTUALIZACION DE UE
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'rue' => 'required|string|max:100',
+            'departamento_id' => 'required|integer',
+            'municipio_id' => 'required|integer',
+        ]);
+
+        $ue = UnidadEducativa::findOrFail($id);
+
+        $ue->update([
+            'nombre_ue' => $request->nombre,
+            'rue_ue' => $request->rue,
+            'id_depart' => $request->departamento_id,
+            'id_municipio' => $request->municipio_id
+        ]);
+
+        return response()->json($ue); // Devuelve la UE actualizada
+    }
+
+    // ELIMINAR UNIDAD EDUCATIVA
+    public function destroy($id)
+    {
+        $ue = UnidadEducativa::findOrFail($id);
+        $ue->delete();
+
+        return response()->json(['message' => 'Unidad educativa eliminada.']);
     }
 }
