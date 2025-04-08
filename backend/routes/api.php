@@ -18,6 +18,7 @@ use App\Http\Controllers\AreaController;
 
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
+Route::get('/municipios', [MunicipioController::class, 'sinDepartamento']);
 
 Route::post('/unidad-educativa', [UnidadEducativaController::class, 'store']);
 Route::get('/unidades-educativas', [UnidadEducativaController::class, 'index']); //PARA OBTENER LOS DATOS UE

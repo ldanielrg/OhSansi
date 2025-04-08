@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import '../styles/Inscripciones.css';
 import Caja from '../components/Caja';
 import RegistroForm from '../components/RegistroForm';
@@ -27,6 +27,7 @@ const Inscripciones = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleClearSelected, setToggleClearSelected] = useState(false);
   const selectedRowsRef = useRef([]);
+  const [municipios, setMunicipios] = useState([]);
 
   const columns = [
     { name: 'Nombre Completo', selector: row => row.nombre, sortable: true },
@@ -174,6 +175,15 @@ const Inscripciones = () => {
     setToggleClearSelected(prev => !prev);
   };
 
+  useEffect(() => {
+      fetch('http://localhost:8000/api/municipios')
+        .then(res => res.json())
+        .then(data => setMunicipios(data));
+  }, []);
+
+
+
+
   return (
     <div className="page-container">
       <Caja titulo='Tomar en cuenta'>
@@ -193,11 +203,7 @@ const Inscripciones = () => {
               type='select'
               value={formData.provincia}
               onChange={setFormData}
-              options={[
-                { value: '', label: 'Seleccione una provincia' },
-                { value: 'cercado', label: 'Cercado' },
-                { value: 'quillacollo', label: 'Quillacollo' },
-              ]}
+              options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))}
             />
             <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
             <RegistroForm
