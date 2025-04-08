@@ -10,18 +10,28 @@ const MetodoRecuperacion = () => {
     const handleSeleccion = async (metodo) => {
         const email = localStorage.getItem('email_recuperacion');
     
+        if (!email) {
+            alert('No se encontró el correo en la sesión.');
+            return;
+        }
+    
         if (metodo === 'correo') {
             try {
                 await axios.post('http://localhost:8000/api/auth/enviar-codigo-correo', { email });
-                // Luego redirigimos
                 navigate('/verificacion-correo');
             } catch (error) {
                 alert('No se pudo enviar el código al correo');
             }
         } else if (metodo === 'whatsapp') {
-            navigate('/verificacion-whatsapp');
+            try {
+                await axios.post('http://localhost:8000/api/auth/enviar-codigo-whatsapp', { email });
+                navigate('/verificacion-whatsapp');
+            } catch (error) {
+                alert('No se pudo enviar el código por WhatsApp');
+            }
         }
     };
+    
 
     return (
         <div className="login-page">

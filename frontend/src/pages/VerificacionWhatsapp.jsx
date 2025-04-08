@@ -9,6 +9,13 @@ const VerificacionWhatsapp = () => {
     const inputsRef = useRef([]);
     const navigate = useNavigate();
 
+    const numero = localStorage.getItem('telefono_recuperacion'); // guarda esto al verificar email
+
+    const numeroParcial = numero 
+    ? numero.slice(0, 4) + '*****' + numero.slice(-2) 
+    : '+591 ******';
+
+
     const handleChange = (index, value) => {
         if (/^\d?$/.test(value)) {
             const nuevoCodigo = [...codigo];
@@ -49,12 +56,21 @@ const VerificacionWhatsapp = () => {
             alert("Código inválido o expirado.");
         }
     };
-
+    const handleReenviar = async () => {
+        const email = localStorage.getItem('email_recuperacion');
+        try {
+            await axios.post('http://localhost:8000/api/auth/enviar-codigo-whatsapp', { email });
+            alert("Código reenviado por WhatsApp");
+        } catch (error) {
+            alert("No se pudo reenviar el código.");
+        }
+    };
+    
     return (
         <div className="login-page">
             <div className="login-form-wrapper">
                 <Caja titulo="Verificación de código" width='28%'>
-                    <p>Hemos enviado un código de 6 dígitos a tu whatsapp<br /><strong>+591 ******12</strong></p>
+                <p>Hemos enviado un código de 6 dígitos a tu whatsapp<br /><strong>{numeroParcial}</strong></p>
 
                     <div className="codigo-inputs">
                         {codigo.map((num, i) => (
@@ -71,7 +87,9 @@ const VerificacionWhatsapp = () => {
                         ))}
                     </div>
 
-                    <p style={{ marginTop: '10px' }}>¿No recibiste el código? <a href="#">Reenviar</a></p>
+                    <p style={{ marginTop: '10px' }}>
+                        ¿No recibiste el código? <a href="#" onClick={handleReenviar}>Reenviar</a>
+                    </p>
 
                     <div className="boton-login-wrapper">
                         <button onClick={handleVerificar}>Verificar código</button>

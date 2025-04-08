@@ -33,5 +33,6 @@ Route::post('/auth/enviar-codigo', [RecuperacionController::class, 'enviarCodigo
 Route::post('/auth/enviar-codigo-correo', [RecuperacionController::class, 'enviarCodigoCorreo']);
 Route::post('/auth/verificar-codigo', [RecuperacionController::class, 'verificarCodigo']);
 Route::post('/auth/restablecer-contrasena', [RecuperacionController::class, 'restablecerContrasena']);
+Route::post('/auth/enviar-codigo-whatsapp', [RecuperacionController::class, 'enviarCodigoWhatsapp']);
 
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
