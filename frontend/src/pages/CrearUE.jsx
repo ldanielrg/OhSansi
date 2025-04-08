@@ -69,7 +69,7 @@ const CrearUE = () => {
     } else if (!form.nombre.startsWith('Unidad Educativa')) {
       newErrors.nombre = 'Debe comenzar con "Unidad Educativa".';
     } else if (!/^Unidad Educativa\s[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜñÑ.,-]{1,87}$/.test(form.nombre)) {
-      newErrors.nombre = 'Después de "Unidad Educativa", Debe Ingresar el nombre de la Unidad Educativa. Máximo 100 caracteres.';
+      newErrors.nombre = 'Después de "Unidad Educativa", Debe Ingresar el nombre de la Unidad Educativa.';
     } else if (form.nombre.length > 100) {
       newErrors.nombre = 'Máximo 100 caracteres permitidos.';
     }
@@ -143,10 +143,16 @@ const CrearUE = () => {
       alert('Error de conexión con el servidor, porque sera');
     }
   };
-  
+
+  //PARA EDITAR
   const handleEditar = () => {
   if (selectedUEs.length === 0) {
-    alert('Selecciona una unidad educativa para editar.');
+    alert('NO seleccionaste ningun dato para editar.');
+    return;
+  }
+  
+  if (selectedUEs.length > 1) {
+    alert('Solo selecciona un dato para editar.');
     return;
   }
 
@@ -167,38 +173,48 @@ const CrearUE = () => {
   fetch(`http://localhost:8000/api/municipios/${seleccionada.departamento_id}`)
     .then(res => res.json())
     .then(data => setMunicipios(data));
+
+    //HACER UN SCROLL, HACIA EL FORMULARIO
+    document.getElementById('formulario-ue')?.scrollIntoView({ behavior: 'smooth' });
+
   };
-  
+
+  //FUNCION PARA ELIMINAR
   const handleEliminar = async () => {
     if (selectedUEs.length === 0) {
-      alert('Selecciona al menos una unidad educativa para eliminar.');
+      alert('NO seleccionaste ningun dato para eliminar.');
       return;
     }
+
+    if (selectedUEs.length > 1) {
+      alert('Solo selecciona un dato para eliminar.');
+      return;
+    }
+
+    const ue = selectedUEs[0]; //UNIDAD EDUCATIVA SELECCIONADA
+    const confirmacion = window.confirm(`⚠️ ¿Estás seguro de eliminar la: \n"${ue.nombre}"?`);
+
   
-    if (!window.confirm('¿Estás seguro de eliminar las unidades seleccionadas?')) return;
+    if (!confirmacion) return;
   
     try {
-      for (let ue of selectedUEs) {
-        await fetch(`http://localhost:8000/api/unidad-educativa/${ue.id}`, {
-          method: 'DELETE',
-        });
-      }
+      await fetch(`http://localhost:8000/api/unidad-educativa/${ue.id}`, {
+        method: 'DELETE',
+      });  
   
-      const nuevasUEs = unidadesEducativas.filter(
-        ue => !selectedUEs.some(sel => sel.id === ue.id)
-      );
+      const nuevasUEs = unidadesEducativas.filter(item => item.ide !== ue.id);
   
       setUnidadesEducativas(nuevasUEs);
       setSelectedUEs([]);
-      alert('✅ Unidades educativas eliminadas correctamente.');
+      alert('✅ "${ue.nombre}", eliminada correctamente.');
     } catch (error) {
       console.error(error);
-      alert('Error al eliminar.');
+      alert('❌ Error al eliminar.');
     }
   };
 
   return (
-    <div className="crear-ue-container">
+    <div className="crear-ue-container" id="formulario-ue">
       <div className="titulo-box">Crear Unidad Educativa</div>
 
       <div className="form-row">
@@ -304,6 +320,7 @@ const CrearUE = () => {
         columns={columns}
         data={unidadesEducativas}
         selectableRows
+        selectableRowSingle
         onSelectedRowsChange={({ selectedRows }) => setSelectedUEs(selectedRows)}
         pagination
         responsive
