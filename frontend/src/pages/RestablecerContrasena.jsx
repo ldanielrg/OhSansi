@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Caja from '../components/Caja';
 import '../styles/login.css';
@@ -8,21 +9,33 @@ const RestablecerContrasena = () => {
     const [confirmarContrasena, setConfirmarContrasena] = useState('');
     const navigate = useNavigate();
 
-    const handleActualizar = (e) => {
+    const handleActualizar = async (e) => {
         e.preventDefault();
+        const email = localStorage.getItem('email_recuperacion');
+    
         if (nuevaContrasena.length < 8) {
             alert("La contraseña debe tener al menos 8 caracteres.");
             return;
         }
-
+    
         if (nuevaContrasena !== confirmarContrasena) {
             alert("Las contraseñas no coinciden.");
             return;
         }
-
-        // Aquí podrías hacer una petición a tu backend para actualizar la contraseña
-        // Simulamos éxito de actualización
-        navigate('/recuperacion-exitosa');
+    
+        try {
+            await axios.post('http://localhost:8000/api/auth/restablecer-contrasena', {
+                email,
+                code: '', // puedes guardar también el código si quieres validarlo aquí
+                password: nuevaContrasena,
+                password_confirmation: confirmarContrasena
+            });
+    
+            localStorage.removeItem('email_recuperacion');
+            navigate('/recuperacion-exitosa');
+        } catch (error) {
+            alert("No se pudo actualizar la contraseña.");
+        }
     };
 
     return (

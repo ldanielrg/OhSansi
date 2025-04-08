@@ -2,15 +2,24 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Caja from '../components/Caja';
 import '../styles/RecuperarCuenta.css';
+import axios from 'axios';
 
 const MetodoRecuperacion = () => {
     const navigate = useNavigate();
 
-    const handleSeleccion = (metodo) => {
+    const handleSeleccion = async (metodo) => {
+        const email = localStorage.getItem('email_recuperacion');
+    
         if (metodo === 'correo') {
-            navigate('/verificacion-correo'); // lleva al formulario de código
-        }  else if (metodo === 'whatsapp') {
-            navigate('/verificacion-whatsapp'); // lleva al formulario de código
+            try {
+                await axios.post('http://localhost:8000/api/auth/enviar-codigo-correo', { email });
+                // Luego redirigimos
+                navigate('/verificacion-correo');
+            } catch (error) {
+                alert('No se pudo enviar el código al correo');
+            }
+        } else if (metodo === 'whatsapp') {
+            navigate('/verificacion-whatsapp');
         }
     };
 

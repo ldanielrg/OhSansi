@@ -1,5 +1,6 @@
 // RecuperarCuenta.jsx
 import React, { useState } from 'react';
+import axios from 'axios';
 import '../styles/RecuperarCuenta.css'; // reutiliza estilos si ya están definidos
 import Caja from '../components/Caja';
 import { useNavigate } from 'react-router-dom';
@@ -11,15 +12,16 @@ const RecuperarCuenta = () => {
 
     const handleRecuperar = async (e) => {
         e.preventDefault();
-
-        // Aquí deberías hacer una llamada a tu backend para iniciar el proceso de recuperación
-        // Por ahora simulamos la acción
-
-        if (email) {
-            // Simula verificación de correo y redirige
+        setMensaje(null);
+    
+        try {
+            const response = await axios.post('http://localhost:8000/api/auth/enviar-codigo', {
+                email
+            });
+            localStorage.setItem('email_recuperacion', email); // para usar en pasos siguientes
             navigate('/metodo-recuperacion');
-        } else {
-            setMensaje("Por favor ingresa un correo válido.");
+        } catch (error) {
+            setMensaje("No se pudo enviar el código. Verifica tu correo.");
         }
     };
 

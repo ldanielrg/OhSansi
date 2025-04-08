@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Caja from '../components/Caja';
 import '../styles/RecuperarCuenta.css';
@@ -29,12 +30,23 @@ const VerificacionCorreo = () => {
         }
     };
 
-    const handleVerificar = () => {
+    const handleVerificar = async () => {
         const codigoIngresado = codigo.join('');
-        if (codigoIngresado.length === 6) {
-            navigate('/restablecer-contrasena');
-        } else {
+        const email = localStorage.getItem('email_recuperacion');
+    
+        if (codigoIngresado.length !== 6) {
             alert("Por favor ingresa los 6 dígitos del código");
+            return;
+        }
+    
+        try {
+            const response = await axios.post('http://localhost:8000/api/auth/verificar-codigo', {
+                email,
+                code: codigoIngresado
+            });
+            navigate('/restablecer-contrasena');
+        } catch (error) {
+            alert("Código inválido o expirado.");
         }
     };
 
