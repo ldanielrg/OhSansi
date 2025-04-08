@@ -15,6 +15,7 @@ const Sidebar = () => {
       <ul>
         {/* Siempre visibles */}
         <li><Link to="/">Inicio</Link></li>
+        <li><Link to="/inscripciones">Inscripciones</Link></li>
         <li><Link to="/noticias">Noticias</Link></li>
         <li><Link to="/contactos">Contactos</Link></li>
         <li><Link to="/eventos">Eventos</Link></li>
