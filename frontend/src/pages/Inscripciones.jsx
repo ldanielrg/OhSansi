@@ -28,6 +28,8 @@ const Inscripciones = () => {
   const [toggleClearSelected, setToggleClearSelected] = useState(false);
   const selectedRowsRef = useRef([]);
   const [municipios, setMunicipios] = useState([]);
+  const [ue, setUe] = useState([]);
+
 
   const columns = [
     { name: 'Nombre Completo', selector: row => row.nombre, sortable: true },
@@ -179,6 +181,10 @@ const Inscripciones = () => {
       fetch('http://localhost:8000/api/municipios')
         .then(res => res.json())
         .then(data => setMunicipios(data));
+
+      fetch('http://localhost:8000/api/unidades-educativas')
+      .then(res => res.json())
+      .then(data => setUe(data));
   }, []);
 
 
@@ -234,7 +240,14 @@ const Inscripciones = () => {
                 { value: 'femenino', label: 'Femenino' }
               ]}
             />
-            <RegistroForm label='Unidad Educativa' name='unidadEducativa' value={formData.unidadEducativa} onChange={setFormData} />
+            <RegistroForm 
+              label='Unidad Educativa' 
+              name='unidadEducativa' 
+              type='select'
+              value={formData.unidadEducativa} 
+              onChange={setFormData} 
+              options={ue.map(mun => ({ value: mun.id, label: mun.nombre }))}
+            />
             <RegistroForm label='Complemento (opcional)' name='complemento' value={formData.complemento} onChange={setFormData} />
             <RegistroForm
               label='Área'
