@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
       {/* Top Bar */}
       <div className="top-bar"></div>
 
-      {/* Header con fondo detrás de los logos */}
+      {/* Header con fondo y logos */}
       <header className="header">
         <div className="container">
           <div className="row align-items-center">
@@ -32,46 +32,16 @@ const Layout = ({ children }) => {
         </div>
       </header>
 
-      {/* Navigation Bar con botones horizontales (por ejemplo, en este caso usamos iconos en los botones de la izquierda) */}
+      {/* Navigation Bar */}
       <nav className="navbar navbar-expand-lg custom-navbar">
         <div className="container">
           <div className="collapse navbar-collapse">
-            {/* Botones de la izquierda */}
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <a className="nav-link text-white" href="#">
-                  <i className="fa fa-home"></i> Inicio
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link text-white" href="#">
-                  <i className="fa fa-edit"></i> Inscripciones
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link text-white" href="#">
-                  <i className="fa fa-calendar"></i> Eventos
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link text-white" href="#">
-                  <i className="fa fa-info-circle"></i> Nosotros
-                </a>
-              </li>
-            </ul>
-            {/* Botón de Ingresar a la derecha */}
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <a className="nav-link text-white" href="#">
-                  <i className="fa fa-sign-in"></i> Ingresar
-                </a>
-              </li>
-            </ul>
+            {/* Aquí irían los botones de navegación */}
           </div>
         </div>
       </nav>
 
-      {/* Área de contenido con fondo blanco */}
+      {/* Área de contenido */}
       <main className="content-area">
         { children }
       </main>
