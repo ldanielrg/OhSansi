@@ -1,15 +1,57 @@
-.home {
-    padding: 0;
-    margin: 0;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    height: 100%;
-    background-color: #E1F4FF;
-}
+/* Home.css */
 
-.home h2 {
-    color: #0078FF;
-    margin: 0;
-}
+/* Sección de fondo en la columna izquierda */
+.left-side .background-section {
+    /* Puedes ajustar el alto; por ejemplo, 200px o usar unidades relativas */
+    height: 200px;
+    background: url('/ruta/a/tu/home-fondo.jpg') no-repeat center center;
+    background-size: cover;
+    margin-bottom: 20px;
+  }
+  
+  /* Espaciado entre las cards */
+  .cards-section .custom-card {
+    margin-bottom: 20px;
+  }
+  
+  /* Estilo para la card larga en la columna derecha */
+  .right-side .long-card {
+    margin-bottom: 20px;
+  }
+  
+  /* Títulos estilo botón (para secciones en la card derecha) */
+  .button-style-title {
+    background-color: #003366;
+    color: #FFFFFF;
+    padding: 10px;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  
+  /* Estilos para los botones de noticias y ayuda (formato invertido) */
+  .news-buttons .btn-news,
+  .help-buttons .btn-help {
+    width: 100%;
+    margin-bottom: 10px;
+    background-color: #FFFFFF;
+    color: #003366;
+    border: 1px solid #003366;
+  }
+  
+  /* Efecto hover en botones verticales:
+     Al pasar el mouse, se muestra una barra blanca en la parte inferior */
+  .vertical-btn {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .vertical-btn:hover::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #FFFFFF;
+  }
+  
