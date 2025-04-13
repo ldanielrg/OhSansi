@@ -1,11 +1,13 @@
 // src/components/EventoForm.jsx
 import React, { useState, useEffect } from 'react';
 import '../styles/EventoForm.css';
+import { crearCronograma } from '../api/cronogramaApi';
+import { obtenerAreas } from '../api/areaApi';
 
 function EventoForm({ mode, initialData, onSubmit, onCancel }) {
   const [cronograma, setCronograma] = useState({
     nombre: '',
-    fechaInicio: '',
+    fecha: '',
     fechaPreinscripcion: '',
     duracion: '',
     fechaFin: '',
@@ -19,77 +21,58 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
   const [requisitos, setRequisitos] = useState('');
   const [inscripcion, setInscripcion] = useState('');
 
-  // Para manejar errores de validación
-  const [errors, setErrors] = useState([]);
+  const [areasDisponibles, setAreasDisponibles] = useState([]);
+  const [areasSeleccionadas, setAreasSeleccionadas] = useState([]);
 
   useEffect(() => {
-    if (initialData) {
-      setCronograma(initialData.cronograma || {});
-      setPresentacion(initialData.convocatoria?.presentacion || '');
-      setAreas(initialData.convocatoria?.areas || []);
-      setRequisitos(initialData.convocatoria?.requisitos || '');
-      setInscripcion(initialData.convocatoria?.inscripcion || '');
+    obtenerAreas()
+      .then(data => setAreasDisponibles(data))
+      .catch(error => console.error('Error al obtener áreas:', error));
+  }, []);
+  
+
+  useEffect(() => {
+    if (initialData && initialData.cronograma) {
+      setCronograma((prev) => ({
+        ...prev,
+        ...initialData.cronograma,
+      }));
     }
+    // si no hay initialData, no hacemos nada
   }, [initialData]);
 
-  const isViewMode = (mode === 'view');
-  const isEditOrCreate = (mode === 'edit' || mode === 'create');
-
-  // Validaciones
-  const validate = () => {
-    let validationErrors = [];
-
-    // 1. Campos obligatorios en cronograma
-    if (!cronograma.nombre.trim()) {
-      validationErrors.push('El nombre del evento es obligatorio.');
-    }
-    if (!cronograma.fechaInicio) {
-      validationErrors.push('La fecha de inicio es obligatoria.');
-    }
-    if (!cronograma.fechaFin) {
-      validationErrors.push('La fecha fin es obligatoria.');
-    }
-    // Comprobar coherencia: fechaInicio <= fechaFin
-    if (cronograma.fechaInicio && cronograma.fechaFin) {
-      if (cronograma.fechaInicio > cronograma.fechaFin) {
-        validationErrors.push('La fecha de inicio no puede ser mayor que la fecha fin.');
-      }
-    }
-
-    // 2. Presentación obligatoria
-    if (!presentacion.trim()) {
-      validationErrors.push('La presentación de la convocatoria es obligatoria.');
-    }
-
-    // 3. Validar áreas: que tengan nombre
-    areas.forEach((area, idx) => {
-      if (!area.nombre.trim()) {
-        validationErrors.push(`El área #${idx + 1} necesita un nombre.`);
-      }
-    });
-
-    // 4. Validar otros campos obligatorios si deseas (requisitos, inscripcion, etc.)
-    // Ejemplo:
-    if (!requisitos.trim()) {
-      validationErrors.push('Los requisitos son obligatorios.');
-    }
-    if (!inscripcion.trim()) {
-      validationErrors.push('La sección de inscripción es obligatoria.');
-    }
-
-    setErrors(validationErrors);
-    return validationErrors.length === 0; // true si no hay errores
+  const handleAddArea = () => {
+    setAreas([...areas, { nombre: '', inicioAno: '', inicioNivel: '', finalAno: '', finalNivel: '' }]);
   };
 
-  // Manejar submit
-  const handleSubmit = (e) => {
+  const handleAreaChange = (index, field, value) => {
+    const newAreas = [...areas];
+    newAreas[index][field] = value;
+    setAreas(newAreas);
+  };
+
+  /*const handleSubmit = async (e) => {
+    
+    e.preventDefault();
+    console.log("cronograma:", cronograma);
+    console.log("cronograma.fecha:", cronograma.fecha);
+    if (mode === 'view') return;
+    
+    try {
+      await crearCronograma(cronograma.fecha);
+      alert('Cronograma creado con éxito');
+    } catch (error) {
+      console.error('Error al crear cronograma:', error);
+      alert('Error al crear cronograma');
+    }
+  };*/
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (mode === 'view') return;
-
-    // Correr validaciones
-    const isValid = validate();
-    if (!isValid) return; // Si hay errores, no llamamos onSubmit
-
+  
+    const idsSeleccionados = areas
+      .map(area => area.id_area)
+      .filter(id => id); // quita undefined o vacío
     const eventoData = {
       cronograma,
       convocatoria: {
@@ -97,36 +80,19 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
         areas,
         requisitos,
         inscripcion,
+        areasSeleccionadas: idsSeleccionados,
       },
     };
-    onSubmit(eventoData);
+  
+    onSubmit(eventoData); // delegamos el guardado al componente padre
   };
+  
 
-  // Agregar un área
-  const handleAddArea = () => {
-    setAreas([...areas, { nombre: '', inicioAno: '', inicioNivel: '', finalAno: '', finalNivel: '' }]);
-  };
-
-  // Cambiar valores en un área
-  const handleAreaChange = (index, field, value) => {
-    const newAreas = [...areas];
-    newAreas[index][field] = value;
-    setAreas(newAreas);
-  };
+  const isViewMode = (mode === 'view');
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Mensajes de error */}
-      {errors.length > 0 && (
-        <div className="error-panel">
-          <ul>
-            {errors.map((err, idx) => (
-              <li key={idx}>{err}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
+      
       {/* Bloque CRONOGRAMA */}
       <div className="cronograma-container">
         <div className="cronograma-header">Cronograma</div>
@@ -150,8 +116,10 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
                   type="date"
                   className="input-registro"
                   disabled={isViewMode}
-                  value={cronograma.fechaInicio}
-                  onChange={(e) => setCronograma({ ...cronograma, fechaInicio: e.target.value })}
+                  value={cronograma.fecha}
+                  onChange={(e) =>
+                    setCronograma({ ...cronograma, fecha: e.target.value })
+                  }
                 />
               </div>
 
@@ -226,14 +194,20 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
             <div key={index} className="area-item">
               <div className="registro-form-field">
                 <label className="nombre-registro">Nombre del Área</label>
-                <input
-                  type="text"
+                <select
                   className="input-registro"
                   disabled={isViewMode}
-                  placeholder="Ej. Biología"
-                  value={area.nombre}
-                  onChange={(e) => handleAreaChange(index, 'nombre', e.target.value)}
-                />
+                  value={area.id_area || ''}
+                  onChange={(e) => handleAreaChange(index, 'id_area', parseInt(e.target.value))}
+                >
+                  <option value="">Seleccione un área</option>
+                  {areasDisponibles.map((a) => (
+                    <option key={a.id_area} value={a.id_area}>
+                      {a.nombre_area}
+                    </option>
+                  ))}
+                </select>
+
               </div>
               {/* Rango inicial */}
               <div className="registro-form-field">
@@ -330,7 +304,7 @@ function EventoForm({ mode, initialData, onSubmit, onCancel }) {
 
       {/* Botones footer (Guardar y Salir) */}
       <div className="eventoform-footer">
-        {isEditOrCreate && (
+        {(mode ==='create' || mode ==='edit') && (
           <button type="submit" className="btn-primary" style={{ marginRight: '1rem' }}>
             Guardar
           </button>

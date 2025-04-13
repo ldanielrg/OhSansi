@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Caja from '../components/Caja';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Configuracion.css';
+import '../styles/CrearCuentas.css';
 import api from '../api/axios';
 
 
@@ -16,7 +16,7 @@ const opciones = [
   'Aux'
 ];
 
-const Configuracion = () => {
+const CrearCuentas = () => {
   const [tipoCuenta, setTipoCuenta] = useState('');
   const [formData, setFormData] = useState({
     nombres: '',
@@ -39,7 +39,7 @@ const Configuracion = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Validación simple
+    // Validación simple, para coincidencia de contraseñas
     if (formData.password !== formData.confirmarPassword) {
       alert('Las contraseñas no coinciden');
       return;
@@ -124,4 +124,4 @@ const Configuracion = () => {
   );
 };
 
-export default Configuracion;
+export default CrearCuentas;

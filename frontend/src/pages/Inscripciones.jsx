@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import '../styles/Inscripciones.css';
 import Caja from '../components/Caja';
 import RegistroForm from '../components/RegistroForm';
@@ -19,22 +19,16 @@ const Inscripciones = () => {
     complemento: '',
     area: ''
   });
-  const [editIndex, setEditIndex] = useState(null); // ← guarda índice a editar
-  const [modoEdicion, setModoEdicion] = useState(false); // ← si estás en edición
-  
-  const [rowData, setRowData] = useState([
-    {
-      nombre: 'Juan Lopez',
-      rude: '12345678',
-      provincia: 'Cercado',
-      ci: '7894561',
-      curso: '6to',
-      categoria: 'Matematica',
-      fechaNac: '2009-04-10'
-    }
-  ]);
+
+  const [editIndex, setEditIndex] = useState(null);
+  const [modoEdicion, setModoEdicion] = useState(false);
+  const [rowData, setRowData] = useState([]);
 
   const [selectedRows, setSelectedRows] = useState([]);
+  const [toggleClearSelected, setToggleClearSelected] = useState(false);
+  const selectedRowsRef = useRef([]);
+  const [municipios, setMunicipios] = useState([]);
+  const [ue, setUe] = useState([]);
 
   const columns = [
     { name: 'Nombre Completo', selector: row => row.nombre, sortable: true },
@@ -58,25 +52,61 @@ const Inscripciones = () => {
   };
 
   const handleRegistrar = () => {
-    const { nombre, rude, provincia, ci, curso, categoria, fechaNac } = formData;
-    if (!nombre || !rude || !provincia || !ci || !curso || !categoria || !fechaNac) {
-      alert('Por favor completa todos los campos obligatorios.');
+    const {
+      nombre, rude, provincia, ci, curso,
+      categoria, fechaNac, genero, unidadEducativa, complemento, area
+    } = formData;
+
+    if (nombre.length < 6) {
+      alert('El nombre debe tener al menos 6 caracteres.');
       return;
     }
-  
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
+      alert('El nombre solo puede contener letras y espacios.');
+      return;
+    }
+    if (nombre.length > 60) {
+      alert('El nombre no puede superar los 60 caracteres.');
+      return;
+    }
+
+    if (!/^\d{1,16}$/.test(rude)) {
+      alert('El RUDE debe contener solo números y como máximo 16 dígitos.');
+      return;
+    }
+
+    if (!/^\d{1,8}$/.test(ci)) {
+      alert('El CI/Pasaporte debe contener solo números y como máximo 8 dígitos.');
+      return;
+    }
+
+    if (complemento.length > 3) {
+      alert('El complemento del CI debe tener como máximo 3 caracteres.');
+      return;
+    }
+
+    if (unidadEducativa.length > 40) {
+      alert('El nombre de la Unidad Educativa no puede superar los 40 caracteres.');
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ.,-]*$/.test(unidadEducativa)) {
+      alert('El nombre de la Unidad Educativa contiene caracteres no válidos.');
+      return;
+    }
+
     if (modoEdicion && editIndex !== null) {
-      // 🔁 Actualizar registro existente
       const nuevosDatos = [...rowData];
       nuevosDatos[editIndex] = formData;
       setRowData(nuevosDatos);
       setModoEdicion(false);
       setEditIndex(null);
     } else {
-      // ➕ Registrar nuevo
-      setRowData((prev) => [...prev, formData]);
+      setRowData(prev => [...prev, formData]);
     }
-  
-    // Limpiar formulario
+
+    alert('Registro realizado correctamente.');
+
     setFormData({
       nombre: '',
       rude: '',
@@ -90,36 +120,79 @@ const Inscripciones = () => {
       complemento: '',
       area: ''
     });
+
+    setSelectedRows([]);
+    selectedRowsRef.current = [];
+    setToggleClearSelected(prev => !prev);
   };
-  
 
   const handleEditar = () => {
-    if (selectedRows.length === 0) {
+    const seleccionActual = selectedRowsRef.current;
+
+    if (seleccionActual.length === 0) {
       alert('Por favor selecciona un registro para editar.');
       return;
     }
-  
-    const seleccionado = selectedRows[0];
-    const index = rowData.findIndex(est => est.ci === seleccionado.ci); // o por algún otro campo único
-    setFormData({ ...formData, ...seleccionado });
+
+    if (seleccionActual.length > 1) {
+      alert('Solo puedes editar un registro a la vez.');
+      return;
+    }
+
+    const confirmado = window.confirm('¿Estás seguro de que deseas editar este registro?');
+    if (!confirmado) return;
+
+    const seleccionado = seleccionActual[0];
+    const index = rowData.findIndex(est => est.ci === seleccionado.ci);
+
+    if (index === -1) {
+      alert('No se pudo encontrar el registro a editar.');
+      return;
+    }
+
+    setFormData({ ...seleccionado });
     setEditIndex(index);
     setModoEdicion(true);
   };
-  
+
   const handleEliminar = () => {
-    if (selectedRows.length === 0) {
+    const seleccionActual = selectedRowsRef.current;
+
+    if (seleccionActual.length === 0) {
       alert('Por favor selecciona al menos un registro para eliminar.');
       return;
     }
-  
+
+    const confirmado = window.confirm('¿Estás seguro de que deseas eliminar el/los registro(s) seleccionado(s)?');
+    if (!confirmado) return;
+
     const nuevosDatos = rowData.filter(
-      row => !selectedRows.some(sel => sel.ci === row.ci)
+      row => !seleccionActual.some(sel => sel.ci === row.ci)
     );
-  
+
     setRowData(nuevosDatos);
-    setSelectedRows([]); // limpia selección
+    setSelectedRows([]);
+    selectedRowsRef.current = [];
+    setToggleClearSelected(prev => !prev);
   };
-  
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/municipios')
+      .then(res => res.json())
+      .then(data => setMunicipios(data));
+
+    fetch('http://localhost:8000/api/unidades-educativas')
+      .then(res => res.json())
+      .then(data => setUe(data));
+  }, []);
+
+  useEffect(() => {
+    console.log('Unidades educativas cargadas:', ue);
+  }, [ue]);
+
+  const opcionesFiltradas = ue
+    .filter(item => item.municipio_id === parseInt(formData.provincia))
+    .map(item => ({ value: item.id, label: item.nombre }));
 
   return (
     <div className="page-container">
@@ -140,35 +213,27 @@ const Inscripciones = () => {
               type='select'
               value={formData.provincia}
               onChange={setFormData}
-              options={[
-                { value: '', label: 'Seleccione una provincia' },
-                { value: 'cercado', label: 'Cercado' },
-                { value: 'quillacollo', label: 'Quillacollo' },
-              ]}
+              options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))}
             />
-            <RegistroForm label='CI/Pasaporte' name='ci' value={formData.ci} onChange={setFormData} />
+            <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
             <RegistroForm
-              label='Año de escolaridad'
+              label='Nivel/Categoria'
               name='curso'
               type='select'
               value={formData.curso}
               onChange={setFormData}
               options={[
-                { value: '', label: 'Seleccione el curso' },
-                { value: '6to', label: '6to' },
-                { value: '5to', label: '5to' },
-              ]}
-            />
-            <RegistroForm
-              label='Categoria'
-              name='categoria'
-              type='select'
-              value={formData.categoria}
-              onChange={setFormData}
-              options={[
-                { value: '', label: 'Seleccione su categoria' },
-                { value: 'matematica', label: 'Matematica' },
-                { value: 'quimica', label: 'Quimica' }
+                { value: '', label: 'Seleccione un nivel/categoria' },
+                { value: '3ro Primaria', label: '3ro Primaria' },
+                { value: '4to Primaria', label: '4to Primaria' },
+                { value: '5to Primaria', label: '5to Primaria' },
+                { value: '6to Primaria', label: '6to Primaria' },
+                { value: '1ro Secundaria', label: '1ro Secundaria' },
+                { value: '2do Secundaria', label: '2do Secundaria' },
+                { value: '3ro Secundaria', label: '3ro Secundaria' },
+                { value: '4to Secundaria', label: '4to Secundaria' },
+                { value: '5to Secundaria', label: '5to Secundaria' },
+                { value: '6to Secundaria', label: '6to Secundaria' }
               ]}
             />
           </section>
@@ -186,7 +251,14 @@ const Inscripciones = () => {
                 { value: 'femenino', label: 'Femenino' }
               ]}
             />
-            <RegistroForm label='Unidad Educativa' name='unidadEducativa' value={formData.unidadEducativa} onChange={setFormData} />
+            <RegistroForm
+              label='Unidad Educativa'
+              name='unidadEducativa'
+              type='select'
+              value={formData.unidadEducativa}
+              onChange={setFormData}
+              options={opcionesFiltradas}
+            />
             <RegistroForm label='Complemento (opcional)' name='complemento' value={formData.complemento} onChange={setFormData} />
             <RegistroForm
               label='Área'
@@ -206,8 +278,7 @@ const Inscripciones = () => {
               ]}
             />
             <div className='contenedor-boton-registrar-est'>
-            <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
-
+              <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
             </div>
           </section>
         </div>
@@ -218,8 +289,14 @@ const Inscripciones = () => {
           columns={columns}
           data={rowData}
           selectableRows
-          onSelectedRowsChange={({ selectedRows }) => setSelectedRows(selectedRows)}
+          selectableRowsNoSelectAll
+          clearSelectedRows={toggleClearSelected}
+          onSelectedRowsChange={({ selectedRows }) => {
+            setSelectedRows(selectedRows);
+            selectedRowsRef.current = selectedRows;
+          }}
           customStyles={customStyles}
+          noDataComponent="No hay estudiantes inscritos aún"
           pagination
           responsive
         />
