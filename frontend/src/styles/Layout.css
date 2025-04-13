@@ -1,0 +1,41 @@
+/* Layout.css */
+
+/* Estilo para el Top Bar */
+.top-bar {
+    background-color: #003366;
+    padding: 10px;
+  }
+  
+  /* Estilo para el Header */
+  .header {
+    background: url('/ruta/a/tu/fondo.jpg') no-repeat center center;
+    background-size: cover;
+    padding: 20px;
+  }
+  
+  /* Estilos para los logos */
+  .logo-instituto,
+  .logo-empresa {
+    max-height: 80px;
+  }
+  
+  /* Estilo para la Navigation Bar */
+  .custom-navbar {
+    background-color: #003366;
+  }
+  
+  /* Estilo para el Área de contenido */
+  .content-area {
+    background-color: #FFFFFF;
+    min-height: 70vh;
+    padding: 20px;
+  }
+  
+  /* Estilo para el Footer */
+  .footer {
+    background-color: #003366;
+    color: #FFFFFF;
+    padding: 10px;
+    text-align: center;
+  }
+  
