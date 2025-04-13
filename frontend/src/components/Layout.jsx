@@ -1,6 +1,6 @@
 // Layout.jsx
 import React from 'react';
-import './Layout.css';  // Importa el archivo de estilos
+import '../styles/Layout.css';  // Importa el archivo de estilos
 
 const Layout = ({ children }) => {
   return (
