@@ -1,6 +1,6 @@
 // Layout.jsx
 import React from 'react';
-import '../styles/Layout.css';  // Importa el archivo de estilos
+import '../styles/Layout.css';
 
 const Layout = ({ children }) => {
   return (
@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
       {/* Top Bar */}
       <div className="top-bar"></div>
 
-      {/* Header con fondo y logos */}
+      {/* Header con fondo detrás de los logos */}
       <header className="header">
         <div className="container">
           <div className="row align-items-center">
@@ -32,11 +32,11 @@ const Layout = ({ children }) => {
         </div>
       </header>
 
-      {/* Navigation Bar */}
+      {/* Navigation Bar con botones horizontales (por ejemplo, en este caso usamos iconos en los botones de la izquierda) */}
       <nav className="navbar navbar-expand-lg custom-navbar">
         <div className="container">
           <div className="collapse navbar-collapse">
-            {/* Botones a la izquierda */}
+            {/* Botones de la izquierda */}
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <a className="nav-link text-white" href="#">
@@ -59,7 +59,7 @@ const Layout = ({ children }) => {
                 </a>
               </li>
             </ul>
-            {/* Botón a la derecha */}
+            {/* Botón de Ingresar a la derecha */}
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 <a className="nav-link text-white" href="#">

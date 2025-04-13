@@ -6,9 +6,10 @@
     padding: 10px;
   }
   
-  /* Estilo para el Header */
+  /* Estilo para el Header (el fondo se coloca aquí y los logos quedan encima) */
   .header {
-    background: url('/ruta/a/tu/fondo.jpg') no-repeat center center;
+    position: relative;
+    background: url('/ruta/a/tu/fondo-header.jpg') no-repeat center center;
     background-size: cover;
     padding: 20px;
   }
@@ -19,19 +20,19 @@
     max-height: 80px;
   }
   
-  /* Estilo para la Navigation Bar */
+  /* Estilo para el Navigation Bar */
   .custom-navbar {
     background-color: #003366;
   }
   
-  /* Estilo para el Área de contenido */
+  /* Área de contenido blanco */
   .content-area {
     background-color: #FFFFFF;
     min-height: 70vh;
     padding: 20px;
   }
   
-  /* Estilo para el Footer */
+  /* Footer */
   .footer {
     background-color: #003366;
     color: #FFFFFF;
