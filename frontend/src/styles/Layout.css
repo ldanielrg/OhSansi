@@ -3,22 +3,39 @@
 /* Barra superior */
 .top-bar {
   background-color: #003366;
-  padding: 10px;
+  padding: 20px;
 }
 
 /* Header con fondo (imagen o color sólido) */
 .header {
   position: relative;
-  background: url('/ruta/a/tu/fondo-header.jpg') no-repeat center center;
+  background: url('/src/assets/fondo.svg') no-repeat center center;
   background-size: cover;
   padding: 20px;
+  height: 250px;
 }
 
 /* Logos */
-.logo-instituto,
-.logo-empresa {
-  max-height: 80px;
+/* Ajuste general para que las imágenes no se salgan del contenedor y sean responsivas */
+.logo-instituto, .logo-empresa {
+  max-width: 100%;
+  height: auto;          /* Mantiene proporción */
+  
 }
+
+/* Si deseas un límite de altura para que no crezcan demasiado en pantallas grandes */
+.logo-instituto, .logo-empresa {
+  max-height: 400px;      /* Ajusta a tu gusto */
+  height: 250px;
+}
+
+/* Para "subir" un poco el logo del instituto, podrías jugar con un margin negativo
+   o un position relative y top negativo. Por ejemplo: */
+.logo-instituto {
+  position: relative;
+  top: -45px;            /* Sube la imagen 10px hacia arriba */
+}
+
 
 /* Navbar */
 .custom-navbar {

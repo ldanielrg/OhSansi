@@ -2,10 +2,11 @@
 
 /* Sección de fondo en la parte superior del lado izquierdo */
 .left-side .background-section {
-  height: 200px; /* Ajusta el alto a tu gusto */
-  background: url('/ruta/a/tu/home-fondo.jpg') no-repeat center center;
+  height: 400px; /* Ajusta el alto a tu gusto */
+  background: url('/src/assets/fondodos.png') no-repeat center center;
   background-size: cover;
   margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 /* Espaciado entre las cards */
@@ -16,6 +17,7 @@
 /* Card larga en la columna derecha */
 .right-side .long-card {
   margin-bottom: 20px;
+  margin-top: 16px;
 }
 
 /* Estilo para los títulos de sección (Calendario, Noticias, Ayuda) */

@@ -1,12 +1,15 @@
 /* Card.css */
-
+/* Sombreado general (opcional si ya usas "shadow-sm" de Bootstrap) */
 .custom-card {
-  /* Sombreado para las cards */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Botón interno de la card */
 .btn-card {
   background-color: #003366;
   color: #FFFFFF;
   border: none;
+  /* Por si quieres un poco de padding extra y sin borde */
+  padding: 8px 16px;
+  cursor: pointer;
 }

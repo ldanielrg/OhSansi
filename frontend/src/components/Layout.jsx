@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
             {/* Logo del Instituto */}
             <div className="col">
               <img
-                src="/ruta/a/tu/logo-instituto.png"
+                src="/src/assets/umss.svg"
                 alt="Logo Instituto"
                 className="logo-instituto"
               />
@@ -23,7 +23,7 @@ const Layout = ({ children }) => {
             {/* Logo de la Empresa */}
             <div className="col text-end">
               <img
-                src="/ruta/a/tu/logo-empresa.png"
+                src="/src/assets/LOGO.png"
                 alt="Logo Empresa"
                 className="logo-empresa"
               />
