@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
 use App\Models\Area;
 use App\Models\Departamento;
@@ -23,27 +25,27 @@ class DepartamentoSeeder extends Seeder
         // Relacionar los municipio a cochabamba (sólo cocha por ahora)
         Municipio::updateOrCreate([
             'nombre_municipio' => 'Quillacollo',
-            'id_departamento_departamento' => $dep1->id_categoria,
+            'id_departamento_departamento' => $dep1->id_departamento,
         ]);
         Municipio::updateOrCreate([
             'nombre_municipio' => 'Sacaba',
-            'id_departamento_departamento' => $dep1->id_categoria,
+            'id_departamento_departamento' => $dep1->id_departamento,
         ]);
         Municipio::updateOrCreate([
             'nombre_municipio' => 'Tiquipaya',
-            'id_departamento_departamento' => $dep1->id_categoria,
+            'id_departamento_departamento' => $dep1->id_departamento,
         ]);
         Municipio::updateOrCreate([
             'nombre_municipio' => 'Colcapirhua',
-            'id_departamento_departamento' => $dep1->id_categoria,
+            'id_departamento_departamento' => $dep1->id_departamento,
         ]);
         Municipio::updateOrCreate([
             'nombre_municipio' => 'Vinto',
-            'id_departamento_departamento' => $dep1->id_categoria,
+            'id_departamento_departamento' => $dep1->id_departamento,
         ]);
         Municipio::updateOrCreate([
             'nombre_municipio' => 'Sipe Sipe,',
-            'id_departamento_departamento' => $dep1->id_categoria,
+            'id_departamento_departamento' => $dep1->id_departamento,
         ]);
 
     }
