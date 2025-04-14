@@ -29,6 +29,11 @@ class AreaTieneCategorium extends Model
 		'id_categoria_categoria' => 'int',
 		'id_area_area' => 'int'
 	];
+	
+	protected $fillable = [
+        'id_area_area',
+        'id_categoria_categoria',
+    ];
 
 	public function categorium()
 	{
