@@ -2,6 +2,9 @@
 import React from "react";
 import "../styles/Home.css";
 import Card from "../components/Card";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css"; // Importa estilo por defecto
+
 
 const Home = () => {
   return (
@@ -15,30 +18,30 @@ const Home = () => {
           <div className="cards-section row">
             <div className="col-md-6">
               <Card
-                image="/ruta/a/imagen1.jpg"
+                image="/src/assets/olimpiada.png"
                 description="Descripción 1"
                 buttonText="Leer más"
               />
             </div>
             <div className="col-md-6">
               <Card
-                image="/ruta/a/imagen2.jpg"
+                image="/src/assets/inscripcion.png"
                 description="Descripción 2"
-                buttonText="Registrar"
+                buttonText="inscripciones"
               />
             </div>
             <div className="col-md-6">
               <Card
-                image="/ruta/a/imagen2.jpg"
+                image="/src/assets/disciplinas.png"
                 description="Descripción 2"
-                buttonText="Registrar"
+                buttonText="diciplinas"
               />
             </div>
             <div className="col-md-6">
               <Card
-                image="/ruta/a/imagen2.jpg"
+                image="/src/assets/eventos.png"
                 description="Descripción 2"
-                buttonText="Registrar"
+                buttonText="Eventos"
               />
             </div>
           </div>
@@ -49,11 +52,11 @@ const Home = () => {
           <div className="card long-card">
             <div className="card-body">
               {/* Calendario */}
-              <h5 className="card-title section-title">Calendario</h5>
-              <div className="calendar-placeholder">Calendario aquí</div>
+              <h5 className="title-bar">Calendario</h5>
+              <Calendar />
 
               {/* Noticias */}
-              <h5 className="card-title section-title">Noticias</h5>
+              <h5 className="title-bar">Noticias</h5>
               <div className="news-buttons">
                 <button className="btn vertical-btn btn-news">Ganadores</button>
                 <button className="btn vertical-btn btn-news">
@@ -65,7 +68,7 @@ const Home = () => {
               </div>
 
               {/* Ayuda */}
-              <h5 className="card-title section-title">Ayuda</h5>
+              <h5 className="title-bar">Ayuda</h5>
               <div className="help-buttons">
                 <button className="btn vertical-btn btn-help">
                   Preguntas frecuentes

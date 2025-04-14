@@ -46,12 +46,72 @@
   transition: all 0.3s ease;
 }
 
-.vertical-btn:hover::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
+
+/* Título con ancho al 100% (asumiendo que el padre está delimitado, ej. col-md-4). */
+.title-bar {
+  display: block;
   width: 100%;
-  height: 3px;
+  background-color: #003366;
+  color: #FFFFFF;
+  text-align: center;       /* Centra el texto */
+  padding: 10px;
+  margin-bottom: 10px;
+  /* Si quieres misma altura que el botón (p. ej. 44px) puedes forzarlo:
+     min-height: 44px; 
+  */
+}
+
+/* Botones de la derecha (ejemplo) */
+.btn-news {
+  width: 100%;
   background-color: #FFFFFF;
+  color: #003366;
+  border: 1px solid #003366;
+  margin-bottom: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Hover invertido */
+.vertical-btn:hover {
+  background-color: #003366 !important;
+  color: #FFFFFF !important;
+}
+
+/* Asumiendo que Calendar se renderiza dentro de un .calendar-container */
+.calendar-container {
+  /* Ajusta un ancho máximo y centra */
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Selector principal de react-calendar */
+.react-calendar {
+  background: #FFFFFF;
+  border: 1px solid #DDD;
+  border-radius: 8px;
+  width: 100%; /* Para que ocupe todo el contenedor */
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.react-calendar__navigation {
+  background-color: #003366;
+  color: #FFFFFF;
+}
+
+.react-calendar__navigation button {
+  background: none; 
+  color: #FFFFFF;
+  min-width: 44px;
+}
+
+/* Días “activos” al hacer clic */
+.react-calendar__tile--active {
+  background: #003366;
+  color: #FFFFFF;
+}
+
+/* Hover en las celdas del calendario */
+.react-calendar__tile:hover {
+  background-color: #EEEEEE;
 }
