@@ -1,56 +1,55 @@
 /* Home.css */
 
-/* Sección superior de la columna izquierda */
+/* Sección de fondo en la parte superior del lado izquierdo */
 .left-side .background-section {
-    height: 200px; /* Ajusta el alto según tus necesidades */
-    background: url('/ruta/a/tu/home-fondo.jpg') no-repeat center center;
-    background-size: cover;
-    margin-bottom: 20px;
-  }
-  
-  /* Espaciado entre las cards */
-  .cards-section .custom-card {
-    margin-bottom: 20px;
-  }
-  
-  /* Card larga en la columna derecha */
-  .right-side .long-card {
-    margin-bottom: 20px;
-  }
-  
-  /* Títulos con estilo de botón */
-  .button-style-title {
-    background-color: #003366;
-    color: #FFFFFF;
-    padding: 10px;
-    display: inline-block;
-    margin-bottom: 10px;
-  }
-  
-  /* Botones para Noticias y Ayuda (estilo invertido) */
-  .news-buttons .btn-news,
-  .help-buttons .btn-help {
-    width: 100%;
-    margin-bottom: 10px;
-    background-color: #FFFFFF;
-    color: #003366;
-    border: 1px solid #003366;
-  }
-  
-  /* Efecto hover para botones verticales:
-     Al pasar el mouse, se agrega una barra blanca en la parte inferior */
-  .vertical-btn {
-    position: relative;
-    transition: all 0.3s ease;
-  }
-  
-  .vertical-btn:hover::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: #FFFFFF;
-  }
-  
+  height: 200px; /* Ajusta el alto a tu gusto */
+  background: url('/ruta/a/tu/home-fondo.jpg') no-repeat center center;
+  background-size: cover;
+  margin-bottom: 20px;
+}
+
+/* Espaciado entre las cards */
+.cards-section .custom-card {
+  margin-bottom: 20px;
+}
+
+/* Card larga en la columna derecha */
+.right-side .long-card {
+  margin-bottom: 20px;
+}
+
+/* Estilo para los títulos de sección (Calendario, Noticias, Ayuda) */
+.section-title {
+  background-color: #003366;
+  color: #FFFFFF;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* Botones verticales: estilo invertido */
+.news-buttons .btn,
+.help-buttons .btn {
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: #FFFFFF;
+  color: #003366;
+  border: 1px solid #003366;
+}
+
+/* Efecto hover para botones verticales */
+.vertical-btn {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.vertical-btn:hover::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #FFFFFF;
+}

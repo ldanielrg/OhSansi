@@ -1,48 +1,53 @@
 /* Layout.css */
 
-/* Top Bar */
+/* Barra superior */
 .top-bar {
-    background-color: #003366;
-    padding: 10px;
-  }
-  
-  /* Header: se coloca un fondo (puede ser imagen o color) detrás de los logos */
-  .header {
-    position: relative;
-    background: url('/ruta/a/tu/fondo-header.jpg') no-repeat center center;
-    background-size: cover;
-    padding: 20px;
-  }
-  
-  /* Estilos para los logos */
-  .logo-instituto,
-  .logo-empresa {
-    max-height: 80px;
-  }
-  
-  /* Navigation Bar */
-  .custom-navbar {
-    background-color: #003366;
-  }
-  
-  /* Estilos para los grupos verticales en el Navbar */
-  .left-nav .nav-link,
-  .right-nav .nav-link {
-    padding: 10px;
-  }
-  
-  /* Área de contenido */
-  .content-area {
-    background-color: #FFFFFF;
-    min-height: 70vh;
-    padding: 20px;
-  }
-  
-  /* Footer */
-  .footer {
-    background-color: #003366;
-    color: #FFFFFF;
-    padding: 10px;
-    text-align: center;
-  }
-  
+  background-color: #003366;
+  padding: 10px;
+}
+
+/* Header con fondo (imagen o color sólido) */
+.header {
+  position: relative;
+  background: url('/ruta/a/tu/fondo-header.jpg') no-repeat center center;
+  background-size: cover;
+  padding: 20px;
+}
+
+/* Logos */
+.logo-instituto,
+.logo-empresa {
+  max-height: 80px;
+}
+
+/* Navbar */
+.custom-navbar {
+  background-color: #003366;
+}
+
+/* Links del navbar */
+.custom-navbar .nav-link {
+  color: #FFFFFF;
+  /* Quitar subrayado al pasar hover si deseas */
+  text-decoration: none;
+}
+
+/* Efecto subrayado o borde inferior al hover (opcional) */
+.custom-navbar .nav-link:hover {
+  border-bottom: 2px solid #FFFFFF;
+}
+
+/* Área de contenido */
+.content-area {
+  background-color: #FFFFFF;
+  min-height: 70vh;
+  padding: 20px;
+}
+
+/* Footer */
+.footer {
+  background-color: #003366;
+  color: #FFFFFF;
+  text-align: center;
+  padding: 10px;
+}

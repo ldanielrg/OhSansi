@@ -1,11 +1,12 @@
 /* Card.css */
 
 .custom-card {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .btn-card {
-    background-color: #003366;
-    color: #FFFFFF;
-    border: none;
-  }
+  /* Sombreado para las cards */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-card {
+  background-color: #003366;
+  color: #FFFFFF;
+  border: none;
+}

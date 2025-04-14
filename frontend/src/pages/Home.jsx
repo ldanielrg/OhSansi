@@ -7,13 +7,11 @@ const Home = () => {
   return (
     <div className="home-container container-fluid">
       <div className="row">
-        {/* Columna Izquierda: 70% */}
+        {/* Columna Izquierda: Fondo y 4 Cards */}
         <div className="col-md-8 left-side">
-          {/* Sección superior con fondo configurable */}
           <div className="background-section">
-            {/* Aquí puedes colocar una imagen de fondo o color personalizado */}
+            {/* Asigna aquí tu imagen de fondo o color */}
           </div>
-          {/* Sección de 4 cards */}
           <div className="cards-section row">
             <div className="col-md-6">
               <Card image="/ruta/a/imagen1.jpg" description="Descripción 1" />
@@ -30,25 +28,26 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Columna Derecha: 30% */}
+        {/* Columna Derecha: Un card grande con Calendario, Noticias y Ayuda */}
         <div className="col-md-4 right-side">
           <div className="card long-card">
             <div className="card-body">
-              {/* Título de la card con estilo de botón */}
-              <h5 className="card-title button-style-title">Título de la Card</h5>
-              {/* Calendario (placeholder) */}
+              {/* Calendario */}
+              <h5 className="card-title section-title">Calendario</h5>
               <div className="calendar-placeholder">
                 Calendario aquí
               </div>
-              {/* Sección Noticias */}
-              <h5 className="card-title button-style-title">Noticias</h5>
+
+              {/* Noticias */}
+              <h5 className="card-title section-title">Noticias</h5>
               <div className="news-buttons">
                 <button className="btn vertical-btn btn-news">Ganadores</button>
                 <button className="btn vertical-btn btn-news">Premiación</button>
                 <button className="btn vertical-btn btn-news">Próximos eventos</button>
               </div>
-              {/* Sección Ayuda */}
-              <h5 className="card-title button-style-title">Ayuda</h5>
+
+              {/* Ayuda */}
+              <h5 className="card-title section-title">Ayuda</h5>
               <div className="help-buttons">
                 <button className="btn vertical-btn btn-help">Preguntas frecuentes</button>
                 <button className="btn vertical-btn btn-help">Contáctanos</button>
