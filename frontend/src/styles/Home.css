@@ -1,9 +1,8 @@
 /* Home.css */
 
-/* Sección de fondo en la columna izquierda */
+/* Sección superior de la columna izquierda */
 .left-side .background-section {
-    /* Puedes ajustar el alto; por ejemplo, 200px o usar unidades relativas */
-    height: 200px;
+    height: 200px; /* Ajusta el alto según tus necesidades */
     background: url('/ruta/a/tu/home-fondo.jpg') no-repeat center center;
     background-size: cover;
     margin-bottom: 20px;
@@ -14,12 +13,12 @@
     margin-bottom: 20px;
   }
   
-  /* Estilo para la card larga en la columna derecha */
+  /* Card larga en la columna derecha */
   .right-side .long-card {
     margin-bottom: 20px;
   }
   
-  /* Títulos estilo botón (para secciones en la card derecha) */
+  /* Títulos con estilo de botón */
   .button-style-title {
     background-color: #003366;
     color: #FFFFFF;
@@ -28,7 +27,7 @@
     margin-bottom: 10px;
   }
   
-  /* Estilos para los botones de noticias y ayuda (formato invertido) */
+  /* Botones para Noticias y Ayuda (estilo invertido) */
   .news-buttons .btn-news,
   .help-buttons .btn-help {
     width: 100%;
@@ -38,8 +37,8 @@
     border: 1px solid #003366;
   }
   
-  /* Efecto hover en botones verticales:
-     Al pasar el mouse, se muestra una barra blanca en la parte inferior */
+  /* Efecto hover para botones verticales:
+     Al pasar el mouse, se agrega una barra blanca en la parte inferior */
   .vertical-btn {
     position: relative;
     transition: all 0.3s ease;

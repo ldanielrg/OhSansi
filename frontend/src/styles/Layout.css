@@ -1,20 +1,20 @@
 /* Layout.css */
 
-/* Estilo para el Top Bar */
+/* Top Bar */
 .top-bar {
     background-color: #003366;
     padding: 10px;
   }
   
-  /* Estilo para el Header con fondo */
+  /* Header: se coloca un fondo (puede ser imagen o color) detrás de los logos */
   .header {
-    position: relative; /* Esto crea un contexto de posicionamiento */
+    position: relative;
     background: url('/ruta/a/tu/fondo-header.jpg') no-repeat center center;
     background-size: cover;
     padding: 20px;
   }
   
-  /* Estilos para los logos: Se visualizarán por encima del fondo de forma natural */
+  /* Estilos para los logos */
   .logo-instituto,
   .logo-empresa {
     max-height: 80px;
@@ -23,6 +23,12 @@
   /* Navigation Bar */
   .custom-navbar {
     background-color: #003366;
+  }
+  
+  /* Estilos para los grupos verticales en el Navbar */
+  .left-nav .nav-link,
+  .right-nav .nav-link {
+    padding: 10px;
   }
   
   /* Área de contenido */

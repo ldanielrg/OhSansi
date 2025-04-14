@@ -1,7 +1,6 @@
 /* Card.css */
 
 .custom-card {
-    /* Sombreado para las cards */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
@@ -10,4 +9,3 @@
     color: #FFFFFF;
     border: none;
   }
-  
