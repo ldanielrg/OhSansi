@@ -1,13 +1,11 @@
-// Login.jsx
+// src/pages/Login.jsx
 import React from 'react';
 
-function Login() {
+export default function Login() {
   return (
     <div>
-      <h2>Login</h2>
-      <p>Aquí irá tu formulario de acceso...</p>
+      <h2>Página de Login</h2>
+      <p>Tu formulario de acceso irá aquí más adelante.</p>
     </div>
   );
 }
-
-export default Login;

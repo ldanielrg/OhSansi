@@ -1,9 +1,10 @@
 // Layout.jsx
 import React from "react";
 import "../styles/Layout.css";
-
+import { useNavigate } from 'react-router-dom'
 
 const Layout = ({ children }) => {
+  const navigate = useNavigate()
   return (
     <div>
       {/* Top Bar */}

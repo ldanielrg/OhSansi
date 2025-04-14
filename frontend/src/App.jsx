@@ -1,18 +1,16 @@
 // App.jsx
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-
-import "bootstrap/dist/css/bootstrap.min.css";
+import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home'
+import Login from './pages/login'
+import Layout from './components/Layout'
 
 function App() {
   return (
     <Routes>
-      {/* Ruta para la Home, usando Layout y Home como children */}
+      {/* Ruta Home ("/") envuelta en Layout */}
       <Route
-        path="/Home"
+        path="/"
         element={
           <Layout>
             <Home />
@@ -20,9 +18,9 @@ function App() {
         }
       />
 
-      {/* Ruta para la página de Login, también con Layout */}
+      {/* Ruta Login ("/login") también con Layout */}
       <Route
-        path="/Login"
+        path="/login"
         element={
           <Layout>
             <Login />
@@ -30,7 +28,7 @@ function App() {
         }
       />
     </Routes>
-  );
+  )
 }
 
-export default App;
+export default App
