@@ -39,54 +39,54 @@ const Layout = ({ children }) => {
           {/* Lista de botones de la izquierda (menú horizontal) */}
           <ul className="navbar-nav d-flex flex-row" id="left-menu">
             <li className="nav-item me-3">
-              <a className="nav-link text-white" href="./src/assets/icono1.png">
+            <Link className="nav-link text-white" to="#">
                 <img
                   src="/src/assets/icono1.svg"
                   alt="Home Icon"
                   style={{ width: "20px", marginRight: "5px" }}
                 />{" "}
                 Inicio
-              </a>
+            </Link>
             </li>
             <li className="nav-item me-3">
-              <a className="nav-link text-white" href="#">
+            <Link className="nav-link text-white" to="#">
               <img
                   src="/src/assets/icono2.svg"
                   alt="Home Icon"
                   style={{ width: "20px", marginRight: "5px" }}
                 />{" "} Inscripciones
-              </a>
+              </Link>
             </li>
             <li className="nav-item me-3">
-              <a className="nav-link text-white" href="#">
+            <Link className="nav-link text-white" to="#">
               <img
                   src="/src/assets/icono3.svg"
                   alt="Home Icon"
                   style={{ width: "20px", marginRight: "5px" }}
                 />{" "} Eventos
-              </a>
+              </Link>
             </li>
             <li className="nav-item me-3">
-              <a className="nav-link text-white" href="#">
+            <Link className="nav-link text-white" to="#">
               <img
                   src="/src/assets/icono4.svg"
                   alt="Home Icon"
                   style={{ width: "20px", marginRight: "5px" }}
                 />{" "} Nosotros
-              </a>
+              </Link>
             </li>
           </ul>
 
           {/* Botón "Ingresar" a la derecha */}
           <ul className="navbar-nav" id="right-menu">
             <li className="nav-item">
-              <a className="nav-link text-white" href="#">
+            <Link className="nav-link text-white" to="#">
               <img
                   src="/src/assets/icono5.svg"
                   alt="Home Icon"
                   style={{ width: "20px", marginRight: "5px" }}
                 />{" "} Ingresar
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
