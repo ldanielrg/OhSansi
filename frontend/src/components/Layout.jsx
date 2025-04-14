@@ -65,7 +65,7 @@ const Layout = ({ children }) => {
             <li className="nav-item me-3">
               <a
                 className="nav-link text-white"
-                
+                href="#"
                 onClick={handleNavigateHome}
               >
                 <img
@@ -79,7 +79,7 @@ const Layout = ({ children }) => {
             <li className="nav-item me-3">
               <a
                 className="nav-link text-white"
-                
+                href="#"
                 onClick={handleNavigateInscripciones}
               >
                 <img
@@ -93,7 +93,7 @@ const Layout = ({ children }) => {
             <li className="nav-item me-3">
               <a
                 className="nav-link text-white"
-                
+                href="#"
                 onClick={handleNavigateEventos}
               >
                 <img
@@ -107,7 +107,7 @@ const Layout = ({ children }) => {
             <li className="nav-item me-3">
               <a
                 className="nav-link text-white"
-                
+                href="#"
                 onClick={handleNavigateNosotros}
               >
                 <img
@@ -125,7 +125,7 @@ const Layout = ({ children }) => {
             <li className="nav-item">
               <a
                 className="nav-link text-white"
-                
+                href="#"
                 onClick={handleNavigateLogin}
               >
                 <img
