@@ -20,7 +20,8 @@ class CuentasSeeder extends Seeder
             ['email' => 'admin@ejemplo.com'],
             [
                 'name' => 'Daniel',
-                'password' => Hash::make('contra123')
+                'password' => Hash::make('contra123'),
+                'username' => 'Admin1'
             ]
         );
         $usuario->assignRole($role1);
@@ -30,7 +31,8 @@ class CuentasSeeder extends Seeder
             ['email' => 'director@ejemplo.com'],
             [
                 'name' => 'Daniel',
-                'password' => Hash::make('contra123')
+                'password' => Hash::make('contra123'),
+                'username' => 'Director1'
             ]
         );
         $usuario2->assignRole($role2);
@@ -40,7 +42,8 @@ class CuentasSeeder extends Seeder
             ['email' => 'inscripcion@ejemplo.com'],
             [
                 'name' => 'Daniel',
-                'password' => Hash::make('contra123')
+                'password' => Hash::make('contra123'),
+                'username' => 'Inscrip1'
             ]
         );
         $usuario3->assignRole($role3);
@@ -50,7 +53,8 @@ class CuentasSeeder extends Seeder
             ['email' => 'caja@ejemplo.com'],
             [
                 'name' => 'Daniel',
-                'password' => Hash::make('contra123')
+                'password' => Hash::make('contra123'),
+                'username' => 'Caja1'
             ]
         );
         $usuario4->assignRole($role4);
@@ -60,7 +64,8 @@ class CuentasSeeder extends Seeder
             ['email' => 'organizador@ejemplo.com'],
             [
                 'name' => 'Daniel',
-                'password' => Hash::make('contra123')
+                'password' => Hash::make('contra123'),
+                'username' => 'Organizador1'
             ]
         );
         $usuario5->assignRole($role5);
