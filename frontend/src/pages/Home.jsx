@@ -19,7 +19,7 @@ const Home = () => {
               <Card
                 image="/src/assets/olimpiada.png"
                 description="Descripción 1"
-                buttonText="Leer más"
+                buttonText="ver"
               />
             </div>
             <div className="col-md-6">
@@ -51,6 +51,7 @@ const Home = () => {
           <div className="card long-card">
             <div className="card-body">
               {/* Calendario */}
+              <h5 className="title-bar">Calendario</h5>
               <div className="myCalendarContainer">
                 <Calendar />
               </div>
