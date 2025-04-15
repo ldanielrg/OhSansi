@@ -1,0 +1,40 @@
+/* Card.css */
+/* Sombreado general (opcional si ya usas "shadow-sm" de Bootstrap) */
+.custom-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón interno de la card */
+.btn-card {
+  background-color: #003366;
+  color: #FFFFFF;
+  border: none;
+  /* Por si quieres un poco de padding extra y sin borde */
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+/* Asegúrate de que se cargue DESPUÉS de bootstrap.css */
+.btn-card.btn {
+  background-color: #003366;
+  color: #FFFFFF;
+  border: none;
+  width: 100%;       /* Botón al 100% del ancho del contenedor */
+  display: block;    /* Para que el ancho 100% realmente se aplique */
+  text-align: center;
+  margin-top: 10px;  /* Separarlo un poco del texto */
+}
+.card-img-top {
+  /* Cambia margin si prefieres */
+  padding: 20px 20px 0 20px; 
+}
+
+.card-body {
+  padding: 20px; /* Ajusta el valor a tu gusto */
+}
+
+.btn-card.btn:hover {
+  background-color: #FFFFFF !important;
+  color: #003366 !important;
+  border: 1px solid #003366; ;
+}

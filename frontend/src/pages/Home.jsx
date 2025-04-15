@@ -1,39 +1,109 @@
-import React from 'react';
-import '../styles/Home.css';
-import Caja from '../components/Caja';
+// Home.jsx
+import React from "react";
+import "../styles/Home.css";
+import { useNavigate } from "react-router-dom";
+import Card from "../components/Card";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css"; // Importa estilo por defecto
 
-const Home = () => (
-    <section className="home">
-        <Caja titulo='Acerca de las olimpiadas'>
-            <p>
-                Las Olimpiadas Científicas tienen como objetivo fomentar la curiosidad y el
-                pensamiento crítico en jóvenes estudiantes a través de desafíos académicos.
-            </p>
-        </Caja>
+const Home = () => {
+  // Hook para navegar
+  const navigate = useNavigate();
 
-        <Caja titulo='Convocatoria'>
-            <p>
-                Las Olimpiadas Científicas tienen como objetivo fomentar la curiosidad y el
-                pensamiento crítico en jóvenes estudiantes a través de desafíos académicos.
-            </p>
-        </Caja>
+  
+  const handleNavigateReclamos = (e) => {
+    e.preventDefault();
+    navigate("/inscripciones");
+  };
+  const handleNavigateInscripciones = (e) => {
+    e.preventDefault();
+    navigate("/inscripciones");
+  };
+  return (
+    <div className="home-container container-fluid">
+      <div className="row">
+        {/* Columna Izquierda: Fondo y 4 Cards */}
+        <div className="col-md-9 left-side">
+          <div className="background-section">
+            {/* Asigna aquí tu imagen de fondo o color */}
+          </div>
+          <div className="cards-section row">
+            <div className="col-md-6">
+              <Card
+                image="/src/assets/olimpiada.png"
+                description="Descripción 1"
+                buttonText="ver"
+              />
+            </div>
+            <div className="col-md-6">
+              <Card
+                image="/src/assets/inscripcion.png"
+                description="Descripción 2"
+                buttonText="inscripciones"
+                onClick={() => navigate(handleNavigateInscripciones)}
+              />
+            </div>
+            <div className="col-md-6">
+              <Card
+                image="/src/assets/disciplinas.png"
+                description="Descripción 2"
+                buttonText="diciplinas"
+              />
+            </div>
+            <div className="col-md-6">
+              <Card
+                image="/src/assets/eventos.png"
+                description="Descripción 2"
+                buttonText="Eventos"
+              />
+            </div>
+          </div>
+        </div>
 
-        <Caja titulo='Requisitos'>
-            <p>
-                Las Olimpiadas Científicas tienen como objetivo fomentar la curiosidad y el
-                pensamiento crítico en jóvenes estudiantes a través de desafíos académicos.
-            </p>
-        </Caja>
-        
-        <Caja titulo='Áreas'>
-            <p>
-                Las Olimpiadas Científicas tienen como objetivo fomentar la curiosidad y el
-                pensamiento crítico en jóvenes estudiantes a través de desafíos académicos.
-            </p>
-        </Caja>
-    </section>
-    
-    
-);
+        {/* Columna Derecha: Un card grande con Calendario, Noticias y Ayuda */}
+        <div className="col-md-3 right-side">
+          <div className="card long-card">
+            <div className="card-body">
+              {/* Calendario */}
+              <h5 className="title-bar">Calendario</h5>
+              <div className="myCalendarContainer">
+                <Calendar />
+              </div>
+
+              {/* Noticias */}
+              <h5 className="title-bar">Noticias</h5>
+              <div className="news-buttons">
+                <button className="btn vertical-btn btn-news">Ganadores</button>
+                <button className="btn vertical-btn btn-news">
+                  Premiación
+                </button>
+                <button className="btn vertical-btn btn-news">
+                  Próximos eventos
+                </button>
+              </div>
+
+              {/* Ayuda */}
+              <h5 className="title-bar">Ayuda</h5>
+              <div className="help-buttons">
+                <button className="btn vertical-btn btn-help">
+                  Preguntas frecuentes
+                </button>
+                <button className="btn vertical-btn btn-help" >
+                  Contáctanos
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateReclamos}
+                >
+                  Reclamos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default Home;
