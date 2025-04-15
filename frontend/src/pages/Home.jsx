@@ -1,11 +1,24 @@
 // Home.jsx
 import React from "react";
 import "../styles/Home.css";
+import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Importa estilo por defecto
 
 const Home = () => {
+  // Hook para navegar
+  const navigate = useNavigate();
+
+  
+  const handleNavigateReclamos = (e) => {
+    e.preventDefault();
+    navigate("/inscripciones");
+  };
+  const handleNavigateInscripciones = (e) => {
+    e.preventDefault();
+    navigate("/inscripciones");
+  };
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -27,6 +40,7 @@ const Home = () => {
                 image="/src/assets/inscripcion.png"
                 description="Descripción 2"
                 buttonText="inscripciones"
+                onClick={() => navigate(handleNavigateInscripciones)}
               />
             </div>
             <div className="col-md-6">
@@ -74,10 +88,15 @@ const Home = () => {
                 <button className="btn vertical-btn btn-help">
                   Preguntas frecuentes
                 </button>
-                <button className="btn vertical-btn btn-help">
+                <button className="btn vertical-btn btn-help" >
                   Contáctanos
                 </button>
-                <button className="btn vertical-btn btn-help">Reclamos</button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateReclamos}
+                >
+                  Reclamos
+                </button>
               </div>
             </div>
           </div>
