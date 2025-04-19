@@ -196,115 +196,118 @@ const Inscripciones = () => {
 
   return (
     <div className="page-container">
-      <Caja titulo='Tomar en cuenta'>
-        <div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo, alias! Beatae, ullam dolorum...
-        </div>
-      </Caja>
+      <section className='contenedor-form-info'>
+        <Caja titulo='Tomar en cuenta' width='30%'>
+          <div>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo, alias! Beatae, ullam dolorum...
+          </div>
+        </Caja>
 
-      <Caja titulo='Formulario de Inscripcion'>
-        <div className='contenedor-secciones-form'>
-          <section className='seccion-form'>
-            <RegistroForm label='Nombre Completo' name='nombre' value={formData.nombre} onChange={setFormData} />
-            <RegistroForm label='Rude' name='rude' value={formData.rude} onChange={setFormData} />
-            <RegistroForm
-              label='Provincia'
-              name='provincia'
-              type='select'
-              value={formData.provincia}
-              onChange={setFormData}
-              options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))}
-            />
-            <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
-            <RegistroForm
-              label='Nivel/Categoria'
-              name='curso'
-              type='select'
-              value={formData.curso}
-              onChange={setFormData}
-              options={[
-                { value: '', label: 'Seleccione un nivel/categoria' },
-                { value: '3ro Primaria', label: '3ro Primaria' },
-                { value: '4to Primaria', label: '4to Primaria' },
-                { value: '5to Primaria', label: '5to Primaria' },
-                { value: '6to Primaria', label: '6to Primaria' },
-                { value: '1ro Secundaria', label: '1ro Secundaria' },
-                { value: '2do Secundaria', label: '2do Secundaria' },
-                { value: '3ro Secundaria', label: '3ro Secundaria' },
-                { value: '4to Secundaria', label: '4to Secundaria' },
-                { value: '5to Secundaria', label: '5to Secundaria' },
-                { value: '6to Secundaria', label: '6to Secundaria' }
-              ]}
-            />
-          </section>
+        <Caja titulo='Formulario de Inscripcion'>
+          <div className='contenedor-secciones-form'>
+            <section className='seccion-form'>
+              <RegistroForm label='Nombre Completo' name='nombre' value={formData.nombre} onChange={setFormData} />
+              <RegistroForm label='Rude' name='rude' value={formData.rude} onChange={setFormData} />
+              <RegistroForm
+                label='Provincia'
+                name='provincia'
+                type='select'
+                value={formData.provincia}
+                onChange={setFormData}
+                options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))}
+              />
+              <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
+              <RegistroForm
+                label='Nivel/Categoria'
+                name='curso'
+                type='select'
+                value={formData.curso}
+                onChange={setFormData}
+                options={[
+                  { value: '', label: 'Seleccione un nivel/categoria' },
+                  { value: '3ro Primaria', label: '3ro Primaria' },
+                  { value: '4to Primaria', label: '4to Primaria' },
+                  { value: '5to Primaria', label: '5to Primaria' },
+                  { value: '6to Primaria', label: '6to Primaria' },
+                  { value: '1ro Secundaria', label: '1ro Secundaria' },
+                  { value: '2do Secundaria', label: '2do Secundaria' },
+                  { value: '3ro Secundaria', label: '3ro Secundaria' },
+                  { value: '4to Secundaria', label: '4to Secundaria' },
+                  { value: '5to Secundaria', label: '5to Secundaria' },
+                  { value: '6to Secundaria', label: '6to Secundaria' }
+                ]}
+              />
+            </section>
 
-          <section className='seccion-form'>
-            <RegistroForm label='Fecha de nacimiento' name='fechaNac' type='date' value={formData.fechaNac} onChange={setFormData} />
-            <RegistroForm
-              label='Género'
-              name='genero'
-              type='radio'
-              value={formData.genero}
-              onChange={setFormData}
-              options={[
-                { value: 'masculino', label: 'Masculino' },
-                { value: 'femenino', label: 'Femenino' }
-              ]}
-            />
-            <RegistroForm
-              label='Unidad Educativa'
-              name='unidadEducativa'
-              type='select'
-              value={formData.unidadEducativa}
-              onChange={setFormData}
-              options={opcionesFiltradas}
-            />
-            <RegistroForm label='Complemento (opcional)' name='complemento' value={formData.complemento} onChange={setFormData} />
-            <RegistroForm
-              label='Área'
-              name='area'
-              type='select'
-              value={formData.area}
-              onChange={setFormData}
-              options={[
-                { value: '', label: 'Seleccione el área' },
-                { value: 'astronomia y astrofisica', label: 'Astronomia y Astrofisica' },
-                { value: 'biologia', label: 'Biología' },
-                { value: 'fisica', label: 'Fisica' },
-                { value: 'informática', label: 'Informática' },
-                { value: 'matematicas', label: 'Matemáticas' },
-                { value: 'quimica', label: 'Quimica' },
-                { value: 'robótica', label: 'Robótica' }
-              ]}
-            />
-            <div className='contenedor-boton-registrar-est'>
-              <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
-            </div>
-          </section>
-        </div>
-      </Caja>
+            <section className='seccion-form'>
+              <RegistroForm label='Fecha de nacimiento' name='fechaNac' type='date' value={formData.fechaNac} onChange={setFormData} />
+              <RegistroForm
+                label='Género'
+                name='genero'
+                type='radio'
+                value={formData.genero}
+                onChange={setFormData}
+                options={[
+                  { value: 'masculino', label: 'Masculino' },
+                  { value: 'femenino', label: 'Femenino' }
+                ]}
+              />
+              <RegistroForm
+                label='Unidad Educativa'
+                name='unidadEducativa'
+                type='select'
+                value={formData.unidadEducativa}
+                onChange={setFormData}
+                options={opcionesFiltradas}
+              />
+              <RegistroForm label='Complemento (opcional)' name='complemento' value={formData.complemento} onChange={setFormData} />
+              <RegistroForm
+                label='Área'
+                name='area'
+                type='select'
+                value={formData.area}
+                onChange={setFormData}
+                options={[
+                  { value: '', label: 'Seleccione el área' },
+                  { value: 'astronomia y astrofisica', label: 'Astronomia y Astrofisica' },
+                  { value: 'biologia', label: 'Biología' },
+                  { value: 'fisica', label: 'Fisica' },
+                  { value: 'informática', label: 'Informática' },
+                  { value: 'matematicas', label: 'Matemáticas' },
+                  { value: 'quimica', label: 'Quimica' },
+                  { value: 'robótica', label: 'Robótica' }
+                ]}
+              />
+              <div className='contenedor-boton-registrar-est'>
+                <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
+              </div>
+            </section>
+          </div>
+        </Caja>
 
-      <Caja titulo='Estudiantes inscritos'>
-        <DataTable
-          columns={columns}
-          data={rowData}
-          selectableRows
-          selectableRowsNoSelectAll
-          clearSelectedRows={toggleClearSelected}
-          onSelectedRowsChange={({ selectedRows }) => {
-            setSelectedRows(selectedRows);
-            selectedRowsRef.current = selectedRows;
-          }}
-          customStyles={customStyles}
-          noDataComponent="No hay estudiantes inscritos aún"
-          pagination
-          responsive
-        />
-        <div className='contenedor-botones-tabla-est-inscritos'>
-          <BotonForm className='botones-editar-eliminar-tabla-est' texto='Editar' onClick={handleEditar} />
-          <BotonForm className='botones-editar-eliminar-tabla-est' texto='Eliminar' onClick={handleEliminar} />
-        </div>
-      </Caja>
+        <Caja titulo='Estudiantes inscritos'>
+          <DataTable
+            columns={columns}
+            data={rowData}
+            selectableRows
+            selectableRowsNoSelectAll
+            clearSelectedRows={toggleClearSelected}
+            onSelectedRowsChange={({ selectedRows }) => {
+              setSelectedRows(selectedRows);
+              selectedRowsRef.current = selectedRows;
+            }}
+            customStyles={customStyles}
+            noDataComponent="No hay estudiantes inscritos aún"
+            pagination
+            responsive
+          />
+          <div className='contenedor-botones-tabla-est-inscritos'>
+            <BotonForm className='botones-editar-eliminar-tabla-est' texto='Editar' onClick={handleEditar} />
+            <BotonForm className='botones-editar-eliminar-tabla-est' texto='Eliminar' onClick={handleEliminar} />
+          </div>
+        </Caja>
+      </section>
+      
     </div>
   );
 };
