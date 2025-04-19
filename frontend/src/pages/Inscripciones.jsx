@@ -196,13 +196,12 @@ const Inscripciones = () => {
 
   return (
     <div className="page-container">
-      <section className='contenedor-form-info'>
-        <Caja titulo='Tomar en cuenta' width='30%'>
+      <Caja titulo='Tomar en cuenta' width='50%'>
           <div>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo, alias! Beatae, ullam dolorum...
           </div>
         </Caja>
-
+      <section className='contenedor-form-info'>
         <Caja titulo='Formulario de Inscripcion'>
           <div className='contenedor-secciones-form'>
             <section className='seccion-form'>
@@ -237,6 +236,7 @@ const Inscripciones = () => {
                 onChange={setFormData}
                 options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))}
               />
+              <BotonForm className='boton-lista-est' texto='Subir lista'></BotonForm>
             </section>
 
             <section className='seccion-form'>
@@ -274,8 +274,9 @@ const Inscripciones = () => {
             </section>
           </div>
         </Caja>
-
-        <Caja titulo='Estudiantes inscritos'>
+        
+      </section>
+      <Caja titulo='Estudiantes inscritos'>
           <DataTable
             columns={columns}
             data={rowData}
@@ -296,8 +297,7 @@ const Inscripciones = () => {
             <BotonForm className='botones-editar-eliminar-tabla-est' texto='Eliminar' onClick={handleEliminar} />
           </div>
         </Caja>
-      </section>
-      
+        <BotonForm className='boton-boleta-seguimiento' texto='Obtener boleta de seguimiento'/>
     </div>
   );
 };

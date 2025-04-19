@@ -2,11 +2,16 @@
 .contenedor-secciones-form{
     display: flex;
     gap: 1rem;
+    justify-content: center;
 }
 .seccion-form{
     flex: 1; /* 🔁 Ocupa el mismo espacio que sus hermanos */
     padding: 1rem;
     box-sizing: border-box; /* Importante para que padding no rompa el layout */
+    padding: 0;
+    justify-content: center !important;
+    align-items: center;
+    padding-left: 1%;
 }
 .checkbox-multiple-generos{
     display: flex;
@@ -37,6 +42,8 @@
 }
 
 .botones-editar-eliminar-tabla-est{
-    background-color: #E1F4FF !important;
-    color: #52C0FF !important;
+    background-color: #ffff !important;
+    color: #003366 !important;
+    border: 2px solid #003366 !important;
+    padding: 0.5em !important;
 }
