@@ -202,7 +202,7 @@ const Inscripciones = () => {
           </div>
         </Caja>
       <section className='contenedor-form-info'>
-        <Caja titulo='Formulario de Inscripcion'>
+        <Caja titulo='Formulario de Inscripcion' width='98%'>
           <div className='contenedor-secciones-form'>
             <section className='seccion-form'>
               <RegistroForm label='Nombres' name='nombre' value={formData.nombre} onChange={setFormData} />

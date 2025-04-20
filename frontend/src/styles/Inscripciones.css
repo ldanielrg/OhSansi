@@ -1,4 +1,9 @@
-
+.page-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 .contenedor-secciones-form{
     display: flex;
     gap: 1rem;
@@ -46,4 +51,15 @@
     color: #003366 !important;
     border: 2px solid #003366 !important;
     padding: 0.5em !important;
+}
+.contenedor-form-info{
+    width: 80%;
+    --background: linear-gradient(to left, #003366 0%, #e43339 100%);
+    padding: 5px;
+    border-radius: 1rem;
+    overflow: visible;
+    background: #f7ba2b;
+    background: var(--background);
+    position: relative;
+    z-index: 1;
 }
