@@ -13,7 +13,7 @@ const Home = () => {
   
   const handleNavigateReclamos = (e) => {
     e.preventDefault();
-    navigate("/inscripciones");
+    navigate("/reclamos");
   };
   const handleNavigateInscripciones = (e) => {
     e.preventDefault();

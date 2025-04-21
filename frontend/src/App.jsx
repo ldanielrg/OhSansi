@@ -6,7 +6,8 @@ import Home from './pages/Home'
 import Inscripciones from './pages/Inscripciones'
 import Eventos from './pages/Eventos'
 import Nosotros from './pages/Nosotros'
-import Login from './pages/Login'
+import Reclamos from './pages/Reclamos'
+import Login from './pages/login'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -37,10 +38,18 @@ function App() {
         }
       />
       <Route
-        path="/nosotros"
+        path="/eventos"
         element={
           <Layout>
-            <Nosotros />
+            <Eventos />
+          </Layout>
+        }
+      />
+      <Route
+        path="/reclamos"
+        element={
+          <Layout>
+            <Reclamos />
           </Layout>
         }
       />
@@ -49,6 +58,14 @@ function App() {
         element={
           <Layout>
             <Login />
+          </Layout>
+        }
+      />
+      <Route
+        path="/nosotros"
+        element={
+          <Layout>
+            <Nosotros />
           </Layout>
         }
       />
