@@ -41,9 +41,10 @@
 }
 
 .contenedor-form-info{
+    background-color: #003366;
+    width: 100%;
     display: flex;
-    flex-direction: row;
-    gap: 10px;
+    flex-direction: column;
 }
 
 .botones-editar-eliminar-tabla-est{
@@ -52,6 +53,14 @@
     border: 2px solid #003366 !important;
     padding: 0.5em !important;
 }
-.contenedor-form-info{
-    width: 100%;
+.boton-eliminar-form{
+    display: flex;
+    justify-content: end;
+}
+.boton-eliminar-form-bf{
+    margin-top: 0 !important;
+}
+.div-boton-guardar-form-est{
+    display: flex;
+    justify-content: center;
 }

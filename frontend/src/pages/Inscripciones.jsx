@@ -202,6 +202,9 @@ const Inscripciones = () => {
           </div>
       </Caja>
       <section className='contenedor-form-info'>
+        <div className='boton-eliminar-form'>
+          <BotonForm texto='X' className='boton-eliminar-form-bf'></BotonForm>
+        </div>
         <Caja titulo='Formulario de Inscripcion' >
           <div className='contenedor-secciones-form'>
             <section className='seccion-form'>
@@ -275,29 +278,33 @@ const Inscripciones = () => {
           </div>
         </Caja>
         
-      </section>
-      <Caja titulo='Estudiantes inscritos'>
+      
+        <Caja titulo='Estudiantes inscritos'>
           <DataTable
-            columns={columns}
-            data={rowData}
-            selectableRows
-            selectableRowsNoSelectAll
-            clearSelectedRows={toggleClearSelected}
-            onSelectedRowsChange={({ selectedRows }) => {
-              setSelectedRows(selectedRows);
-              selectedRowsRef.current = selectedRows;
-            }}
-            customStyles={customStyles}
-            noDataComponent="Aqui veras a los estudiantes que inscribiste."
-            pagination
-            responsive
+              columns={columns}
+              data={rowData}
+              selectableRows
+              selectableRowsNoSelectAll
+              clearSelectedRows={toggleClearSelected}
+              onSelectedRowsChange={({ selectedRows }) => {
+                setSelectedRows(selectedRows);
+                selectedRowsRef.current = selectedRows;
+              }}
+              customStyles={customStyles}
+              noDataComponent="Aqui veras a los estudiantes que inscribiste."
+              pagination
+              responsive
           />
           <div className='contenedor-botones-tabla-est-inscritos'>
             <BotonForm className='botones-editar-eliminar-tabla-est' texto='Editar' onClick={handleEditar} />
             <BotonForm className='botones-editar-eliminar-tabla-est' texto='Eliminar' onClick={handleEliminar} />
           </div>
         </Caja>
-        <BotonForm className='boton-boleta-seguimiento' texto='Obtener boleta de seguimiento'/>
+        <div className='div-boton-guardar-form-est'>
+          <BotonForm className='boton-guardar-form-est' texto='Guardar formulario'/>
+        </div>
+        
+      </section>
     </div>
   );
 };
