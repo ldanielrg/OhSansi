@@ -88,7 +88,7 @@ function App() {
         path="/contactanos"
         element={
           <Layout>
-            <Contactanos/>
+            <Contactanos />
           </Layout>
         }
       />
@@ -96,7 +96,7 @@ function App() {
         path="/preguntasfrecuentes"
         element={
           <Layout>
-            <PreguntasFrecuentes/>
+            <PreguntasFrecuentes />
           </Layout>
         }
       />
