@@ -17,6 +17,8 @@ import ProximosEventos from "./pages/ProximosEventos";
 import Contactanos from "./pages/Contactanos";
 import PreguntasFrecuentes from "./pages/PreguntasFrecuentes";
 import ConfiguracionConvocatoria from "./pages/ConfigurarcionConvocatoria";
+import CrearConfigurarConvocatoria from "./pages/CrearConfiguracionConvocatoria";
+import EditarConfigurarConvocatoria from "./pages/EditarConfiguracionConvocatoria";
 
 function App() {
   return (
@@ -110,10 +112,26 @@ function App() {
         }
       />
       <Route
-        path="/configuracionconvocatoria"
+        path="/configuracion-convocatoria"
         element={
           <Layout>
             <ConfiguracionConvocatoria />
+          </Layout>
+        }
+      />
+      <Route
+        path="/crear-configuracion-convocatoria"
+        element={
+          <Layout>
+            <CrearConfigurarConvocatoria />
+          </Layout>
+        }
+      />
+      <Route
+        path="/editar-configuracion-convocatoria"
+        element={
+          <Layout>
+            <EditarConfigurarConvocatoria />
           </Layout>
         }
       />

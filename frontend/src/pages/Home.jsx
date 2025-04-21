@@ -52,7 +52,7 @@ const Home = () => {
   };
   const handleNavigateConfiguracionConvocatoria = (e) => {
     e.preventDefault();
-    navigate("/configuracionconvocatoria");
+    navigate("/configuracion-convocatoria");
   };
   const handleNavigateConfiguracionEventos = (e) => {
     e.preventDefault();
@@ -168,7 +168,7 @@ const Home = () => {
                   className="btn vertical-btn btn-help "
                   onClick={handleNavigateConfiguracionEventos}
                 >
-                  Anahi Shalom
+                  Oscar Ordoñez
                 </button>
               </div>
             </div>
