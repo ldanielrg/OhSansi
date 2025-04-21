@@ -22,6 +22,14 @@ const Home = () => {
     e.preventDefault();
     navigate("/eventos");
   };
+  const handleNavigateVer = (e) => {
+    e.preventDefault();
+    navigate("/ver");
+  };
+  const handleNavigateDisciplinas = (e) => {
+    e.preventDefault();
+    navigate("/disciplinas");
+  };
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -35,7 +43,7 @@ const Home = () => {
               <Card
                 image="/src/assets/olimpiada.png"
                 buttonText="Ver más"
-                onClick={handleNavigateInscripciones}
+                onClick={handleNavigateVer}
               />
             </div>
             <div className="col-md-6">
@@ -48,8 +56,8 @@ const Home = () => {
             <div className="col-md-6">
               <Card
                 image="/src/assets/disciplinas.png"
-                buttonText="Diciplinas"
-                onClick={handleNavigateInscripciones}
+                buttonText="Disciplinas"
+                onClick={handleNavigateDisciplinas}
               />
             </div>
             <div className="col-md-6">

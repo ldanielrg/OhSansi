@@ -9,6 +9,8 @@ import Nosotros from './pages/Nosotros'
 import Reclamos from './pages/Reclamos'
 import Login from './pages/login'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Ver from './pages/Ver'
+import Disciplinas from './pages/Disciplinas'
 
 function App() {
   return (
@@ -26,6 +28,22 @@ function App() {
         element={
           <Layout>
             <Inscripciones />
+          </Layout>
+        }
+      />
+      <Route
+        path="/ver"
+        element={
+          <Layout>
+            <Ver />
+          </Layout>
+        }
+      />
+      <Route
+        path="/disciplinas"
+        element={
+          <Layout>
+            <Disciplinas />
           </Layout>
         }
       />
