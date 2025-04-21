@@ -50,6 +50,14 @@ const Home = () => {
     e.preventDefault();
     navigate("/preguntasfrecuentes");
   };
+  const handleNavigateConfiguracionConvocatoria = (e) => {
+    e.preventDefault();
+    navigate("/configuracionconvocatoria");
+  };
+  const handleNavigateConfiguracionEventos = (e) => {
+    e.preventDefault();
+    navigate("/configuracioneventos");
+  };
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -143,6 +151,24 @@ const Home = () => {
                   onClick={handleNavigateReclamos}
                 >
                   Reclamos
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateConfiguracionConvocatoria}
+                >
+                  ConfiguracionConvocatoria
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateConfiguracionEventos}
+                >
+                  ConfiguracionEventos
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateConfiguracionEventos}
+                >
+                  Anahi Shalom
                 </button>
               </div>
             </div>

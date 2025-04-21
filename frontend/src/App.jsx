@@ -16,6 +16,7 @@ import Premiacion from "./pages/Premiacion";
 import ProximosEventos from "./pages/ProximosEventos";
 import Contactanos from "./pages/Contactanos";
 import PreguntasFrecuentes from "./pages/PreguntasFrecuentes";
+import ConfiguracionConvocatoria from "./pages/ConfigurarcionConvocatoria";
 
 function App() {
   return (
@@ -105,6 +106,14 @@ function App() {
         element={
           <Layout>
             <Reclamos />
+          </Layout>
+        }
+      />
+      <Route
+        path="/configuracionconvocatoria"
+        element={
+          <Layout>
+            <ConfiguracionConvocatoria />
           </Layout>
         }
       />
