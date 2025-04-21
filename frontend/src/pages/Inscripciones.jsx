@@ -288,7 +288,7 @@ const Inscripciones = () => {
               selectedRowsRef.current = selectedRows;
             }}
             customStyles={customStyles}
-            noDataComponent="No hay estudiantes inscritos aún"
+            noDataComponent="Aqui veras a los estudiantes que inscribiste."
             pagination
             responsive
           />
