@@ -53,13 +53,5 @@
     padding: 0.5em !important;
 }
 .contenedor-form-info{
-    width: 80%;
-    --background: linear-gradient(to left, #003366 0%, #e43339 100%);
-    padding: 5px;
-    border-radius: 1rem;
-    overflow: visible;
-    background: #f7ba2b;
-    background: var(--background);
-    position: relative;
-    z-index: 1;
+    width: 100%;
 }
