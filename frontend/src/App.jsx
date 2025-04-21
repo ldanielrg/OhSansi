@@ -1,18 +1,21 @@
 // App.jsx
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Layout from './components/Layout'
-import Home from './pages/Home'
-import Inscripciones from './pages/Inscripciones'
-import Eventos from './pages/Eventos'
-import Nosotros from './pages/Nosotros'
-import Reclamos from './pages/Reclamos'
-import Login from './pages/login'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Ver from './pages/Ver'
-import Disciplinas from './pages/Disciplinas'
-import Ganadores from './pages/Ganadores'
-import Premiacion from './pages/Premiacion'
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Inscripciones from "./pages/Inscripciones";
+import Eventos from "./pages/Eventos";
+import Nosotros from "./pages/Nosotros";
+import Reclamos from "./pages/Reclamos";
+import Login from "./pages/login";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Ver from "./pages/Ver";
+import Disciplinas from "./pages/Disciplinas";
+import Ganadores from "./pages/Ganadores";
+import Premiacion from "./pages/Premiacion";
+import ProximosEventos from "./pages/ProximosEventos";
+import Contactanos from "./pages/Contactanos";
+import PreguntasFrecuentes from "./pages/PreguntasFrecuentes";
 
 function App() {
   return (
@@ -64,14 +67,39 @@ function App() {
             <Ganadores />
           </Layout>
         }
-      /><Route
-      path="/premiacion"
-      element={
-        <Layout>
-          <Premiacion />
-        </Layout>
-      }
-    />
+      />
+      <Route
+        path="/premiacion"
+        element={
+          <Layout>
+            <Premiacion />
+          </Layout>
+        }
+      />
+      <Route
+        path="/proximoseventos"
+        element={
+          <Layout>
+            <ProximosEventos />
+          </Layout>
+        }
+      />
+      <Route
+        path="/contactanos"
+        element={
+          <Layout>
+            <Contactanos/>
+          </Layout>
+        }
+      />
+      <Route
+        path="/preguntasfrecuentes"
+        element={
+          <Layout>
+            <PreguntasFrecuentes/>
+          </Layout>
+        }
+      />
       <Route
         path="/reclamos"
         element={
@@ -98,7 +126,7 @@ function App() {
       />
       {/* Podrías agregar más rutas si lo requieres */}
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;

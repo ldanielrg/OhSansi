@@ -38,6 +38,18 @@ const Home = () => {
     e.preventDefault();
     navigate("/premiacion");
   };
+  const handleNavigateProximosEventos = (e) => {
+    e.preventDefault();
+    navigate("/proximoseventos");
+  };
+  const handleNavigateContactanos = (e) => {
+    e.preventDefault();
+    navigate("/contactanos");
+  };
+  const handleNavigatePreguntasFrecuentes = (e) => {
+    e.preventDefault();
+    navigate("/preguntasfrecuentes");
+  };
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -105,7 +117,7 @@ const Home = () => {
                 </button>
                 <button
                   className="btn vertical-btn btn-news"
-                  onClick={handleNavigateInscripciones}
+                  onClick={handleNavigateProximosEventos}
                 >
                   Próximos eventos
                 </button>
@@ -116,13 +128,13 @@ const Home = () => {
               <div className="help-buttons">
                 <button
                   className="btn vertical-btn btn-help"
-                  onClick={handleNavigateInscripciones}
+                  onClick={handleNavigatePreguntasFrecuentes}
                 >
                   Preguntas frecuentes
                 </button>
                 <button
                   className="btn vertical-btn btn-help"
-                  onClick={handleNavigateInscripciones}
+                  onClick={handleNavigateContactanos}
                 >
                   Contáctanos
                 </button>
