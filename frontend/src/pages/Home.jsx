@@ -10,7 +10,6 @@ const Home = () => {
   // Hook para navegar
   const navigate = useNavigate();
 
-  
   const handleNavigateReclamos = (e) => {
     e.preventDefault();
     navigate("/reclamos");
@@ -18,6 +17,10 @@ const Home = () => {
   const handleNavigateInscripciones = (e) => {
     e.preventDefault();
     navigate("/inscripciones");
+  };
+  const handleNavigateEventos = (e) => {
+    e.preventDefault();
+    navigate("/eventos");
   };
   return (
     <div className="home-container container-fluid">
@@ -31,30 +34,29 @@ const Home = () => {
             <div className="col-md-6">
               <Card
                 image="/src/assets/olimpiada.png"
-                description="Descripción 1"
-                buttonText="ver"
+                buttonText="Ver más"
+                onClick={handleNavigateInscripciones}
               />
             </div>
             <div className="col-md-6">
               <Card
                 image="/src/assets/inscripcion.png"
-                description="Descripción 2"
-                buttonText="inscripciones"
-                onClick={() => navigate(handleNavigateInscripciones)}
+                buttonText="Inscripciones"
+                onClick={handleNavigateInscripciones}
               />
             </div>
             <div className="col-md-6">
               <Card
                 image="/src/assets/disciplinas.png"
-                description="Descripción 2"
-                buttonText="diciplinas"
+                buttonText="Diciplinas"
+                onClick={handleNavigateInscripciones}
               />
             </div>
             <div className="col-md-6">
               <Card
                 image="/src/assets/eventos.png"
-                description="Descripción 2"
                 buttonText="Eventos"
+                onClick={handleNavigateEventos}
               />
             </div>
           </div>
@@ -73,11 +75,22 @@ const Home = () => {
               {/* Noticias */}
               <h5 className="title-bar">Noticias</h5>
               <div className="news-buttons">
-                <button className="btn vertical-btn btn-news">Ganadores</button>
-                <button className="btn vertical-btn btn-news">
+                <button
+                  className="btn vertical-btn btn-news"
+                  onClick={handleNavigateInscripciones}
+                >
+                  Ganadores
+                </button>
+                <button
+                  className="btn vertical-btn btn-news"
+                  onClick={handleNavigateInscripciones}
+                >
                   Premiación
                 </button>
-                <button className="btn vertical-btn btn-news">
+                <button
+                  className="btn vertical-btn btn-news"
+                  onClick={handleNavigateInscripciones}
+                >
                   Próximos eventos
                 </button>
               </div>
@@ -85,10 +98,16 @@ const Home = () => {
               {/* Ayuda */}
               <h5 className="title-bar">Ayuda</h5>
               <div className="help-buttons">
-                <button className="btn vertical-btn btn-help">
+                <button
+                  className="btn vertical-btn btn-help"
+                  onClick={handleNavigateInscripciones}
+                >
                   Preguntas frecuentes
                 </button>
-                <button className="btn vertical-btn btn-help" >
+                <button
+                  className="btn vertical-btn btn-help"
+                  onClick={handleNavigateInscripciones}
+                >
                   Contáctanos
                 </button>
                 <button
