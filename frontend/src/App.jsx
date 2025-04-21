@@ -6,7 +6,7 @@ import Home from './pages/Home'
 import Inscripciones from './pages/Inscripciones'
 import Eventos from './pages/Eventos'
 import Nosotros from './pages/Nosotros'
-import Login from './pages/login'
+import Login from './pages/Login'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
