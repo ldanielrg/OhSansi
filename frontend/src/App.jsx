@@ -11,6 +11,8 @@ import Login from './pages/login'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Ver from './pages/Ver'
 import Disciplinas from './pages/Disciplinas'
+import Ganadores from './pages/Ganadores'
+import Premiacion from './pages/Premiacion'
 
 function App() {
   return (
@@ -56,13 +58,20 @@ function App() {
         }
       />
       <Route
-        path="/eventos"
+        path="/ganadores"
         element={
           <Layout>
-            <Eventos />
+            <Ganadores />
           </Layout>
         }
-      />
+      /><Route
+      path="/premiacion"
+      element={
+        <Layout>
+          <Premiacion />
+        </Layout>
+      }
+    />
       <Route
         path="/reclamos"
         element={

@@ -30,6 +30,14 @@ const Home = () => {
     e.preventDefault();
     navigate("/disciplinas");
   };
+  const handleNavigateGanadores = (e) => {
+    e.preventDefault();
+    navigate("/ganadores");
+  };
+  const handleNavigatePremiacion = (e) => {
+    e.preventDefault();
+    navigate("/premiacion");
+  };
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -85,13 +93,13 @@ const Home = () => {
               <div className="news-buttons">
                 <button
                   className="btn vertical-btn btn-news"
-                  onClick={handleNavigateInscripciones}
+                  onClick={handleNavigateGanadores}
                 >
                   Ganadores
                 </button>
                 <button
                   className="btn vertical-btn btn-news"
-                  onClick={handleNavigateInscripciones}
+                  onClick={handleNavigatePremiacion}
                 >
                   Premiación
                 </button>
