@@ -10,20 +10,59 @@ const Home = () => {
   // Hook para navegar
   const navigate = useNavigate();
 
-  
   const handleNavigateReclamos = (e) => {
     e.preventDefault();
-    navigate("/inscripciones");
+    navigate("/reclamos");
   };
   const handleNavigateInscripciones = (e) => {
     e.preventDefault();
     navigate("/inscripciones");
   };
+  const handleNavigateEventos = (e) => {
+    e.preventDefault();
+    navigate("/eventos");
+  };
+  const handleNavigateVer = (e) => {
+    e.preventDefault();
+    navigate("/ver");
+  };
+  const handleNavigateDisciplinas = (e) => {
+    e.preventDefault();
+    navigate("/disciplinas");
+  };
+  const handleNavigateGanadores = (e) => {
+    e.preventDefault();
+    navigate("/ganadores");
+  };
+  const handleNavigatePremiacion = (e) => {
+    e.preventDefault();
+    navigate("/premiacion");
+  };
+  const handleNavigateProximosEventos = (e) => {
+    e.preventDefault();
+    navigate("/proximoseventos");
+  };
+  const handleNavigateContactanos = (e) => {
+    e.preventDefault();
+    navigate("/contactanos");
+  };
+  const handleNavigatePreguntasFrecuentes = (e) => {
+    e.preventDefault();
+    navigate("/preguntasfrecuentes");
+  };
+  const handleNavigateConfiguracionConvocatoria = (e) => {
+    e.preventDefault();
+    navigate("/configuracion-convocatoria");
+  };
+  const handleNavigateConfiguracionEventos = (e) => {
+    e.preventDefault();
+    navigate("/configuracioneventos");
+  };
   return (
     <div className="home-container container-fluid">
       <div className="row">
         {/* Columna Izquierda: Fondo y 4 Cards */}
-        <div className="col-md-9 left-side">
+        <div className="col-md-8 left-side">
           <div className="background-section">
             {/* Asigna aquí tu imagen de fondo o color */}
           </div>
@@ -31,37 +70,36 @@ const Home = () => {
             <div className="col-md-6">
               <Card
                 image="/src/assets/olimpiada.png"
-                description="Descripción 1"
-                buttonText="ver"
+                buttonText="Ver más"
+                onClick={handleNavigateVer}
               />
             </div>
             <div className="col-md-6">
               <Card
                 image="/src/assets/inscripcion.png"
-                description="Descripción 2"
-                buttonText="inscripciones"
-                onClick={() => navigate(handleNavigateInscripciones)}
+                buttonText="Inscripciones"
+                onClick={handleNavigateInscripciones}
               />
             </div>
             <div className="col-md-6">
               <Card
                 image="/src/assets/disciplinas.png"
-                description="Descripción 2"
-                buttonText="diciplinas"
+                buttonText="Disciplinas"
+                onClick={handleNavigateDisciplinas}
               />
             </div>
             <div className="col-md-6">
               <Card
                 image="/src/assets/eventos.png"
-                description="Descripción 2"
                 buttonText="Eventos"
+                onClick={handleNavigateEventos}
               />
             </div>
           </div>
         </div>
 
         {/* Columna Derecha: Un card grande con Calendario, Noticias y Ayuda */}
-        <div className="col-md-3 right-side">
+        <div className="col-md-4 right-side">
           <div className="card long-card">
             <div className="card-body">
               {/* Calendario */}
@@ -73,11 +111,22 @@ const Home = () => {
               {/* Noticias */}
               <h5 className="title-bar">Noticias</h5>
               <div className="news-buttons">
-                <button className="btn vertical-btn btn-news">Ganadores</button>
-                <button className="btn vertical-btn btn-news">
+                <button
+                  className="btn vertical-btn btn-news"
+                  onClick={handleNavigateGanadores}
+                >
+                  Ganadores
+                </button>
+                <button
+                  className="btn vertical-btn btn-news"
+                  onClick={handleNavigatePremiacion}
+                >
                   Premiación
                 </button>
-                <button className="btn vertical-btn btn-news">
+                <button
+                  className="btn vertical-btn btn-news"
+                  onClick={handleNavigateProximosEventos}
+                >
                   Próximos eventos
                 </button>
               </div>
@@ -85,10 +134,16 @@ const Home = () => {
               {/* Ayuda */}
               <h5 className="title-bar">Ayuda</h5>
               <div className="help-buttons">
-                <button className="btn vertical-btn btn-help">
+                <button
+                  className="btn vertical-btn btn-help"
+                  onClick={handleNavigatePreguntasFrecuentes}
+                >
                   Preguntas frecuentes
                 </button>
-                <button className="btn vertical-btn btn-help" >
+                <button
+                  className="btn vertical-btn btn-help"
+                  onClick={handleNavigateContactanos}
+                >
                   Contáctanos
                 </button>
                 <button
@@ -96,6 +151,24 @@ const Home = () => {
                   onClick={handleNavigateReclamos}
                 >
                   Reclamos
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateConfiguracionConvocatoria}
+                >
+                  ConfiguracionConvocatoria
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateConfiguracionEventos}
+                >
+                  ConfiguracionEventos
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateConfiguracionEventos}
+                >
+                  Oscar Ordoñez
                 </button>
               </div>
             </div>

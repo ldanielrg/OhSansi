@@ -31,7 +31,7 @@ const Layout = ({ children }) => {
   return (
     <div>
       {/* Top Bar */}
-      <div className="top-bar"></div>
+      <div className=""></div>
 
       {/* Header con fondo detrás de los logos */}
       <header className="header">

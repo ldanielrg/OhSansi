@@ -1,13 +1,24 @@
 // App.jsx
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Layout from './components/Layout'
-import Home from './pages/Home'
-import Inscripciones from './pages/Inscripciones'
-import Eventos from './pages/Eventos'
-import Nosotros from './pages/Nosotros'
-import Login from './pages/login'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Inscripciones from "./pages/Inscripciones";
+import Eventos from "./pages/Eventos";
+import Nosotros from "./pages/Nosotros";
+import Reclamos from "./pages/Reclamos";
+import Login from "./pages/login";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Ver from "./pages/Ver";
+import Disciplinas from "./pages/Disciplinas";
+import Ganadores from "./pages/Ganadores";
+import Premiacion from "./pages/Premiacion";
+import ProximosEventos from "./pages/ProximosEventos";
+import Contactanos from "./pages/Contactanos";
+import PreguntasFrecuentes from "./pages/PreguntasFrecuentes";
+import ConfiguracionConvocatoria from "./pages/ConfigurarcionConvocatoria";
+import CrearConfigurarConvocatoria from "./pages/CrearConfiguracionConvocatoria";
+import EditarConfigurarConvocatoria from "./pages/EditarConfiguracionConvocatoria";
 
 function App() {
   return (
@@ -29,6 +40,22 @@ function App() {
         }
       />
       <Route
+        path="/ver"
+        element={
+          <Layout>
+            <Ver />
+          </Layout>
+        }
+      />
+      <Route
+        path="/disciplinas"
+        element={
+          <Layout>
+            <Disciplinas />
+          </Layout>
+        }
+      />
+      <Route
         path="/eventos"
         element={
           <Layout>
@@ -37,10 +64,74 @@ function App() {
         }
       />
       <Route
-        path="/nosotros"
+        path="/ganadores"
         element={
           <Layout>
-            <Nosotros />
+            <Ganadores />
+          </Layout>
+        }
+      />
+      <Route
+        path="/premiacion"
+        element={
+          <Layout>
+            <Premiacion />
+          </Layout>
+        }
+      />
+      <Route
+        path="/proximoseventos"
+        element={
+          <Layout>
+            <ProximosEventos />
+          </Layout>
+        }
+      />
+      <Route
+        path="/contactanos"
+        element={
+          <Layout>
+            <Contactanos />
+          </Layout>
+        }
+      />
+      <Route
+        path="/preguntasfrecuentes"
+        element={
+          <Layout>
+            <PreguntasFrecuentes />
+          </Layout>
+        }
+      />
+      <Route
+        path="/reclamos"
+        element={
+          <Layout>
+            <Reclamos />
+          </Layout>
+        }
+      />
+      <Route
+        path="/configuracion-convocatoria"
+        element={
+          <Layout>
+            <ConfiguracionConvocatoria />
+          </Layout>
+        }
+      />
+      <Route
+        path="/crear-configuracion-convocatoria"
+        element={
+          <Layout>
+            <CrearConfigurarConvocatoria />
+          </Layout>
+        }
+      />
+      <Route
+        path="/editar-configuracion-convocatoria"
+        element={
+          <Layout>
+            <EditarConfigurarConvocatoria />
           </Layout>
         }
       />
@@ -52,9 +143,17 @@ function App() {
           </Layout>
         }
       />
+      <Route
+        path="/nosotros"
+        element={
+          <Layout>
+            <Nosotros />
+          </Layout>
+        }
+      />
       {/* Podrías agregar más rutas si lo requieres */}
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;
