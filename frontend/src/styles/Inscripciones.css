@@ -42,9 +42,11 @@
 
 .contenedor-form-info{
     background-color: #003366;
-    width: 100%;
+    width: 80%;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    border-radius: 12px;
 }
 
 .botones-editar-eliminar-tabla-est{
@@ -54,16 +56,24 @@
     padding: 0.5em !important;
 }
 .boton-eliminar-form{
+    width: 100%;
     display: flex;
     justify-content: end;
 }
 .boton-eliminar-form-bf{
     margin-top: 0 !important;
+    border-radius: 35px !important;
 }
 .div-boton-guardar-form-est{
     display: flex;
     justify-content: center;
 }
+
+.boton-guardar-form-est{
+    border: 2px solid white !important;
+    margin-bottom: 10px !important;    
+}
+
 .boton-añadir-formularios{
     background-color: #003366;
     color: #ffff;

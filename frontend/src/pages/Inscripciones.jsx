@@ -177,7 +177,7 @@ const Inscripciones = () => {
             <BotonForm texto='X' className='boton-eliminar-form-bf' onClick={() => setShowFormulario(false)} />
           </div>
 
-          <Caja titulo='Formulario de Inscripcion'>
+          <Caja titulo='Formulario de Inscripcion' width='99%' className='caja-formulario-est'>
             <div className='contenedor-secciones-form'>
               <section className='seccion-form'>
                 <RegistroForm label='Nombres' name='nombre' value={formData.nombre} onChange={setFormData} />
@@ -201,7 +201,7 @@ const Inscripciones = () => {
             </div>
           </Caja>
 
-          <Caja titulo='Estudiantes inscritos'>
+          <Caja titulo='Estudiantes inscritos' width='99%'>
             <DataTable columns={columns} data={rowData} selectableRows selectableRowsNoSelectAll clearSelectedRows={toggleClearSelected} onSelectedRowsChange={({ selectedRows }) => { setSelectedRows(selectedRows); selectedRowsRef.current = selectedRows; }} customStyles={customStyles} noDataComponent="Aqui veras a los estudiantes que inscribiste." pagination responsive />
             <div className='contenedor-botones-tabla-est-inscritos'>
               <BotonForm className='botones-editar-eliminar-tabla-est' texto='Editar' onClick={handleEditar} />
