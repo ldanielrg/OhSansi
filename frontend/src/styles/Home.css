@@ -1,13 +1,20 @@
 /* Home.css */
 
-/* Sección de fondo en la parte superior del lado izquierdo */
+/** Sección de fondo en la parte superior del lado izquierdo
 .left-side .background-section {
-  height: 400px; /* Ajusta el alto a tu gusto */
+  height: 400px; / Ajusta el alto a tu gusto /
   background: url('/src/assets/fondodos.png') no-repeat center center;
   background-size: cover;
   margin-bottom: 20px;
   margin-top: 20px;
 }
+**/
+
+.left-side .background-section {
+  margin-bottom: 17px;
+  margin-top: 15px;
+}
+
 
 /* Espaciado entre las cards */
 .cards-section .custom-card {
