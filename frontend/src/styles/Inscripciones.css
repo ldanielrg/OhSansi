@@ -81,8 +81,12 @@
 .seccion-crud-formularios{
     width: 80%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: start;
     color: #003366;
     margin:20px auto;
+}
+.para-separar-de-tabla-formularios{
+    display: flex;
+    flex-direction: row;
 }
