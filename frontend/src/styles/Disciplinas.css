@@ -1,0 +1,69 @@
+/* src/styles/Disciplinas.css */
+
+.disciplinas-page {
+    padding: 40px 20px;
+    background-color: #ffffff;
+    min-height: 100vh;
+  }
+  
+  .disciplinas-title {
+    text-align: center;
+    color: #003366;
+    margin-bottom: 32px;
+  }
+  
+  /* Grid de 3 columnas */
+  .disciplinas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  /* Estilos para cada card dentro del grid */
+  .disciplinas-grid > .card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Imagen de la disciplina */
+  .disciplinas-grid .card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+  }
+  
+  /* Título dentro de la card */
+  .disciplinas-grid .card-title {
+    font-size: 1.1rem;
+    color: #333333;
+    margin: 12px;
+    flex-grow: 1;
+  }
+  
+  /* Icono de navegación al final */
+  .disciplinas-grid .card-btn {
+    align-self: flex-end;
+    margin: 0 12px 12px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #003366;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .disciplinas-grid .card-btn:hover {
+    color: #002a5c;
+  }
+  @media (max-width: 768px) {
+    .disciplinas-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+    

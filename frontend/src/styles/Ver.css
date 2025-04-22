@@ -1,0 +1,30 @@
+/* src/styles/Ver.css*/
+.ver-page {
+  padding: 40px 20px;
+  background-color: #f0f4f8;
+  min-height: 100vh;
+}
+.ver-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 30px;
+}
+.ver-container h1,
+.ver-container h2 {
+  color: #003366;
+  margin-bottom: 16px;
+}
+.ver-container p,
+.ver-container li {
+  color: #333333;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.ver-container ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-bottom: 20px;
+}

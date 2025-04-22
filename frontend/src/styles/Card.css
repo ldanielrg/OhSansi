@@ -26,7 +26,8 @@
 }
 .card-img-top {
   /* Cambia margin si prefieres */
-  padding: 20px 20px 0 20px; 
+  padding: 20px 20px 0 20px;
+  border-radius: 20px !important;  
 }
 
 .card-body {
@@ -37,4 +38,12 @@
   background-color: #FFFFFF !important;
   color: #003366 !important;
   border: 1px solid #003366; ;
+}
+
+.btn-icon {
+  width: 60px;   /* ancho */
+  height: 60px;  /* alto */
+  object-fit: contain;
+  display: block;
+  margin: 0 auto; /* centra el icono dentro de su contenedor */
 }

@@ -69,28 +69,28 @@ const Home = () => {
           <div className="cards-section row">
             <div className="col-md-6">
               <Card
-                image="/src/assets/olimpiada.png"
+                image="/src/assets/hd/olimpiadas.jpg"
                 buttonText="Ver más"
                 onClick={handleNavigateVer}
               />
             </div>
             <div className="col-md-6">
               <Card
-                image="/src/assets/inscripcion.png"
+                image="/src/assets/hd/inscripciones.jpg"
                 buttonText="Inscripciones"
                 onClick={handleNavigateInscripciones}
               />
             </div>
             <div className="col-md-6">
               <Card
-                image="/src/assets/disciplinas.png"
+                image="/src/assets/hd/disciplinas.jpg"
                 buttonText="Disciplinas"
                 onClick={handleNavigateDisciplinas}
               />
             </div>
             <div className="col-md-6">
               <Card
-                image="/src/assets/eventos.png"
+                image="/src/assets/hd/eventos.jpg"
                 buttonText="Eventos"
                 onClick={handleNavigateEventos}
               />

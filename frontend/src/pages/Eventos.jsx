@@ -102,13 +102,7 @@ const Eventos = () => {
             >
               Editar
             </button>
-            <button
-              className="btn-primary"
-              onClick={handleVerEvento}
-              disabled={!selectedEvent}
-            >
-              Ver
-            </button>
+            
             <button
               className="btn-primary"
               onClick={handleEliminarEvento}
