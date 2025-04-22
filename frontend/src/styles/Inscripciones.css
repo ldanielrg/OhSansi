@@ -1,12 +1,22 @@
-
+.page-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 .contenedor-secciones-form{
     display: flex;
     gap: 1rem;
+    justify-content: center;
 }
 .seccion-form{
     flex: 1; /* 🔁 Ocupa el mismo espacio que sus hermanos */
     padding: 1rem;
     box-sizing: border-box; /* Importante para que padding no rompa el layout */
+    padding: 0;
+    justify-content: center !important;
+    align-items: center;
+    padding-left: 1%;
 }
 .checkbox-multiple-generos{
     display: flex;
@@ -29,7 +39,64 @@
     justify-content: end;
     gap: 10px;
 }
+
+.contenedor-form-info{
+    background-color: #003366;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 12px;
+}
+
 .botones-editar-eliminar-tabla-est{
-    background-color: #E1F4FF !important;
-    color: #52C0FF !important;
+    background-color: #ffff !important;
+    color: #003366 !important;
+    border: 2px solid #003366 !important;
+    padding: 0.5em !important;
+}
+.boton-eliminar-form{
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+.boton-eliminar-form-bf{
+    margin-top: 0 !important;
+    border-radius: 35px !important;
+}
+.div-boton-guardar-form-est{
+    display: flex;
+    justify-content: center;
+}
+
+.boton-guardar-form-est{
+    border: 2px solid white !important;
+    margin-bottom: 10px !important;    
+}
+
+.boton-añadir-formularios{
+    background-color: #003366;
+    color: #ffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    border-radius: 40px;
+    margin-right: 0.5%;
+}
+.boton-añadir-formularios:hover{
+    background-color: #0077cc;
+}
+.seccion-crud-formularios{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    color: #003366;
+    margin:20px auto;
+}
+.para-separar-de-tabla-formularios{
+    display: flex;
+    flex-direction: row;
 }

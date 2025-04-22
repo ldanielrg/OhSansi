@@ -39,7 +39,13 @@
 
 /* Navbar */
 .custom-navbar {
-  background-color: #003366;
+  --background: linear-gradient(to left, #003366 0%, #e43339 100%);
+    padding: 5px;
+    overflow: visible;
+    background: #f7ba2b;
+    background: var(--background);
+    position: relative;
+    z-index: 1;
 }
 
 /* Links del navbar */
