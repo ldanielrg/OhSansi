@@ -1,13 +1,13 @@
-// Login.jsx
+// Nosotros.jsx
 import React from 'react'
 
-const Login = () => {
+const Disciplinas = () => {
   return (
     <div>
-      <h2>Página de Login</h2>
+      <h2>Página de Disciplinas</h2>
       <p>Aquí información sobre la institución/empresa.</p>
     </div>
   )
 }
 
-export default Login
+export default Disciplinas
