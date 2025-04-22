@@ -151,6 +151,14 @@ function App() {
           </Layout>
         }
       />
+      <Route
+        path="/login"
+        element={
+          <Layout>
+            <Login />
+          </Layout>
+        }
+      />
       {/* Podrías agregar más rutas si lo requieres */}
     </Routes>
   );
