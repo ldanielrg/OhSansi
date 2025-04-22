@@ -201,6 +201,12 @@ const Inscripciones = () => {
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo, alias! Beatae, ullam dolorum...
           </div>
       </Caja>
+
+      <section className='seccion-crud-formularios'>
+        <button className='boton-añadir-formularios'>+</button>
+        <h3>Formularios</h3>
+      </section>
+
       <section className='contenedor-form-info'>
         <div className='boton-eliminar-form'>
           <BotonForm texto='X' className='boton-eliminar-form-bf'></BotonForm>

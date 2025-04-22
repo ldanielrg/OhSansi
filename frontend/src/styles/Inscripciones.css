@@ -64,3 +64,25 @@
     display: flex;
     justify-content: center;
 }
+.boton-añadir-formularios{
+    background-color: #003366;
+    color: #ffff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    border-radius: 40px;
+    margin-right: 0.5%;
+}
+.boton-añadir-formularios:hover{
+    background-color: #0077cc;
+}
+.seccion-crud-formularios{
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    color: #003366;
+    margin:20px auto;
+}
