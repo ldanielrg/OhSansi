@@ -8,8 +8,8 @@ import { FaEdit, FaTrash, FaEye , FaRegFile } from 'react-icons/fa';
 
 const Inscripciones = () => {
   const [formData, setFormData] = useState({
-    nombre: '', rude: '', provincia: '', ci: '', curso: '',
-    categoria: '', fechaNac: '', genero: '', unidadEducativa: '', complemento: '', area: ''
+    nombre: '',apellido: '', email: '', ci: '', fechaNac: '', rude: '',
+    area: '', categoria: '', ue: ''
   });
   const [editIndex, setEditIndex] = useState(null);
   const [modoEdicion, setModoEdicion] = useState(false);
@@ -25,13 +25,15 @@ const Inscripciones = () => {
   const [formularioIdCounter, setFormularioIdCounter] = useState(1);
 
   const columns = [
-    { name: 'Nombre Completo', selector: row => row.nombre, sortable: true },
-    { name: 'RUDE', selector: row => row.rude },
-    { name: 'Provincia', selector: row => row.provincia },
-    { name: 'CI/Pasaporte', selector: row => row.ci },
-    { name: 'Curso', selector: row => row.curso },
+    { name: 'Nombre', selector: row => row.nombre, sortable: true },
+    { name: 'Apellido', selector: row => row.apellido, sortable: true },
+    { name: 'Email', selector: row => row.email },
+    { name: 'CI', selector: row => row.ci },
+    { name: 'Fecha de Nacimiento', selector: row => row.fechaNac },
+    { name: 'Rude', selector: row => row.rude },
+    { name: 'Área', selector: row => row.area },
     { name: 'Categoría', selector: row => row.categoria },
-    { name: 'Área', selector: row => row.area }
+    { name: 'UE', selector: row => row.ue }
   ];
 
   const formularioColumns = [
@@ -61,7 +63,7 @@ const Inscripciones = () => {
   };
 
   const handleRegistrar = () => {
-    const { nombre, rude, provincia, ci, curso, categoria, fechaNac, genero, unidadEducativa, complemento, area } = formData;
+    const { nombre, apellido, email, ci, fechaNac, rude, area, categoria, ue } = formData;
 
     if (nombre.length < 6) return alert('El nombre debe tener al menos 6 caracteres.');
     if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) return alert('El nombre solo puede contener letras y espacios.');
@@ -118,8 +120,6 @@ const Inscripciones = () => {
   };
 
   const guardarFormulario = () => {
-
-
     const nuevoFormulario = {
       id: formularioIdCounter,
       estudiantes: [...rowData]
