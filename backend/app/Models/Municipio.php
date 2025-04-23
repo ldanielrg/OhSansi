@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 class Municipio extends Model
 {
 	protected $table = 'municipio';
+	protected $primaryKey = 'id_municipio';
 	public $incrementing = false;
 	public $timestamps = false;
 
@@ -38,11 +39,11 @@ class Municipio extends Model
 
 	public function departamento()
 	{
-		return $this->belongsTo(Departamento::class, 'id_departamento_departamento');
+		return $this->belongsTo(Departamento::class, 'id_departamento_departamento', 'id_departamento');
 	}
 
 	public function unidad_educativas()
 	{
-		return $this->hasMany(UnidadEducativa::class, 'id_municipio_municipio');
+		return $this->hasMany(UnidadEducativa::class, 'id_municipio');
 	}
 }

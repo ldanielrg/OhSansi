@@ -14,11 +14,11 @@ class UnidadEducativaController extends Controller
 
         $resultado = $unidades->map(function ($ue) {
             return [
-                'id' => $ue->id_ue,
-                'nombre' => $ue->nombre_ue,
-                'rue' => $ue->rue_ue,
-                'departamento_id' => $ue->id_depart,
-                'departamento_nombre' => $ue->departamento->nombre_depart ?? '—',
+                'id_ue' => $ue->id_ue,
+                'nombre_ue' => $ue->nombre_ue,
+                'rue' => $ue->rue,
+                'departamento_id' => $ue->id_departamento,
+                'departamento_nombre' => $ue->departamento->nombre_departamento ?? '—',
                 'municipio_id' => $ue->id_municipio,
                 'municipio_nombre' => $ue->municipio->nombre_municipio ?? '—',
             ];

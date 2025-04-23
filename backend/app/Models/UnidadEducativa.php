@@ -26,7 +26,6 @@ class UnidadEducativa extends Model
 {
 	protected $table = 'unidad_educativa';
 	protected $primaryKey = 'id_ue';
-	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [
@@ -43,9 +42,12 @@ class UnidadEducativa extends Model
 
 	public function municipio()
 	{
-		return $this->belongsTo(Municipio::class, 'id_municipio_municipio')
-					->where('municipio.id_municipio', '=', 'unidad_educativa.id_municipio')
-					->where('municipio.id_departamento', '=', 'unidad_educativa.id_departamento');
+		return $this->belongsTo(Municipio::class, 'id_municipio');
+	}
+	public function departamento()
+	{
+		return $this->belongsTo(Departamento::class, 'id_departamento');
+
 	}
 
 	public function formularios()
