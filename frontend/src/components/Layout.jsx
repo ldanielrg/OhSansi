@@ -27,6 +27,11 @@ const Layout = ({ children }) => {
     e.preventDefault();
     navigate("/login");
   };
+  const handleNavigateModificarCuenta = (e) => {
+    e.preventDefault();
+    navigate("/modificar-cuenta");
+  };
+  
 
   return (
     <div>
@@ -118,6 +123,21 @@ const Layout = ({ children }) => {
                 Nosotros
               </a>
             </li>
+            <li className="nav-item me-3">
+              <a
+                className="nav-link text-white"
+                href="#"
+                onClick={handleNavigateModificarCuenta}
+              >
+                <img
+                  src="/src/assets/icono4.svg"
+                  alt="Modificar Cuenta Icon"
+                  style={{ width: "20px", marginRight: "5px" }}
+                />
+                Modificar cuenta
+              </a>
+            </li>
+
           </ul>
 
           {/* Botón "Ingresar" a la derecha */}

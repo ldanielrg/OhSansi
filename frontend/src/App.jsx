@@ -19,6 +19,7 @@ import PreguntasFrecuentes from "./pages/PreguntasFrecuentes";
 import ConfiguracionConvocatoria from "./pages/ConfigurarcionConvocatoria";
 import CrearConfigurarConvocatoria from "./pages/CrearConfiguracionConvocatoria";
 import EditarConfigurarConvocatoria from "./pages/EditarConfiguracionConvocatoria";
+import ModificarCuenta from "./pages/ModificarCuenta";
 
 function App() {
   return (
@@ -148,6 +149,14 @@ function App() {
         element={
           <Layout>
             <Nosotros />
+          </Layout>
+        }
+      />
+      <Route
+        path="/modificar-cuenta"
+        element={
+          <Layout>
+            <ModificarCuenta />
           </Layout>
         }
       />

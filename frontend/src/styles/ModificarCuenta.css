@@ -1,0 +1,22 @@
+.page-container-modificar-cuenta{
+    width: auto;
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+.seccion-formulario-modificar-cuenta{
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.div-label-input-modificar-cuenta{
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    margin-bottom: 5%;
+}
+form{
+    margin-top: 3%;
+}
