@@ -16,6 +16,7 @@ use App\Http\Controllers\CronogramaController;
 use App\Http\Controllers\ConvocatoriaController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\CategoriaController;
 
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
@@ -28,6 +29,7 @@ Route::delete('/unidad-educativa/{id}', [UnidadEducativaController::class, 'dest
 Route::apiResource('/eventos', EventoController::class);
 Route::apiResource('/convocatorias', ConvocatoriaController::class);
 Route::get('/areas', [AreaController::class, 'index']);
+Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
 Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asignarAreas']);
 
 

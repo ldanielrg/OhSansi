@@ -24,7 +24,7 @@ class Comprobante extends Model
 {
 	protected $table = 'comprobante';
 	protected $primaryKey = 'id_comprobante';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [

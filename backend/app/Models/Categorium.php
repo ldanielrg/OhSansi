@@ -27,7 +27,7 @@ class Categorium extends Model
 {
 	protected $table = 'categoria';
 	protected $primaryKey = 'id_categoria';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [

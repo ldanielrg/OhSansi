@@ -30,7 +30,7 @@ class Convocatorium extends Model
 {
 	protected $table = 'convocatoria';
 	protected $primaryKey = 'id_convocatoria';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [

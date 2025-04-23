@@ -17,6 +17,8 @@ const Inscripciones = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleClearSelected, setToggleClearSelected] = useState(false);
   const selectedRowsRef = useRef([]);
+  const [areas, setAreas] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [ue, setUe] = useState([]);
   const [showFormulario, setShowFormulario] = useState(false);
@@ -138,6 +140,14 @@ const Inscripciones = () => {
   };
 
   useEffect(() => {
+    fetch('http://localhost:8000/api/areas')
+      .then(res => res.json())
+      .then(data => setAreas(data));
+
+    fetch('http://localhost:8000/api/categorias')
+      .then(res => res.json())
+      .then(data => setCategorias(data));
+    
     fetch('http://localhost:8000/api/municipios')
       .then(res => res.json())
       .then(data => setMunicipios(data));
@@ -147,7 +157,7 @@ const Inscripciones = () => {
       .then(data => setUe(data));
   }, []);
 
-  const opcionesFiltradas = ue
+  const opcionesFiltradasUE = ue
     .filter(item => item.municipio_id === parseInt(formData.municipio))
     .map(item => ({ value: item.id_ue, label: item.nombre_ue }));
 
@@ -183,16 +193,16 @@ const Inscripciones = () => {
                 <RegistroForm label='Nombres' name='nombre' value={formData.nombre} onChange={setFormData} />
                 <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
                 <RegistroForm label='Fecha de nacimiento' name='fechaNac' type='date' value={formData.fechaNac} onChange={setFormData} />
-                <RegistroForm label='Nivel/Categoria' name='curso' type='select' value={formData.curso} onChange={setFormData} options={[{ value: '', label: 'Seleccione un nivel/categoria' }, { value: '3ro Primaria', label: '3P' }, { value: '4to Primaria', label: '4P' }, { value: '5to Primaria', label: '5P' }, { value: '6to Primaria', label: '6P' }, { value: '1ro Secundaria', label: '1S' }, { value: '2do Secundaria', label: '2S' }, { value: '3ro Secundaria', label: '3S' }, { value: '4to Secundaria', label: '4S' }, { value: '5to Secundaria', label: '5S' }, { value: '6to Secundaria', label: '6S' }]} />
+                <RegistroForm label='Categoria' name='curso' type='select' value={formData.curso} onChange={setFormData} options={[{ value: '', label: 'Seleccione un nivel/categoria' }, { value: '3ro Primaria', label: '3P' }, { value: '4to Primaria', label: '4P' }, { value: '5to Primaria', label: '5P' }, { value: '6to Primaria', label: '6P' }, { value: '1ro Secundaria', label: '1S' }, { value: '2do Secundaria', label: '2S' }, { value: '3ro Secundaria', label: '3S' }, { value: '4to Secundaria', label: '4S' }, { value: '5to Secundaria', label: '5S' }, { value: '6to Secundaria', label: '6S' }]} />
                 <RegistroForm label='Municipio' name='municipio' type='select' value={formData.municipio} onChange={setFormData} options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))} />
                 <BotonForm className='boton-lista-est' texto='Subir lista' />
               </section>
 
               <section className='seccion-form'>
-                <RegistroForm label='Apellidos' name='apellidos' />
+                <RegistroForm label='Apellidos' name='apellido' value={formData.apellido} onChange={setFormData} />
                 <RegistroForm label='Rude' name='rude' value={formData.rude} onChange={setFormData} />
-                <RegistroForm label='Área' name='area' type='select' value={formData.area} onChange={setFormData} options={[{ value: '', label: 'Seleccione el área' }, { value: 'astronomia y astrofisica', label: 'Astronomia y Astrofisica' }, { value: 'biologia', label: 'Biología' }, { value: 'fisica', label: 'Fisica' }, { value: 'informática', label: 'Informática' }, { value: 'matematicas', label: 'Matemáticas' }, { value: 'quimica', label: 'Quimica' }, { value: 'robótica', label: 'Robótica' }]} />
-                <RegistroForm label='Unidad Educativa' name='unidadEducativa' type='select' value={formData.unidadEducativa} onChange={setFormData} options={opcionesFiltradas} />
+                <RegistroForm label='Área' name='area' type='select' value={formData.area} onChange={setFormData} options={areas.map(area => ({ value: area.id_area, label: area.nombre_area }))} />
+                <RegistroForm label='Unidad Educativa' name='unidadEducativa' type='select' value={formData.unidadEducativa} onChange={setFormData} options={opcionesFiltradasUE} />
                 <RegistroForm label='Grado' name='grado' />
                 <div className='contenedor-boton-registrar-est'>
                   <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
