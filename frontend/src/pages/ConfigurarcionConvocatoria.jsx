@@ -48,7 +48,7 @@ const ConfiguracionConvocatoria = () => {
           ) : (
             <table className="tabla-config">
               <thead>
-                <tr><th>Nombre</th><th style={{ width: '200px' }}>Descripción</th></tr>
+                <tr><th>Nombre</th><th style={{ width: '500px' }}>Descripción</th></tr>
               </thead>
               <tbody>
                 {convocatorias.map(c => (
