@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-const Logout = () => {
+const Logout2 = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [mensaje, setMensaje] = useState('');
@@ -28,4 +28,4 @@ const Logout = () => {
   );
 };
 
-export default Logout;
+export default Logout2;

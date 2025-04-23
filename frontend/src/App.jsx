@@ -1,13 +1,32 @@
 // App.jsx
 import React from "react";
-import { Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Home from "./pages/Home";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import Footer from "./components/Footer";
+import Login from "./pages/Login2";
 import Inscripciones from "./pages/Inscripciones";
 import Eventos from "./pages/Eventos";
+import Home from "./pages/Home";
+import "./styles/App.css";
+import ProtectedRoute from "./context/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
+import CrearEvento from "./components/CrearEvento";
+import EditarEvento from "./components/EditarEvento";
+import VerEvento from "./components/VerEvento";
+import Logout from './pages/Logout2'
+import CrearUE from './pages/CrearUE'; {/* AGREGUE YO*/}
+import CrearCuentas from "./pages/CrearCuentas";
+import Layout from "./components/Layout";
+import Inscripciones from "./pages/Inscripciones";
 import Nosotros from "./pages/Nosotros";
 import Reclamos from "./pages/Reclamos";
-import Login from "./pages/login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Ver from "./pages/Ver";
 import Disciplinas from "./pages/Disciplinas";

@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 
-const Login = () => {
+const Login2 = () => {
     //Esto es para ver qué tipo de rol está activo (según RoleTabs) y mostrar formulario que le corresponde
     const [rolActivo, setRolActivo] = useState('administrador');
     const { login } = useAuth();
@@ -99,4 +99,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Login2;

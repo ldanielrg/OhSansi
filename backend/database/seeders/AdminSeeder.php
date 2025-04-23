@@ -1,5 +1,10 @@
 <?php
 
+//ESTE SEEDER NO SE USA POR AHORA AL 14/04/2025. 
+//ES SÓLO PARA TENER REFERENCIA DE CÓDIGO.
+
+
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
