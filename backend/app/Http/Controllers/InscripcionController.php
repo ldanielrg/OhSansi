@@ -17,17 +17,18 @@ class InscripcionController extends Controller{
             'registrador.nombre' => 'required|string',
             'registrador.apellido' => 'required|string',
             'registrador.email' => 'required|email',
-            'registrador.ci' => 'required|string',
+            'registrador.ci' => 'required|integer|min:1',
 
             'id_ue' => 'required|integer',
+            'id_formulario_actual' => 'required|integer',
 
             'estudiantes' => 'required|array|min:1',
             'estudiantes.*.nombre' => 'required|string',
             'estudiantes.*.apellido' => 'required|string',
             'estudiantes.*.email' => 'required|email',
-            'estudiantes.*.ci' => 'required|string',
+            'estudiantes.*.ci' => 'required|integer|min:1',
             'estudiantes.*.fecha_nacimiento' => 'required|date',
-            'estudiantes.*.rude' => 'required|string',
+            'estudiantes.*.rude' => 'required|integer|min:1',
             'estudiantes.*.idAarea' => 'required|integer',
             'estudiantes.*.idCategoria' => 'required|integer',
         ]);
@@ -35,17 +36,33 @@ class InscripcionController extends Controller{
         try {
             DB::beginTransaction();
 
-            // 1. Crear registrador
-            $registrador = Registrador::create($request->input('registrador'));
+            $registradorData = $validated['registrador'];
 
-            
+            $registrador = Registrador::firstOrCreate(
+                ['ci' => $registradorData['ci']],
+                $registradorData
+            );
             Log::debug($registrador);
             
+
+            // Obtener el ID del formulario actual desde el request
+            $idFormularioActual = $request->input('id_formulario_actual');
+
             // 2. Crear formulario
-            $formulario = Formulario::create([
-                'id_registrador_registrador' => $registrador->id_registrador,
-                'id_ue_ue' => $request->id_ue
-            ]);
+            // Si es 0, crear uno nuevo
+            if ($idFormularioActual == 0) {
+                $formulario = Formulario::create([
+                    'id_registrador_registrador' => $registrador->id_registrador,
+                    'id_ue_ue' => $request->id_ue
+                ]);
+            } else {
+                // Si no, buscar el formulario existente
+                $formulario = Formulario::find($idFormularioActual);
+                //validar que exista
+                if (!$formulario) {
+                    return response()->json(['error' => 'Formulario no encontrado.'], 404);
+                }
+            }
             Log::debug($formulario);
     
             // 3. Crear estudiantes y asociarlos al formulario
@@ -61,15 +78,29 @@ class InscripcionController extends Controller{
                 ];
 
                 // Crear estudiante asociado al formulario
-                $estudiante = Estudiante::create($estudianteData);
+                $estudiante = Estudiante::firstOrCreate(
+                    ['ci' => $est['ci']],
+                    $estudianteData
+                );
                 Log::debug($estudiante);
-                // Crear inscripción en tabla pivote estudiante_esta_inscrito
-                EstudianteEstaInscrito::create([
+
+                //Verificar que el estudiante no esté inscrito en es AREA-CATEGORIA
+                $yaInscrito = EstudianteEstaInscrito::where([
                     'id_estudiante_estudiante' => $estudiante->id_estudiante,
+                    'id_formulario_formulario' => $formulario->id_formulario,
                     'id_area_area' => $est['idAarea'],
                     'id_categ' => $est['idCategoria'],
-                    'id_formulario_formulario' => $formulario->id_formulario
-                ]);
+                ])->exists();
+
+                // Crear inscripción en tabla pivote estudiante_esta_inscrito
+                if (!$yaInscrito) {
+                    EstudianteEstaInscrito::create([
+                        'id_estudiante_estudiante' => $estudiante->id_estudiante,
+                        'id_area_area' => $est['idAarea'],
+                        'id_categ' => $est['idCategoria'],
+                        'id_formulario_formulario' => $formulario->id_formulario
+                    ]);
+                }
             }
 
             DB::commit();
