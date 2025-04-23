@@ -163,6 +163,22 @@ function App() {
         }
       />
       <Route
+        path="/crear-evento"
+        element={
+          <Layout>
+            <CrearEvento />
+          </Layout>
+        }
+      />
+      <Route
+        path="/editar-evento"
+        element={
+          <Layout>
+            <EditarEvento />
+          </Layout>
+        }
+      />
+      <Route
         path="/login"
         element={
           <Layout>
