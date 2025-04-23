@@ -3,19 +3,21 @@
     flex-direction: column; /* Esto alinea el label arriba y el input abajo */
     margin-bottom: 1rem;
     font-size: 16px;
-    width: 80%;
+    width: 95%;
+    color: #003366;
+    font-weight: 500;
 }
 .input-registro{
-    background-color: #E4F5FF;
+    background-color: #ffff;
     border: 0.8px solid #3498db; /* Cambia el color como quieras */
-    border-radius: 20px;
+    border-radius: 10px;
     font-size: 1em;
     padding: 0.6em 0.6em 0.6em 1em;
 }
 .input-registro:focus {
     outline: none;
-    border: 2px solid #3498db; /* Color del borde al enfocar */
-    box-shadow: 0 0 3px #3498db; /* Sombra opcional para dar efecto suave */
+    border: 2px solid #003366; /* Color del borde al enfocar */
+    box-shadow: 0 0 3px #003366; /* Sombra opcional para dar efecto suave */
 }  
 .nombre-registro{
     font-size: 1em;
