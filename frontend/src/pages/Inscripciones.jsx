@@ -9,7 +9,7 @@ import { FaEdit, FaTrash, FaEye , FaRegFile } from 'react-icons/fa';
 const Inscripciones = () => {
   const [formData, setFormData] = useState({
     nombre: '',apellido: '', email: '', ci: '', fechaNac: '', rude: '',
-    area: '', categoria: '', ue: ''
+    area: '', categoria: '', ue: '', municipio: ''
   });
   const [editIndex, setEditIndex] = useState(null);
   const [modoEdicion, setModoEdicion] = useState(false);
@@ -63,7 +63,7 @@ const Inscripciones = () => {
   };
 
   const handleRegistrar = () => {
-    const { nombre, apellido, email, ci, fechaNac, rude, area, categoria, ue } = formData;
+    const { nombre, apellido, email, ci, fechaNac, rude, area, categoria, ue, municipio } = formData;
 
     if (nombre.length < 6) return alert('El nombre debe tener al menos 6 caracteres.');
     if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) return alert('El nombre solo puede contener letras y espacios.');
@@ -148,8 +148,8 @@ const Inscripciones = () => {
   }, []);
 
   const opcionesFiltradas = ue
-    .filter(item => item.municipio_id === parseInt(formData.provincia))
-    .map(item => ({ value: item.id, label: item.nombre }));
+    .filter(item => item.municipio_id === parseInt(formData.municipio))
+    .map(item => ({ value: item.id_ue, label: item.nombre_ue }));
 
   return (
     <div className="page-container">
@@ -184,7 +184,7 @@ const Inscripciones = () => {
                 <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
                 <RegistroForm label='Fecha de nacimiento' name='fechaNac' type='date' value={formData.fechaNac} onChange={setFormData} />
                 <RegistroForm label='Nivel/Categoria' name='curso' type='select' value={formData.curso} onChange={setFormData} options={[{ value: '', label: 'Seleccione un nivel/categoria' }, { value: '3ro Primaria', label: '3P' }, { value: '4to Primaria', label: '4P' }, { value: '5to Primaria', label: '5P' }, { value: '6to Primaria', label: '6P' }, { value: '1ro Secundaria', label: '1S' }, { value: '2do Secundaria', label: '2S' }, { value: '3ro Secundaria', label: '3S' }, { value: '4to Secundaria', label: '4S' }, { value: '5to Secundaria', label: '5S' }, { value: '6to Secundaria', label: '6S' }]} />
-                <RegistroForm label='Municipio' name='provincia' type='select' value={formData.provincia} onChange={setFormData} options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))} />
+                <RegistroForm label='Municipio' name='municipio' type='select' value={formData.municipio} onChange={setFormData} options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))} />
                 <BotonForm className='boton-lista-est' texto='Subir lista' />
               </section>
 
