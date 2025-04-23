@@ -139,14 +139,24 @@ const Inscripciones = () => {
     setFormularios(prev => prev.filter(f => f.id !== id));
   };
 
+
+  useEffect(() => {
+    if (formData.area) {
+      fetch(`http://localhost:8000/api/categorias/${formData.area}`)
+        .then(res => res.json())
+        .then(data => setCategorias(data))
+        .catch(error => console.error('Error al obtener categorías:', error));
+    } else {
+      setCategorias([]); // Limpia si no hay área seleccionada
+    }
+  }, [formData.area]);
+  
+
+
   useEffect(() => {
     fetch('http://localhost:8000/api/areas')
       .then(res => res.json())
       .then(data => setAreas(data));
-
-    fetch('http://localhost:8000/api/categorias')
-      .then(res => res.json())
-      .then(data => setCategorias(data));
     
     fetch('http://localhost:8000/api/municipios')
       .then(res => res.json())
@@ -193,7 +203,8 @@ const Inscripciones = () => {
                 <RegistroForm label='Nombres' name='nombre' value={formData.nombre} onChange={setFormData} />
                 <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
                 <RegistroForm label='Fecha de nacimiento' name='fechaNac' type='date' value={formData.fechaNac} onChange={setFormData} />
-                <RegistroForm label='Categoria' name='curso' type='select' value={formData.curso} onChange={setFormData} options={[{ value: '', label: 'Seleccione un nivel/categoria' }, { value: '3ro Primaria', label: '3P' }, { value: '4to Primaria', label: '4P' }, { value: '5to Primaria', label: '5P' }, { value: '6to Primaria', label: '6P' }, { value: '1ro Secundaria', label: '1S' }, { value: '2do Secundaria', label: '2S' }, { value: '3ro Secundaria', label: '3S' }, { value: '4to Secundaria', label: '4S' }, { value: '5to Secundaria', label: '5S' }, { value: '6to Secundaria', label: '6S' }]} />
+                <RegistroForm label='Categoria' name='categoria' type='select' value={formData.categoria} onChange={setFormData} options= {[{ value: '', label: 'Seleccione una Categoria' },...categorias.map(cat => ({ value: cat.id_categoria, label: cat.nombre_categoria }))
+  ]} />
                 <RegistroForm label='Municipio' name='municipio' type='select' value={formData.municipio} onChange={setFormData} options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))} />
                 <BotonForm className='boton-lista-est' texto='Subir lista' />
               </section>
