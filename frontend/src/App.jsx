@@ -24,7 +24,6 @@ import Logout from './pages/Logout2'
 import CrearUE from './pages/CrearUE'; {/* AGREGUE YO*/}
 import CrearCuentas from "./pages/CrearCuentas";
 import Layout from "./components/Layout";
-import Inscripciones from "./pages/Inscripciones";
 import Nosotros from "./pages/Nosotros";
 import Reclamos from "./pages/Reclamos";
 import "bootstrap/dist/css/bootstrap.min.css";
