@@ -9,7 +9,7 @@ import {
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
-import Login from "./pages/login";
+import Login from "./pages/Login2";
 import Inscripciones from "./pages/Inscripciones";
 import Eventos from "./pages/Eventos";
 import Home from "./pages/Home";
@@ -20,7 +20,7 @@ import CrearEvento from "./components/CrearEvento";
 import EditarEvento from "./components/EditarEvento";
 import VerEvento from "./components/VerEvento";
 
-import Logout from './pages/logout'
+import Logout from './pages/Logout2'
 import CrearUE from './pages/CrearUE'; {/* AGREGUE YO*/}
 import CrearCuentas from "./pages/CrearCuentas";
 
