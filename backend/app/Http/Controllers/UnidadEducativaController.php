@@ -50,8 +50,8 @@ class UnidadEducativaController extends Controller
         // Crear el nuevo colegio, INGRESANDO A LA BD
         $nuevaUE = UnidadEducativa::create([
             'nombre_ue' => $request->nombre,
-            'rue_ue' => $request->rue,
-            'id_depart' => $request->departamento_id,
+            'rue' => $request->rue,
+            'id_departamento' => $request->departamento_id,
             'id_municipio' => $request->municipio_id
         ]);
 
@@ -75,8 +75,8 @@ class UnidadEducativaController extends Controller
 
         $ue->update([
             'nombre_ue' => $request->nombre,
-            'rue_ue' => $request->rue,
-            'id_depart' => $request->departamento_id,
+            'rue' => $request->rue,
+            'id_departamento' => $request->departamento_id,
             'id_municipio' => $request->municipio_id
         ]);
 

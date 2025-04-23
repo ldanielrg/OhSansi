@@ -31,23 +31,18 @@ class Formulario extends Model
 {
 	protected $table = 'formulario';
 	protected $primaryKey = 'id_formulario';
-	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [
 		'id_formulario' => 'int',
 		'id_registrador_registrador' => 'int',
-		'rue_unidad_educativa' => 'int',
-		'id_municipio_municipio_unidad_educativa' => 'int',
-		'id_departamento_departamento_municipio_unidad_educativa' => 'int',
+		'id_ue_ue' => 'int',
 		'id_convocatoria_convocatoria' => 'int'
 	];
 
 	protected $fillable = [
 		'id_registrador_registrador',
-		'rue_unidad_educativa',
-		'id_municipio_municipio_unidad_educativa',
-		'id_departamento_departamento_municipio_unidad_educativa',
+		'id_ue_ue',
 		'id_convocatoria_convocatoria'
 	];
 

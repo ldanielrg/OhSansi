@@ -29,7 +29,6 @@ class Estudiante extends Model
 {
 	protected $table = 'estudiante';
 	protected $primaryKey = 'id_estudiante';
-	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [

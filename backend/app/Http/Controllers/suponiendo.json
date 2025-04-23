@@ -1,0 +1,31 @@
+{
+  "registrador": {
+    "nombre": "Juan",
+    "apellido": "Perez",
+    "email": "juan@ejemplo.com",
+    "ci": "72233445"
+  },
+  "id_ue":1,
+  "estudiantes": [
+    {
+      "nombre": "Ana",
+      "apellido": "Lopez",
+      "email": "ana@ejemplo.com",
+      "ci": "9876543",
+      "fecha_nacimiento": "2025-04-22",
+      "rude": "202045612",
+      "idAarea": 1,
+      "idCategoria": 1
+    },
+    {
+      "nombre": "Carlos",
+      "apellido": "Rojas",
+      "email": "Carlos@ejemplo.com",
+      "ci": "8765432",
+      "fecha_nacimiento": "2025-04-23",
+      "rude": "202045613",
+      "idAarea": 1,
+      "idCategoria": 2
+    }
+  ]
+}
