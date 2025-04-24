@@ -121,16 +121,64 @@ const Inscripciones = () => {
     setToggleClearSelected(prev => !prev);
   };
 
+
   const guardarFormulario = () => {
-    const nuevoFormulario = {
-      id: formularioIdCounter,
-      estudiantes: [...rowData]
+    const registrador = {
+      nombre: formData.nombre,
+      apellido: formData.apellido,
+      email: formData.email,
+      ci: parseInt(formData.ci)
     };
-    setFormularios([...formularios, nuevoFormulario]);
-    setFormularioIdCounter(prev => prev + 1);
-    setRowData([]);
-    setShowFormulario(false);
+  
+    const estudiantesTransformados = rowData.map(est => ({
+      nombre: est.nombre,
+      apellido: est.apellido,
+      email: est.email,
+      ci: parseInt(est.ci),
+      fecha_nacimiento: est.fechaNac,
+      rude: parseInt(est.rude),
+      idAarea: parseInt(est.area),
+      idCategoria: parseInt(est.categoria)
+    }));
+  
+    const formularioPayload = {
+      registrador,
+      id_ue: parseInt(formData.unidadEducativa),
+      id_formulario_actual: formularioIdCounter,
+      estudiantes: estudiantesTransformados
+    };
+  
+    fetch('http://localhost:8000/api/formularios', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formularioPayload),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error al guardar el formulario en el servidor.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      alert('Formulario guardado correctamente en el servidor.');
+  
+      // Actualizamos el estado local
+      setFormularios(prev => [...prev, {
+        id: formularioIdCounter,
+        estudiantes: rowData
+      }]);
+      setFormularioIdCounter(prev => prev + 1);
+      setRowData([]);
+      setShowFormulario(false);
+    })
+    .catch(error => {
+      console.error('Error al enviar los datos:', error);
+      alert('Hubo un problema al guardar los datos.');
+    });
   };
+  
 
   const eliminarFormulario = (id) => {
     const confirmacion = window.confirm('¿Deseas eliminar este formulario?');
@@ -203,17 +251,16 @@ const Inscripciones = () => {
                 <RegistroForm label='Nombres' name='nombre' value={formData.nombre} onChange={setFormData} />
                 <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
                 <RegistroForm label='Fecha de nacimiento' name='fechaNac' type='date' value={formData.fechaNac} onChange={setFormData} />
-                <RegistroForm label='Categoria' name='categoria' type='select' value={formData.categoria} onChange={setFormData} options= {[{ value: '', label: 'Seleccione una Categoria' },...categorias.map(cat => ({ value: cat.id_categoria, label: cat.nombre_categoria }))
-  ]} />
-                <RegistroForm label='Municipio' name='municipio' type='select' value={formData.municipio} onChange={setFormData} options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))} />
+                <RegistroForm label='Categoria' name='categoria' type='select' value={formData.categoria} onChange={setFormData} options= {[{ value: '', label: 'Seleccione una Categoria' },...categorias.map(cat => ({ value: cat.id_categoria, label: cat.nombre_categoria }))]} />
+                <RegistroForm label='Municipio' name='municipio' type='select' value={formData.municipio} onChange={setFormData} options={[{value: '', label: 'Seleccione un Municipio' },...municipios.map(mun => ({ value: mun.id, label: mun.nombre }))]} />
                 <BotonForm className='boton-lista-est' texto='Subir lista' />
               </section>
 
               <section className='seccion-form'>
                 <RegistroForm label='Apellidos' name='apellido' value={formData.apellido} onChange={setFormData} />
                 <RegistroForm label='Rude' name='rude' value={formData.rude} onChange={setFormData} />
-                <RegistroForm label='Área' name='area' type='select' value={formData.area} onChange={setFormData} options={areas.map(area => ({ value: area.id_area, label: area.nombre_area }))} />
-                <RegistroForm label='Unidad Educativa' name='unidadEducativa' type='select' value={formData.unidadEducativa} onChange={setFormData} options={opcionesFiltradasUE} />
+                <RegistroForm label='Área' name='area' type='select' value={formData.area} onChange={setFormData} options={[{value: '', label: 'Seleccione una Area' },...areas.map(area => ({ value: area.id_area, label: area.nombre_area }))]} />
+                <RegistroForm label='Unidad Educativa' name='unidadEducativa' type='select' value={formData.unidadEducativa} onChange={setFormData} options={[{value: '', label: 'Seleccione una Unidad Educativa' },...opcionesFiltradasUE]} />
                 <RegistroForm label='Grado' name='grado' />
                 <div className='contenedor-boton-registrar-est'>
                   <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />

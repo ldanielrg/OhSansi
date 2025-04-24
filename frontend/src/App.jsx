@@ -42,17 +42,12 @@ function App() {
   return (
     <Routes>
       <Route
-        path="/"
-        element={
-          <Layout>
+        path="/" element={<Layout>
             <Home />
           </Layout>
         }
       />
-      <Route
-        path="/inscripciones"
-        element={
-          <Layout>
+      <Route path="/inscripciones" element={     <Layout>
             <Inscripciones />
           </Layout>
         }
