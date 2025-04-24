@@ -1,37 +1,52 @@
-/* Fondo base más oscuro */
+:root {
+    --sidebar-width: 10%; /* Cambia este valor (10%, 20%, etc.) para ajustar la anchura */
+}
+
 .role-tabs-wrapper {
-    background-color: #3BAFF0; /* azul fuerte como en tu imagen */
-    padding: 10px;
-    border-radius: 10px;
+    background-color: #003366; /* Azul oscuro */
+    padding: 0.5rem;
+    border-radius: 0.5rem;
     display: flex;
     justify-content: center;
-    width: fit-content;
+    width: calc(100% - 3.3 * var(--sidebar-width)); /* Ajusta el ancho según las barras */
     max-width: 100%;
-    margin-bottom: 20px;
+    margin: 0 auto 1.5rem; /* Centra el contenedor y da espacio inferior */
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
-/* Contenedor interno de los botones */
+/* Asegura que el contenedor externo mantenga las barras */
+.container {
+    display: flex;
+    justify-content: center;
+}
+
+/* Botones y otras configuraciones no necesitan cambios, pero se mantienen */
 .role-tabs {
     display: flex;
-    gap: 6px;
+    gap: 0.5rem;
 }
 
-/* Botones de rol */
 .role-tab {
-    padding: 10px 16px;
+    padding: 0.5rem 1rem;
     border: none;
     background-color: transparent;
     font-weight: 500;
-    color: #002244;
+    color: #FFFFFF;
     cursor: pointer;
-    border-radius: 5px;
-    transition: all 0.2s ease;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    display: inline-block;
 }
 
-/* Estilo de botón activo (resaltado) */
 .role-tab.active {
-    background-color: white;
+    background-color: #FFFFFF;
     color: #003366;
     font-weight: bold;
-    border-bottom: 4px solid #007acc;
+    
+}
+
+.role-tab:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
 }

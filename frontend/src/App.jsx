@@ -20,8 +20,11 @@ import { AuthProvider } from "./context/AuthContext";
 import CrearEvento from "./components/CrearEvento";
 import EditarEvento from "./components/EditarEvento";
 import VerEvento from "./components/VerEvento";
-import Logout from './pages/Logout2'
-import CrearUE from './pages/CrearUE'; {/* AGREGUE YO*/}
+import Logout from "./pages/Logout2";
+import CrearUE from "./pages/CrearUE";
+{
+  /* AGREGUE YO*/
+}
 import CrearCuentas from "./pages/CrearCuentas";
 import Layout from "./components/Layout";
 import Nosotros from "./pages/Nosotros";
@@ -153,7 +156,7 @@ function App() {
           </Layout>
         }
       />
-      
+
       <Route
         path="/nosotros"
         element={
@@ -181,9 +184,11 @@ function App() {
       <Route
         path="/login"
         element={
-          <Layout>
-            <Login />
-          </Layout>
+          <AuthProvider>
+            <Layout>
+              <Login />
+            </Layout>
+          </AuthProvider>
         }
       />
       {/* Podrías agregar más rutas si lo requieres */}
