@@ -1,12 +1,13 @@
 // src/pages/CrearConfigurarConvocatoria.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; // Importa useParams
 import '../styles/ConfiguracionConvocatoria.css';
 
 const CrearConfigurarConvocatoria = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // Obtiene el ID de la URL para modo edición
 
-  // Lists and inputs
+  // Lists and inputs for creating/deleting list items (Grados, Categorias, Areas)
   const [grados, setGrados] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -16,26 +17,52 @@ const CrearConfigurarConvocatoria = () => {
   const [selGradoId, setSelGradoId] = useState(null);
   const [selCategoriaId, setSelCategoriaId] = useState(null);
   const [selAreaId, setSelAreaId] = useState(null);
-  const [selGradoInicial, setSelGradoInicial] = useState('');
-  const [selGradoFinal, setSelGradoFinal] = useState('');
 
-  // Convocatoria data
+  // Data for the specific convocatoria being created/edited
   const [nombreConv, setNombreConv] = useState('');
   const [descConv, setDescConv] = useState('');
-  const [convocatoriaAreas, setConvocatoriaAreas] = useState([]);
+  const [convocatoriaAreas, setConvocatoriaAreas] = useState([]); // This will store the areas added to THIS convocatoria
 
-  // Load lists
+  // State for adding areas to the convocatoria
+  const [selAreaToAddId, setSelAreaToAddId] = useState('');
+  const [selCategoriaToAddId, setSelCategoriaToAddId] = useState('');
+  const [selGradoInicialToAddId, setSelGradoInicialToAddId] = useState('');
+  const [selGradoFinalToAddId, setSelGradoFinalToAddId] = useState('');
+
+
+  // Load lists (Grados, Categorias, Areas) on component mount
   useEffect(() => {
     setGrados(JSON.parse(localStorage.getItem('listaGrados')) || []);
     setCategorias(JSON.parse(localStorage.getItem('listaCategorias')) || []);
     setAreas(JSON.parse(localStorage.getItem('listaAreas')) || []);
   }, []);
 
-  // Handlers for create list items
+  // Load existing convocatoria data if in edit mode (when 'id' is present)
+  useEffect(() => {
+    if (id) {
+      const existingConvocatorias = JSON.parse(localStorage.getItem('convocatorias')) || [];
+      // Find the convocatoria with the matching ID (parse ID from URL string)
+      const convocatoriaToEdit = existingConvocatorias.find(conv => conv.id === parseInt(id));
+
+      if (convocatoriaToEdit) {
+        setNombreConv(convocatoriaToEdit.nombre);
+        setDescConv(convocatoriaToEdit.descripcion);
+        // Load the saved areas for this convocatoria
+        setConvocatoriaAreas(convocatoriaToEdit.areas || []); // Use [] if areas is null/undefined
+      } else {
+        // Handle case where ID is invalid or not found (e.g., redirect)
+        console.error('Convocatoria not found for editing:', id);
+        navigate('/configuracion-convocatoria'); // Redirect back to list
+      }
+    }
+  }, [id, navigate]); // Re-run effect if id or navigate changes
+
+  // --- Handlers for managing Grados, Categorias, Areas Lists ---
+
   const handleCreateGrado = (e) => {
     e.preventDefault();
-    if (!newGrado) return;
-    const item = { id: Date.now(), nombre: newGrado };
+    if (!newGrado.trim()) return; // Prevent adding empty names
+    const item = { id: Date.now(), nombre: newGrado.trim() };
     const updated = [...grados, item];
     setGrados(updated);
     localStorage.setItem('listaGrados', JSON.stringify(updated));
@@ -44,7 +71,8 @@ const CrearConfigurarConvocatoria = () => {
   const handleDeleteGrado = (e) => {
     e.preventDefault();
     if (!selGradoId) return;
-    if (window.confirm('Eliminar grado?')) {
+    // Optional: Add check if grade is used in any convocatoriaArea
+    if (window.confirm(`¿Eliminar grado "${grados.find(g => g.id === selGradoId)?.nombre}"?`)) {
       const updated = grados.filter(g => g.id !== selGradoId);
       setGrados(updated);
       localStorage.setItem('listaGrados', JSON.stringify(updated));
@@ -54,8 +82,8 @@ const CrearConfigurarConvocatoria = () => {
 
   const handleCreateCategoria = (e) => {
     e.preventDefault();
-    if (!newCategoria) return;
-    const item = { id: Date.now(), nombre: newCategoria };
+    if (!newCategoria.trim()) return; // Prevent adding empty names
+    const item = { id: Date.now(), nombre: newCategoria.trim() };
     const updated = [...categorias, item];
     setCategorias(updated);
     localStorage.setItem('listaCategorias', JSON.stringify(updated));
@@ -64,7 +92,8 @@ const CrearConfigurarConvocatoria = () => {
   const handleDeleteCategoria = (e) => {
     e.preventDefault();
     if (!selCategoriaId) return;
-    if (window.confirm('Eliminar categoría?')) {
+     // Optional: Add check if category is used in any convocatoriaArea
+    if (window.confirm(`¿Eliminar categoría "${categorias.find(c => c.id === selCategoriaId)?.nombre}"?`)) {
       const updated = categorias.filter(c => c.id !== selCategoriaId);
       setCategorias(updated);
       localStorage.setItem('listaCategorias', JSON.stringify(updated));
@@ -74,8 +103,8 @@ const CrearConfigurarConvocatoria = () => {
 
   const handleCreateArea = (e) => {
     e.preventDefault();
-    if (!newArea) return;
-    const item = { id: Date.now(), nombre: newArea };
+    if (!newArea.trim()) return; // Prevent adding empty names
+    const item = { id: Date.now(), nombre: newArea.trim() };
     const updated = [...areas, item];
     setAreas(updated);
     localStorage.setItem('listaAreas', JSON.stringify(updated));
@@ -84,7 +113,8 @@ const CrearConfigurarConvocatoria = () => {
   const handleDeleteArea = (e) => {
     e.preventDefault();
     if (!selAreaId) return;
-    if (window.confirm('Eliminar área?')) {
+    // Optional: Add check if area is used in any convocatoriaArea
+    if (window.confirm(`¿Eliminar área "${areas.find(a => a.id === selAreaId)?.nombre}"?`)) {
       const updated = areas.filter(a => a.id !== selAreaId);
       setAreas(updated);
       localStorage.setItem('listaAreas', JSON.stringify(updated));
@@ -92,42 +122,142 @@ const CrearConfigurarConvocatoria = () => {
     }
   };
 
-  // Add area to convocatoria
+  // --- Handlers for managing Areas within the specific Convocatoria ---
+
   const handleAgregarArea = () => {
-    if (!selAreaId || !selCategoriaId || !selGradoInicial || !selGradoFinal) return alert('Completa todos los campos');
-    const area = areas.find(a => a.id === parseInt(selAreaId));
-    const cat = categorias.find(c => c.id === parseInt(selCategoriaId));
-    const gradoI = grados.find(g => g.id === parseInt(selGradoInicial));
-    const gradoF = grados.find(g => g.id === parseInt(selGradoFinal));
+    // Check if required fields are selected
+    if (!selAreaToAddId || !selCategoriaToAddId || !selGradoInicialToAddId || !selGradoFinalToAddId) {
+        alert('Completa todos los campos para agregar un área a la convocatoria.');
+        return;
+    }
+
+    // Find the actual names using the selected IDs
+    const area = areas.find(a => a.id === parseInt(selAreaToAddId));
+    const cat = categorias.find(c => c.id === parseInt(selCategoriaToAddId));
+    const gradoI = grados.find(g => g.id === parseInt(selGradoInicialToAddId));
+    const gradoF = grados.find(g => g.id === parseInt(selGradoFinalToAddId));
+
+     // Basic validation for grade range
+     const gradoInicialIndex = grados.findIndex(g => g.id === parseInt(selGradoInicialToAddId));
+     const gradoFinalIndex = grados.findIndex(g => g.id === parseInt(selGradoFinalToAddId));
+
+     if (gradoInicialIndex > gradoFinalIndex) {
+         alert('El Grado Inicial no puede ser mayor que el Grado Final.');
+         return;
+     }
+
+
+    // Create the new entry for the convocatoriaAreas list
     const entry = {
       area: area.nombre,
       categoria: cat.nombre,
       gradoInicial: gradoI.nombre,
       gradoFinal: gradoF.nombre
+      // Optional: Store IDs as well for more robust data integrity
+      // areaId: parseInt(selAreaToAddId),
+      // categoriaId: parseInt(selCategoriaToAddId),
+      // gradoInicialId: parseInt(selGradoInicialToAddId),
+      // gradoFinalId: parseInt(selGradoFinalToAddId)
     };
+
+    // Add the new entry to the convocatoriaAreas state
     setConvocatoriaAreas([...convocatoriaAreas, entry]);
-    setSelAreaId(''); setSelCategoriaId(''); setSelGradoInicial(''); setSelGradoFinal('');
+
+    // Reset the select inputs after adding
+    setSelAreaToAddId('');
+    setSelCategoriaToAddId('');
+    setSelGradoInicialToAddId('');
+    setSelGradoFinalToAddId('');
   };
 
   const handleRemoveArea = (idx) => {
+    // Filter out the item by its index
     setConvocatoriaAreas(convocatoriaAreas.filter((_, i) => i !== idx));
   };
 
-  const handleCrearConvocatoria = (e) => {
-    e.preventDefault();
-    if (!nombreConv) return alert('Ingresa nombre');
-    const existentes = JSON.parse(localStorage.getItem('convocatorias')) || [];
-    existentes.push({ id: Date.now(), nombre: nombreConv, descripcion: descConv, areas: convocatoriaAreas });
-    localStorage.setItem('convocatorias', JSON.stringify(existentes));
+  // --- Handler for Saving the entire Convocatoria ---
+
+  const handleSaveConvocatoria = (e) => {
+    e.preventDefault(); // Prevent default form submission (page reload)
+
+    // Basic validation for the convocatoria itself
+    if (!nombreConv.trim()) {
+      alert('Ingresa el nombre de la convocatoria.');
+      return;
+    }
+    // Optional: Add validation for description and areas if needed
+    // if (!descConv.trim()) {
+    //     alert('Ingresa la descripción de la convocatoria.');
+    //     return;
+    // }
+    // if (convocatoriaAreas.length === 0) {
+    //      alert('Agrega al menos un área a la convocatoria.');
+    //      return;
+    // }
+
+
+    const existingConvocatorias = JSON.parse(localStorage.getItem('convocatorias')) || [];
+    let updatedConvocatorias;
+
+    if (id) {
+      // --- Edit Mode ---
+      updatedConvocatorias = existingConvocatorias.map(conv =>
+        // Find the convocatoria being edited by its ID
+        conv.id === parseInt(id)
+          ? { // Update its properties
+              ...conv,
+              nombre: nombreConv.trim(),
+              descripcion: descConv.trim(),
+              areas: convocatoriaAreas // Save the current state of convocatoriaAreas
+            }
+          : conv // Keep other convocatorias as they are
+      );
+       alert('Convocatoria actualizada con éxito!');
+
+    } else {
+      // --- Create Mode ---
+
+      // Check if a convocatoria already exists (the one-convocatoria restriction)
+      if (existingConvocatorias.length > 0) {
+           alert('Ya existe una convocatoria. Debes eliminar la convocatoria existente para crear una nueva.');
+           return; // Stop the creation process
+      }
+
+      // Create a new convocatoria object
+      const newConvocatoria = {
+        id: Date.now(), // Use timestamp for a simple unique ID
+        nombre: nombreConv.trim(),
+        descripcion: descConv.trim(),
+        areas: convocatoriaAreas // Save the added areas with the new convocatoria
+      };
+      // Add the new convocatoria to the list
+      updatedConvocatorias = [...existingConvocatorias, newConvocatoria];
+       alert('Convocatoria creada con éxito!');
+    }
+
+    // Save the updated list back to localStorage
+    localStorage.setItem('convocatorias', JSON.stringify(updatedConvocatorias));
+
+    // Navigate back to the main configuration page after saving
     navigate('/configuracion-convocatoria');
   };
+
+  // Handler for the "Salir" button (does not save)
+  const handleExit = () => {
+    // Simply navigate back without saving
+    navigate('/configuracion-convocatoria');
+  };
+
 
   return (
     <div className="config-page">
       <div className="config-container">
-        <div className="config-header">Crear / Configurar Convocatoria</div>
+        {/* Use id to change header based on mode */}
+        <div className="config-header">{id ? 'Editar Convocatoria' : 'Crear Nueva Convocatoria'}</div>
         <div className="config-body">
-          {/* Grados */}
+
+          {/* Secciones para Grados, Categorías, Áreas */}
+          {/* Estas secciones son para configurar las listas globales, no la convocatoria específica */}
           <div className="card">
             <h3>Lista de grados</h3>
             <form className="form-row" onSubmit={handleCreateGrado}>
@@ -139,23 +269,24 @@ const CrearConfigurarConvocatoria = () => {
               <button className="btn-primary" type="submit">Crear</button>
               <button className="btn-primary" onClick={handleDeleteGrado} disabled={!selGradoId}>Eliminar</button>
             </form>
-            <table className="tabla-lista">
-              <thead><tr><th>ID</th><th>Nombre</th></tr></thead>
-              <tbody>
-                {grados.map(g => (
-                  <tr
-                    key={g.id}
-                    onClick={() => setSelGradoId(g.id)}
-                    className={selGradoId === g.id ? 'fila-seleccionada' : ''}
-                  >
-                    <td>{g.id}</td><td>{g.nombre}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="tabla-lista-container"> {/* Added container for scroll */}
+              <table className="tabla-lista">
+                <thead><tr><th>ID</th><th>Nombre</th></tr></thead>
+                <tbody>
+                  {grados.map(g => (
+                    <tr
+                      key={g.id}
+                      onClick={() => setSelGradoId(g.id)}
+                      className={selGradoId === g.id ? 'fila-seleccionada' : ''}
+                    >
+                      <td>{g.id}</td><td>{g.nombre}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          {/* Categorías */}
           <div className="card">
             <h3>Lista de categorías</h3>
             <form className="form-row" onSubmit={handleCreateCategoria}>
@@ -167,23 +298,24 @@ const CrearConfigurarConvocatoria = () => {
               <button className="btn-primary" type="submit">Crear</button>
               <button className="btn-primary" onClick={handleDeleteCategoria} disabled={!selCategoriaId}>Eliminar</button>
             </form>
-            <table className="tabla-lista">
-              <thead><tr><th>ID</th><th>Nombre</th></tr></thead>
-              <tbody>
-                {categorias.map(c => (
-                  <tr
-                    key={c.id}
-                    onClick={() => setSelCategoriaId(c.id)}
-                    className={selCategoriaId === c.id ? 'fila-seleccionada' : ''}
-                  >
-                    <td>{c.id}</td><td>{c.nombre}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+             <div className="tabla-lista-container"> {/* Added container for scroll */}
+              <table className="tabla-lista">
+                <thead><tr><th>ID</th><th>Nombre</th></tr></thead>
+                <tbody>
+                  {categorias.map(c => (
+                    <tr
+                      key={c.id}
+                      onClick={() => setSelCategoriaId(c.id)}
+                      className={selCategoriaId === c.id ? 'fila-seleccionada' : ''}
+                    >
+                      <td>{c.id}</td><td>{c.nombre}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+             </div>
           </div>
 
-          {/* Áreas */}
           <div className="card">
             <h3>Lista de áreas</h3>
             <form className="form-row" onSubmit={handleCreateArea}>
@@ -195,80 +327,100 @@ const CrearConfigurarConvocatoria = () => {
               <button className="btn-primary" type="submit">Crear</button>
               <button className="btn-primary" onClick={handleDeleteArea} disabled={!selAreaId}>Eliminar</button>
             </form>
-            <table className="tabla-lista">
-              <thead><tr><th>ID</th><th>Nombre</th></tr></thead>
-              <tbody>
-                {areas.map(a => (
-                  <tr
-                    key={a.id}
-                    onClick={() => setSelAreaId(a.id)}
-                    className={selAreaId === a.id ? 'fila-seleccionada' : ''}
-                  >
-                    <td>{a.id}</td><td>{a.nombre}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="tabla-lista-container"> {/* Added container for scroll */}
+              <table className="tabla-lista">
+                <thead><tr><th>ID</th><th>Nombre</th></tr></thead>
+                <tbody>
+                  {areas.map(a => (
+                    <tr
+                      key={a.id}
+                      onClick={() => setSelAreaId(a.id)}
+                      className={selAreaId === a.id ? 'fila-seleccionada' : ''}
+                    >
+                      <td>{a.id}</td><td>{a.nombre}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          {/* Nueva convocatoria */}
+          {/* Sección para configurar la Convocatoria específica */}
+          {/* Esta sección usa los datos de las listas globales para definir el contenido de LA convocatoria */}
           <div className="card nueva-convocatoria">
-            <h3>Nueva convocatoria</h3>
-            <form onSubmit={handleCrearConvocatoria}>
+            <h3>Datos de la convocatoria</h3> {/* Updated title */}
+            {/* Formulario principal que se envía para guardar/actualizar la convocatoria */}
+            <form onSubmit={handleSaveConvocatoria}>
               <div className="form-row">
                 <label>
-                  Nombre convocatoria
+                  Nombre convocatoria:
                   <input type="text" value={nombreConv} onChange={e => setNombreConv(e.target.value)} />
                 </label>
-                <label>
-                  Descripción
-                  <textarea rows={2} value={descConv} onChange={e => setDescConv(e.target.value)} />
+                 {/* Descripción ahora está dentro del formulario principal */}
+                <label className="descripcion-convocatoria"> {/* Added class for potential styling */}
+                  Descripción:
+                  {/* La descripción es un campo fijo en el sentido de que siempre está presente en el formulario */}
+                  <textarea rows={4} value={descConv} onChange={e => setDescConv(e.target.value)} />
                 </label>
               </div>
-              <h4>Área de convocatoria</h4>
+
+              {/* Selección de áreas para agregar a la convocatoria */}
+              <h4>Configurar Áreas de Evaluación para esta Convocatoria:</h4>
               <div className="form-row">
-                <select value={selAreaId} onChange={e => setSelAreaId(e.target.value)}>
+                <select value={selAreaToAddId} onChange={e => setSelAreaToAddId(e.target.value)}>
                   <option value="" disabled>Selecciona área</option>
                   {areas.map(a => <option key={a.id} value={a.id}>{a.nombre}</option>)}
                 </select>
-                <select value={selCategoriaId} onChange={e => setSelCategoriaId(e.target.value)}>
+                <select value={selCategoriaToAddId} onChange={e => setSelCategoriaToAddId(e.target.value)}>
                   <option value="" disabled>Selecciona categoría</option>
                   {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
                 </select>
               </div>
               <div className="form-row">
-                <select value={selGradoInicial} onChange={e => setSelGradoInicial(e.target.value)}>
+                <select value={selGradoInicialToAddId} onChange={e => setSelGradoInicialToAddId(e.target.value)}>
                   <option value="" disabled>Grado inicial</option>
                   {grados.map(g => <option key={g.id} value={g.id}>{g.nombre}</option>)}
                 </select>
-                <select value={selGradoFinal} onChange={e => setSelGradoFinal(e.target.value)}>
+                <select value={selGradoFinalToAddId} onChange={e => setSelGradoFinalToAddId(e.target.value)}>
                   <option value="" disabled>Grado final</option>
                   {grados.map(g => <option key={g.id} value={g.id}>{g.nombre}</option>)}
                 </select>
+                 {/* Moved "Agregar" button outside the form-row for better layout control if needed */}
               </div>
-              <button className="btn-primary" type="button" onClick={handleAgregarArea}>Agregar a convocatoria</button>
+              <button className="btn-primary" type="button" onClick={handleAgregarArea} style={{ marginTop: '10px' }}>Agregar Área a Convocatoria</button>
 
+
+              {/* Tabla que muestra las áreas agregadas a la convocatoria */}
+              {/* Esta tabla muestra el contenido que se guardará con LA convocatoria */}
               {convocatoriaAreas.length > 0 && (
-                <table className="tabla-convocatoria-areas">
-                  <thead>
-                    <tr><th>Área</th><th>Categoría</th><th>Grado</th><th></th></tr>
-                  </thead>
-                  <tbody>
-                    {convocatoriaAreas.map((item, idx) => (
-                      <tr key={idx}>
-                        <td>{item.area}</td>
-                        <td>{item.categoria}</td>
-                        <td>{item.gradoInicial === item.gradoFinal ? item.gradoInicial : `${item.gradoInicial} - ${item.gradoFinal}`}</td>
-                        <td><button className="btn-remove" onClick={() => handleRemoveArea(idx)}>×</button></td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="tabla-convocatoria-areas-container" style={{ marginTop: '20px' }}> {/* Added container for scroll */}
+                     <h4>Áreas agregadas a esta Convocatoria:</h4>
+                    <table className="tabla-convocatoria-areas">
+                      <thead>
+                        <tr><th>Área</th><th>Categoría</th><th>Grado</th><th></th></tr>
+                      </thead>
+                      <tbody>
+                        {convocatoriaAreas.map((item, idx) => (
+                          <tr key={idx}> {/* Using index as key is acceptable if list order doesn't change drastically */}
+                            <td>{item.area}</td>
+                            <td>{item.categoria}</td>
+                            <td>{item.gradoInicial === item.gradoFinal ? item.gradoInicial : `${item.gradoInicial} - ${item.gradoFinal}`}</td>
+                            <td><button className="btn-remove" type="button" onClick={() => handleRemoveArea(idx)}>×</button></td> {/* type="button" to prevent form submission */}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                </div>
               )}
 
+              {/* Botones de acción para la Convocatoria */}
               <div className="acciones-container" style={{ marginTop: '2rem' }}>
-                <button className="btn-primary" type="submit" onClick={() => navigate('/configuracion-convocatoria')} >Crear convocatoria</button>
-                <button className="btn-primary" onClick={() => navigate('/configuracion-convocatoria')}>Salir</button>
+                {/* Submit button for the form */}
+                <button className="btn-primary" type="submit">
+                  {id ? 'Guardar cambios de Convocatoria' : 'Crear Convocatoria'} {/* Change button text based on mode */}
+                </button>
+                 {/* Salir button does not submit the form */}
+                <button className="btn-primary" type="button" onClick={handleExit}>Salir</button>
               </div>
             </form>
           </div>

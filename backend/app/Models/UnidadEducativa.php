@@ -1,31 +1,57 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class UnidadEducativa
+ * 
+ * @property int $rue
+ * @property string|null $nombre_ue
+ * @property int $id_municipio_municipio
+ * @property int $id_departamento_departamento_municipio
+ * 
+ * @property Municipio $municipio
+ * @property Collection|Formulario[] $formularios
+ *
+ * @package App\Models
+ */
 class UnidadEducativa extends Model
 {
-    protected $table = 'unidad_educativa';
-    protected $primaryKey = 'id_ue';
-    public $timestamps = false;
+	protected $table = 'unidad_educativa';
+	protected $primaryKey = 'id_ue';
+	public $timestamps = false;
 
-    protected $fillable = [
-        'nombre_ue',
-        'rue_ue',
-        'id_depart',
-        'id_municipio'
-    ];
+	protected $casts = [
+		'id_municipio' => 'int',
+		'id_departamento' => 'int'
+	];
 
-    // RELACION CON DEPARTAMENTO
-    public function departamento()
-    {
-        return $this->belongsTo(Departamento::class, 'id_depart', 'id_depart');
-    }
+	protected $fillable = [
+		'nombre_ue',
+		'rue',
+		'id_municipio',
+		'id_departamento'
+	];
 
-    // RELACION CON MUNICIPIO
-    public function municipio()
-    {
-        return $this->belongsTo(Municipio::class, 'id_municipio', 'id_municipio');
-    }
+	public function municipio()
+	{
+		return $this->belongsTo(Municipio::class, 'id_municipio');
+	}
+	public function departamento()
+	{
+		return $this->belongsTo(Departamento::class, 'id_departamento');
+
+	}
+
+	public function formularios()
+	{
+		return $this->hasMany(Formulario::class, 'rue_unidad_educativa');
+	}
 }

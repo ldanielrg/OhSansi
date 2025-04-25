@@ -1,20 +1,41 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Municipio; 
 
+/**
+ * Class Departamento
+ * 
+ * @property int $id_departamento
+ * @property string|null $nombre_departamento
+ * 
+ * @property Collection|Municipio[] $municipios
+ *
+ * @package App\Models
+ */
 class Departamento extends Model
 {
-    protected $table = 'departamento';
-    protected $primaryKey = 'id_depart';
-    public $timestamps = false;
+	protected $table = 'departamento';
+	protected $primaryKey = 'id_departamento';
+	public $incrementing = true;
+	public $timestamps = false;
 
-    protected $fillable = ['nombre_depart'];
+	protected $casts = [
+		'id_departamento' => 'int'
+	];
 
-    public function municipios()
-    {
-        return $this->hasMany(Municipio::class, 'id_depart', 'id_depart');
-    }
+	protected $fillable = [
+		'nombre_departamento'
+	];
+
+	public function municipios()
+	{
+		return $this->hasMany(Municipio::class, 'id_departamento_departamento');
+	}
 }

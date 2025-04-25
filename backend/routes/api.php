@@ -15,6 +15,8 @@ use App\Http\Controllers\EventoController;
 use App\Http\Controllers\CronogramaController;
 use App\Http\Controllers\ConvocatoriaController;
 use App\Http\Controllers\AreaController;
+use App\Http\Controllers\InscripcionController;
+use App\Http\Controllers\CategoriaController;
 
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
@@ -25,9 +27,9 @@ Route::get('/unidades-educativas', [UnidadEducativaController::class, 'index']);
 Route::put('/unidad-educativa/{id}', [UnidadEducativaController::class, 'update']);
 Route::delete('/unidad-educativa/{id}', [UnidadEducativaController::class, 'destroy']);
 Route::apiResource('/eventos', EventoController::class);
-Route::apiResource('/cronogramas', CronogramaController::class);
 Route::apiResource('/convocatorias', ConvocatoriaController::class);
 Route::get('/areas', [AreaController::class, 'index']);
+Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
 Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asignarAreas']);
 
 
@@ -38,3 +40,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/crear-cuenta', [CuentaController::class, 'store']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 Route::middleware('auth:sanctum')->get('/permisos', [PermisoController::class, 'index']);
+
+
+//INSCRIPCIONES
+Route::post('/formularios', [InscripcionController::class, 'store']);

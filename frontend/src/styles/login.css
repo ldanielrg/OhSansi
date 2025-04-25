@@ -1,0 +1,119 @@
+/* estilos/ChatTheme.css */
+
+/* Contenedor principal de formularios */
+.caja-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #ffffff;        /* fondo blanco */
+  }
+  
+  /* Etiquetas */
+  .caja-body label {
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #333333;
+  }
+  
+  /* Inputs redondeados */
+  .caja-body input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #f5faff;       /* tono muy suave de azul */
+    color: #333333;
+    width: 100%;
+  }
+  
+  /* Botón principal */
+  .caja-body button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #003366;       /* nuestro azul primario */
+    color: #ffffff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .caja-body button:hover {
+    background-color: #002a5c;       /* azul más oscuro al hover */
+  }
+  
+  /* Página de login */
+  .login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0;
+    background-color: #f0f4f8;       /* gris muy claro */
+    min-height: 100vh;
+  }
+  
+  /* Wrapper del formulario */
+  .login-form-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  /* Barra de roles (debajo del header) */
+  .barra-roles-wrapper {
+    width: 100%;
+    background-color: #f0f4f8;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Pestañas de roles */
+  .role-tabs-wrapper {
+    width: 100%;
+    background-color: #003366;       /* azul primario */
+    padding: 10px 20px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Botones de roles */
+  .role-tabs {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+  
+  /* Formulario de login */
+  .formulario-login {
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  /* Wrapper del botón de login */
+  .boton-login-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  
+  /* Botón de login usando nuestra clase .btn-primary */
+  .boton-login-wrapper .btn-primary {
+    padding: 10px 16px;
+    background-color: #003366;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .boton-login-wrapper .btn-primary:hover {
+    background-color: #002a5c;
+  }
+  

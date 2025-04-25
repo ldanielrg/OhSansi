@@ -1,4 +1,7 @@
 <?php
+//ESTE SEEDER NO SE USA POR AHORA AL 14/04/2025. 
+
+
 
 namespace Database\Seeders;
 

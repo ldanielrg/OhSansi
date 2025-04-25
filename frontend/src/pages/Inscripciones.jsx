@@ -8,8 +8,8 @@ import { FaEdit, FaTrash, FaEye , FaRegFile } from 'react-icons/fa';
 
 const Inscripciones = () => {
   const [formData, setFormData] = useState({
-    nombre: '', rude: '', provincia: '', ci: '', curso: '',
-    categoria: '', fechaNac: '', genero: '', unidadEducativa: '', complemento: '', area: ''
+    nombre: '',apellido: '', email: '', ci: '', fechaNac: '', rude: '',
+    area: '', categoria: '', ue: '', municipio: ''
   });
   const [editIndex, setEditIndex] = useState(null);
   const [modoEdicion, setModoEdicion] = useState(false);
@@ -17,6 +17,8 @@ const Inscripciones = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleClearSelected, setToggleClearSelected] = useState(false);
   const selectedRowsRef = useRef([]);
+  const [areas, setAreas] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [ue, setUe] = useState([]);
   const [showFormulario, setShowFormulario] = useState(false);
@@ -25,13 +27,15 @@ const Inscripciones = () => {
   const [formularioIdCounter, setFormularioIdCounter] = useState(1);
 
   const columns = [
-    { name: 'Nombre Completo', selector: row => row.nombre, sortable: true },
-    { name: 'RUDE', selector: row => row.rude },
-    { name: 'Provincia', selector: row => row.provincia },
-    { name: 'CI/Pasaporte', selector: row => row.ci },
-    { name: 'Curso', selector: row => row.curso },
+    { name: 'Nombre', selector: row => row.nombre, sortable: true },
+    { name: 'Apellido', selector: row => row.apellido, sortable: true },
+    { name: 'Email', selector: row => row.email },
+    { name: 'CI', selector: row => row.ci },
+    { name: 'Fecha de Nacimiento', selector: row => row.fechaNac },
+    { name: 'Rude', selector: row => row.rude },
+    { name: 'Área', selector: row => row.area },
     { name: 'Categoría', selector: row => row.categoria },
-    { name: 'Área', selector: row => row.area }
+    { name: 'UE', selector: row => row.ue }
   ];
 
   const formularioColumns = [
@@ -61,7 +65,7 @@ const Inscripciones = () => {
   };
 
   const handleRegistrar = () => {
-    const { nombre, rude, provincia, ci, curso, categoria, fechaNac, genero, unidadEducativa, complemento, area } = formData;
+    const { nombre, apellido, email, ci, fechaNac, rude, area, categoria, ue, municipio } = formData;
 
     if (nombre.length < 6) return alert('El nombre debe tener al menos 6 caracteres.');
     if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) return alert('El nombre solo puede contener letras y espacios.');
@@ -117,18 +121,64 @@ const Inscripciones = () => {
     setToggleClearSelected(prev => !prev);
   };
 
+
   const guardarFormulario = () => {
-
-
-    const nuevoFormulario = {
-      id: formularioIdCounter,
-      estudiantes: [...rowData]
+    const registrador = {
+      nombre: formData.nombre,
+      apellido: formData.apellido,
+      email: formData.email,
+      ci: parseInt(formData.ci)
     };
-    setFormularios([...formularios, nuevoFormulario]);
-    setFormularioIdCounter(prev => prev + 1);
-    setRowData([]);
-    setShowFormulario(false);
+  
+    const estudiantesTransformados = rowData.map(est => ({
+      nombre: est.nombre,
+      apellido: est.apellido,
+      email: est.email,
+      ci: parseInt(est.ci),
+      fecha_nacimiento: est.fechaNac,
+      rude: parseInt(est.rude),
+      idAarea: parseInt(est.area),
+      idCategoria: parseInt(est.categoria)
+    }));
+  
+    const formularioPayload = {
+      registrador,
+      id_ue: parseInt(formData.unidadEducativa),
+      id_formulario_actual: formularioIdCounter,
+      estudiantes: estudiantesTransformados
+    };
+  
+    fetch('http://localhost:8000/api/formularios', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formularioPayload),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error al guardar el formulario en el servidor.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      alert('Formulario guardado correctamente en el servidor.');
+  
+      // Actualizamos el estado local
+      setFormularios(prev => [...prev, {
+        id: formularioIdCounter,
+        estudiantes: rowData
+      }]);
+      setFormularioIdCounter(prev => prev + 1);
+      setRowData([]);
+      setShowFormulario(false);
+    })
+    .catch(error => {
+      console.error('Error al enviar los datos:', error);
+      alert('Hubo un problema al guardar los datos.');
+    });
   };
+  
 
   const eliminarFormulario = (id) => {
     const confirmacion = window.confirm('¿Deseas eliminar este formulario?');
@@ -137,7 +187,25 @@ const Inscripciones = () => {
     setFormularios(prev => prev.filter(f => f.id !== id));
   };
 
+
   useEffect(() => {
+    if (formData.area) {
+      fetch(`http://localhost:8000/api/categorias/${formData.area}`)
+        .then(res => res.json())
+        .then(data => setCategorias(data))
+        .catch(error => console.error('Error al obtener categorías:', error));
+    } else {
+      setCategorias([]); // Limpia si no hay área seleccionada
+    }
+  }, [formData.area]);
+  
+
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/areas')
+      .then(res => res.json())
+      .then(data => setAreas(data));
+    
     fetch('http://localhost:8000/api/municipios')
       .then(res => res.json())
       .then(data => setMunicipios(data));
@@ -147,9 +215,9 @@ const Inscripciones = () => {
       .then(data => setUe(data));
   }, []);
 
-  const opcionesFiltradas = ue
-    .filter(item => item.municipio_id === parseInt(formData.provincia))
-    .map(item => ({ value: item.id, label: item.nombre }));
+  const opcionesFiltradasUE = ue
+    .filter(item => item.municipio_id === parseInt(formData.municipio))
+    .map(item => ({ value: item.id_ue, label: item.nombre_ue }));
 
   return (
     <div className="page-container">
@@ -183,16 +251,16 @@ const Inscripciones = () => {
                 <RegistroForm label='Nombres' name='nombre' value={formData.nombre} onChange={setFormData} />
                 <RegistroForm label='C.I.' name='ci' value={formData.ci} onChange={setFormData} />
                 <RegistroForm label='Fecha de nacimiento' name='fechaNac' type='date' value={formData.fechaNac} onChange={setFormData} />
-                <RegistroForm label='Nivel/Categoria' name='curso' type='select' value={formData.curso} onChange={setFormData} options={[{ value: '', label: 'Seleccione un nivel/categoria' }, { value: '3ro Primaria', label: '3P' }, { value: '4to Primaria', label: '4P' }, { value: '5to Primaria', label: '5P' }, { value: '6to Primaria', label: '6P' }, { value: '1ro Secundaria', label: '1S' }, { value: '2do Secundaria', label: '2S' }, { value: '3ro Secundaria', label: '3S' }, { value: '4to Secundaria', label: '4S' }, { value: '5to Secundaria', label: '5S' }, { value: '6to Secundaria', label: '6S' }]} />
-                <RegistroForm label='Municipio' name='provincia' type='select' value={formData.provincia} onChange={setFormData} options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))} />
+                <RegistroForm label='Categoria' name='categoria' type='select' value={formData.categoria} onChange={setFormData} options= {[{ value: '', label: 'Seleccione una Categoria' },...categorias.map(cat => ({ value: cat.id_categoria, label: cat.nombre_categoria }))]} />
+                <RegistroForm label='Municipio' name='municipio' type='select' value={formData.municipio} onChange={setFormData} options={[{value: '', label: 'Seleccione un Municipio' },...municipios.map(mun => ({ value: mun.id, label: mun.nombre }))]} />
                 <BotonForm className='boton-lista-est' texto='Subir lista' />
               </section>
 
               <section className='seccion-form'>
-                <RegistroForm label='Apellidos' name='apellidos' />
+                <RegistroForm label='Apellidos' name='apellido' value={formData.apellido} onChange={setFormData} />
                 <RegistroForm label='Rude' name='rude' value={formData.rude} onChange={setFormData} />
-                <RegistroForm label='Área' name='area' type='select' value={formData.area} onChange={setFormData} options={[{ value: '', label: 'Seleccione el área' }, { value: 'astronomia y astrofisica', label: 'Astronomia y Astrofisica' }, { value: 'biologia', label: 'Biología' }, { value: 'fisica', label: 'Fisica' }, { value: 'informática', label: 'Informática' }, { value: 'matematicas', label: 'Matemáticas' }, { value: 'quimica', label: 'Quimica' }, { value: 'robótica', label: 'Robótica' }]} />
-                <RegistroForm label='Unidad Educativa' name='unidadEducativa' type='select' value={formData.unidadEducativa} onChange={setFormData} options={opcionesFiltradas} />
+                <RegistroForm label='Área' name='area' type='select' value={formData.area} onChange={setFormData} options={[{value: '', label: 'Seleccione una Area' },...areas.map(area => ({ value: area.id_area, label: area.nombre_area }))]} />
+                <RegistroForm label='Unidad Educativa' name='unidadEducativa' type='select' value={formData.unidadEducativa} onChange={setFormData} options={[{value: '', label: 'Seleccione una Unidad Educativa' },...opcionesFiltradasUE]} />
                 <RegistroForm label='Grado' name='grado' />
                 <div className='contenedor-boton-registrar-est'>
                   <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
