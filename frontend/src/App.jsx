@@ -38,6 +38,7 @@ import ConfiguracionConvocatoria from "./pages/ConfigurarcionConvocatoria";
 import CrearConfigurarConvocatoria from "./pages/CrearConfiguracionConvocatoria";
 import EditarConfigurarConvocatoria from "./pages/EditarConfiguracionConvocatoria";
 import ModificarCuenta from "./pages/ModificarCuenta";
+import Formulario from './pages/Formulario'; //
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
       <Route path="/login" element={<Layout><Login /></Layout>}/>
       <Route path="/logout" element={<Layout><Logout /></Layout>}/>
       <Route path="/modificar-cuenta" element={<Layout><ModificarCuenta /></Layout>}/>
+      <Route path="/formulario/:id" element={<Layout><Formulario /></Layout>} /> 
     </Routes>
     </AuthProvider>
   );
