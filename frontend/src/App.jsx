@@ -62,6 +62,7 @@ function App() {
       <Route path="/editar-evento" element={ <Layout><EditarEvento /></Layout>}/>
       <Route path="/login" element={<Layout><Login /></Layout>}/>
       <Route path="/logout" element={<Layout><Logout /></Layout>}/>
+      <Route path="/modificar-cuenta" element={<Layout><ModificarCuenta /></Layout>}/>
     </Routes>
     </AuthProvider>
   );

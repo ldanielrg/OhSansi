@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import '../styles/ModificarCuenta.css';
 import RegistroForm from '../components/RegistroForm';
 import BotonForm from '../components/BotonForm';
+import { useAuth } from "../context/AuthContext"; 
+
 const ModificarCuenta = () => {
   const [usuario, setUsuario] = useState({
     nombreCuenta: "Juan Pérez",
