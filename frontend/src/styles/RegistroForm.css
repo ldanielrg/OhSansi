@@ -8,7 +8,7 @@
     font-weight: 500;
 }
 .input-registro{
-    background-color: #ffff;
+    background-color: #ffff !important;
     border: 0.8px solid #3498db; /* Cambia el color como quieras */
     border-radius: 10px;
     font-size: 1em;
@@ -32,5 +32,6 @@
     align-items: center;
     margin-bottom: 0.8em;
 }
+
 
 
