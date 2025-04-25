@@ -1,0 +1,42 @@
+/* Estilos generales para la página de edición */
+.editar-evento-page {
+    padding: 2rem;
+    /* background-color: #f8f9fa; */
+  }
+  
+  /* Estilos para la tarjeta (card) */
+  .editar-evento-card {
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Estilo para el encabezado de la tarjeta */
+  .editar-evento-header {
+    background-color: #003366; /* Tu color primario */
+    color: #FFFFFF; /* Texto blanco */
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 1rem 1.25rem;
+  }
+  
+  /* Estilo personalizado para el botón primario (igual que en crear) */
+  .btn-custom-primary {
+    background-color: #003366;
+    border-color: #003366;
+    color: #FFFFFF;
+  }
+  
+  .btn-custom-primary:hover {
+    background-color: #002244;
+    border-color: #001a33;
+    color: #FFFFFF;
+  }
+  
+  /* Estilos para etiquetas y inputs (igual que en crear) */
+  .form-label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+  
+  /* Si necesitas algún ajuste específico SOLO para la página de editar,
+     puedes añadirlo aquí usando las clases .editar-evento-* */

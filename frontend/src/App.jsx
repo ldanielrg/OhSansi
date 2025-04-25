@@ -20,11 +20,13 @@ import { AuthProvider } from "./context/AuthContext";
 import CrearEvento from "./components/CrearEvento";
 import EditarEvento from "./components/EditarEvento";
 import VerEvento from "./components/VerEvento";
-import Logout from './pages/Logout2'
-import CrearUE from './pages/CrearUE'; {/* AGREGUE YO*/}
+import Logout from "./pages/Logout2";
+import CrearUE from "./pages/CrearUE";
+{
+  /* AGREGUE YO*/
+}
 import CrearCuentas from "./pages/CrearCuentas";
 import Layout from "./components/Layout";
-import Inscripciones from "./pages/Inscripciones";
 import Nosotros from "./pages/Nosotros";
 import Reclamos from "./pages/Reclamos";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -154,14 +156,7 @@ function App() {
           </Layout>
         }
       />
-      <Route
-        path="/login"
-        element={
-          <Layout>
-            <Login />
-          </Layout>
-        }
-      />
+
       <Route
         path="/nosotros"
         element={
@@ -171,11 +166,29 @@ function App() {
         }
       />
       <Route
-        path="/login"
+        path="/crear-evento"
         element={
           <Layout>
-            <Login />
+            <CrearEvento />
           </Layout>
+        }
+      />
+      <Route
+        path="/editar-evento"
+        element={
+          <Layout>
+            <EditarEvento />
+          </Layout>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <AuthProvider>
+            <Layout>
+              <Login />
+            </Layout>
+          </AuthProvider>
         }
       />
       {/* Podrías agregar más rutas si lo requieres */}
