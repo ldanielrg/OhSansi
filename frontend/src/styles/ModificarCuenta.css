@@ -14,9 +14,18 @@
 .div-label-input-modificar-cuenta{
     display: flex;
     flex-direction: row;
-    justify-content: end;
+    justify-content: space-between;
+    gap: 70%;
     margin-bottom: 5%;
 }
 form{
     margin-top: 3%;
+}
+.cont-form-mod{
+    width: 40%;
+}
+.ddddddd{
+    background-color: #ffff !important;
+    color: #003366;
+    border: 2px solid #003366;
 }

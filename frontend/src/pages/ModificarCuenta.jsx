@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import '../styles/ModificarCuenta.css';
-
+import RegistroForm from '../components/RegistroForm';
+import BotonForm from '../components/BotonForm';
 const ModificarCuenta = () => {
   const [usuario, setUsuario] = useState({
     nombreCuenta: "Juan Pérez",
@@ -33,60 +34,44 @@ const ModificarCuenta = () => {
   return (
     <div className="page-container-modificar-cuenta">
       <section className="seccion-formulario-modificar-cuenta">
-        <h2>Configuración de cuenta</h2>
+        <h2>Modificacion de la cuenta</h2>
+        <div className="cont-form-mod">
+
+        
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="div-label-input-modificar-cuenta">
-            <label>Nombre de cuenta</label>
-            <input
-              type="text"
-              {...register("nombreCuenta", {
-                required: "Este campo es obligatorio",
-              })}
-            />
+            <RegistroForm label='Nombre'>
+
+            </RegistroForm>
           </div>
           {errors.nombreCuenta && <p>{errors.nombreCuenta.message}</p>}
 
           <div className="div-label-input-modificar-cuenta">
-            <label>Email</label>
-            <input
-              type="email"
-              {...register("email", {
-                required: "Este campo es obligatorio",
-                pattern: {
-                  value: /^\S+@\S+$/i,
-                  message: "Correo inválido",
-                },
-              })}
-            />
+          <RegistroForm label='email'>
+
+            </RegistroForm>
           </div>
           {errors.email && <p>{errors.email.message}</p>}
 
           <div className="div-label-input-modificar-cuenta">
-            <label>Contraseña</label>
-            <input
-              type="password"
-              {...register("password", {
-                required: "Este campo es obligatorio",
-                minLength: {
-                  value: 6,
-                  message: "La contraseña debe tener al menos 6 caracteres",
-                },
-              })}
-            />
+          <RegistroForm label='contraseña'>
+
+          </RegistroForm>
           </div>
           {errors.password && <p>{errors.password.message}</p>}
 
           <div className="div-label-input-modificar-cuenta">
-            <button type="submit">Guardar Cambios</button>
+          <RegistroForm label='Confirmar contraseña'>
+
+          </RegistroForm>
+          </div>
+          <div className="div-label-input-modificar-cuenta">
+            <BotonForm className='ddddddd' texto= 'Volver'type="submit"></BotonForm>
+            <BotonForm texto= 'Confirmar'type="submit"></BotonForm>
           </div>
         </form>
-
-        <div style={{ marginTop: "2rem" }}>
-          <h4>Datos actuales:</h4>
-          <p><strong>Nombre:</strong> {usuario.nombreCuenta}</p>
-          <p><strong>Email:</strong> {usuario.email}</p>
-          <p><strong>Contraseña:</strong> {usuario.password}</p>
         </div>
+
       </section>
     </div>
   );
