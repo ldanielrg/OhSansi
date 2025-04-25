@@ -72,10 +72,7 @@ const Inscripciones = () => {
     if (nombre.length > 60) return alert('El nombre no puede superar los 60 caracteres.');
     if (!/^\d{1,16}$/.test(rude)) return alert('El RUDE debe contener solo números y como máximo 16 dígitos.');
     if (!/^\d{1,8}$/.test(ci)) return alert('El CI/Pasaporte debe contener solo números y como máximo 8 dígitos.');
-    if (complemento.length > 3) return alert('El complemento del CI debe tener como máximo 3 caracteres.');
     if (unidadEducativa.length > 40) return alert('El nombre de la Unidad Educativa no puede superar los 40 caracteres.');
-    if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ.,-]*$/.test(unidadEducativa)) return alert('El nombre de la Unidad Educativa contiene caracteres no válidos.');
-
     if (modoEdicion && editIndex !== null) {
       const nuevosDatos = [...rowData];
       nuevosDatos[editIndex] = formData;
@@ -261,7 +258,6 @@ const Inscripciones = () => {
                 <RegistroForm label='Rude' name='rude' value={formData.rude} onChange={setFormData} />
                 <RegistroForm label='Área' name='area' type='select' value={formData.area} onChange={setFormData} options={[{value: '', label: 'Seleccione una Area' },...areas.map(area => ({ value: area.id_area, label: area.nombre_area }))]} />
                 <RegistroForm label='Unidad Educativa' name='unidadEducativa' type='select' value={formData.unidadEducativa} onChange={setFormData} options={[{value: '', label: 'Seleccione una Unidad Educativa' },...opcionesFiltradasUE]} />
-                <RegistroForm label='Grado' name='grado' />
                 <div className='contenedor-boton-registrar-est'>
                   <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
                 </div>
