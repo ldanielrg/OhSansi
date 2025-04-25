@@ -8,7 +8,7 @@ import RegistroForm from '../components/RegistroForm';
 
 
 const Formulario = () => {
-    const { id } = useParams(); // 🔥 Obtenemos el ID del formulario
+    const { id } = useParams(); // Obtenemos el ID del formulario
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -128,6 +128,8 @@ const Formulario = () => {
     };
 
 
+
+
     return (
     <div className="formulario-page-container">
         <section className='contenedor-form-info'>
@@ -135,7 +137,8 @@ const Formulario = () => {
             <BotonForm texto='X' className='boton-eliminar-form-bf'/>
             </div>
 
-            <Caja titulo='Formulario de Inscripcion' width='99%' className='caja-formulario-est'>
+            <Caja titulo={`Formulario de Inscripción #${id}`} width='99%' className='caja-formulario-est'>
+
             <div className='contenedor-secciones-form'>
                 <section className='seccion-form'>
                 <RegistroForm label='Nombres' name='nombre' value={formData.nombre} onChange={setFormData} />
