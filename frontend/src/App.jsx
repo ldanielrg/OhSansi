@@ -40,6 +40,7 @@ import EditarConfigurarConvocatoria from "./pages/EditarConfiguracionConvocatori
 
 function App() {
   return (
+    <AuthProvider>
     <Routes>
       <Route path="/" element={<Layout><Home /></Layout>}/>
       <Route path="/inscripciones" element={<Layout><Inscripciones /></Layout>}/>
@@ -58,8 +59,9 @@ function App() {
       <Route path="/nosotros" element={<Layout><Nosotros /></Layout>}/>
       <Route path="/crear-evento" element={<Layout><CrearEvento /></Layout>}/>
       <Route path="/editar-evento" element={ <Layout><EditarEvento /></Layout>}/>
-      <Route path="/login" element={ <AuthProvider><Layout><Login /></Layout></AuthProvider>}/>
+      <Route path="/login" element={<Layout><Login /></Layout>}/>
     </Routes>
+    </AuthProvider>
   );
 }
 
