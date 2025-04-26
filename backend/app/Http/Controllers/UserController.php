@@ -9,7 +9,12 @@ class UserController extends Controller
 {
     public function profile(Request $request)
     {
-        return $request->user();
+        return response()->json([
+            'id' => $request->user()->id,
+            'name' => $request->user()->name,
+            'email' => $request->user()->email,
+            'username' => $request->user()->username,
+        ]);
     }
 
     public function update(Request $request)
@@ -26,7 +31,7 @@ class UserController extends Controller
         $user->email = $request->email;
 
         if ($request->filled('password')) {
-            $user->password = $request->password; // Laravel ya hace hashing automático
+            $user->password = Hash::make($request->password);
         }
 
         $user->save();
