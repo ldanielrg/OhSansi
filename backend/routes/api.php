@@ -18,6 +18,8 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\CategoriaController;
 
+use App\Http\Controllers\UserController;
+
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
 Route::get('/municipios', [MunicipioController::class, 'sinDepartamento']);
@@ -44,3 +46,9 @@ Route::middleware('auth:sanctum')->get('/permisos', [PermisoController::class, '
 
 //INSCRIPCIONES
 Route::post('/formularios', [InscripcionController::class, 'store']);
+
+// RECUPERAR DATOS DE USER
+Route::get('/user', [UserController::class, 'profile']);
+Route::put('/user', [UserController::class, 'update']);
+Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'profile']);
+Route::middleware('auth:sanctum')->put('/user', [UserController::class, 'update']);
