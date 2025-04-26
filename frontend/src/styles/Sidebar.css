@@ -1,37 +1,55 @@
+/* Contenedor de la barra lateral */
+/* Simula un list-group o nav vertical oscuro */
 .sidebar {
-    background-color: #52C0FF;
-    width: 15%;
+    background-color: #003366; /* Usa tu azul oscuro para el fondo */
+    width: 15%; /* Mantienes tu ancho porcentual */
     height: auto;
-    padding: 20px;
-    border-radius: 10px;
-    border: 2px solid #ffff;
+    padding: 1rem; /* Espaciado interno tipo Bootstrap (p-4) */
+    border-radius: 0.5rem; /* Bordes redondeados tipo Bootstrap (rounded) */
+    border: 2px solid #FFFFFF; /* Borde blanco alrededor */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
 }
 
+/* Lista de enlaces (Simula list-group o nav flex-column) */
 .sidebar ul {
     list-style: none;
     padding: 0;
+    margin: 0; /* Elimina margen por defecto de la lista */
 }
 
+/* Elementos de la lista (Simula list-group-item o nav-item) */
+.sidebar li {
+    margin-bottom: 0.5rem; /* Espacio entre ítems (mb-2) */
+}
+.sidebar li:last-child {
+     margin-bottom: 0; /* Elimina margen del último ítem */
+}
+
+
+/* Enlaces individuales (Simula list-group-item-action o nav-link) */
 .sidebar a {
     text-decoration: none;
-    color: #ffff;
+    color: #FFFFFF; /* Texto blanco por defecto sobre fondo azul oscuro */
     display: block;
-    padding: 10px 0;
+    padding: 0.75rem 1rem; /* Espaciado interno tipo Bootstrap (py-3 px-4) */
     font-weight: 600;
-    padding-left: 8%;
-    transition: 0.2s;
-    margin: 0.6em;
+    /* Ajusta el padding-left si quieres la indentación original */
+    /* padding-left: 8%; */
+    transition: all 0.2s ease-in-out; /* Transición suave */
+    border-radius: 0.375rem; /* Bordes redondeados pequeños (rounded-sm) */
 }
 
+/* Estilo al pasar el ratón (hover) */
 .sidebar a:hover {
-    background-color: #ffff;
-    color: #52C0FF;
-    border-radius: 5px;
-    transition: 0.2s;
-}
-.sidebar a.active-link {
-    background-color: #ffff;
-    color: #52C0FF;
-    border-radius: 5px;
+    background-color: #FFFFFF; /* Fondo blanco al pasar el ratón */
+    color: #003366; /* Texto azul oscuro al pasar el ratón */
+    /* border-radius: 0.375rem; /* Ya definido arriba, no necesitas repetirlo si es el mismo */
 }
 
+/* Estilo del enlace activo */
+.sidebar a.active-link {
+    background-color: #FFFFFF; /* Fondo blanco para el activo */
+    color: #003366; /* Texto azul oscuro para el activo */
+    font-weight: bold; /* Texto en negrita para el activo */
+    /* border-radius: 0.375rem; /* Ya definido arriba */
+}

@@ -1,41 +1,48 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Evento
  * 
  * @property int $id_evento
- * @property int|null $id_cronog
  * @property string|null $nombre_evento
- * @property string|null $nombre_convocatoria
+ * @property Carbon|null $fecha_inicio
+ * @property Carbon|null $fecha_final
+ * @property int $id_convocatoria_convocatoria
  * 
- * @property Cronograma|null $cronograma
+ * @property Convocatorium $convocatorium
  *
  * @package App\Models
  */
 class Evento extends Model
 {
 	protected $table = 'evento';
-	protected $primaryKey = 'id_evento';
 	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [
 		'id_evento' => 'int',
-		'id_cronog' => 'int'
+		'fecha_inicio' => 'datetime',
+		'fecha_final' => 'datetime',
+		'id_convocatoria_convocatoria' => 'int'
 	];
 
 	protected $fillable = [
-		'id_cronog',
 		'nombre_evento',
-		'nombre_convocatoria'
+		'fecha_inicio',
+		'fecha_final'
 	];
 
-	public function cronograma()
+	public function convocatorium()
 	{
-		return $this->belongsTo(Cronograma::class, 'id_cronog');
+		return $this->belongsTo(Convocatorium::class, 'id_convocatoria_convocatoria');
 	}
 }

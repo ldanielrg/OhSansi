@@ -1,10 +1,10 @@
 .boton-personalizado {
-    background-color: #00aaff;
+    background-color: #003366;
     color: white;
     padding: 10px 20px;
     border: none;
     font-weight: bold;
-    border-radius: 6px;
+    border-radius: 6px !important;
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 1rem;

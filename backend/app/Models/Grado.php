@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Created by Reliese Model.
+ */
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
@@ -32,6 +36,6 @@ class Grado extends Model
 
 	public function categoria_tiene_grados()
 	{
-		return $this->hasMany(Categoria_Tiene_Grado::class, 'id_grado');
+		return $this->hasMany(CategoriaTieneGrado::class, 'id_grado_grado');
 	}
 }

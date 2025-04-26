@@ -1,0 +1,48 @@
+/* src/styles/Nosotros.css*/
+.nosotros-page {
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+.nosotros-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+.nosotros-title {
+  color: #003366;
+  font-size: 2rem;
+  margin-bottom: 16px;
+}
+.nosotros-description {
+  color: #333333;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.nosotros-subtitle {
+  color: #003366;
+  font-size: 1.5rem;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+.nosotros-services,
+.nosotros-info {
+  list-style-type: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+.nosotros-services li,
+.nosotros-info li {
+  margin-bottom: 8px;
+  color: #333333;
+}
+.nosotros-info a {
+  color: #003366;
+  text-decoration: none;
+}
+.nosotros-info a:hover {
+  text-decoration: underline;
+}
