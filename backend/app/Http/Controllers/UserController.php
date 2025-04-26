@@ -24,7 +24,6 @@ class UserController extends Controller
 
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->username = $request->username;
 
         if ($request->filled('password')) {
             $user->password = $request->password; // Laravel ya hace hashing automático
