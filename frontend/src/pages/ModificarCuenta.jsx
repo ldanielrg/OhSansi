@@ -7,16 +7,8 @@ import BotonForm from '../components/BotonForm';
 import { useAuth } from "../context/AuthContext"; 
 
 
-const { token } = useAuth(); //PARA TRAER LOS TOKEN
-
 const ModificarCuenta = () => {
   const { token } = useAuth(); //PARA TRAER LOS TOKEN
-
-  const [usuario, setUsuario] = useState({
-    nombreCuenta: "Juan Pérez",
-    email: "juan@example.com",
-    password: "123456",
-  });
 
   const {
     register,
