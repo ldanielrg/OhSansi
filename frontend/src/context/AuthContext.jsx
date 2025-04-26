@@ -8,16 +8,19 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [token, setToken] = useState(null); // AGREGUE YO PARA USAR EL TOKEN
     
      //Restaurar sesión desde localStorage
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         const storedRoles = localStorage.getItem('roles');
-        const token = localStorage.getItem('token');
-        if (token && storedUser && storedRoles) {
+        const storedToken = localStorage.getItem('token');
+
+        if (token && storedUser && storedRoles && storedToken) {
         setUser(JSON.parse(storedUser));
         setRoles(JSON.parse(storedRoles));
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        setToken(storedToken); // AGREGUE YO
+        api.defaults.headers.common['Authorization'] = `Bearer ${storedTokentoken}`;
         }
         setLoading(false);
     }, []);
@@ -28,6 +31,8 @@ export const AuthProvider = ({ children }) => {
         if (res.success) {
         setUser(res.user);
         setRoles(res.roles);
+        setToken(res.access_token);
+        api.defaults.headers.common['Authorization'] = `Bearer ${res.access_token}`;
         }
         return res;
     };
@@ -37,10 +42,11 @@ export const AuthProvider = ({ children }) => {
         await logoutAPI();
         setUser(null);
         setRoles([]);
+        setToken(null); //AGREGUE YO
     };
 
     return (
-        <AuthContext.Provider value={{ user, roles, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, roles,token,login, logout, loading }}>
           {children}
         </AuthContext.Provider>
       );
