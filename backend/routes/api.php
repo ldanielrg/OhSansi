@@ -18,6 +18,8 @@ use App\Http\Controllers\AreaController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\CategoriaController;
 
+use App\Http\Controllers\UserController;
+
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
 Route::get('/municipios', [MunicipioController::class, 'sinDepartamento']);
@@ -38,9 +40,19 @@ Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asigna
 //PERMISOS Y ROLES. Toda ruta relacionada con esto se encuentra aquí:
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/crear-cuenta', [CuentaController::class, 'store']);
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
-Route::middleware('auth:sanctum')->get('/permisos', [PermisoController::class, 'index']);
 
 
 //INSCRIPCIONES
 Route::post('/formularios', [InscripcionController::class, 'store']);
+
+// RECUPERAR DATOS DE USER
+Route::get('/user', [UserController::class, 'profile']);
+Route::put('/user', [UserController::class, 'update']);
+
+// ORDENE MEJOR
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [UserController::class, 'profile']);
+    Route::put('/user', [UserController::class, 'update']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/permisos', [PermisoController::class, 'index']);
+});
