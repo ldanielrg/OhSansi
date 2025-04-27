@@ -1,199 +1,196 @@
+/* src/styles/CrearUE.css */
+
+/* Contenedor principal */
 .crear-ue-container {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 700px;
-    margin: 40px auto;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  .crear-ue-container .titulo-box {
-    background-color: #4cb4f5;
-    color: white;
-    text-align: center;
-    padding: 12px 20px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    font-size: 1.4rem;
-    font-weight: bold;
-    margin: -30px -30px 30px;
-  }
-  
-  .crear-ue-container .form-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 40px;
-    margin-bottom: 25px;
-  }
-  
-  .crear-ue-container .form-group {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    margin-bottom: 30px;
-  }
-
-  /* Estilos encapsulados SOLO para Crear Unidad Educativa */
-
-.crear-ue-container .form-input {
-    width: 100%;
-    padding: 10px 16px;
-    border: 2px solid #a0c8f0;
-    background-color: #e6f4ff;
-    color: #4cb4f5;
-    border-radius: 999px;
-    font-size: 16px;
-    transition: border-color 0.3s, background-color 0.3s;
-  }
-  
-  .crear-ue-container .input-valid {
-    background-color: #d4edda; /* verde claro */
-    border-color: #28a745;
-    color: #155724;
-  }
-  
-  .crear-ue-container .input-error {
-    background-color: #f8d7da; /* rojo suave */
-    border-color: #dc3545;
-    color: #721c24;
-  }
-  
-  
-  .crear-ue-container .ancho-input {
-    max-width: 300px;
-  }
-  
-  .crear-ue-container .form-group label {
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 6px;
-    color: #3498db;
-    margin-left: 8px;
-  }
-  
-  .crear-ue-container .input-error {
-    border-color: red;
-  }
-  
-  .crear-ue-container .error-text {
-    color: red;
-    font-size: 0.85rem;
-    margin-top: 4px;
-    margin-left: 10px;
-  }
-  
-  .crear-ue-container .select-react {
-    font-size: 16px;
-    color: #3498db;
-  }
-  
-  .crear-ue-container .select-react .react-select__control {
-    border: 2px solid #a0c8f0 !important;
-    background-color: #e6f4ff;
-    color: #3498db;
-    border-radius: 999px !important;
-    padding: 2px;
-    box-shadow: none !important;
-    min-height: 42px;
-    margin-bottom: 60px;
-  }
-  
-  .crear-ue-container .select-react .react-select__menu {
-    background-color: #fff;
-    border: 1px solid #3498db;
-    color: #3498db;
-    border-radius: 10px;
-    margin-top: 5px;
-    z-index: 10;
-    margin-bottom: 60px;
-  }
-  
-  .crear-ue-container .crear-ue-botones {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-top: 10px;
-  }
-  
-
-  .crear-ue-container .titulo-tabla-ue {
-    margin-top: 30px;
-    margin-bottom: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    background-color: #4cb4f5;
-    color: white;
-    text-align: center;
-    padding: 12px 20px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-
-  }
-  .crear-ue-container .tabla-ue-box {
-    margin-top: 30px;
-  }
-  
-  .crear-ue-container .btn-editar,
-  .crear-ue-container .btn-eliminar{
-    background-color: #3498db;
-    color: white;
-    padding: 12px 32px;
-    font-size: 15px;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .crear-ue-container .btn-guardar {
-    background-color: #3498db;
-    color: white;
-    padding: 12px 32px;
-    font-size: 15px;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;  
-    margin-top: 90px;
-  }
-  
-  .crear-ue-container .btn-cancelar {
-    background-color: #e74c3c;
-    color: white;
-    padding: 12px 32px;
-    font-size: 15px;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    margin-top: 90px;
-  } 
-
-  .crear-ue-container .form-buttons {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-top: 20px;
-  }
-  
-  /* Limitar cantidad de opciones en el menú del select */
-.limitar-opciones .react-select__menu-list {
-  max-height: 132px; /* Altura para 3 opciones aprox */
-  overflow-y: auto;
+  background-color: #FFFFFF;        /* Fondo blanco */
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 700px;
+  margin: 40px auto;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Cambiar color del texto de las opciones en el desplegable */
-.limitar-opciones .react-select__option {
-    color: #61b3f2;              /* ✅ texto negro */
-    background-color: white;   /* fondo blanco */
+/* Título de la caja */
+.crear-ue-container .titulo-box {
+  background-color: #003366;        /* Azul primario */
+  color: #FFFFFF;
+  text-align: center;
+  padding: 12px 20px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: -30px -30px 30px;
+}
+
+/* Filas de formulario */
+.crear-ue-container .form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 25px;
+}
+
+/* Cada grupo de input+label */
+.crear-ue-container .form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: 30px;
+}
+
+/* Labels */
+.crear-ue-container .form-group label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #003366;                    /* Azul primario */
+  margin-left: 8px;
+}
+
+/* Inputs */
+.crear-ue-container .form-input {
+  width: 100%;
+  padding: 10px 16px;
+  border: 2px solid #003366;         /* Azul primario */
+  background-color: #f0f8ff;         /* azul muy suave */
+  color: #003366;
+  border-radius: 999px;
+  font-size: 16px;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+/* Valid/invalid */
+.crear-ue-container .input-valid {
+  background-color: #d4edda;
+  border-color: #28a745;
+  color: #155724;
+}
+.crear-ue-container .input-error {
+  background-color: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+}
+
+/* Botones principales */
+.crear-ue-container .btn-guardar,
+.crear-ue-container .btn-editar,
+.crear-ue-container .btn-eliminar {
+  background-color: #003366;
+  color: #FFFFFF;
+  padding: 12px 32px;
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.crear-ue-container .btn-guardar:hover,
+.crear-ue-container .btn-editar:hover,
+.crear-ue-container .btn-eliminar:hover {
+  background-color: #002a5c;
+}
+
+/* Botón cancelar sigue rojo para contraste */
+.crear-ue-container .btn-cancelar {
+  background-color: #e74c3c;
+  color: #FFFFFF;
+  padding: 12px 32px;
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+/* Wrapper para los dos botones abajo */
+.crear-ue-container .form-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Título de la tabla */
+.crear-ue-container .titulo-tabla-ue {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #003366;
+  color: #FFFFFF;
+  text-align: center;
+  padding: 12px 20px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+/* Contenedor de la tabla */
+.crear-ue-container .tabla-ue-box {
+  margin-top: 30px;
+}
+
+/* Select (React Select) */
+.crear-ue-container .select-react .react-select__control {
+  border: 2px solid #003366 !important;
+  background-color: #f0f8ff;
+  color: #003366;
+  border-radius: 999px !important;
+  padding: 2px;
+  box-shadow: none !important;
+  min-height: 42px;
+  margin-bottom: 60px;
+}
+.crear-ue-container .select-react .react-select__menu {
+  background-color: #FFFFFF;
+  border: 1px solid #003366;
+  color: #003366;
+  border-radius: 10px;
+  margin-top: 5px;
+  z-index: 10;
+  margin-bottom: 60px;
+}
+.crear-ue-container .limitar-opciones .react-select__menu-list {
+  max-height: 132px;
+  overflow-y: auto;
+}
+.crear-ue-container .limitar-opciones .react-select__option {
+  color: #003366;
+  background-color: #FFFFFF;
+}
+.crear-ue-container .limitar-opciones .react-select__option--is-selected {
+  background-color: #003366;
+  color: #FFFFFF;
+}
+
+/* Sonner toasts abajo a la izquierda */
+.sonner-toast-container,
+.snr-toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px; /* lado izquierdo */
+  z-index: 9999;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .crear-ue-container {
+    padding: 20px;
+    margin: 20px;
   }
-  
-  /* Opción cuando está seleccionada */
-  .limitar-opciones .react-select__option--is-selected {
-    background-color: #61b3f2; 
-    color: white;             
+  .crear-ue-container .form-row {
+    flex-direction: column;
+    gap: 15px;
   }
-  
- 
+  .crear-ue-container .form-buttons {
+    flex-direction: column;
+  }
+  .crear-ue-container .btn-guardar,
+  .crear-ue-container .btn-cancelar {
+    width: 100%;
+  }
+}
