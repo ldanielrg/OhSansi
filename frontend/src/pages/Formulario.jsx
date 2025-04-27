@@ -74,6 +74,7 @@ const Formulario = () => {
             .then(data => setUe(data));
     }, []);
 
+    //Cargar estudiantes (si es no es formulario nuevo)
     useEffect(() => {
         const cargarFormulario = async () => {
           // Si estamos creando un nuevo formulario (id == 0), no hacemos nada
@@ -101,18 +102,19 @@ const Formulario = () => {
       
             // Setear estudiantes en la tabla
             const estudiantesFormateados = estudiantes.map(est => ({
-              nombre: est.nombre,
-              apellido: est.apellido,
-              email: est.email,
-              ci: est.ci,
-              fechaNac: est.fecha_nacimiento,
-              rude: est.rude,
-              id_area: est.idArea,
-              nombre_area: est?.nombre_area || '',
-              id_categoria: est.idCategoria,
-              nombre_categoria: est?.nombre_categoria || '',
-              municipio: '',
-              unidadEducativa: ''
+                id_estudiante: est.id_estudiante ?? null,
+                nombre: est.nombre,
+                apellido: est.apellido,
+                email: est.email,
+                ci: est.ci,
+                fechaNac: est.fecha_nacimiento,
+                rude: est.rude,
+                id_area: est.idArea,
+                nombre_area: est?.nombre_area || '',
+                id_categoria: est.idCategoria,
+                nombre_categoria: est?.nombre_categoria || '',
+                municipio: '',
+                unidadEducativa: ''
             }));
       
             setRowData(estudiantesFormateados);
@@ -124,7 +126,7 @@ const Formulario = () => {
         };
       
         cargarFormulario();
-      }, [id]);
+    }, [id]);
       
 
     const opcionesFiltradasUE = ue
@@ -208,10 +210,9 @@ const Formulario = () => {
         }
     
         const datosEnviar = {
-            //id_ue: parseInt(formData.ue || formData.unidadEducativa), No necesairo con el token
-            //id_formulario_actual: parseInt(id), Mejorar logica de creacion de id antes de hacer esto
-            id_formulario_actual: 0,
+            id_formulario_actual: parseInt(id),
             estudiantes: rowData.map(est => ({
+                id_estudiante: est.id_estudiante ?? null,
                 nombre: est.nombre,
                 apellido: est.apellido,
                 email: est.email,

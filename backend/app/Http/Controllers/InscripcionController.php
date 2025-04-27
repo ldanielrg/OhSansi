@@ -18,6 +18,8 @@ class InscripcionController extends Controller{
         $validated = $request->validate([
             'id_formulario_actual' => 'required|integer',
             'estudiantes' => 'required|array|min:1',
+            'estudiantes.*.id_estudiante' => 'nullable|exists:estudiante,id_estudiante', //Este es bueno, lo coloco porque valida también que 
+                                                 //si viene ID entonces mínimo ese id exista en la tabla estudiantes
             'estudiantes.*.nombre' => 'required|string',
             'estudiantes.*.apellido' => 'required|string',
             'estudiantes.*.email' => 'required|email',
@@ -72,6 +74,7 @@ class InscripcionController extends Controller{
             foreach ($request->estudiantes as $est) {
                 // Separar los campos del estudiante
                 $estudianteData = [
+                    'id_estudiante' => $est['id_estudiante'],
                     'nombre' => $est['nombre'],
                     'apellido' => $est['apellido'],
                     'email' => $est['email'],
@@ -80,11 +83,21 @@ class InscripcionController extends Controller{
                     'rude' => $est['rude'],
                 ];
 
-                // Crear estudiante asociado al formulario
-                $estudiante = Estudiante::firstOrCreate(
-                    ['ci' => $est['ci']],
-                    $estudianteData
-                );
+                // Crear estudiante o Actualiza. Dependiendo si el id_estudiante existe
+                if (isset($est['id_estudiante'])) {
+                    // Actualizar estudiante existente
+                    $estudiante = Estudiante::find($est['id_estudiante']);
+                    if ($estudiante) {
+                        $estudiante->update($estudianteData);
+                    } else {
+                        // En caso de que no exista el ID, crearlo
+                        $estudiante = Estudiante::create($estudianteData);
+                    }
+                } else {
+                    // Crear estudiante nuevo
+                    $estudiante = Estudiante::create($estudianteData);
+                }
+                
                 Log::debug($estudiante);
 
                 //Verificar que el estudiante no esté inscrito en es AREA-CATEGORIA
@@ -142,6 +155,7 @@ class InscripcionController extends Controller{
         // Recolectar estudiantes formateados
         $estudiantes = $formulario->inscripciones->map(function ($inscripcion) {
             return [
+                'id_estudiante' => $inscripcion->estudiante->id_estudiante ?? '',
                 'nombre' => $inscripcion->estudiante->nombre ?? '',
                 'apellido' => $inscripcion->estudiante->apellido ?? '',
                 'email' => $inscripcion->estudiante->email ?? '',
