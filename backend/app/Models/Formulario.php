@@ -72,8 +72,9 @@ class Formulario extends Model
 		return $this->hasMany(OrdenPago::class, 'id_formulario_formulario');
 	}
 
-	public function estudiante_esta_inscritos()
+	public function inscripciones()
 	{
-		return $this->hasMany(EstudianteEstaInscrito::class, 'id_formulario_formulario');
+		return $this->hasMany(EstudianteEstaInscrito::class, 'id_formulario_formulario', 'id_formulario');
 	}
+
 }

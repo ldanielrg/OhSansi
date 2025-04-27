@@ -127,7 +127,10 @@ class InscripcionController extends Controller{
     $user = $request->user();
 
     // Recuperar todos los formularios donde el id_usuario sea igual al del usuario autenticado
-    $formularios = Formulario::where('id_usuario', $user->id)->get();
+    $formularios = Formulario::where('id_usuario', $user->id)
+        ->withCount('inscripciones')  //esto usa la relación
+        //->orderBy('created_at', 'desc') quito esto porque la tabla no tiene este campo.
+        ->get();
 
     return response()->json([
         'formularios' => $formularios

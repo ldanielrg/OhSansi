@@ -31,7 +31,7 @@ const Inscripciones = () => {
 
   const formularioColumns = [
     { name: 'ID', selector: row => row.id_formulario, sortable: true },
-    //{ name: 'Cantidad Estudiantes', selector: row => row.estudiantes.length },
+    { name: 'Cantidad Estudiantes', selector: row => row.inscripciones_count },
     //Comento esto porque no estoy implementando para recuperar estudiantes.
     {
       name: 'Acciones',
