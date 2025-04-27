@@ -8,7 +8,8 @@ const RegistroForm = ({
     type = 'text',
     options = [],
     value = '',
-    onChange
+    onChange,
+    disabled = false //AGREGUE YO
 }) => {
     const handleChange = (e) => {
         const val = e.target.value;
@@ -29,6 +30,7 @@ const RegistroForm = ({
                     id={name}
                     value={value}
                     onChange={handleChange}
+                    disabled={disabled} //AGREGUE YO
                 >
                     {options.map((opt, idx) => (
                         <option key={idx} value={opt.value}>
@@ -47,6 +49,7 @@ const RegistroForm = ({
                                 checked={value === opt.value}
                                 onChange={handleChange}
                                 className="input-radio"
+                                disabled={disabled} // AGREGUE YO
                             />
                             {opt.label}
                         </label>
@@ -61,6 +64,7 @@ const RegistroForm = ({
                     placeholder={placeholder}
                     value={value}
                     onChange={handleChange}
+                    disabled={disabled} //AGREGUE YO
                 />
             )}
         </div>
