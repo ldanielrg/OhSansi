@@ -121,4 +121,17 @@ class InscripcionController extends Controller{
             ], 500);
         }
     }
+
+    public function recuperarFormularios(Request $request)
+{
+    $user = $request->user();
+
+    // Recuperar todos los formularios donde el id_usuario sea igual al del usuario autenticado
+    $formularios = Formulario::where('id_usuario', $user->id)->get();
+
+    return response()->json([
+        'formularios' => $formularios
+    ], 200);
+}
+
 }
