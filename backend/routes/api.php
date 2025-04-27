@@ -43,7 +43,7 @@ Route::post('/crear-cuenta', [CuentaController::class, 'store']);
 
 
 //INSCRIPCIONES
-Route::post('/formularios', [InscripcionController::class, 'store']);
+Route::middleware('auth:sanctum')->post('/inscribir', [InscripcionController::class, 'store']);
 
 // RECUPERAR DATOS DE USER
 Route::get('/user', [UserController::class, 'profile']);

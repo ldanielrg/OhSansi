@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Log;;
 class InscripcionController extends Controller{
     public function store(Request $request)
     {
+        //Mejoraré mi backend con esto directamente, no necesitará "registrador"
+        //$user = $request->user();
+
+
         $validated = $request->validate([
             'registrador.nombre' => 'required|string',
             'registrador.apellido' => 'required|string',
