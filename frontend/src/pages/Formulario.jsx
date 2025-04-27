@@ -70,9 +70,14 @@ const Formulario = () => {
         .then(res => res.json())
         .then(data => setUe(data));
     }, []);
-    const handleRegistrar = () => {
-    const { nombre, apellido, ci, fechaNac, rude, area, categoria, municipio } = formData;
 
+    const opcionesFiltradasUE = ue
+    .filter(item => item.municipio_id === parseInt(formData.municipio))
+    .map(item => ({ value: item.id_ue, label: item.nombre_ue }));
+
+
+    const handleRegistrar = () => {
+    const { nombre, apellido, ci, fechaNac, rude, area, categoria, municipio } = formData; 
     if (nombre.length < 6) return alert('El nombre debe tener al menos 6 caracteres.');
     if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$/.test(nombre)) return alert('El nombre solo puede contener letras y espacios.');
     if (!/^\d{1,16}$/.test(rude)) return alert('El RUDE debe contener solo números y como máximo 16 dígitos.');
