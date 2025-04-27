@@ -38,4 +38,16 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Perfil actualizado exitosamente']);
     }
+
+    public function verifyPassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        $user = $request->user(); // Usuario autenticado
+        $isValid = Hash::check($request->password, $user->password); // Comparar contraseñas
+
+        return response()->json(['valid' => $isValid]);
+    }
 }
