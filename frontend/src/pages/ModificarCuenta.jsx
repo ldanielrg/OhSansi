@@ -5,6 +5,8 @@ import '../styles/ModificarCuenta.css';
 import RegistroForm from '../components/RegistroForm';
 import BotonForm from '../components/BotonForm';
 import { useAuth } from "../context/AuthContext"; 
+import { useNavigate } from 'react-router-dom';
+
 
 
 const ModificarCuenta = () => {
@@ -78,6 +80,7 @@ const ModificarCuenta = () => {
         });
   
         alert('¡Datos actualizados con éxito!');
+        navigate('/modificar-campos');
       } catch (error) {
         console.error('Error al actualizar datos', error);
       }
@@ -90,6 +93,8 @@ const ModificarCuenta = () => {
       [fieldName]: true,
     }));
   };
+  const navigate = useNavigate();
+
   
 
   return (
@@ -99,31 +104,6 @@ const ModificarCuenta = () => {
         <div className="cont-form-mod">
   
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Nombre */}
-            <div className="div-label-input-modificar-cuenta">
-              <RegistroForm
-                label="Nombre"
-                type="text"
-                value={watch('nombreCuenta')}
-                {...register('nombreCuenta', { required: 'El nombre es obligatorio' })}
-                disabled={!isEditable.nombreCuenta}
-              />
-            </div>
-            {errors.nombreCuenta && <p>{errors.nombreCuenta.message}</p>}
-  
-            {/* Email */}
-            <div className="div-label-input-modificar-cuenta">
-              <RegistroForm
-                label="Email"
-                type="email"
-                value={watch('email')}
-                {...register('email', { required: 'El email es obligatorio' })}
-                disabled={!isEditable.email}
-              />
-              
-            </div>
-            {errors.email && <p>{errors.email.message}</p>}
-  
             {/* Contraseña */}
             <div className="div-label-input-modificar-cuenta">
               <RegistroForm
@@ -143,13 +123,12 @@ const ModificarCuenta = () => {
                 type="password"
                 value={watch('confirmarPassword')}
                 {...register('confirmarPassword')}
-               disabled={!isEditable.confirmarPassword}
+                disabled={!isEditable.confirmarPassword}
               />
             </div>
   
             {/* Botones */}
             <div className="div-label-input-modificar-cuenta">
-              <BotonForm className="ddddddd" texto="Volver" type="button" />
               <BotonForm texto="Confirmar" type="submit" />
             </div>
           </form>
