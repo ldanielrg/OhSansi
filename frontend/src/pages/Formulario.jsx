@@ -208,7 +208,7 @@ const Formulario = () => {
                             <RegistroForm label='Rude' name='rude' value={formData.rude} onChange={setFormData} />
                             <RegistroForm label='Área' name='area' type='select' value={formData.area} onChange={setFormData} options={[{ value: '', label: 'Seleccione una Área' }, ...areas.map(area => ({ value: area.id_area, label: area.nombre_area }))]} />
                             <RegistroForm label='Unidad Educativa' name='unidadEducativa' type='select' value={formData.unidadEducativa} onChange={setFormData} options={[{ value: '', label: 'Seleccione una Unidad Educativa' }, ...opcionesFiltradasUE]} />
-                            <RegistroForm label='Grado' name='grado' />
+                            <RegistroForm label='Email' name='email' value={formData.email} onChange={setFormData}/>
                             <div className='contenedor-boton-registrar-est'>
                                 <BotonForm texto={modoEdicion ? "Guardar" : "Registrar"} onClick={handleRegistrar} />
                             </div>
