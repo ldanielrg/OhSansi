@@ -5,35 +5,34 @@ import BotonForm from '../components/BotonForm';
 import DataTable from 'react-data-table-component';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; //Para mostrar el usuario. Pero no necesario por ahora
+import api from '../api/axios';
+
 
 const Inscripciones = () => {
-  // --- FUTURO: Sección de estudiantes y formData (para Formulario.jsx) ---
-  /*
-  const [formData, setFormData] = useState({
-    nombre: '', apellido: '', email: '', ci: '', fechaNac: '', rude: '',
-    area: '', categoria: '', ue: '', municipio: ''
-  });
-  const [editIndex, setEditIndex] = useState(null);
-  const [modoEdicion, setModoEdicion] = useState(false);
-  const [rowData, setRowData] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [toggleClearSelected, setToggleClearSelected] = useState(false);
-  const selectedRowsRef = useRef([]);
-  const [areas, setAreas] = useState([]);
-  const [categorias, setCategorias] = useState([]);
-  const [municipios, setMunicipios] = useState([]);
-  const [ue, setUe] = useState([]);
-  */
-
   // --- CRUD de Formularios ---
   const [formularios, setFormularios] = useState([]);
   const [formularioIdCounter, setFormularioIdCounter] = useState(1);
   const navigate = useNavigate();
 
+  //Recuparación de formularios que pertenecen al usuario
+  useEffect(() => {
+    const obtenerFormularios = async () => {
+      try {
+        const response = await api.post('/formularios');
+        setFormularios(response.data.formularios);
+      } catch (error) {
+        console.error('Error al recuperar formularios:', error);
+      }
+    };
+  
+    obtenerFormularios();
+  }, []);
+  
+
   const formularioColumns = [
-    { name: 'ID', selector: row => row.id, sortable: true },
-    { name: 'Cantidad Estudiantes', selector: row => row.estudiantes.length },
+    { name: 'ID', selector: row => row.id_formulario, sortable: true },
+    //{ name: 'Cantidad Estudiantes', selector: row => row.estudiantes.length },
+    //Comento esto porque no estoy implementando para recuperar estudiantes.
     {
       name: 'Acciones',
       cell: row => (
@@ -76,32 +75,6 @@ const Inscripciones = () => {
 
     setFormularios(prev => prev.filter(f => f.id !== id));
   };
-
-  // --- FUTURO: Cargar opciones (para Formulario.jsx) ---
-  /*
-  useEffect(() => {
-    if (formData.area) {
-      fetch(`http://localhost:8000/api/categorias/${formData.area}`)
-        .then(res => res.json())
-        .then(data => setCategorias(data))
-        .catch(error => console.error('Error al obtener categorías:', error));
-    } else {
-      setCategorias([]);
-    }
-  }, [formData.area]);
-
-  useEffect(() => {
-    fetch('http://localhost:8000/api/areas')
-      .then(res => res.json())
-      .then(data => setAreas(data));
-    fetch('http://localhost:8000/api/municipios')
-      .then(res => res.json())
-      .then(data => setMunicipios(data));
-    fetch('http://localhost:8000/api/unidades-educativas')
-      .then(res => res.json())
-      .then(data => setUe(data));
-  }, []);
-  */
 
   return (
     <div className="page-container">
