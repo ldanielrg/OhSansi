@@ -2,6 +2,8 @@
 import React from "react";
 import "../styles/Layout.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; 
+
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -27,6 +29,12 @@ const Layout = ({ children }) => {
     e.preventDefault();
     navigate("/login");
   };
+  const handleNavigateModificarCuenta = (e) => {
+    e.preventDefault();
+    navigate("/modificar-cuenta");
+  };
+  
+  const { user, logout } = useAuth();
 
   return (
     <div>
@@ -118,25 +126,60 @@ const Layout = ({ children }) => {
                 Nosotros
               </a>
             </li>
+            {user && (
+              <li className="nav-item me-3">
+                <a
+                  className="nav-link text-white"
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate("/modificar-cuenta");
+                  }}
+                >
+                  <img
+                    src="/src/assets/icono4.svg"
+                    alt="Modificar Cuenta Icon"
+                    style={{ width: "20px", marginRight: "5px" }}
+                  />
+                  Modificar cuenta
+                </a>
+              </li>
+          )}
+
           </ul>
 
           {/* Botón "Ingresar" a la derecha */}
           <ul className="navbar-nav" id="right-menu">
-            <li className="nav-item">
-              <a
-                className="nav-link text-white"
-                href="#"
-                onClick={handleNavigateLogin}
-              >
+            {user ? (
+              <li className="nav-item d-flex align-items-center text-white">
                 <img
                   src="/src/assets/icono5.svg"
-                  alt="Ingresar Icon"
+                  alt="User Icon"
                   style={{ width: "20px", marginRight: "5px" }}
                 />
-                Ingresar
-              </a>
-            </li>
+                <span className="me-3">Hola, {user.name}</span>
+                <button className="btn btn-outline-light btn-sm" onClick={logout}>
+                  Cerrar sesión
+                </button>
+              </li>
+            ) : (
+              <li className="nav-item">
+                <a
+                  className="nav-link text-white"
+                  href="#"
+                  onClick={handleNavigateLogin}
+                >
+                  <img
+                    src="/src/assets/icono5.svg"
+                    alt="Ingresar Icon"
+                    style={{ width: "20px", marginRight: "5px" }}
+                  />
+                  Ingresar
+                </a>
+              </li>
+            )}
           </ul>
+
         </div>
       </nav>
 
