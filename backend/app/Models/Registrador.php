@@ -26,7 +26,6 @@ class Registrador extends Model
 {
 	protected $table = 'registrador';
 	protected $primaryKey = 'id_registrador';
-	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [

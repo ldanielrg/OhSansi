@@ -10,6 +10,7 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
@@ -28,6 +29,8 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'user' => [
                 'name' => $user->name,
+                'apellido' => $user->apellido,
+                'ci' => $user->ci,
                 'email' => $user->email,
             ],
             'roles' => $user->getRoleNames()

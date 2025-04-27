@@ -31,43 +31,35 @@ class Formulario extends Model
 {
 	protected $table = 'formulario';
 	protected $primaryKey = 'id_formulario';
-	public $incrementing = false;
 	public $timestamps = false;
 
 	protected $casts = [
 		'id_formulario' => 'int',
 		'id_registrador_registrador' => 'int',
-		'rue_unidad_educativa' => 'int',
-		'id_municipio_municipio_unidad_educativa' => 'int',
-		'id_departamento_departamento_municipio_unidad_educativa' => 'int',
-		'id_convocatoria_convocatoria' => 'int'
+		'id_ue_ue' => 'int',
+		'id_convocatoria_convocatoria' => 'int',
+		'id_usuario' => 'int'
 	];
 
 	protected $fillable = [
 		'id_registrador_registrador',
-		'rue_unidad_educativa',
-		'id_municipio_municipio_unidad_educativa',
-		'id_departamento_departamento_municipio_unidad_educativa',
-		'id_convocatoria_convocatoria'
+		'id_ue_ue',
+		'id_convocatoria_convocatoria',
+		'id_usuario',
 	];
 
 	public function registrador()
 	{
 		return $this->belongsTo(Registrador::class, 'id_registrador_registrador');
 	}
+	public function usuario()
+	{
+		return $this->belongsTo(User::class, 'id_usuario');
+	}
 
 	public function unidad_educativa()
 	{
-		return $this->belongsTo(UnidadEducativa::class, 'rue_unidad_educativa')
-					->where('unidad_educativa.rue', '=', 'formulario.rue_unidad_educativa')
-					->where('unidad_educativa.id_municipio_municipio', '=', 'formulario.rue_unidad_educativa')
-					->where('unidad_educativa.id_departamento_departamento_municipio', '=', 'formulario.rue_unidad_educativa')
-					->where('unidad_educativa.rue', '=', 'formulario.id_municipio_municipio_unidad_educativa')
-					->where('unidad_educativa.id_municipio_municipio', '=', 'formulario.id_municipio_municipio_unidad_educativa')
-					->where('unidad_educativa.id_departamento_departamento_municipio', '=', 'formulario.id_municipio_municipio_unidad_educativa')
-					->where('unidad_educativa.rue', '=', 'formulario.id_departamento_departamento_municipio_unidad_educativa')
-					->where('unidad_educativa.id_municipio_municipio', '=', 'formulario.id_departamento_departamento_municipio_unidad_educativa')
-					->where('unidad_educativa.id_departamento_departamento_municipio', '=', 'formulario.id_departamento_departamento_municipio_unidad_educativa');
+		return $this->belongsTo(UnidadEducativa::class, 'id_ue_ue');
 	}
 
 	public function convocatorium()

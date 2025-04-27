@@ -37,8 +37,10 @@ class EstudianteEstaInscrito extends Model
 	];
 
 	protected $fillable = [
+		'id_estudiante_estudiante',
 		'id_area_area',
-		'id_categ'
+		'id_categ',
+		'id_formulario_formulario'
 	];
 
 	public function estudiante()

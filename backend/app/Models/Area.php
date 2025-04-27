@@ -27,7 +27,7 @@ class Area extends Model
 {
 	protected $table = 'area';
 	protected $primaryKey = 'id_area';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [

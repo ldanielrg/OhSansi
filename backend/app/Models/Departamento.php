@@ -23,7 +23,7 @@ class Departamento extends Model
 {
 	protected $table = 'departamento';
 	protected $primaryKey = 'id_departamento';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [
