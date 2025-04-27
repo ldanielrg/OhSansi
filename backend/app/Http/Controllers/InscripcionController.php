@@ -13,19 +13,11 @@ use Illuminate\Support\Facades\Log;;
 class InscripcionController extends Controller{
     public function store(Request $request)
     {
-        //Mejoraré mi backend con esto directamente, no necesitará "registrador"
-        //$user = $request->user();
+        
 
 
         $validated = $request->validate([
-            'registrador.nombre' => 'required|string',
-            'registrador.apellido' => 'required|string',
-            'registrador.email' => 'required|email',
-            'registrador.ci' => 'required|integer|min:1',
-
-            'id_ue' => 'required|integer',
             'id_formulario_actual' => 'required|integer',
-
             'estudiantes' => 'required|array|min:1',
             'estudiantes.*.nombre' => 'required|string',
             'estudiantes.*.apellido' => 'required|string',
@@ -37,10 +29,17 @@ class InscripcionController extends Controller{
             'estudiantes.*.idCategoria' => 'required|integer',
         ]);
 
+        $user = $request->user();
+        
         try {
             DB::beginTransaction();
 
-            $registradorData = $validated['registrador'];
+            $registradorData = [
+                'nombre' => $user->name,    
+                'apellido' => $user->apellido ?? '', 
+                'email' => $user->email,
+                'ci' => $user->ci,
+            ];
 
             $registrador = Registrador::firstOrCreate(
                 ['ci' => $registradorData['ci']],
@@ -57,7 +56,8 @@ class InscripcionController extends Controller{
             if ($idFormularioActual == 0) {
                 $formulario = Formulario::create([
                     'id_registrador_registrador' => $registrador->id_registrador,
-                    'id_ue_ue' => $request->id_ue
+                    'id_usuario' => $user->id,
+                    'id_ue_ue' => $user->id_ue_ue
                 ]);
             } else {
                 // Si no, buscar el formulario existente
