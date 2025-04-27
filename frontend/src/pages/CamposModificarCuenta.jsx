@@ -151,7 +151,7 @@ const CamposModificarCuenta = () => {
     
                 {/* Botones */}
                 <div className="div-label-input-modificar-cuenta">
-                <BotonForm className="ddddddd" texto="Volver" type="button" onClick={() => navigate('/modificar-cuenta')} />
+                <BotonForm className="boton-volver-form-campos-mod" texto="Volver" type="button" onClick={() => navigate('/modificar-cuenta')} />
                 <BotonForm texto="Modificar" type="submit" />
                 </div>
             </form>
