@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import axios from "axios";
 import '../styles/ModificarCuenta.css';
 import RegistroForm from '../components/RegistroForm';
@@ -7,26 +6,16 @@ import BotonForm from '../components/BotonForm';
 import { useAuth } from "../context/AuthContext"; 
 import { useNavigate } from 'react-router-dom';
 
-
-
 const ModificarCuenta = () => {
-  const { token } = useAuth(); //PARA TRAER LOS TOKEN
+  const { token } = useAuth(); // PARA TRAER LOS TOKEN
+  const navigate = useNavigate();
 
   const [usuario, setUsuario] = useState({});
-  const [isEditable, setIsEditable] = useState({
-    nombreCuenta: false,
-    email: false,
-    password: false,
-    confirmarPassword: false,
-  });
-
-  const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm({
-    defaultValues: {
-      nombreCuenta: '',
-      email: '',
-      password: '',
-      confirmarPassword: ''
-    }
+  
+  // Estado para manejar contraseñas
+  const [formData, setFormData] = useState({
+    password: '',
+    confirmarPassword: ''
   });
 
   useEffect(() => {
@@ -34,18 +23,10 @@ const ModificarCuenta = () => {
       try {
         const response = await axios.get('http://127.0.0.1:8000/api/user', {
           headers: {
-            Authorization: `Bearer ${token}` // <- Aquí debes poner la variable que tengas del token de autenticación
+            Authorization: `Bearer ${token}`
           }
         });
         setUsuario(response.data);
-
-        reset({
-          nombreCuenta: response.data.name, // Cargamos Nombre
-          email: response.data.email,        // Cargamos Email
-          password: '',             // SIEMPRE vacío
-          confirmarPassword: ''              // Vacío
-        });
-
       } catch (error) {
         console.error('Error al traer datos del usuario', error);
       }
@@ -54,25 +35,22 @@ const ModificarCuenta = () => {
     if (token) {
       fetchUsuario();
     }
-  
-  }, [token, setValue]);
+  }, [token]);
 
-
-
-  const onSubmit = async (data) => {
-    if (data.password !== data.confirmarPassword !== data.confirmarPassword) {
+  const onSubmit = async () => {
+    if (formData.password !== formData.confirmarPassword) {
       alert("Las contraseñas no coinciden.");
       return;
     }
-
+  
     const confirmar = window.confirm("¿Estás seguro de que deseas guardar los cambios?");
     if (confirmar) {
       try {
         await axios.put('http://127.0.0.1:8000/api/user', {
-          name: data.nombreCuenta,
-          email: data.email,
-          username: usuario.username, // importante mantener username original
-          password: data.password !== '' ? data.password : undefined, // solo si quiere cambiar contraseña
+          name: usuario.name,
+          email: usuario.email,
+          username: usuario.username,
+          password: formData.password !== '' ? formData.password : undefined,
         }, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,52 +65,38 @@ const ModificarCuenta = () => {
     }
   };
 
-  const enableField = (fieldName) => {
-    setIsEditable(prev => ({
-      ...prev,
-      [fieldName]: true,
-    }));
-  };
-  const navigate = useNavigate();
-
-  
-
   return (
     <div className="page-container-modificar-cuenta">
       <section className="seccion-formulario-modificar-cuenta">
         <h2>Modificación de la cuenta</h2>
         <div className="cont-form-mod">
   
-          <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Contraseña */}
+          <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }}>
             <div className="div-label-input-modificar-cuenta">
               <RegistroForm
                 label="Contraseña"
                 type="password"
-                value={watch('password')}
-                {...register('password')}
-                disabled={!isEditable.password}
+                name="password"
+                value={formData.password}
+                onChange={setFormData}
               />
             </div>
-            {errors.password && <p>{errors.password.message}</p>}
-  
-            {/* Confirmar contraseña */}
+
             <div className="div-label-input-modificar-cuenta">
               <RegistroForm
                 label="Confirmar contraseña"
                 type="password"
-                value={watch('confirmarPassword')}
-                {...register('confirmarPassword')}
-                disabled={!isEditable.confirmarPassword}
+                name="confirmarPassword"
+                value={formData.confirmarPassword}
+                onChange={setFormData}
               />
             </div>
-  
-            {/* Botones */}
+
             <div className="div-label-input-modificar-cuenta">
               <BotonForm texto="Confirmar" type="submit" />
             </div>
           </form>
-  
+
         </div>
       </section>
     </div>
