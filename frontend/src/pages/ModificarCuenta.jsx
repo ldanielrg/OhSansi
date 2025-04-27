@@ -121,7 +121,7 @@ const ModificarCuenta = () => {
                 {...register('email', { required: 'El email es obligatorio' })}
                 disabled={!isEditable.email}
               />
-              <button type="button" onClick={() => enableField('email')}>🖉</button>
+              
             </div>
             {errors.email && <p>{errors.email.message}</p>}
   
