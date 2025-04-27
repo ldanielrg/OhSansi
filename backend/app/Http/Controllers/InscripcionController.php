@@ -85,18 +85,25 @@ class InscripcionController extends Controller{
 
                 // Crear estudiante o Actualiza. Dependiendo si el id_estudiante existe
                 if (isset($est['id_estudiante'])) {
-                    // Actualizar estudiante existente
+                    // Si viene el id_estudiante, actualizamos por ID
                     $estudiante = Estudiante::find($est['id_estudiante']);
                     if ($estudiante) {
                         $estudiante->update($estudianteData);
                     } else {
-                        // En caso de que no exista el ID, crearlo
-                        $estudiante = Estudiante::create($estudianteData);
+                        // Si el ID no existe (por algún error), tratar de buscar por CI
+                        $estudiante = Estudiante::firstOrCreate(
+                            ['ci' => $est['ci']],
+                            $estudianteData
+                        );
                     }
                 } else {
-                    // Crear estudiante nuevo
-                    $estudiante = Estudiante::create($estudianteData);
+                    // No viene ID, entonces buscar por CI o crear. Asi evitamos duplicados p
+                    $estudiante = Estudiante::firstOrCreate(
+                        ['ci' => $est['ci']],
+                        $estudianteData
+                    );
                 }
+                
                 
                 Log::debug($estudiante);
 
