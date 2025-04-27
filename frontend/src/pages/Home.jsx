@@ -58,6 +58,14 @@ const Home = () => {
     e.preventDefault();
     navigate("/configuracioneventos");
   };
+  const handleNavigateCrearUE = (e) => {
+    e.preventDefault();
+    navigate("/crear-ue");
+  };
+  const handleNavigateCrearCuentas = (e) => {
+    e.preventDefault();
+    navigate("/crear-cuentas");
+  };
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -154,15 +162,27 @@ const Home = () => {
                 </button>
                 <button
                   className="btn vertical-btn btn-help "
+                  onClick={handleNavigateCrearUE}
+                >
+                  Crear UE
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateCrearCuentas}
+                >
+                  Crear Cuentas
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
                   onClick={handleNavigateConfiguracionConvocatoria}
                 >
                   ConfiguracionConvocatoria
                 </button>
                 <button
                   className="btn vertical-btn btn-help "
-                  onClick={handleNavigateConfiguracionEventos}
+                  onClick={handleNavigateEventos}
                 >
-                  ConfiguracionEventos
+                  Crear Eventos
                 </button>
                 <button
                   className="btn vertical-btn btn-help "

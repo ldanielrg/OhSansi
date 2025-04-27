@@ -174,6 +174,22 @@ function App() {
         }
       />
       <Route
+        path="/crear-ue"
+        element={
+          <Layout>
+            <CrearUE />
+          </Layout>
+        }
+      />
+      <Route
+        path="/crear-cuentas"
+        element={
+          <Layout>
+            <CrearCuentas />
+          </Layout>
+        }
+      />
+      <Route
         path="/editar-evento"
         element={
           <Layout>
