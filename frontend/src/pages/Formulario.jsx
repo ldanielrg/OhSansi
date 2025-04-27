@@ -169,9 +169,8 @@ const Formulario = () => {
                 idCategoria: est.id_categoria
             }))
         };
-    
-        {/* Todavia no hago esto, quiero asegurarme qué se manda al backend
         try {
+            console.log(datosEnviar);
             const response = await api.post('/inscribir', datosEnviar);
             console.log('Formulario guardado exitosamente:', response.data);
             alert('Formulario guardado exitosamente');
@@ -180,8 +179,7 @@ const Formulario = () => {
             console.error('Error al guardar:', error);
             alert('Ocurrió un error al guardar el formulario.');
         }
-            */}
-        console.log(datosEnviar);
+        
     };
 
 

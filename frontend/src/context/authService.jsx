@@ -14,7 +14,7 @@ export async function login(email, password) {
     localStorage.setItem('token', access_token);
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('roles', JSON.stringify(roles));
-
+    console.log()
     // Configurar Axios con el token globalmente
     api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
 

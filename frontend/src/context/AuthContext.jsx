@@ -8,19 +8,16 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [token, setToken] = useState(null); // AGREGUE YO PARA USAR EL TOKEN
     
      //Restaurar sesión desde localStorage
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         const storedRoles = localStorage.getItem('roles');
-        const storedToken = localStorage.getItem('token');
-
-        if (storedToken && storedUser && storedRoles) {
-            setUser(JSON.parse(storedUser));
-            setRoles(JSON.parse(storedRoles));
-            setToken(storedToken); // AGREGUE YO
-            api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+        const token = localStorage.getItem('token');
+        if (token && storedUser && storedRoles) {
+        setUser(JSON.parse(storedUser));
+        setRoles(JSON.parse(storedRoles));
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         }
         setLoading(false);
     }, []);
@@ -29,13 +26,8 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         const res = await loginAPI(email, password);
         if (res.success) {
-            setUser(res.user);
-            setRoles(res.roles);
-            setToken(res.access_token);
-            localStorage.setItem('token', res.access_token); // GUARDAR TOKEN
-            localStorage.setItem('user', JSON.stringify(res.user));
-            localStorage.setItem('roles', JSON.stringify(res.roles));
-            api.defaults.headers.common['Authorization'] = `Bearer ${res.access_token}`;
+        setUser(res.user);
+        setRoles(res.roles);
         }
         return res;
     };
@@ -45,14 +37,10 @@ export const AuthProvider = ({ children }) => {
         await logoutAPI();
         setUser(null);
         setRoles([]);
-        setToken(null); //AGREGUE YO
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.removeItem('roles');
     };
 
     return (
-        <AuthContext.Provider value={{ user, roles,token,login, logout, loading }}>
+        <AuthContext.Provider value={{ user, roles, login, logout, loading }}>
           {children}
         </AuthContext.Provider>
       );
