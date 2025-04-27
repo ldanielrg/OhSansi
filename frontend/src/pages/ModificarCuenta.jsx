@@ -108,7 +108,6 @@ const ModificarCuenta = () => {
                 {...register('nombreCuenta', { required: 'El nombre es obligatorio' })}
                 disabled={!isEditable.nombreCuenta}
               />
-              <button type="button" onClick={() => enableField('nombreCuenta')}>🖉</button>
             </div>
             {errors.nombreCuenta && <p>{errors.nombreCuenta.message}</p>}
   
