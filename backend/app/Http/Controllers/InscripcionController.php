@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;;
 
 class InscripcionController extends Controller{
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         
 
 
@@ -122,19 +121,46 @@ class InscripcionController extends Controller{
         }
     }
 
-    public function recuperarFormularios(Request $request)
-{
-    $user = $request->user();
+    public function recuperarFormularios(Request $request){
+        $user = $request->user();
 
-    // Recuperar todos los formularios donde el id_usuario sea igual al del usuario autenticado
-    $formularios = Formulario::where('id_usuario', $user->id)
-        ->withCount('inscripciones')  //esto usa la relación
-        //->orderBy('created_at', 'desc') quito esto porque la tabla no tiene este campo.
-        ->get();
+        // Recuperar todos los formularios donde el id_usuario sea igual al del usuario autenticado
+        $formularios = Formulario::where('id_usuario', $user->id)
+            ->withCount('inscripciones')  //esto usa la relación
+            //->orderBy('created_at', 'desc') quito esto porque la tabla no tiene este campo.
+            ->get();
 
-    return response()->json([
-        'formularios' => $formularios
-    ], 200);
-}
+        return response()->json([
+            'formularios' => $formularios
+        ], 200);
+    }
+
+    public function mostrarFormulario($id){
+        $formulario = Formulario::with('inscripciones.estudiante', 'inscripciones.area', 'inscripciones.categorium')
+                                ->findOrFail($id);
+
+        // Recolectar estudiantes formateados
+        $estudiantes = $formulario->inscripciones->map(function ($inscripcion) {
+            return [
+                'nombre' => $inscripcion->estudiante->nombre ?? '',
+                'apellido' => $inscripcion->estudiante->apellido ?? '',
+                'email' => $inscripcion->estudiante->email ?? '',
+                'ci' => $inscripcion->estudiante->ci ?? '',
+                'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento ?? '',
+                'rude' => $inscripcion->estudiante->rude ?? '',
+                'idAarea' => $inscripcion->id_area_area,
+                'nombre_area' => $inscripcion->area->nombre_area ?? '',
+                'idCategoria' => $inscripcion->id_categ,
+                'nombre_categoria' => $inscripcion->categorium->nombre_categoria ?? '',
+            ];
+        });
+
+        return response()->json([
+            'id_formulario' => $formulario->id_formulario,
+            'estudiantes' => $estudiantes
+        ]);
+    }
+
+
 
 }

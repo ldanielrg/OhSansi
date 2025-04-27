@@ -10,7 +10,7 @@ import api from '../api/axios'; //ESTO ES LA API en AXIOS.
 
 
 const Formulario = () => {
-    const { id } = useParams(); // Obtenemos el ID del formulario
+    const { id } = useParams(); // Obtenemos el ID del formulario que se está editando
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -73,6 +73,59 @@ const Formulario = () => {
             .then(res => res.json())
             .then(data => setUe(data));
     }, []);
+
+    useEffect(() => {
+        const cargarFormulario = async () => {
+          // Si estamos creando un nuevo formulario (id == 0), no hacemos nada
+          if (parseInt(id) === 0) return;
+      
+          try {
+            const response = await api.get(`/formularios/${id}`); // Ruta
+            //const registrador = response.data.registrador; Usaré esto pronto para los Administradores globales de inscripción.
+            const estudiantes = response.data.estudiantes; // Lista de estudiantes inscritos
+      
+            {/* Esto lo usaré junto con el "cons registrador"
+            setFormData({
+              nombre: formulario.nombre ?? '',
+              apellido: formulario.apellido ?? '',
+              email: formulario.email ?? '',
+              ci: formulario.ci ?? '',
+              fechaNac: '',
+              rude: '',
+              area: '',
+              categoria: '',
+              ue: '',
+              municipio: '',
+              unidadEducativa: '',
+            });   */}
+      
+            // Setear estudiantes en la tabla
+            const estudiantesFormateados = estudiantes.map(est => ({
+              nombre: est.nombre,
+              apellido: est.apellido,
+              email: est.email,
+              ci: est.ci,
+              fechaNac: est.fecha_nacimiento,
+              rude: est.rude,
+              id_area: est.idArea,
+              nombre_area: est?.nombre_area || '',
+              id_categoria: est.idCategoria,
+              nombre_categoria: est?.nombre_categoria || '',
+              municipio: '',
+              unidadEducativa: ''
+            }));
+      
+            setRowData(estudiantesFormateados);
+      
+          } catch (error) {
+            console.error('Error al cargar formulario:', error);
+            alert('No se pudo cargar el formulario.');
+          }
+        };
+      
+        cargarFormulario();
+      }, [id]);
+      
 
     const opcionesFiltradasUE = ue
         .filter(item => item.municipio_id === parseInt(formData.municipio))

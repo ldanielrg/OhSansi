@@ -32,15 +32,14 @@ const Inscripciones = () => {
   const formularioColumns = [
     { name: 'ID', selector: row => row.id_formulario, sortable: true },
     { name: 'Cantidad Estudiantes', selector: row => row.inscripciones_count },
-    //Comento esto porque no estoy implementando para recuperar estudiantes.
     {
       name: 'Acciones',
       cell: row => (
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={() => navigate(`/formulario/${row.id}`)}>
+          <button onClick={() => navigate(`/formulario/${row.id_formulario}`)}>
             <FaEdit />
           </button>
-          <button onClick={() => eliminarFormulario(row.id)}>
+          <button onClick={() => eliminarFormulario(row.id_formulario)}> //NO IMPLEMENTE NADA DE BACKEND PARA ESTO.
             <FaTrash />
           </button>
         </div>
