@@ -29,6 +29,8 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'user' => [
                 'name' => $user->name,
+                'apellido' => $user->apellido,
+                'ci' => $user->name,
                 'email' => $user->email,
             ],
             'roles' => $user->getRoleNames()

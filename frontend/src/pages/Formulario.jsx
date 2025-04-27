@@ -5,6 +5,9 @@ import Caja from '../components/Caja';
 import BotonForm from '../components/BotonForm';
 import DataTable from 'react-data-table-component';
 import RegistroForm from '../components/RegistroForm';
+import api from '../api/axios'; //ESTO ES LA API en AXIOS.
+
+
 
 const Formulario = () => {
     const { id } = useParams(); // Obtenemos el ID del formulario
@@ -150,16 +153,10 @@ const Formulario = () => {
             alert('No hay estudiantes registrados para guardar.');
             return;
         }
-
+    
         const datosEnviar = {
-            registrador: {
-                nombre: formData.nombre,
-                apellido: formData.apellido,
-                email: formData.email,
-                ci: parseInt(formData.ci)
-            },
-            id_ue: parseInt(formData.ue || formData.unidadEducativa),
-            //id_formulario_actual: parseInt(id),   //Por ahora quito esto, hasta que mejore el frontend.
+            //id_ue: parseInt(formData.ue || formData.unidadEducativa), No necesairo con el token
+            //id_formulario_actual: parseInt(id), Mejorar logica de creacion de id antes de hacer esto
             id_formulario_actual: 0,
             estudiantes: rowData.map(est => ({
                 nombre: est.nombre,
@@ -172,32 +169,23 @@ const Formulario = () => {
                 idCategoria: est.id_categoria
             }))
         };
-        {/* Por ahora quiero ver lo que manda el frontend.
+    
+        {/* Todavia no hago esto, quiero asegurarme qué se manda al backend
         try {
-            const response = await fetch('http://localhost:8000/api/guardar-formulario', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datosEnviar)
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al guardar el formulario');
-            }
-
-            const data = await response.json();
-            console.log('Formulario guardado exitosamente:', data);
+            const response = await api.post('/inscribir', datosEnviar);
+            console.log('Formulario guardado exitosamente:', response.data);
             alert('Formulario guardado exitosamente');
             navigate('/');
         } catch (error) {
             console.error('Error al guardar:', error);
             alert('Ocurrió un error al guardar el formulario.');
         }
-        */}
+            */}
         console.log(datosEnviar);
-
     };
+
+
+
 
     return (
         <div className="formulario-page-container">

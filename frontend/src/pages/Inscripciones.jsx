@@ -5,6 +5,7 @@ import BotonForm from '../components/BotonForm';
 import DataTable from 'react-data-table-component';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; //Para mostrar el usuario. Pero no necesario por ahora
 
 const Inscripciones = () => {
   // --- FUTURO: Sección de estudiantes y formData (para Formulario.jsx) ---
