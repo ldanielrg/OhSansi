@@ -37,25 +37,13 @@ const ModificarCuenta = () => {
     }
   }, [token]);
 
-  const onSubmit = async () => {
-    if (formData.password !== formData.confirmarPassword) {
-      alert("Las contraseñas no coinciden.");
-      return;
-    }
-  
+  const onSubmit = async (data) => {
+    
+
     const confirmar = window.confirm("¿Estás seguro de que deseas guardar los cambios?");
     if (confirmar) {
       try {
-        await axios.put('http://127.0.0.1:8000/api/user', {
-          name: usuario.name,
-          email: usuario.email,
-          username: usuario.username,
-          password: formData.password !== '' ? formData.password : undefined,
-        }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
+        
   
         alert('¡Datos actualizados con éxito!');
         navigate('/modificar-campos');
