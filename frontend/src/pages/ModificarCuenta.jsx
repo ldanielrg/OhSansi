@@ -65,6 +65,24 @@ const ModificarCuenta = () => {
     }
   };
 
+  const validarPassword = async () => {
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/user/verify-password', {
+        password: formData.password
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+  
+      return response.data.valid; // true o false
+    } catch (error) {
+      console.error('Error al validar la contraseña', error);
+      return false;
+    }
+  };
+  
+
   return (
     <div className="page-container-modificar-cuenta">
       <section className="seccion-formulario-modificar-cuenta">
@@ -101,7 +119,7 @@ const ModificarCuenta = () => {
       </section>
     </div>
   );
-  
+
 };
 
 export default ModificarCuenta;
