@@ -5,6 +5,7 @@ import RegistroForm from '../components/RegistroForm';
 import BotonForm from '../components/BotonForm';
 import { useAuth } from "../context/AuthContext"; 
 import { useNavigate } from 'react-router-dom';
+import api from '../api/axios';
 
 const ModificarCuenta = () => {
   const { token } = useAuth(); 
@@ -57,11 +58,18 @@ const ModificarCuenta = () => {
       alert("Por favor, ingresa tu contraseña.");
       return;
     }
+    
+    try {
+      console.log(formData.password);
+      
+      const response = await api.post('/user/verify-password', {
+        password: formData.password
+      });
   
-    const esPasswordCorrecta = await validarPassword();
-    if (!esPasswordCorrecta) {
-      alert("La contraseña ingresada no es correcta. Intenta nuevamente.");
-      return;
+      return response.data.valid;
+    } catch (error) {
+      console.error('Error al validar la contraseña', error);
+      return false;
     }
   
     alert("Contraseña verificada con éxito.");
