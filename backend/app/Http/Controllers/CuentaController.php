@@ -19,15 +19,18 @@ class CuentaController extends Controller{
             ], 403);
         }
 
+        // Validación básica
         $request->validate([
             'nombres' => 'required|string',
             'apellidos' => 'required|string',
             'correo' => 'required|email|unique:users,email',
+            'ci' => 'required|integer|unique:users,ci',
             'password' => 'required|string|min:6',
             'rol' => 'required|string',
+            // unidad_educativa_id puede venir o no, validaremos después según necesidad
         ]);
 
-        // Lógica de control de creación según quien crea
+        // Control de creación según quien crea
         if ($user->hasRole('Director') && $request->rol !== 'Docente') {
             return response()->json([
                 'message' => 'Los Directores solo pueden crear cuentas de tipo "Docente".'
@@ -40,16 +43,36 @@ class CuentaController extends Controller{
             ], 403);
         }
 
-        // Admin puede crear cualquier tipo de usuario, no necesita restricción
-
-        $nuevoUsuario = User::create([
+        // Preparar datos para la creación
+        $datos = [
             'name' => $request->nombres,
             'apellido' => $request->apellidos,
             'email' => $request->correo,
+            'ci' => $request->ci,
             'password' => bcrypt($request->password),
-        ]);
+        ];
 
-        $nuevoUsuario->assignRole($request->rol); // asignamos rol
+        // Lógica de unidad educativa
+        if (in_array($request->rol, ['Director', 'Docente'])) {
+            if ($user->hasRole('Admin')) {
+                // Admin DEBE mandar unidad educativa
+                if (!$request->filled('unidad_educativa_id')) {
+                    return response()->json([
+                        'message' => 'Debes seleccionar una Unidad Educativa para el nuevo usuario.'
+                    ], 422);
+                }
+                $datos['id_ue_ue'] = $request->unidad_educativa_id;
+            } elseif ($user->hasRole('Director')) {
+                // Director: se usa su propia unidad educativa
+                $datos['id_ue_ue'] = $user->id_ue_ue;
+            }
+        }
+
+        // Crear el usuario
+        $nuevoUsuario = User::create($datos);
+
+        // Asignar rol
+        $nuevoUsuario->assignRole($request->rol);
 
         return response()->json([
             'message' => 'Usuario creado con éxito.'

@@ -144,7 +144,7 @@ const CrearCuentas = () => {
               <input name="apellidos" value={formData.apellidos} onChange={handleInputChange} />
 
               <label>CI</label>
-              <input name="ci" value={formData.ci} onChange={handleInputChange} type="number" />
+              <input name="ci" value={formData.ci} onChange={handleInputChange}/>
 
               <label>Contraseña</label>
               <input type="password" name="password" value={formData.password} onChange={handleInputChange} />
