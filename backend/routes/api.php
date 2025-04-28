@@ -55,5 +55,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user', [UserController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/permisos', [PermisoController::class, 'index']);
-    Route::post('/user/verify-password', [UserController::class, 'verifyPassword']); //AGREGUE YO PARA VERIFICAR PASSWORD
+    Route::post('/user/verify-password', [AuthController::class, 'verifyPassword']); //AGREGUE YO PARA VERIFICAR PASSWORD 
 });

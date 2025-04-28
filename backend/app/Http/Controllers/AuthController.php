@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,4 +42,21 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Sesión cerrada']);
     }
+
+    public function verifyPassword(Request $request)
+{
+    $request->validate([
+        'password' => 'required|string',
+    ]);
+
+    $user = $request->user();
+
+    if (!$user) {
+        return response()->json(['valid' => false, 'message' => 'Usuario no autenticado'], 401);
+    }
+
+    $passwordCorrecta = Hash::check($request->password, $user->password);
+
+    return response()->json(['valid' => $passwordCorrecta]);
+}
 }

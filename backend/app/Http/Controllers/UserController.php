@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -40,14 +41,20 @@ class UserController extends Controller
     }
 
     public function verifyPassword(Request $request)
-    {
-        $request->validate([
-            'password' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'password' => 'required|string',
+    ]);
 
-        $user = $request->user(); // Usuario autenticado
-        $isValid = Hash::check($request->password, $user->password); // Comparar contraseñas
+    $user = $request->user();
 
-        return response()->json(['valid' => $isValid]);
+    if (!$user) {
+        return response()->json(['valid' => false, 'message' => 'Usuario no autenticado'], 401);
     }
+
+    $passwordCorrecta = Hash::check($request->password, $user->password);
+
+    return response()->json(['valid' => $passwordCorrecta]);
+}
+
 }
