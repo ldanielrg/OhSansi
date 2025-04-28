@@ -51,7 +51,12 @@ function App() {
       <Route path="/inscripciones" element={<Layout><Inscripciones /></Layout>}/>
       <Route path="/ver" element={<Layout><Ver /></Layout>}/>
       <Route path="/disciplinas" element={<Layout><Disciplinas /></Layout>}/>
+
+      //Eventos
       <Route path="/eventos" element={<Layout><Eventos /></Layout>}/>
+      <Route path="/crear-evento" element={<Layout><CrearEvento /></Layout>}/>
+      <Route path="/editar-evento" element={ <Layout><EditarEvento /></Layout>}/>
+     
       <Route path="/ganadores" element={<Layout><Ganadores /></Layout>}/>
       <Route path="/premiacion" element={<Layout><Premiacion /></Layout>}/>
       <Route path="/proximoseventos" element={<Layout><ProximosEventos /></Layout>}/>
@@ -62,8 +67,6 @@ function App() {
       <Route path="/crear-configuracion-convocatoria" element={<Layout><CrearConfigurarConvocatoria /></Layout>}/>
       <Route path="/editar-configuracion-convocatoria" element={<Layout><EditarConfigurarConvocatoria /></Layout>}/>
       <Route path="/nosotros" element={<Layout><Nosotros /></Layout>}/>
-      <Route path="/crear-evento" element={<Layout><CrearEvento /></Layout>}/>
-      <Route path="/editar-evento" element={ <Layout><EditarEvento /></Layout>}/>
       <Route path="/login" element={<Layout><Login /></Layout>}/>
       <Route path="/logout" element={<Layout><Logout /></Layout>}/>
       <Route path="/modificar-cuenta" element={<Layout><ModificarCuenta /></Layout>}/>
