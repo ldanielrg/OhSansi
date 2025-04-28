@@ -39,7 +39,7 @@ const Inscripciones = () => {
           <button onClick={() => navigate(`/formulario/${row.id_formulario}`)}>
             <FaEdit />
           </button>
-          <button onClick={() => eliminarFormulario(row.id_formulario)}> //NO IMPLEMENTE NADA DE BACKEND PARA ESTO.
+          <button onClick={() => eliminarFormulario(row.id_formulario)}>
             <FaTrash />
           </button>
         </div>
@@ -59,21 +59,28 @@ const Inscripciones = () => {
   };
 
   const agregarFormulario = () => {
-    const nuevoFormulario = {
-      id: formularioIdCounter,
-      estudiantes: [] // o un array vacío, o lo que quieras predefinir
-    };
-    setFormularios(prev => [...prev, nuevoFormulario]);
-    setFormularioIdCounter(prev => prev + 1);
+    navigate('/formulario/0');
   };
   
+  
 
-  const eliminarFormulario = (id) => {
+  const eliminarFormulario = async (id_formulario) => {
     const confirmacion = window.confirm('¿Deseas eliminar este formulario?');
     if (!confirmacion) return;
-
-    setFormularios(prev => prev.filter(f => f.id !== id));
+  
+    try {
+      await api.delete(`/formularios/${id_formulario}`);
+      alert('Formulario eliminado exitosamente.');
+  
+      // Actualizar la lista de formularios: eliminarlo del estado
+      setFormularios(prev => prev.filter(f => f.id_formulario !== id_formulario));
+  
+    } catch (error) {
+      console.error('Error al eliminar formulario:', error);
+      alert('Ocurrió un error al eliminar el formulario.');
+    }
   };
+  
 
   return (
     <div className="page-container">

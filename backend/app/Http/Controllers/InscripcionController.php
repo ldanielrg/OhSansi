@@ -182,6 +182,41 @@ class InscripcionController extends Controller{
         ]);
     }
 
+    public function eliminarFormulario(Request $request, $id){
+        $user = $request->user(); // Usuario autenticado
+
+        DB::beginTransaction();
+
+        try {
+            $formulario = Formulario::find($id);
+
+            if (!$formulario) {
+                return response()->json(['message' => 'Formulario no encontrado.'], 404);
+            }
+
+            // Verificar si el formulario pertenece al usuario
+            if ($formulario->id_usuario !== $user->id) {
+                return response()->json(['message' => 'No autorizado para eliminar este formulario.'], 403);
+            }
+
+            // Eliminar inscripciones asociadas
+            EstudianteEstaInscrito::where('id_formulario_formulario', $id)->delete();
+
+            // Eliminar el formulario
+            $formulario->delete();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Formulario e inscripciones eliminados exitosamente.'], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al eliminar el formulario',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
 
 }
