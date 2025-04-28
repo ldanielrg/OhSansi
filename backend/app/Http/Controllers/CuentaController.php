@@ -31,33 +31,44 @@ class CuentaController extends Controller{
     }
 
 
-    public function devolverUsuarios(Request $request)    {
-        //$user = Auth::user(); También funciona, pero el VC me da que no reconoce hasRoles.
+    public function devolverUsuarios(Request $request)
+    {
         $user = $request->user();
 
-        if (!$user->hasRole('Admin')) {
+        if (!$user->hasRole('Admin') && !$user->hasRole('Director')) {
             return response()->json([
                 'message' => 'Unauthorized.'
             ], 403);
         }
-        
-        $users = User::with('roles')->get()->map(function($user) {
+
+        if ($user->hasRole('Admin')) {
+            // Admin: ve todos los usuarios
+            $users = User::with('roles')->get();
+        } else {
+            // Director: solo ve usuarios de su unidad educativa
+            $users = User::with('roles')
+                        ->where('id_ue_ue', $user->id_ue_ue)
+                        ->get();
+        }
+
+        $usuariosFormateados = $users->map(function($usuario) {
             return [
-                'id'    => $user->id,
-                'nombre'  => $user->name,
-                'apellido'  => $user->apellido,
-                'email' => $user->email,
-                'role' => $user->getRoleNames()->first(), //Aqui me devulve sólo el primer rol (porque solo hay uno por usuario)
+                'id'       => $usuario->id,
+                'nombre'   => $usuario->name,
+                'apellido' => $usuario->apellido,
+                'email'    => $usuario->email,
+                'role'     => $usuario->getRoleNames()->first(), // primer rol
             ];
         });
 
-        return response()->json($users);
+        return response()->json($usuariosFormateados);
     }
 
-    public function eliminarUsuario(Request $request, $id)    {
+    public function eliminarUsuario(Request $request, $id)
+    {
         $user = $request->user();
 
-        if (!$user->hasRole('Admin')) {
+        if (!$user->hasRole('Admin') && !$user->hasRole('Director')) {
             return response()->json([
                 'message' => 'Unauthorized.'
             ], 403);
@@ -71,18 +82,38 @@ class CuentaController extends Controller{
             ], 404);
         }
 
-        // Opcional: Evitar que el Admin se elimine a sí mismo
+        // No puede eliminarse a sí mismo
         if ($usuarioEliminar->id == $user->id) {
             return response()->json([
                 'message' => 'No puedes eliminar tu propia cuenta.'
             ], 403);
         }
 
-        $usuarioEliminar->delete();
+        if ($user->hasRole('Admin')) {
+            // Admin puede eliminar sin restricciones (excepto a sí mismo)
+            $usuarioEliminar->delete();
+            return response()->json([
+                'message' => 'Usuario eliminado correctamente.'
+            ], 200);
+        }
 
-        return response()->json([
-            'message' => 'Usuario eliminado correctamente.'
-        ], 200);
+        if ($user->hasRole('Director')) {
+            // Director: Restricciones adicionales
+            $mismoUnidadEducativa = $usuarioEliminar->id_ue_ue == $user->id_ue_ue;
+            $rolesPermitidos = ['Director', 'Docente'];
+            $rolUsuario = $usuarioEliminar->getRoleNames()->first(); // suponemos un rol por usuario
+
+            if (!$mismoUnidadEducativa || !in_array($rolUsuario, $rolesPermitidos)) {
+                return response()->json([
+                    'message' => 'No tienes permisos para eliminar este usuario.'
+                ], 403);
+            }
+
+            $usuarioEliminar->delete();
+            return response()->json([
+                'message' => 'Usuario eliminado correctamente.'
+            ], 200);
+        }
     }
 
 
