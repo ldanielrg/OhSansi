@@ -15,45 +15,9 @@ const ModificarCuenta = () => {
     password: ''
   });
 
-
-  /*const validarPassword = async () => {
-    try {
-      const response = await axios.post('http://127.0.0.1:8000/api/user/verify-password', {
-        password: formData.password
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-  
-      return response.data.valid;
-    } catch (error) {
-      console.error('Error al validar la contraseña', error);
-      return false;
-    }
-  };*/
-
-  const validarPassword = async () => {
-    try {
-      console.log(formData.password);
-      
-      const response = await axios.post('api/user/verify-password', {
-        password: formData.password
-      });
-  
-      return response.data.valid;
-    } catch (error) {
-      console.error('Error al validar la contraseña', error);
-      return false;
-    }
-  };
-  
-  
-  
-
   const onSubmit = async (e) => {
     e.preventDefault();
-  
+    console.log(formData.password);
     if (formData.password.trim() === '') {
       alert("Por favor, ingresa tu contraseña.");
       return;
