@@ -52,6 +52,7 @@ const ConfiguracionConvocatoria = () => {
 
   const cancelDelete = () => {
     setShowDeleteModal(false);
+    toast.info('Eliminación cancelada.');
   };
 
   return (
