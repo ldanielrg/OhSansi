@@ -54,5 +54,36 @@ class CuentaController extends Controller{
         return response()->json($users);
     }
 
+    public function eliminarUsuario(Request $request, $id)    {
+        $user = $request->user();
+
+        if (!$user->hasRole('Admin')) {
+            return response()->json([
+                'message' => 'Unauthorized.'
+            ], 403);
+        }
+
+        $usuarioEliminar = User::find($id);
+
+        if (!$usuarioEliminar) {
+            return response()->json([
+                'message' => 'Usuario no encontrado.'
+            ], 404);
+        }
+
+        // Opcional: Evitar que el Admin se elimine a sí mismo
+        if ($usuarioEliminar->id == $user->id) {
+            return response()->json([
+                'message' => 'No puedes eliminar tu propia cuenta.'
+            ], 403);
+        }
+
+        $usuarioEliminar->delete();
+
+        return response()->json([
+            'message' => 'Usuario eliminado correctamente.'
+        ], 200);
+    }
+
 
 }

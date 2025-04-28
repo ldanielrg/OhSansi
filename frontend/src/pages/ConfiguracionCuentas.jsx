@@ -40,7 +40,7 @@ const ConfiguracionCuentas = () => {
 
   const confirmDeleteCuenta = async () => {
     try {
-      await api.delete(`/borrar-cuenta/${selectedCuenta.id}`);
+      await api.delete(`/eliminar-cuenta/${selectedCuenta.id}`);
 
       const updatedCuentas = cuentas.filter(c => c.id !== selectedCuenta.id);
       setCuentas(updatedCuentas);
