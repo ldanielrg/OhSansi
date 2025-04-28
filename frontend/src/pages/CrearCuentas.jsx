@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Caja from '../components/Caja';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // <-- Importamos el AuthContext
+import { useAuth } from '../context/AuthContext';
 import '../styles/CrearCuentas.css';
 import api from '../api/axios';
 
@@ -22,17 +22,18 @@ const CrearCuentas = () => {
     nombres: '',
     apellidos: '',
     correo: '',
-    ci: '', 
+    ci: '',
     password: '',
     confirmarPassword: ''
   });
-  
 
-  const { roles, loading } = useAuth(); // Usamos el contexto de auth
+  const { roles, loading } = useAuth();
   const navigate = useNavigate();
   const [opcionesDisponibles, setOpcionesDisponibles] = useState([]);
+  const [unidadesEducativas, setUnidadesEducativas] = useState([]);
+  const [unidadSeleccionada, setUnidadSeleccionada] = useState('');
 
-  // Definir qué opciones mostrar según el rol
+  // Definir opciones de roles disponibles
   useEffect(() => {
     if (!loading) {
       if (roles.includes('Admin')) {
@@ -41,9 +42,27 @@ const CrearCuentas = () => {
         setOpcionesDisponibles(['Docente']);
       } else if (roles.includes('Adm. Inscripcion')) {
         setOpcionesDisponibles(['Aux']);
+      } else {
+        navigate('/no-autorizado');
       }
     }
-  }, [roles, loading]);
+  }, [roles, loading, navigate]);
+
+  // Cargar unidades educativas solo si Admin crea Director o Docente
+  useEffect(() => {
+    const fetchUnidades = async () => {
+      try {
+        const res = await api.get('/unidades-educativas');
+        setUnidadesEducativas(res.data);
+      } catch (error) {
+        console.error('Error al cargar unidades educativas', error);
+      }
+    };
+
+    if (roles.includes('Admin') && (tipoCuenta === 'Director' || tipoCuenta === 'Docente')) {
+      fetchUnidades();
+    }
+  }, [tipoCuenta, roles]);
 
   const handleInputChange = (e) => {
     setFormData(prev => ({
@@ -54,40 +73,53 @@ const CrearCuentas = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (formData.password !== formData.confirmarPassword) {
       alert('Las contraseñas no coinciden');
       return;
     }
-  
+
+    // Validación extra para Admin creando Director o Docente
+    if ((tipoCuenta === 'Director' || tipoCuenta === 'Docente') && roles.includes('Admin') && !unidadSeleccionada) {
+      alert('Debes seleccionar una Unidad Educativa');
+      return;
+    }
+
     try {
-      const response = await api.post('/crear-cuenta', {
+      const payload = {
         nombres: formData.nombres,
         apellidos: formData.apellidos,
         correo: formData.correo,
-        ci: parseInt(formData.ci),
+        ci: parseInt(formData.ci, 10),
         password: formData.password,
         rol: tipoCuenta,
-      });
-      
-  
+      };
+
+      // Solo Admin debe enviar unidad educativa seleccionada
+      if (roles.includes('Admin') && (tipoCuenta === 'Director' || tipoCuenta === 'Docente')) {
+        payload.unidad_educativa_id = parseInt(unidadSeleccionada, 10);
+      }
+      console.log(payload)
+      await api.post('/crear-cuenta', payload);
+
       alert('Cuenta creada exitosamente');
       setFormData({
         nombres: '',
         apellidos: '',
         correo: '',
-        celular: '',
+        ci: '',
         password: '',
         confirmarPassword: ''
       });
       setTipoCuenta('');
+      setUnidadSeleccionada('');
     } catch (error) {
       console.error(error.response?.data || error);
       alert('Hubo un error al crear la cuenta');
     }
   };
 
-  if (loading) return null; // Esperar a que cargue auth
+  if (loading) return null;
 
   return (
     <div className="pagina-configuracion">
@@ -104,7 +136,7 @@ const CrearCuentas = () => {
             ))}
           </select>
         </div>
-        
+
         {tipoCuenta && (
           <form className="formulario-cuenta" onSubmit={handleSubmit}>
             <div className="form-column">
@@ -112,8 +144,7 @@ const CrearCuentas = () => {
               <input name="apellidos" value={formData.apellidos} onChange={handleInputChange} />
 
               <label>CI</label>
-              <input
-                name="ci" value={formData.ci} onChange={handleInputChange} />
+              <input name="ci" value={formData.ci} onChange={handleInputChange} type="number" />
 
               <label>Contraseña</label>
               <input type="password" name="password" value={formData.password} onChange={handleInputChange} />
@@ -130,10 +161,28 @@ const CrearCuentas = () => {
               <input type="password" name="confirmarPassword" value={formData.confirmarPassword} onChange={handleInputChange} />
             </div>
 
+            {/* Mostrar el selector solo si Admin crea Director o Docente */}
+            {roles.includes('Admin') && (tipoCuenta === 'Director' || tipoCuenta === 'Docente') && (
+              <div className="form-column">
+                <label>Unidad Educativa</label>
+                <select
+                  value={unidadSeleccionada}
+                  onChange={(e) => setUnidadSeleccionada(e.target.value)}
+                >
+                  <option value="">Selecciona Unidad Educativa</option>
+                  {unidadesEducativas.map((ue) => (
+                    <option key={ue.id} value={ue.id_ue}>
+                      {ue.nombre_ue}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="form-botones">
               <button type="button" className="boton-volver" onClick={() => navigate(-1)}>Volver</button>
               <button type="submit" className="boton-crear">Crear cuenta</button>
-            </div>          
+            </div>
           </form>
         )}
       </Caja>
