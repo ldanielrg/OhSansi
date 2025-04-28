@@ -34,10 +34,13 @@ Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asigna
 
 //Rutas para gestionar convocatoria
 Route::get('/areas', [AreaController::class, 'index']);
-Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
+Route::get('/areas-modificar/{id}', [AreaController::class, 'index']);
 Route::get('/categorias', [CategoriaController::class, 'todo']);
+Route::get('/categorias-modificar/{id}', [CategoriaController::class, 'todo']);
+Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
 Route::get('/categorias-grados', [CategoriaController::class, 'categoriasConGrados']);
 Route::get('/grados', [GradoController::class, 'todo']);
+Route::get('/grados-modificar/{id}', [GradoController::class, 'todo']);
 Route::get('/eventos', [EventoController::class, 'index']);
 
 
