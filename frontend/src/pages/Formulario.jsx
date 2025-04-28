@@ -132,6 +132,23 @@ const Formulario = () => {
 
     return (
     <div className="formulario-page-container">
+        <Caja titulo='Tomar en cuenta' width='50%'>
+            <div>En caso de querer inscribir un grupo de estudiantes sin usar el formulario, puede hacerlo descargando el siguiente archivo excel siguiendo las instrucciones:</div>
+            <div className='contenedor-archivo-excel'>
+            <a 
+                href="/plantillas/FormatoParaSubirLista.xlsx" 
+                download="FormatoParaSubirLista.xlsx"
+                className="boton-descargar-excel"
+                >
+                Descargar plantilla Excel
+            </a>
+            </div>
+            <div>Paso 1.- Descargar el archivo. <br />
+                Paso 2.- Llenar los campos correspondientes en el excel. <br />
+                Paso 3.-Subir el archivo a esta pagina presionando el boton "Subir lista". <br />
+                En caso de no cumplir el formato sugerido explicado en el documento excel, el sistema rechazará su archivo.
+            </div>
+        </Caja>
         <section className='contenedor-form-info'>
             <div className='boton-eliminar-form'>
             <BotonForm texto='X' className='boton-eliminar-form-bf'/>

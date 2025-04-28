@@ -104,10 +104,6 @@ const Inscripciones = () => {
 
   return (
     <div className="page-container">
-      <Caja titulo='Tomar en cuenta' width='50%'>
-        <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo, alias! Beatae, ullam dolorum...</div>
-      </Caja>
-
       <section className='seccion-crud-formularios'>
         <div className='para-separar-de-tabla-formularios'>
           <BotonForm
