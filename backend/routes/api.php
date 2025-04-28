@@ -50,14 +50,11 @@ Route::middleware('auth:sanctum')->delete('/formularios/{id}', [InscripcionContr
 
 
 
-// RECUPERAR DATOS DE USER
-Route::get('/user', [UserController::class, 'profile']);
-Route::put('/user', [UserController::class, 'update']);
-
 // ORDENE MEJOR
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [UserController::class, 'profile']);
     Route::put('/user', [UserController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/permisos', [PermisoController::class, 'index']);
+    Route::post('/user/verify-password', [AuthController::class, 'verifyPassword']); //AGREGUE YO PARA VERIFICAR PASSWORD 
 });
