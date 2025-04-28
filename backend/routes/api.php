@@ -43,11 +43,12 @@ Route::post('/crear-cuenta', [CuentaController::class, 'store']);
 
 
 //INSCRIPCIONES
-Route::post('/formularios', [InscripcionController::class, 'store']);
+Route::middleware('auth:sanctum')->post('/inscribir', [InscripcionController::class, 'store']);
+Route::middleware('auth:sanctum')->post('/formularios', [InscripcionController::class, 'recuperarFormularios']);
+Route::middleware('auth:sanctum')->get('/formularios/{id}', [InscripcionController::class, 'mostrarFormulario']);
+Route::middleware('auth:sanctum')->delete('/formularios/{id}', [InscripcionController::class, 'eliminarFormulario']);
 
-// RECUPERAR DATOS DE USER
-Route::get('/user', [UserController::class, 'profile']);
-Route::put('/user', [UserController::class, 'update']);
+
 
 // ORDENE MEJOR
 Route::middleware('auth:sanctum')->group(function () {
@@ -55,4 +56,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user', [UserController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/permisos', [PermisoController::class, 'index']);
+    Route::post('/user/verify-password', [AuthController::class, 'verifyPassword']); //AGREGUE YO PARA VERIFICAR PASSWORD 
 });
