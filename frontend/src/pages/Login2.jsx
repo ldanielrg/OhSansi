@@ -9,22 +9,10 @@ import { useNavigate } from 'react-router-dom';
 
 
 const Login2 = () => {
-    //Esto es para ver qué tipo de rol está activo (según RoleTabs) y mostrar formulario que le corresponde
-    const [rolActivo, setRolActivo] = useState('administrador');
     const { login } = useAuth();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const roles = [
-        { clave: 'tutor', nombre: 'Tutor' },
-        { clave: 'director', nombre: 'Director' },
-        { clave: 'docentes', nombre: 'Docentes' },
-        { clave: 'administrador', nombre: 'Administradores' },
-        { clave: 'cajas', nombre: 'Cajas' },
-        { clave: 'inscripciones', nombre: 'Adm. de inscripción' },
-        { clave: 'organizadores', nombre: 'Organizadores' }
-    ];
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -39,14 +27,9 @@ const Login2 = () => {
 
 
     const renderContenidoPorRol = () => {
-        switch (rolActivo) {
-            case 'administrador':
+        
                 return (
                     <form className="formulario-login" onSubmit={handleLogin}>
-                        <div>
-                            <label>Usuario</label>
-                            <input type="text" name="usuario" />
-                        </div>
                         <div>
                             <label>Correo</label>
                             <input
@@ -70,26 +53,10 @@ const Login2 = () => {
                         </div>
                     </form>
                 );
-            default:
-                return <FormGeneral onSubmit={() => {
-                    login(rolActivo);
-                    navigate('/');
-                }} />;
-                
-        }
     };
 
     return (
         <div className="login-page">
-            {/* Barra de roles debajo del header */}
-            <div className="barra-roles-wrapper">
-                <RoleTabs
-                    roles={roles}
-                    activeRole={rolActivo}
-                    onSelect={setRolActivo}
-                />
-            </div>
-
             <div className="login-form-wrapper">
                 <Caja titulo="Iniciar Sesión" width='28%'>
                     {renderContenidoPorRol()}
