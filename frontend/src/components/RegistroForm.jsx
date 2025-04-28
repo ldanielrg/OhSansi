@@ -61,6 +61,7 @@ const RegistroForm = ({
                     placeholder={placeholder}
                     value={value}
                     onChange={handleChange}
+                    autoComplete={type === 'password' ? 'new-password' : 'off'} //AGREGUE YO
                 />
             )}
         </div>
