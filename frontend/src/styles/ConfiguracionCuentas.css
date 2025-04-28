@@ -1,0 +1,52 @@
+/* ConfiguracionCuentas.css */
+
+.configuracion-cuentas {
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .cuentas-title {
+    color: #003366;
+    border-bottom: 2px solid #003366;
+    padding-bottom: 5px;
+  }
+  
+  .table-head {
+    background-color: #003366;
+    color: #FFFFFF;
+  }
+  
+  .table-bordered {
+    border: 1px solid #003366;
+  }
+  
+  .table-bordered th,
+  .table-bordered td {
+    border: 1px solid #003366;
+  }
+  
+  .btn-eliminar {
+    background-color: #003366;
+    color: #FFFFFF;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-eliminar:hover {
+    background-color: #002244;
+    color: #FFFFFF;
+  }
+  
+  /* Responsividad adicional */
+  @media (max-width: 576px) {
+    .cuentas-title {
+      font-size: 1.5rem;
+    }
+  
+    .btn-eliminar {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+    }
+  }
+  

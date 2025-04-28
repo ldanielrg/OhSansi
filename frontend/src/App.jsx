@@ -40,6 +40,7 @@ import EditarConfigurarConvocatoria from "./pages/EditarConfiguracionConvocatori
 import ModificarCuenta from "./pages/ModificarCuenta";
 import Formulario from './pages/Formulario'; //
 import CamposModificarCuenta from './pages/CamposModificarCuenta'; //
+import ConfiguracionCuentas from './pages/ConfiguracionCuentas';
 
 function App() {
   return (
@@ -73,6 +74,14 @@ function App() {
         element={
           <Layout>
             <Nosotros />
+          </Layout>
+        }
+      />
+      <Route
+        path="/configuracion-cuentas"
+        element={
+          <Layout>
+            <ConfiguracionCuentas />
           </Layout>
         }
       />
