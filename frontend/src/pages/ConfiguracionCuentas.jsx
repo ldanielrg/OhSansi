@@ -1,46 +1,59 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // <-- Necesitas Axios para las peticiones
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/ConfiguracionCuentas.css';
+import api from '../api/axios';
+
 
 const ConfiguracionCuentas = () => {
   const [cuentas, setCuentas] = useState([]);
   const [selectedCuenta, setSelectedCuenta] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Cargar cuentas del localStorage al iniciar
   useEffect(() => {
-    const storedCuentas = JSON.parse(localStorage.getItem('cuentas')) || [
-      { id: 1, nombre: 'Juan Pérez', rol: 'Administrador' },
-      { id: 2, nombre: 'María López', rol: 'Director' },
-      { id: 3, nombre: 'Carlos Gómez', rol: 'Docente' },
-      { id: 4, nombre: 'Ana Fernández', rol: 'Docente' },
-    ];
-    setCuentas(storedCuentas);
+    fetchCuentas();
   }, []);
 
-  // Guardar cambios en localStorage
-  const updateLocalStorage = (updatedCuentas) => {
-    localStorage.setItem('cuentas', JSON.stringify(updatedCuentas));
+  const fetchCuentas = async () => {
+    try {
+      const response = await api.get('/obtener-cuentas');
+      // Ajustamos la estructura si es necesario
+      const formattedCuentas = response.data.map(user => ({
+        id: user.id,
+        nombre: user.nombre,
+        apellido: user.apellido,
+        rol: user.role
+      }));
+
+      setCuentas(formattedCuentas);
+    } catch (error) {
+      console.error('Error al cargar las cuentas:', error);
+      toast.error('No se pudieron cargar las cuentas.');
+    }
   };
 
-  // Prompt para eliminar cuenta
   const promptDeleteCuenta = (cuenta) => {
     setSelectedCuenta(cuenta);
     setShowDeleteModal(true);
   };
 
-  // Confirmar eliminación
-  const confirmDeleteCuenta = () => {
-    const updatedCuentas = cuentas.filter(c => c.id !== selectedCuenta.id);
-    setCuentas(updatedCuentas);
-    updateLocalStorage(updatedCuentas);
-    toast.error(`Cuenta "${selectedCuenta.nombre}" eliminada.`);
+  const confirmDeleteCuenta = async () => {
+    try {
+      await api.delete(`/eliminar-cuenta/${selectedCuenta.id}`);
+
+      const updatedCuentas = cuentas.filter(c => c.id !== selectedCuenta.id);
+      setCuentas(updatedCuentas);
+      toast.success(`Cuenta "${selectedCuenta.nombre}" eliminada.`);
+    } catch (error) {
+      console.error('Error al eliminar la cuenta:', error);
+      toast.error('No se pudo eliminar la cuenta.');
+    }
+
     setShowDeleteModal(false);
     setSelectedCuenta(null);
   };
 
-  // Cancelar eliminación
   const cancelDeleteCuenta = () => {
     setShowDeleteModal(false);
     setSelectedCuenta(null);

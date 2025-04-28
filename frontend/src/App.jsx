@@ -42,6 +42,7 @@ import Formulario from './pages/Formulario'; //
 import CamposModificarCuenta from './pages/CamposModificarCuenta'; //
 import ConfiguracionCuentas from './pages/ConfiguracionCuentas';
 
+
 function App() {
   return (
     <AuthProvider>
@@ -74,7 +75,11 @@ function App() {
      
       <Route path="/configuracion-cuentas" element={<Layout><ConfiguracionCuentas /></Layout>}/>
       <Route path="/crear-ue" element={<Layout><CrearUE /></Layout>}/>
-      <Route path="/crear-cuentas" element={<Layout> <CrearCuentas /> </Layout>} />
+
+      {/* Rutas protegidas solo para Admin/Director/Adm.Inscripción */}
+      <Route element={<ProtectedRoute allowedRoles={['Admin', 'Director', 'Adm. Inscripcion']} />}>
+          <Route path="/crear-cuentas" element={<Layout><CrearCuentas /></Layout>} />
+      </Route>
     </Routes>
     </AuthProvider>
   );

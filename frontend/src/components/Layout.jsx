@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
+  const { user} = useAuth();
 
   // Funciones para cada ruta
   const handleNavigateHome = (e) => {
@@ -33,8 +34,11 @@ const Layout = ({ children }) => {
     e.preventDefault();
     navigate("/modificar-cuenta");
   };
+  const handleNavigateLogout = (e) => {
+    e.preventDefault();
+    navigate("/logout");
+  };
   
-  const { user, logout } = useAuth();
 
   return (
     <div>
@@ -158,7 +162,7 @@ const Layout = ({ children }) => {
                   style={{ width: "20px", marginRight: "5px" }}
                 />
                 <span className="me-3">Hola, {user.name}</span>
-                <button className="btn btn-outline-light btn-sm" onClick={logout}>
+                <button className="btn btn-outline-light btn-sm" onClick={handleNavigateLogout}>
                   Cerrar sesión
                 </button>
               </li>
