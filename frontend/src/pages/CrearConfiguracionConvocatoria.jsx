@@ -33,103 +33,132 @@ const CrearConfigurarConvocatoria = () => {
   const [selGradoInicialToAddId, setSelGradoInicialToAddId] = useState("");
   const [selGradoFinalToAddId, setSelGradoFinalToAddId] = useState("");
 
+  const fetchDatos = async () => {
+    try {
+      const [gradosRes, categoriasRes, areasRes] = await Promise.all([
+        api.get('/grados'),
+        api.get('/categorias'),
+        api.get('/areas'),
+      ]);
+  
+      setGrados(gradosRes.data);
+      setCategorias(categoriasRes.data);
+      setAreas(areasRes.data);
+    } catch (error) {
+      console.error('Error recargando datos:', error);
+      toast.error('Error recargando datos.');
+    }
+  };
+  
+
   useEffect(() => {
-    const fetchDatos = async () => {
-      try {
-        const [gradosRes, categoriasRes, areasRes] = await Promise.all([
-          api.get('/grados'),
-          api.get('/categorias'),
-          api.get('/areas'),
-        ]);
-  
-        setGrados(gradosRes.data); 
-        setCategorias(categoriasRes.data); 
-        setAreas(areasRes.data); 
-      } catch (error) {
-        console.error('Error cargando datos:', error);
-        toast.error('Error cargando datos iniciales.');
-      }
-    };
-  
     fetchDatos();
   }, []);
 
-  const handleCreateGrado = (e) => {
+  
+  const handleCreateGrado = async (e) => {
     e.preventDefault();
-    if (!newGrado.trim()) return; // Prevent adding empty names
-    const item = { id: Date.now(), nombre: newGrado.trim() };
-    const updated = [...grados, item];
-    setGrados(updated);
-    localStorage.setItem("listaGrados", JSON.stringify(updated));
-    setNewGrado("");
+    if (!newGrado.trim()) return;
+    try {
+      const res = await api.post('/grado-crear', { nombre: newGrado.trim() });
+      toast.success('Grado creado exitosamente.');
+      setGrados([...grados, res.data.grado]);
+      setNewGrado("");
+      fetchDatos(); //recarga la lista
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al crear grado.');
+    }
   };
-  const handleDeleteGrado = (e) => {
+  
+
+  const handleDeleteGrado = async (e) => {
     e.preventDefault();
     if (!selGradoId) return;
-    // Optional: Add check if grade is used in any convocatoriaArea
-    if (
-      window.confirm(
-        `¿Eliminar grado "${grados.find((g) => g.id === selGradoId)?.nombre}"?`
-      )
-    ) {
-      const updated = grados.filter((g) => g.id !== selGradoId);
-      setGrados(updated);
-      localStorage.setItem("listaGrados", JSON.stringify(updated));
-      setSelGradoId(null);
+  
+    if (window.confirm(`¿Eliminar grado seleccionado?`)) {
+      try {
+        await api.delete(`/grado-eliminar/${selGradoId}`);
+        toast.success('Grado eliminado exitosamente.');
+        setGrados(grados.filter((g) => g.id_grado !== selGradoId));
+        setSelGradoId(null);
+        fetchDatos(); //recarga la lista
+      } catch (error) {
+        console.error(error);
+        toast.error('Error al eliminar grado.');
+      }
     }
   };
-
-  const handleCreateCategoria = (e) => {
+  
+  const handleCreateCategoria = async (e) => {
     e.preventDefault();
-    if (!newCategoria.trim()) return; // Prevent adding empty names
-    const item = { id: Date.now(), nombre: newCategoria.trim() };
-    const updated = [...categorias, item];
-    setCategorias(updated);
-    localStorage.setItem("listaCategorias", JSON.stringify(updated));
-    setNewCategoria("");
+    if (!newCategoria.trim()) return;
+  
+    try {
+      const res = await api.post('/categoria-crear', { nombre_categoria: newCategoria.trim() });
+      toast.success('Categoría creada exitosamente.');
+      setCategorias([...categorias, res.data.categoria]);
+      setNewCategoria("");
+      fetchDatos(); //recarga la lista
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al crear categoría.');
+    }
   };
-  const handleDeleteCategoria = (e) => {
+  
+
+  const handleDeleteCategoria = async (e) => {
     e.preventDefault();
     if (!selCategoriaId) return;
-    // Optional: Add check if category is used in any convocatoriaArea
-    if (
-      window.confirm(
-        `¿Eliminar categoría "${
-          categorias.find((c) => c.id === selCategoriaId)?.nombre
-        }"?`
-      )
-    ) {
-      const updated = categorias.filter((c) => c.id !== selCategoriaId);
-      setCategorias(updated);
-      localStorage.setItem("listaCategorias", JSON.stringify(updated));
-      setSelCategoriaId(null);
+  
+    if (window.confirm(`¿Eliminar categoría seleccionada?`)) {
+      try {
+        await api.delete(`/categoria-eliminar/${selCategoriaId}`);
+        toast.success('Categoría eliminada exitosamente.');
+        setCategorias(categorias.filter((c) => c.id_categoria !== selCategoriaId));
+        setSelCategoriaId(null);
+        fetchDatos(); //recarga la lista
+      } catch (error) {
+        console.error(error);
+        toast.error('Error al eliminar categoría.');
+      }
     }
   };
-
-  const handleCreateArea = (e) => {
+  
+  const handleCreateArea = async (e) => {
     e.preventDefault();
-    if (!newArea.trim()) return; // Prevent adding empty names
-    const item = { id: Date.now(), nombre: newArea.trim() };
-    const updated = [...areas, item];
-    setAreas(updated);
-    localStorage.setItem("listaAreas", JSON.stringify(updated));
-    setNewArea("");
+    if (!newArea.trim()) return;
+  
+    try {
+      const res = await api.post('/area-crear', { nombre: newArea.trim() });
+      toast.success('Área creada exitosamente.');
+      setAreas([...areas, res.data.area]);
+      setNewArea("");
+      fetchDatos(); //recarga la lista
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al crear área.');
+    }
   };
-  const handleDeleteArea = (e) => {
+  
+  const handleDeleteArea = async (e) => {
     e.preventDefault();
     if (!selAreaId) return;
-    // Optional: Add check if area is used in any convocatoriaArea
-    if (
-      window.confirm(
-        `¿Eliminar área "${areas.find((a) => a.id === selAreaId)?.nombre}"?`
-      )
-    ) {
-      const updated = areas.filter((a) => a.id !== selAreaId);
-      setAreas(updated);
-      localStorage.setItem("listaAreas", JSON.stringify(updated));
-      setSelAreaId(null);
+  
+    if (window.confirm(`¿Eliminar área seleccionada?`)) {
+      try {
+        await api.delete(`/area-eliminar/${selAreaId}`);
+        toast.success('Área eliminada exitosamente.');
+        setAreas(areas.filter((a) => a.id_area !== selAreaId));
+        setSelAreaId(null);
+        fetchDatos(); //recarga la lista
+      } catch (error) {
+        console.error(error);
+        toast.error('Error al eliminar área.');
+      }
     }
   };
+  
 
   // --- Handlers for managing Areas within the specific Convocatoria ---
 

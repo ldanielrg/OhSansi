@@ -12,38 +12,43 @@ class AreaController extends Controller
      */
     public function index()
     {
-        return Area::where('activo', true)->get();
+        return Area::all();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Crear nueva área
     public function store(Request $request)
     {
-        //
+        // Validar que envíen un nombre
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+        ]);
+
+        // Crear y guardar nueva área
+        $area = Area::create([
+            'nombre_area' => $validated['nombre'],
+        ]);
+
+        return response()->json([
+            'message' => 'Área creada exitosamente.',
+            'area' => $area,
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // Eliminar un área por id
+    public function destroy($id)
     {
-        //
-    }
+        $area = Area::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if (!$area) {
+            return response()->json([
+                'message' => 'Área no encontrada.',
+            ], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $area->delete();
+
+        return response()->json([
+            'message' => 'Área eliminada correctamente.',
+        ]);
     }
 }

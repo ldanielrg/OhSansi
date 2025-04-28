@@ -34,15 +34,21 @@ Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asigna
 
 //Rutas para gestionar convocatoria
 Route::get('/areas', [AreaController::class, 'index']);
-Route::get('/areas-modificar/{id}', [AreaController::class, 'index']);
+Route::delete('/area-eliminar/{id}', [AreaController::class, 'destroy']);
+Route::post('/area-crear', [AreaController::class, 'store']);
+
 Route::get('/categorias', [CategoriaController::class, 'todo']);
-Route::get('/categorias-modificar/{id}', [CategoriaController::class, 'todo']);
 Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
 Route::get('/categorias-grados', [CategoriaController::class, 'categoriasConGrados']);
-Route::get('/grados', [GradoController::class, 'todo']);
-Route::get('/grados-modificar/{id}', [GradoController::class, 'todo']);
-Route::get('/eventos', [EventoController::class, 'index']);
+Route::delete('/categoria-eliminar/{id}', [CategoriaController::class, 'destroy']);
+Route::post('/categoria-crear', [CategoriaController::class, 'store']);
 
+Route::get('/grados', [GradoController::class, 'todo']);
+Route::delete('/grado-eliminar/{id}', [GradoController::class, 'destroy']);
+Route::post('/grado-crear', [GradoController::class, 'store']);
+
+Route::get('/eventos', [EventoController::class, 'index']);
+//////
 
 Route::post('/login', [AuthController::class, 'login']);//Para logueo
 Route::middleware('auth:sanctum')->get('/obtener-cuentas', [CuentaController::class, 'devolverUsuarios']);//Obtiene todos los usuarios con roles
@@ -59,7 +65,7 @@ Route::middleware('auth:sanctum')->delete('/formularios/{id}', [InscripcionContr
 
 
 
-// ORDENE MEJOR
+//RUTAS PROTEGIDAS
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [UserController::class, 'profile']);
     Route::put('/user', [UserController::class, 'update']);

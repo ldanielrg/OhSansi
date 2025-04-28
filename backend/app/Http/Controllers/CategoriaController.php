@@ -43,4 +43,38 @@ class CategoriaController extends Controller{
         return response()->json($categorias);
     }
 
+    //Crear categoría por nombre
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre_categoria' => 'required|string|max:255',
+        ]);
+
+        $categoria = Categorium::create([
+            'nombre_categoria' => $validated['nombre_categoria'],
+        ]);
+
+        return response()->json([
+            'message' => 'Categoría creada exitosamente.',
+            'categoria' => $categoria,
+        ], 201);
+    }
+
+    //Eliminar categoría por ID
+    public function destroy($id)
+    {
+        $categoria = Categorium::find($id);
+
+        if (!$categoria) {
+            return response()->json([
+                'message' => 'Categoría no encontrada.',
+            ], 404);
+        }
+
+        $categoria->delete();
+
+        return response()->json([
+            'message' => 'Categoría eliminada correctamente.',
+        ]);
+    }
 }
