@@ -40,6 +40,7 @@ import EditarConfigurarConvocatoria from "./pages/EditarConfiguracionConvocatori
 import ModificarCuenta from "./pages/ModificarCuenta";
 import Formulario from './pages/Formulario'; //
 import CamposModificarCuenta from './pages/CamposModificarCuenta'; //
+import ConfiguracionCuentas from './pages/ConfiguracionCuentas';
 
 function App() {
   return (
@@ -68,6 +69,65 @@ function App() {
       <Route path="/formulario/:id" element={<Layout><Formulario /></Layout>} /> 
       <Route path="/modificar-campos" element={<Layout><CamposModificarCuenta /></Layout>} />
 
+      <Route
+        path="/nosotros"
+        element={
+          <Layout>
+            <Nosotros />
+          </Layout>
+        }
+      />
+      <Route
+        path="/configuracion-cuentas"
+        element={
+          <Layout>
+            <ConfiguracionCuentas />
+          </Layout>
+        }
+      />
+      <Route
+        path="/crear-evento"
+        element={
+          <Layout>
+            <CrearEvento />
+          </Layout>
+        }
+      />
+      <Route
+        path="/crear-ue"
+        element={
+          <Layout>
+            <CrearUE />
+          </Layout>
+        }
+      />
+      <Route
+        path="/crear-cuentas"
+        element={
+          <Layout>
+            <CrearCuentas />
+          </Layout>
+        }
+      />
+      <Route
+        path="/editar-evento"
+        element={
+          <Layout>
+            <EditarEvento />
+          </Layout>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <AuthProvider>
+            <Layout>
+              <Login />
+            </Layout>
+          </AuthProvider>
+        }
+      />
+      {/* Podrías agregar más rutas si lo requieres */}
     </Routes>
     </AuthProvider>
   );
