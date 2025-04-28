@@ -1,165 +1,168 @@
 import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import axios from "axios";
+import api from '../api/axios';
 import '../styles/CamposModificarCuenta.css';
 import RegistroForm from '../components/RegistroForm';
 import BotonForm from '../components/BotonForm';
-import { useAuth } from "../context/AuthContext"; 
 import { useNavigate } from 'react-router-dom';
-
+import { useAuth } from "../context/AuthContext";
 
 const CamposModificarCuenta = () => {
-    const { token } = useAuth(); //PARA TRAER LOS TOKEN
+  const { token } = useAuth();
+  const navigate = useNavigate();
 
-    const [usuario, setUsuario] = useState({});
-    const [isEditable, setIsEditable] = useState({
-        nombreCuenta: false,
-        email: false,
-        password: false,
-        confirmarPassword: false,
-    });
+  const [formData, setFormData] = useState({
+    nombreCuenta: '',
+    email: '',
+    password: '',
+    confirmarPassword: ''
+  });
 
-    const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm({
-        defaultValues: {
-        nombreCuenta: '',
-        email: '',
-        password: '',
-        confirmarPassword: ''
-        }
-    });
+  useEffect(() => {
+    const fetchUsuario = async () => {
+      try {
+        const response = await api.get('/user');
+        setFormData({
+          nombreCuenta: response.data.name || '',
+          email: response.data.email || '',
+          password: '',
+          confirmarPassword: ''
+        });
+      } catch (error) {
+        console.error('Error al traer datos del usuario', error);
+      }
+    };
 
-    useEffect(() => {
-        const fetchUsuario = async () => {
-        try {
-            const response = await axios.get('http://127.0.0.1:8000/api/user', {
-            headers: {
-                Authorization: `Bearer ${token}` // <- Aquí debes poner la variable que tengas del token de autenticación
-            }
-            });
-            setUsuario(response.data);
+    fetchUsuario();
+  }, []);
 
-            reset({
-            nombreCuenta: response.data.name, // Cargamos Nombre
-            email: response.data.email,        // Cargamos Email
-            password: '',             // SIEMPRE vacío
-            confirmarPassword: ''              // Vacío
-            });
+  const onSubmit = async (e) => {
+    e.preventDefault();
 
-        } catch (error) {
-            console.error('Error al traer datos del usuario', error);
-        }
-        };
-
-        if (token) {
-        fetchUsuario();
-        }
-    
-    }, [token, setValue]);
-
-
-
-    const onSubmit = async (data) => {
-        if (data.password !== data.confirmarPassword !== data.confirmarPassword) {
-        alert("Las contraseñas no coinciden.");
+    // Validar nombre
+    if (formData.nombreCuenta.trim() === '') {
+        alert("El nombre no puede estar vacío.");
         return;
+    }
+
+    // Validar que el nombre solo contenga letras (puede contener espacios también)
+    const nombreRegex = /^[a-zA-Z\s]+$/;
+    if (!nombreRegex.test(formData.nombreCuenta)) {
+        alert("El nombre solo puede contener letras y espacios, no números.");
+        return;
+    }
+
+    // Validar email
+    if (formData.email.trim() === '') {
+        alert("El correo no puede estar vacío.");
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+        alert("Por favor ingresa un correo electrónico válido.");
+        return;
+    }
+  
+    // Si intenta cambiar contraseña
+    if (formData.password !== '' || formData.confirmarPassword !== '') {
+      // Ambas deben estar llenas
+        if (formData.password.trim() === '' || formData.confirmarPassword.trim() === '') {
+            alert("Debes llenar ambos campos de contraseña.");          
+            return;
         }
-
-        const confirmar = window.confirm("¿Estás seguro de que deseas guardar los cambios?");
-        if (confirmar) {
-        try {
-            await axios.put('http://127.0.0.1:8000/api/user', {
-            name: data.nombreCuenta,
-            email: data.email,
-            username: usuario.username, // importante mantener username original
-            password: data.password !== '' ? data.password : undefined, // solo si quiere cambiar contraseña
-            }, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-            });
-    
-            alert('¡Datos actualizados con éxito!');
-        } catch (error) {
-            console.error('Error al actualizar datos', error);
+        
+        // La contraseña debe tener al menos 6 caracteres
+        if (formData.password.length < 6) {
+            alert("La nueva contraseña debe tener al menos 6 caracteres.");
+            return;
         }
+  
+      // Las contraseñas deben coincidir
+        if (formData.password !== formData.confirmarPassword) {
+            alert("Las contraseñas no coinciden.");
+            return;
         }
-    };
+    }
 
-    const enableField = (fieldName) => {
-        setIsEditable(prev => ({
-        ...prev,
-        [fieldName]: true,
-        }));
-    };
-    const navigate = useNavigate();
+    const confirmar = window.confirm("¿Estás seguro de que deseas guardar los cambios?");
+    if (!confirmar) return;
 
+    try {
+      await api.put('/user', {
+        name: formData.nombreCuenta,
+        email: formData.email,
+        password: formData.password !== '' ? formData.password : undefined,
+      });
 
-    return (
-        <div className="page-container-modificar-cuenta">
-        <section className="seccion-formulario-modificar-cuenta">
-            <h2>Modificación de la cuenta</h2>
-            <div className="cont-form-mod">
-    
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {/* Nombre */}
-                <div className="div-label-input-modificar-cuenta">
-                <RegistroForm
-                    label="Nombre"
-                    type="text"
-                    value={watch('nombreCuenta')}
-                    {...register('nombreCuenta', { required: 'El nombre es obligatorio' })}
-                    disabled={!isEditable.nombreCuenta}
-                />
-                </div>
-                {errors.nombreCuenta && <p>{errors.nombreCuenta.message}</p>}
-    
-                {/* Email */}
-                <div className="div-label-input-modificar-cuenta">
-                <RegistroForm
-                    label="Email"
-                    type="email"
-                    value={watch('email')}
-                    {...register('email', { required: 'El email es obligatorio' })}
-                    disabled={!isEditable.email}
-                />
-                
-                </div>
-                {errors.email && <p>{errors.email.message}</p>}
-    
-                {/* Contraseña */}
-                <div className="div-label-input-modificar-cuenta">
-                <RegistroForm
-                    label="Nueva contraseña"
-                    type="password"
-                    value={watch('password')}
-                    {...register('password')}
-                    disabled={!isEditable.password}
-                />
-                </div>
-                {errors.password && <p>{errors.password.message}</p>}
-    
-                {/* Confirmar contraseña */}
-                <div className="div-label-input-modificar-cuenta">
-                <RegistroForm
-                    label="Confirmar nueva contraseña"
-                    type="password"
-                    value={watch('confirmarPassword')}
-                    {...register('confirmarPassword')}
-                disabled={!isEditable.confirmarPassword}
-                />
-                </div>
-    
-                {/* Botones */}
-                <div className="div-label-input-modificar-cuenta">
-                <BotonForm className="boton-volver-form-campos-mod" texto="Volver" type="button" onClick={() => navigate('/modificar-cuenta')} />
-                <BotonForm texto="Modificar" type="submit" />
-                </div>
-            </form>
-    
+      alert('¡Datos actualizados con éxito!');
+      navigate('/');
+    } catch (error) {
+      console.error('Error al actualizar datos', error);
+      alert('Ocurrió un error al actualizar tus datos.');
+    }
+  };
+
+  return (
+    <div className="page-container-modificar-cuenta">
+      <section className="seccion-formulario-modificar-cuenta">
+        <h2>Modificación de la cuenta</h2>
+        <div className="cont-form-mod">
+          <form onSubmit={onSubmit}>
+            {/* Nombre */}
+            <div className="div-label-input-modificar-cuenta">
+              <RegistroForm
+                label="Nombre"
+                name="nombreCuenta"
+                value={formData.nombreCuenta}
+                onChange={setFormData}
+                type="text"
+              />
             </div>
-        </section>
+
+            {/* Email */}
+            <div className="div-label-input-modificar-cuenta">
+              <RegistroForm
+                label="Email"
+                name="email"
+                value={formData.email}
+                onChange={setFormData}
+                type="email"
+              />
+            </div>
+
+            {/* Nueva contraseña */}
+            <div className="div-label-input-modificar-cuenta">
+              <RegistroForm
+                label="Nueva contraseña"
+                name="password"
+                value={formData.password}
+                onChange={setFormData}
+                type="password"
+              />
+            </div>
+
+            {/* Confirmar nueva contraseña */}
+            <div className="div-label-input-modificar-cuenta">
+              <RegistroForm
+                label="Confirmar nueva contraseña"
+                name="confirmarPassword"
+                value={formData.confirmarPassword}
+                onChange={setFormData}
+                type="password"
+              />
+            </div>
+
+            {/* Botones */}
+            <div className="div-label-input-modificar-cuenta">
+              <BotonForm texto="Volver" type="button" onClick={(e) => {e.preventDefault(); navigate('/modificar-cuenta');}} />
+              <BotonForm texto="Modificar" type="submit" />
+            </div>
+          </form>
+         
         </div>
-    );
+      </section>
+    </div>
+  );
 };
 
 export default CamposModificarCuenta;
