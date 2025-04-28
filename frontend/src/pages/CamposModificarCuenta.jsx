@@ -154,10 +154,11 @@ const CamposModificarCuenta = () => {
 
             {/* Botones */}
             <div className="div-label-input-modificar-cuenta">
-              <BotonForm texto="Volver" type="button" onClick={() => navigate('/modificar-cuenta')} />
+              <BotonForm texto="Volver" type="button" onClick={(e) => {e.preventDefault(); navigate('/modificar-cuenta');}} />
               <BotonForm texto="Modificar" type="submit" />
             </div>
           </form>
+         
         </div>
       </section>
     </div>
