@@ -17,7 +17,7 @@ use App\Http\Controllers\ConvocatoriaController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\InscripcionController;
 use App\Http\Controllers\CategoriaController;
-
+use App\Http\Controllers\GradoController;
 use App\Http\Controllers\UserController;
 
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
@@ -28,12 +28,17 @@ Route::post('/unidad-educativa', [UnidadEducativaController::class, 'store']);
 Route::get('/unidades-educativas', [UnidadEducativaController::class, 'index']); //PARA OBTENER LOS DATOS UE
 Route::put('/unidad-educativa/{id}', [UnidadEducativaController::class, 'update']);
 Route::delete('/unidad-educativa/{id}', [UnidadEducativaController::class, 'destroy']);
-Route::apiResource('/eventos', EventoController::class);
+
 Route::apiResource('/convocatorias', ConvocatoriaController::class);
-Route::get('/areas', [AreaController::class, 'index']);
-Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
 Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asignarAreas']);
 
+//Rutas para gestionar convocatoria
+Route::get('/areas', [AreaController::class, 'index']);
+Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
+Route::get('/categorias', [CategoriaController::class, 'todo']);
+Route::get('/categorias-grados', [CategoriaController::class, 'categoriasConGrados']);
+Route::get('/grados', [GradoController::class, 'todo']);
+Route::get('/eventos', [EventoController::class, 'index']);
 
 
 Route::post('/login', [AuthController::class, 'login']);//Para logueo
