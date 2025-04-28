@@ -36,10 +36,10 @@ Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asigna
 
 
 
+Route::post('/login', [AuthController::class, 'login']);//Para logueo
+Route::post('/crear-cuenta', [CuentaController::class, 'store']);//Para crear cuentas con roles
+Route::middleware('auth:sanctum')->get('/obtener-cuentas', [CuentaController::class, 'devolverUsuarios']);//Obtiene todos los usuarios con roles
 
-//PERMISOS Y ROLES. Toda ruta relacionada con esto se encuentra aquí:
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/crear-cuenta', [CuentaController::class, 'store']);
 
 
 //INSCRIPCIONES

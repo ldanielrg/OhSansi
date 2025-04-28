@@ -4,31 +4,55 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class CuentaController extends Controller{
 
     
-public function store(Request $request)
-{
-    $request->validate([
-        'nombres' => 'required|string',
-        'apellidos' => 'required|string',
-        'correo' => 'required|email|unique:users,email',
-        //'celular' => 'nullable|string',
-        'password' => 'required|string|min:6',
-        'rol' => 'required|string',
-    ]);
+    public function store(Request $request)    {
+        $request->validate([
+            'nombres' => 'required|string',
+            'apellidos' => 'required|string',
+            'correo' => 'required|email|unique:users,email',
+            //'celular' => 'nullable|string',
+            'password' => 'required|string|min:6',
+            'rol' => 'required|string',
+        ]);
 
-    $user = User::create([
-        'name' => $request->nombres . ' ' . $request->apellidos,
-        'email' => $request->correo,
-        'password' => bcrypt($request->password),
-    ]);
+        $user = User::create([
+            'name' => $request->nombres . ' ' . $request->apellidos,
+            'email' => $request->correo,
+            'password' => bcrypt($request->password),
+        ]);
 
-    $user->assignRole($request->rol); // usando laravel-permission
+        $user->assignRole($request->rol); // usando laravel-permission
 
-    return response()->json(['message' => 'Usuario creado con éxito'], 201);
-}
+        return response()->json(['message' => 'Usuario creado con éxito'], 201);
+    }
+
+
+    public function devolverUsuarios(Request $request)    {
+        
+        $user = $request->user();
+
+        if (!$user->hasRole('Admin')) {
+            return response()->json([
+                'message' => 'Unauthorized.'
+            ], 403);
+        }
+        
+        $users = User::with('roles')->get()->map(function($user) {
+            return [
+                'id'    => $user->id,
+                'nombre'  => $user->name,
+                'apellido'  => $user->apellido,
+                'email' => $user->email,
+                'role' => $user->getRoleNames()->first(), //Aqui me devulve sólo el primer rol (porque solo hay uno por usuario)
+            ];
+        });
+
+        return response()->json($users);
+    }
 
 
 }
