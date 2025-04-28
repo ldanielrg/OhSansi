@@ -5,12 +5,11 @@ import Caja from '../components/Caja';
 import BotonForm from '../components/BotonForm';
 import DataTable from 'react-data-table-component';
 import RegistroForm from '../components/RegistroForm';
-import api from '../api/axios'; //ESTO ES LA API en AXIOS.
-
-
+import api from '../api/axios';
+import * as XLSX from 'xlsx';
 
 const Formulario = () => {
-    const { id } = useParams(); // Obtenemos el ID del formulario que se está editando
+    const { id } = useParams();
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -35,8 +34,7 @@ const Formulario = () => {
         { name: 'Fecha de Nacimiento', selector: row => row.fechaNac },
         { name: 'Rude', selector: row => row.rude },
         { name: 'Área', selector: row => row.nombre_area },
-        { name: 'Categoría', selector: row => row.nombre_categoria },
-        { name: 'Municipio', selector: row => row.municipio }
+        { name: 'Categoría', selector: row => row.nombre_categoria }
     ];
 
     const customStyles = {
@@ -49,103 +47,72 @@ const Formulario = () => {
             },
         },
     };
-
-    // Cargar opciones (áreas, municipios, unidades educativas)
-    useEffect(() => {
-        if (formData.area) {
-            fetch(`http://localhost:8000/api/categorias/${formData.area}`)
-                .then(res => res.json())
-                .then(data => setCategorias(data))
-                .catch(error => console.error('Error al obtener categorías:', error));
-        } else {
-            setCategorias([]);
-        }
-    }, [formData.area]);
-
-    useEffect(() => {
-        fetch('http://localhost:8000/api/areas')
+// Cargar opciones (áreas, municipios, unidades educativas)
+useEffect(() => {
+    if (formData.area) {
+        fetch(`http://localhost:8000/api/categorias/${formData.area}`)
             .then(res => res.json())
-            .then(data => setAreas(data));
-        fetch('http://localhost:8000/api/municipios')
-            .then(res => res.json())
-            .then(data => setMunicipios(data));
-        fetch('http://localhost:8000/api/unidades-educativas')
-            .then(res => res.json())
-            .then(data => setUe(data));
-    }, []);
+            .then(data => setCategorias(data))
+            .catch(error => console.error('Error al obtener categorías:', error));
+    } else {
+        setCategorias([]);
+    }
+}, [formData.area]);
 
-    //Cargar estudiantes (si es no es formulario nuevo)
+useEffect(() => {
+    fetch('http://localhost:8000/api/areas')
+        .then(res => res.json())
+        .then(data => setAreas(data));
+    fetch('http://localhost:8000/api/municipios')
+        .then(res => res.json())
+        .then(data => setMunicipios(data));
+    fetch('http://localhost:8000/api/unidades-educativas')
+        .then(res => res.json())
+        .then(data => setUe(data));
+}, []);
+
     useEffect(() => {
         const cargarFormulario = async () => {
-          // Si estamos creando un nuevo formulario (id == 0), no hacemos nada
-          if (parseInt(id) === 0) return;
-      
-          try {
-            const response = await api.get(`/formularios/${id}`); // Ruta
-            //const registrador = response.data.registrador; Usaré esto pronto para los Administradores globales de inscripción.
-            const estudiantes = response.data.estudiantes; // Lista de estudiantes inscritos
-      
-            {/* Esto lo usaré junto con el "cons registrador"
-            setFormData({
-              nombre: formulario.nombre ?? '',
-              apellido: formulario.apellido ?? '',
-              email: formulario.email ?? '',
-              ci: formulario.ci ?? '',
-              fechaNac: '',
-              rude: '',
-              area: '',
-              categoria: '',
-              ue: '',
-              municipio: '',
-              unidadEducativa: '',
-            });   */}
-      
-            // Setear estudiantes en la tabla
-            const estudiantesFormateados = estudiantes.map(est => ({
-                id_estudiante: est.id_estudiante ?? null,
-                nombre: est.nombre,
-                apellido: est.apellido,
-                email: est.email,
-                ci: est.ci,
-                fechaNac: est.fecha_nacimiento,
-                rude: est.rude,
-                id_area: est.idArea,
-                nombre_area: est?.nombre_area || '',
-                id_categoria: est.idCategoria,
-                nombre_categoria: est?.nombre_categoria || '',
-                municipio: '',
-                unidadEducativa: ''
-            }));
-      
-            setRowData(estudiantesFormateados);
-      
-          } catch (error) {
-            console.error('Error al cargar formulario:', error);
-            alert('No se pudo cargar el formulario.');
-          }
+            if (parseInt(id) === 0) return;
+            try {
+                const response = await api.get(`/formularios/${id}`);
+                const estudiantes = response.data.estudiantes;
+                const estudiantesFormateados = estudiantes.map(est => ({
+                    id_estudiante: est.id_estudiante ?? null,
+                    nombre: est.nombre,
+                    apellido: est.apellido,
+                    email: est.email,
+                    ci: est.ci,
+                    fechaNac: est.fecha_nacimiento,
+                    rude: est.rude,
+                    id_area: est.idArea,
+                    nombre_area: est?.nombre_area || '',
+                    id_categoria: est.idCategoria,
+                    nombre_categoria: est?.nombre_categoria || '',
+                    municipio: '',
+                    unidadEducativa: ''
+                }));
+                setRowData(estudiantesFormateados);
+            } catch (error) {
+                console.error('Error al cargar formulario:', error);
+                alert('No se pudo cargar el formulario.');
+            }
         };
-      
         cargarFormulario();
     }, [id]);
-      
 
-    const opcionesFiltradasUE = ue
-        .filter(item => item.municipio_id === parseInt(formData.municipio))
-        .map(item => ({ value: item.id_ue, label: item.nombre_ue }));
+    const opcionesFiltradasUE = ue.filter(item => item.municipio_id === parseInt(formData.municipio)).map(item => ({ value: item.id_ue, label: item.nombre_ue }));
 
     const handleRegistrar = () => {
-        const { nombre, apellido, ci, fechaNac, rude, area, categoria, municipio } = formData;
-
+        const { nombre, apellido, ci, fechaNac, rude, area, categoria } = formData;
         if (nombre.length < 6) return alert('El nombre debe tener al menos 6 caracteres.');
         if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) return alert('El nombre solo puede contener letras y espacios.');
-        if (!/^\d{1,16}$/.test(rude)) return alert('El RUDE debe contener solo números y como máximo 16 dígitos.');
-        if (!/^\d{1,8}$/.test(ci)) return alert('El CI debe contener solo números y como máximo 8 dígitos.');
+        if (!/\d{1,16}/.test(rude)) return alert('El RUDE debe contener solo números y como máximo 16 dígitos.');
+        if (!/\d{1,8}/.test(ci)) return alert('El CI debe contener solo números y como máximo 8 dígitos.');
 
-        //Estoy sacando IDs de area y categoria.
-        const areaSeleccionada = areas.find(a => a.id_area === parseInt(formData.area));
-        const categoriaSeleccionada = categorias.find(c => c.id_categoria === parseInt(formData.categoria));
+        const areaSeleccionada = areas.find(a => a.id_area === parseInt(area));
+        const categoriaSeleccionada = categorias.find(c => c.id_categoria === parseInt(categoria));
 
-        //Estoy creando los Datos en uno para añadir a la fila de la tabla.
         const nuevoEstudiante = {
             ...formData,
             id_area: areaSeleccionada ? areaSeleccionada.id_area : null,
@@ -165,12 +132,7 @@ const Formulario = () => {
         }
 
         alert('Estudiante registrado correctamente.');
-
-        setFormData({
-            nombre: '', apellido: '', email: '', ci: '', fechaNac: '', rude: '',
-            area: '', categoria: '', ue: '', municipio: '', unidadEducativa: ''
-        });
-
+        setFormData({ nombre: '', apellido: '', email: '', ci: '', fechaNac: '', rude: '', area: '', categoria: '', ue: '', municipio: '', unidadEducativa: '' });
         setSelectedRows([]);
         selectedRowsRef.current = [];
         setToggleClearSelected(prev => !prev);
@@ -191,9 +153,63 @@ const Formulario = () => {
         setModoEdicion(true);
     };
 
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const data = new Uint8Array(e.target.result);
+            setSelectedRows([]);
+            selectedRowsRef.current = [];
+
+            const workbook = XLSX.read(data, { type: 'array' });
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            const rows = jsonData.slice(13);
+            if (rows.length === 0) return alert('El archivo no contiene datos válidos.');
+
+            const nuevosEstudiantes = [];
+            for (let i = 0; i < rows.length; i++) {
+                const fila = rows[i];
+                const [, nombre, apellido, ci, rude, fechaNacOriginal, area, categoria, email] = fila;
+
+                let fechaNac = fechaNacOriginal;
+                if (typeof fechaNac === 'number') {
+                    const excelStartDate = new Date(1900, 0, 1);
+                    excelStartDate.setDate(excelStartDate.getDate() + fechaNac - 2);
+                    fechaNac = excelStartDate.toISOString().split('T')[0];
+                }
+
+                if (!nombre || !apellido || !ci || !fechaNac || !rude || !area || !categoria) {
+                    return alert(`Error en fila ${i + 14}: Algún campo vacío.`);
+                }
+
+                nuevosEstudiantes.push({
+                    nombre,
+                    apellido,
+                    ci: ci.toString(),
+                    fechaNac,
+                    rude: rude.toString(),
+                    nombre_area: area,
+                    nombre_categoria: categoria,
+                    email: email || ''
+                });
+            }
+
+            if (nuevosEstudiantes.length > 0) {
+                setRowData(prev => [...prev, ...nuevosEstudiantes]);
+                alert(`¡Se agregaron ${nuevosEstudiantes.length} estudiantes correctamente!`);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+        event.target.value = '';
+    };
+
     const handleEliminar = () => {
         const seleccionActual = selectedRowsRef.current;
-        if (seleccionActual.length === 0) return alert('Por favor selecciona al menos un registro para eliminar.');
+        if (seleccionActual.length === 0) return alert('Por favor selecciona un registro para eliminar.');
         if (!window.confirm('¿Estás seguro de que deseas eliminar el/los registro(s) seleccionado(s)?')) return;
 
         const nuevosDatos = rowData.filter(row => !seleccionActual.some(sel => sel.ci === row.ci));
@@ -236,11 +252,36 @@ const Formulario = () => {
         
     };
 
-
+    const fileInputRef = useRef();
 
 
     return (
         <div className="formulario-page-container">
+            <Caja titulo='Tomar en cuenta' width='50%'>
+                <div>En caso de querer inscribir un grupo de estudiantes sin usar el formulario, puede hacerlo descargando el siguiente archivo excel siguiendo las instrucciones:</div>
+                <div className='contenedor-archivo-excel'>
+                    <a 
+                        href="/plantillas/FormatoParaSubirLista.xlsx" 
+                        download="FormatoParaSubirLista.xlsx"
+                        className="boton-descargar-excel"
+                        >
+                        Descargar plantilla Excel
+                    </a>
+                </div>
+                <input 
+                    type="file" 
+                    accept=".xlsx, .xls" 
+                    ref={fileInputRef} 
+                    style={{ display: 'none' }}
+                    onChange={handleFileUpload}
+                />
+
+                <div>Paso 1.- Descargar el archivo. <br />
+                    Paso 2.- Llenar los campos correspondientes en el excel. <br />
+                    Paso 3.-Subir el archivo a esta pagina presionando el boton "Subir lista". <br />
+                    En caso de no cumplir el formato sugerido explicado en el documento excel, el sistema rechazará su archivo.
+                </div>
+            </Caja>
             <section className='contenedor-form-info'>
                 <div className='boton-eliminar-form'>
                     <BotonForm texto='X' className='boton-eliminar-form-bf' />
@@ -254,7 +295,12 @@ const Formulario = () => {
                             <RegistroForm label='Fecha de nacimiento' name='fechaNac' type='date' value={formData.fechaNac} onChange={setFormData} />
                             <RegistroForm label='Categoria' name='categoria' type='select' value={formData.categoria} onChange={setFormData} options={[{ value: '', label: 'Seleccione una Categoria' }, ...categorias.map(cat => ({ value: cat.id_categoria, label: cat.nombre_categoria }))]} />
                             <RegistroForm label='Municipio' name='municipio' type='select' value={formData.municipio} onChange={setFormData} options={[{ value: '', label: 'Seleccione un Municipio' }, ...municipios.map(mun => ({ value: mun.id, label: mun.nombre }))]} />
-                            <BotonForm className='boton-lista-est' texto='Subir lista' />
+                            <BotonForm 
+                                className='boton-lista-est' 
+                                texto='Subir lista' 
+                                onClick={() => fileInputRef.current.click()}
+                            />
+
                         </section>
 
                         <section className='seccion-form'>

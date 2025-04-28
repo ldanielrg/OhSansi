@@ -36,11 +36,11 @@ const Inscripciones = () => {
       name: 'Acciones',
       cell: row => (
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={() => navigate(`/formulario/${row.id_formulario}`)}>
-            <FaEdit />
+          <button className='botones-iconos-crud-formularios' onClick={() => navigate(`/formulario/${row.id_formulario}`)}>
+            <FaEdit className='iconos-crud-formularios' />
           </button>
-          <button onClick={() => eliminarFormulario(row.id_formulario)}>
-            <FaTrash />
+          <button className='botones-iconos-crud-formularios' onClick={() => eliminarFormulario(row.id_formulario)}>
+            <FaTrash className='iconos-crud-formularios' />
           </button>
         </div>
       )
