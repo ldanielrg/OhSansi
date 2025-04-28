@@ -10,24 +10,49 @@ class CuentaController extends Controller{
 
     
     public function store(Request $request)    {
+        $user = $request->user();
+
+        // Verificar que tenga rol permitido
+        if (!$user->hasAnyRole(['Admin', 'Director', 'Adm. Inscripcion'])) {
+            return response()->json([
+                'message' => 'Unauthorized.'
+            ], 403);
+        }
+
         $request->validate([
             'nombres' => 'required|string',
             'apellidos' => 'required|string',
             'correo' => 'required|email|unique:users,email',
-            //'celular' => 'nullable|string',
             'password' => 'required|string|min:6',
             'rol' => 'required|string',
         ]);
 
-        $user = User::create([
+        // Lógica de control de creación según quien crea
+        if ($user->hasRole('Director') && $request->rol !== 'Docente') {
+            return response()->json([
+                'message' => 'Los Directores solo pueden crear cuentas de tipo "Docente".'
+            ], 403);
+        }
+
+        if ($user->hasRole('Adm. Inscripcion') && $request->rol !== 'Aux') {
+            return response()->json([
+                'message' => 'El personal de Inscripción solo puede crear cuentas de tipo "Aux".'
+            ], 403);
+        }
+
+        // Admin puede crear cualquier tipo de usuario, no necesita restricción
+
+        $nuevoUsuario = User::create([
             'name' => $request->nombres . ' ' . $request->apellidos,
             'email' => $request->correo,
             'password' => bcrypt($request->password),
         ]);
 
-        $user->assignRole($request->rol); // usando laravel-permission
+        $nuevoUsuario->assignRole($request->rol); // asignamos rol
 
-        return response()->json(['message' => 'Usuario creado con éxito'], 201);
+        return response()->json([
+            'message' => 'Usuario creado con éxito.'
+        ], 201);
     }
 
 
