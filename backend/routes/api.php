@@ -45,10 +45,6 @@ Route::post('/crear-cuenta', [CuentaController::class, 'store']);
 //INSCRIPCIONES
 Route::post('/formularios', [InscripcionController::class, 'store']);
 
-// RECUPERAR DATOS DE USER
-Route::get('/user', [UserController::class, 'profile']);
-Route::put('/user', [UserController::class, 'update']);
-
 // ORDENE MEJOR
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [UserController::class, 'profile']);
