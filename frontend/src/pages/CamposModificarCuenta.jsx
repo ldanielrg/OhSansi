@@ -129,7 +129,9 @@ const CamposModificarCuenta = () => {
                 type="email"
               />
             </div>
-
+            <p>
+              Si no quieres cambiar tu contraseña puedes dejar los dos ultimos campos vacios.
+            </p>
             {/* Nueva contraseña */}
             <div className="div-label-input-modificar-cuenta">
               <RegistroForm
