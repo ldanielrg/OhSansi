@@ -40,6 +40,4 @@ class UserController extends Controller
         return response()->json(['message' => 'Perfil actualizado exitosamente']);
     }
 
-    
-
 }

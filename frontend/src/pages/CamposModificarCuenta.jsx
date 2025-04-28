@@ -38,9 +38,29 @@ const CamposModificarCuenta = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmarPassword) {
-      alert("Las contraseñas no coinciden.");
-      return;
+    // Validar nombre
+    if (formData.nombreCuenta.trim() === '') {
+        alert("El nombre no puede estar vacío.");
+        return;
+    }
+
+    // Validar email
+    if (formData.email.trim() === '') {
+        alert("El correo no puede estar vacío.");
+        return;
+    }
+  
+    // Si intenta cambiar contraseña
+    if (formData.password !== '' || formData.confirmarPassword !== '') {
+      // Ambas deben estar llenas
+        if (formData.password.trim() === '' || formData.confirmarPassword.trim() === '') {
+            alert("Debes llenar ambos campos de contraseña.");          return;
+        }
+    
+        if (formData.password !== formData.confirmarPassword) {
+            alert("Las contraseñas no coinciden.");
+            return;
+        }
     }
 
     const confirmar = window.confirm("¿Estás seguro de que deseas guardar los cambios?");
