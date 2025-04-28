@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom"; // Importa useParams
 import "../styles/ConfiguracionConvocatoria.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from '../api/axios';
+
 
 const CrearConfigurarConvocatoria = () => {
   const navigate = useNavigate();
@@ -31,114 +33,132 @@ const CrearConfigurarConvocatoria = () => {
   const [selGradoInicialToAddId, setSelGradoInicialToAddId] = useState("");
   const [selGradoFinalToAddId, setSelGradoFinalToAddId] = useState("");
 
-  // Load lists (Grados, Categorias, Areas) on component mount
+  const fetchDatos = async () => {
+    try {
+      const [gradosRes, categoriasRes, areasRes] = await Promise.all([
+        api.get('/grados'),
+        api.get('/categorias'),
+        api.get('/areas'),
+      ]);
+  
+      setGrados(gradosRes.data);
+      setCategorias(categoriasRes.data);
+      setAreas(areasRes.data);
+    } catch (error) {
+      console.error('Error recargando datos:', error);
+      toast.error('Error recargando datos.');
+    }
+  };
+  
+
   useEffect(() => {
-    setGrados(JSON.parse(localStorage.getItem("listaGrados")) || []);
-    setCategorias(JSON.parse(localStorage.getItem("listaCategorias")) || []);
-    setAreas(JSON.parse(localStorage.getItem("listaAreas")) || []);
+    fetchDatos();
   }, []);
 
-  // Load existing convocatoria data if in edit mode (when 'id' is present)
-  useEffect(() => {
-    if (id) {
-      const existingConvocatorias =
-        JSON.parse(localStorage.getItem("convocatorias")) || [];
-      // Find the convocatoria with the matching ID (parse ID from URL string)
-      const convocatoriaToEdit = existingConvocatorias.find(
-        (conv) => conv.id === parseInt(id)
-      );
-
-      if (convocatoriaToEdit) {
-        setNombreConv(convocatoriaToEdit.nombre);
-        setDescConv(convocatoriaToEdit.descripcion);
-        // Load the saved areas for this convocatoria
-        setConvocatoriaAreas(convocatoriaToEdit.areas || []); // Use [] if areas is null/undefined
-      } else {
-        // Handle case where ID is invalid or not found (e.g., redirect)
-        toast.error('Convocatoria no encontrada para editar.');
-        navigate("/configuracion-convocatoria"); // Redirect back to list
-      }
-    }
-  }, [id, navigate]); // Re-run effect if id or navigate changes
-
-  // --- Handlers for managing Grados, Categorias, Areas Lists ---
-
-  const handleCreateGrado = (e) => {
+  
+  const handleCreateGrado = async (e) => {
     e.preventDefault();
-    if (!newGrado.trim()) return; // Prevent adding empty names
-    const item = { id: Date.now(), nombre: newGrado.trim() };
-    const updated = [...grados, item];
-    setGrados(updated);
-    localStorage.setItem("listaGrados", JSON.stringify(updated));
-    setNewGrado("");
+    if (!newGrado.trim()) return;
+    try {
+      const res = await api.post('/grado-crear', { nombre: newGrado.trim() });
+      toast.success('Grado creado exitosamente.');
+      setGrados([...grados, res.data.grado]);
+      setNewGrado("");
+      fetchDatos(); //recarga la lista
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al crear grado.');
+    }
   };
-  const handleDeleteGrado = (e) => {
+  
+
+  const handleDeleteGrado = async (e) => {
     e.preventDefault();
     if (!selGradoId) return;
-    // Optional: Add check if grade is used in any convocatoriaArea
-    if (
-      window.confirm(
-        `¿Eliminar grado "${grados.find((g) => g.id === selGradoId)?.nombre}"?`
-      )
-    ) {
-      const updated = grados.filter((g) => g.id !== selGradoId);
-      setGrados(updated);
-      localStorage.setItem("listaGrados", JSON.stringify(updated));
-      setSelGradoId(null);
+  
+    if (window.confirm(`¿Eliminar grado seleccionado?`)) {
+      try {
+        await api.delete(`/grado-eliminar/${selGradoId}`);
+        toast.success('Grado eliminado exitosamente.');
+        setGrados(grados.filter((g) => g.id_grado !== selGradoId));
+        setSelGradoId(null);
+        fetchDatos(); //recarga la lista
+      } catch (error) {
+        console.error(error);
+        toast.error('Error al eliminar grado.');
+      }
     }
   };
-
-  const handleCreateCategoria = (e) => {
+  
+  const handleCreateCategoria = async (e) => {
     e.preventDefault();
-    if (!newCategoria.trim()) return; // Prevent adding empty names
-    const item = { id: Date.now(), nombre: newCategoria.trim() };
-    const updated = [...categorias, item];
-    setCategorias(updated);
-    localStorage.setItem("listaCategorias", JSON.stringify(updated));
-    setNewCategoria("");
+    if (!newCategoria.trim()) return;
+  
+    try {
+      const res = await api.post('/categoria-crear', { nombre_categoria: newCategoria.trim() });
+      toast.success('Categoría creada exitosamente.');
+      setCategorias([...categorias, res.data.categoria]);
+      setNewCategoria("");
+      fetchDatos(); //recarga la lista
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al crear categoría.');
+    }
   };
-  const handleDeleteCategoria = (e) => {
+  
+
+  const handleDeleteCategoria = async (e) => {
     e.preventDefault();
     if (!selCategoriaId) return;
-    // Optional: Add check if category is used in any convocatoriaArea
-    if (
-      window.confirm(
-        `¿Eliminar categoría "${
-          categorias.find((c) => c.id === selCategoriaId)?.nombre
-        }"?`
-      )
-    ) {
-      const updated = categorias.filter((c) => c.id !== selCategoriaId);
-      setCategorias(updated);
-      localStorage.setItem("listaCategorias", JSON.stringify(updated));
-      setSelCategoriaId(null);
+  
+    if (window.confirm(`¿Eliminar categoría seleccionada?`)) {
+      try {
+        await api.delete(`/categoria-eliminar/${selCategoriaId}`);
+        toast.success('Categoría eliminada exitosamente.');
+        setCategorias(categorias.filter((c) => c.id_categoria !== selCategoriaId));
+        setSelCategoriaId(null);
+        fetchDatos(); //recarga la lista
+      } catch (error) {
+        console.error(error);
+        toast.error('Error al eliminar categoría.');
+      }
     }
   };
-
-  const handleCreateArea = (e) => {
+  
+  const handleCreateArea = async (e) => {
     e.preventDefault();
-    if (!newArea.trim()) return; // Prevent adding empty names
-    const item = { id: Date.now(), nombre: newArea.trim() };
-    const updated = [...areas, item];
-    setAreas(updated);
-    localStorage.setItem("listaAreas", JSON.stringify(updated));
-    setNewArea("");
+    if (!newArea.trim()) return;
+  
+    try {
+      const res = await api.post('/area-crear', { nombre: newArea.trim() });
+      toast.success('Área creada exitosamente.');
+      setAreas([...areas, res.data.area]);
+      setNewArea("");
+      fetchDatos(); //recarga la lista
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al crear área.');
+    }
   };
-  const handleDeleteArea = (e) => {
+  
+  const handleDeleteArea = async (e) => {
     e.preventDefault();
     if (!selAreaId) return;
-    // Optional: Add check if area is used in any convocatoriaArea
-    if (
-      window.confirm(
-        `¿Eliminar área "${areas.find((a) => a.id === selAreaId)?.nombre}"?`
-      )
-    ) {
-      const updated = areas.filter((a) => a.id !== selAreaId);
-      setAreas(updated);
-      localStorage.setItem("listaAreas", JSON.stringify(updated));
-      setSelAreaId(null);
+  
+    if (window.confirm(`¿Eliminar área seleccionada?`)) {
+      try {
+        await api.delete(`/area-eliminar/${selAreaId}`);
+        toast.success('Área eliminada exitosamente.');
+        setAreas(areas.filter((a) => a.id_area !== selAreaId));
+        setSelAreaId(null);
+        fetchDatos(); //recarga la lista
+      } catch (error) {
+        console.error(error);
+        toast.error('Error al eliminar área.');
+      }
     }
   };
+  
 
   // --- Handlers for managing Areas within the specific Convocatoria ---
 
@@ -326,12 +346,12 @@ const CrearConfigurarConvocatoria = () => {
                 <tbody>
                   {grados.map((g) => (
                     <tr
-                      key={g.id}
-                      onClick={() => setSelGradoId(g.id)}
-                      className={selGradoId === g.id ? "fila-seleccionada" : ""}
+                      key={g.id_grado}
+                      onClick={() => setSelGradoId(g.id_grado)}
+                      className={selGradoId === g.id_grado ? "fila-seleccionada" : ""}
                     >
-                      <td>{g.id}</td>
-                      <td>{g.nombre}</td>
+                      <td>{g.id_grado}</td>
+                      <td>{g.nombre_grado}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -371,14 +391,14 @@ const CrearConfigurarConvocatoria = () => {
                 <tbody>
                   {categorias.map((c) => (
                     <tr
-                      key={c.id}
-                      onClick={() => setSelCategoriaId(c.id)}
+                      key={c.id_categoria}
+                      onClick={() => setSelCategoriaId(c.id_categoria)}
                       className={
-                        selCategoriaId === c.id ? "fila-seleccionada" : ""
+                        selCategoriaId === c.id_categoria ? "fila-seleccionada" : ""
                       }
                     >
-                      <td>{c.id}</td>
-                      <td>{c.nombre}</td>
+                      <td>{c.id_categoria}</td>
+                      <td>{c.nombre_categoria}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -418,12 +438,12 @@ const CrearConfigurarConvocatoria = () => {
                 <tbody>
                   {areas.map((a) => (
                     <tr
-                      key={a.id}
-                      onClick={() => setSelAreaId(a.id)}
-                      className={selAreaId === a.id ? "fila-seleccionada" : ""}
+                      key={a.id_area}
+                      onClick={() => setSelAreaId(a.id_area)}
+                      className={selAreaId === a.id_area ? "fila-seleccionada" : ""}
                     >
-                      <td>{a.id}</td>
-                      <td>{a.nombre}</td>
+                      <td>{a.id_area}</td>
+                      <td>{a.nombre_area}</td>
                     </tr>
                   ))}
                 </tbody>

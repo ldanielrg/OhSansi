@@ -38,13 +38,10 @@ class Categorium extends Model
 	protected $fillable = [
 		'nombre_categoria',
 		'descripcion',
-		'activo'
+		'activo',
+		'grado_ini',
+		'grado_fin'
 	];
-
-	public function categoria_tiene_grados()
-	{
-		return $this->hasMany(CategoriaTieneGrado::class, 'id_categoria_categoria');
-	}
 
 	public function area_tiene_categoria()
 	{
@@ -54,5 +51,15 @@ class Categorium extends Model
 	public function estudiante_esta_inscritos()
 	{
 		return $this->hasMany(EstudianteEstaInscrito::class, 'id_categ');
+	}
+
+	public function gradoInicial()
+	{
+		return $this->belongsTo(Grado::class, 'grado_ini', 'id_grado');
+	}
+
+	public function gradoFinal()
+	{
+		return $this->belongsTo(Grado::class, 'grado_fin', 'id_grado');
 	}
 }

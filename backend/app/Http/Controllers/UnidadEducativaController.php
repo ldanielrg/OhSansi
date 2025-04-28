@@ -8,8 +8,7 @@ use App\Models\UnidadEducativa;
 class UnidadEducativaController extends Controller
 {
     // PARA OBTENER LOS DATOS DE UE /api/unidades-educativas
-    public function index()
-    {
+    public function index(){
         $unidades = UnidadEducativa::with(['departamento', 'municipio'])->get();
 
         $resultado = $unidades->map(function ($ue) {
@@ -28,8 +27,7 @@ class UnidadEducativaController extends Controller
     }
 
     //CREAR NUEVA UNIDAD EDUCATIVA
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         // Validación de campos
         $request->validate([
             'nombre' => 'required|string|max:255',
@@ -62,8 +60,7 @@ class UnidadEducativaController extends Controller
     }
 
     // EDITAR/ACTUALIZACION DE UE
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id){
         $request->validate([
             'nombre' => 'required|string|max:255',
             'rue' => 'required|string|max:100',
@@ -84,8 +81,7 @@ class UnidadEducativaController extends Controller
     }
 
     // ELIMINAR UNIDAD EDUCATIVA
-    public function destroy($id)
-    {
+    public function destroy($id){
         $ue = UnidadEducativa::findOrFail($id);
         $ue->delete();
 
