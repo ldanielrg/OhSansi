@@ -66,6 +66,11 @@ const Home = () => {
     e.preventDefault();
     navigate("/crear-cuentas");
   };
+  const handleNavigateConfiguracionCuentas = (e) => {
+    e.preventDefault();
+    navigate("/configuracion-cuentas");
+  };
+  handleNavigateConfiguracionCuentas
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -183,6 +188,12 @@ const Home = () => {
                   onClick={handleNavigateEventos}
                 >
                   Crear Eventos
+                </button>
+                <button
+                  className="btn vertical-btn btn-help "
+                  onClick={handleNavigateConfiguracionCuentas}
+                >
+                  Configuracion Cuentas
                 </button>
                 <button
                   className="btn vertical-btn btn-help "
