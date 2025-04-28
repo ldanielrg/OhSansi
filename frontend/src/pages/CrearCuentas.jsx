@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Caja from '../components/Caja';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext'; // <-- Importamos el AuthContext
 import '../styles/CrearCuentas.css';
 import api from '../api/axios';
 
-
-const opciones = [
+const todasLasOpciones = [
   'Admin',
   'Director',
   'Docente',
@@ -22,12 +22,28 @@ const CrearCuentas = () => {
     nombres: '',
     apellidos: '',
     correo: '',
-    celular: '',
+    ci: '', 
     password: '',
     confirmarPassword: ''
   });
+  
 
+  const { roles, loading } = useAuth(); // Usamos el contexto de auth
   const navigate = useNavigate();
+  const [opcionesDisponibles, setOpcionesDisponibles] = useState([]);
+
+  // Definir qué opciones mostrar según el rol
+  useEffect(() => {
+    if (!loading) {
+      if (roles.includes('Admin')) {
+        setOpcionesDisponibles(todasLasOpciones);
+      } else if (roles.includes('Director')) {
+        setOpcionesDisponibles(['Docente']);
+      } else if (roles.includes('Adm. Inscripcion')) {
+        setOpcionesDisponibles(['Aux']);
+      }
+    }
+  }, [roles, loading]);
 
   const handleInputChange = (e) => {
     setFormData(prev => ({
@@ -39,7 +55,6 @@ const CrearCuentas = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Validación simple, para coincidencia de contraseñas
     if (formData.password !== formData.confirmarPassword) {
       alert('Las contraseñas no coinciden');
       return;
@@ -50,13 +65,13 @@ const CrearCuentas = () => {
         nombres: formData.nombres,
         apellidos: formData.apellidos,
         correo: formData.correo,
-        celular: formData.celular,
+        ci: parseInt(formData.ci),
         password: formData.password,
-        rol: tipoCuenta, // mandamos el tipo de cuenta como rol
+        rol: tipoCuenta,
       });
+      
   
       alert('Cuenta creada exitosamente');
-      // Reiniciar el formulario
       setFormData({
         nombres: '',
         apellidos: '',
@@ -72,6 +87,8 @@ const CrearCuentas = () => {
     }
   };
 
+  if (loading) return null; // Esperar a que cargue auth
+
   return (
     <div className="pagina-configuracion">
       <Caja titulo={`Creando cuenta ${tipoCuenta || ''}`}>
@@ -82,43 +99,43 @@ const CrearCuentas = () => {
             className="selector-tipo-cuenta"
           >
             <option value="">Selecciona tipo de cuenta</option>
-            {opciones.map((opcion, index) => (
+            {opcionesDisponibles.map((opcion, index) => (
               <option key={index} value={opcion}>{opcion}</option>
             ))}
           </select>
         </div>
         
-        {/* Mostrar el formulario si se ha elegido un tipo */}
         {tipoCuenta && (
-            <form className="formulario-cuenta" onSubmit={handleSubmit}>
-                <div className="form-column">
-                <label>Apellidos</label>
-                <input name="apellidos" value={formData.apellidos} onChange={handleInputChange} />
+          <form className="formulario-cuenta" onSubmit={handleSubmit}>
+            <div className="form-column">
+              <label>Apellidos</label>
+              <input name="apellidos" value={formData.apellidos} onChange={handleInputChange} />
 
-                <label>Celular</label>
-                <input name="celular" value={formData.celular} onChange={handleInputChange} />
+              <label>CI</label>
+              <input
+                name="ci" value={formData.ci} onChange={handleInputChange} />
 
-                <label>Contraseña</label>
-                <input type="password" name="password" value={formData.password} onChange={handleInputChange} />
-                </div>
+              <label>Contraseña</label>
+              <input type="password" name="password" value={formData.password} onChange={handleInputChange} />
+            </div>
 
-                <div className="form-column">
-                <label>Nombres</label>
-                <input name="nombres" value={formData.nombres} onChange={handleInputChange} />
+            <div className="form-column">
+              <label>Nombres</label>
+              <input name="nombres" value={formData.nombres} onChange={handleInputChange} />
 
-                <label>Correo Electrónico</label>
-                <input type="email" name="correo" value={formData.correo} onChange={handleInputChange} />
+              <label>Correo Electrónico</label>
+              <input type="email" name="correo" value={formData.correo} onChange={handleInputChange} />
 
-                <label>Confirmar Contraseña</label>
-                <input type="password" name="confirmarPassword" value={formData.confirmarPassword} onChange={handleInputChange} />
-                </div>
+              <label>Confirmar Contraseña</label>
+              <input type="password" name="confirmarPassword" value={formData.confirmarPassword} onChange={handleInputChange} />
+            </div>
 
-                <div className="form-botones">
-                    <button type="button" className="boton-volver" onClick={() => navigate(-1)}>Volver</button>
-                    <button type="submit" className="boton-crear">Crear cuenta</button>
-                </div>          
-            </form>
-            )}
+            <div className="form-botones">
+              <button type="button" className="boton-volver" onClick={() => navigate(-1)}>Volver</button>
+              <button type="submit" className="boton-crear">Crear cuenta</button>
+            </div>          
+          </form>
+        )}
       </Caja>
     </div>
   );

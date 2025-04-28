@@ -37,9 +37,9 @@ Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asigna
 
 
 Route::post('/login', [AuthController::class, 'login']);//Para logueo
-Route::post('/crear-cuenta', [CuentaController::class, 'store']);//Para crear cuentas con roles
 Route::middleware('auth:sanctum')->get('/obtener-cuentas', [CuentaController::class, 'devolverUsuarios']);//Obtiene todos los usuarios con roles
 Route::middleware('auth:sanctum')->delete('/eliminar-cuenta/{id}', [CuentaController::class, 'eliminarUsuario']);
+Route::middleware('auth:sanctum')->post('/crear-cuenta', [CuentaController::class, 'store']);
 
 
 

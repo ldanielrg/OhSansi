@@ -43,7 +43,8 @@ class CuentaController extends Controller{
         // Admin puede crear cualquier tipo de usuario, no necesita restricción
 
         $nuevoUsuario = User::create([
-            'name' => $request->nombres . ' ' . $request->apellidos,
+            'name' => $request->nombres,
+            'apellido' => $request->apellidos,
             'email' => $request->correo,
             'password' => bcrypt($request->password),
         ]);
