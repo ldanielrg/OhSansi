@@ -46,11 +46,14 @@ const ModificarCuenta = () => {
     <div className="page-container-modificar-cuenta">
       <section className="seccion-formulario-modificar-cuenta">
         <h2>Confirmar Contraseña</h2>
+        <p>
+          Para modificar los datos de tu cuenta por favor ingresa tu contraseña.
+        </p>
         <div className="cont-form-mod">
-
           <form onSubmit={onSubmit}>
             <div className="div-label-input-modificar-cuenta">
               <RegistroForm
+                className='campo-contraseña-mod-cuenta'
                 label="Contraseña"
                 type="password"
                 name="password"
