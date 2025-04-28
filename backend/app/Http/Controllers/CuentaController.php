@@ -32,7 +32,7 @@ class CuentaController extends Controller{
 
 
     public function devolverUsuarios(Request $request)    {
-        
+        //$user = Auth::user(); También funciona, pero el VC me da que no reconoce hasRoles.
         $user = $request->user();
 
         if (!$user->hasRole('Admin')) {
