@@ -17,29 +17,30 @@ const ModificarCuenta = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData.password);
+  
     if (formData.password.trim() === '') {
       alert("Por favor, ingresa tu contraseña.");
       return;
     }
-    
+  
     try {
-      console.log(formData.password);
-      
       const response = await api.post('/user/verify-password', {
         password: formData.password
       });
   
-      return response.data.valid;
+      if (response.data.valid) {
+        alert("Contraseña verificada con éxito.");
+        navigate('/modificar-campos');
+      } else {
+        alert("La contraseña es incorrecta. Intenta de nuevo.")
+        ;
+      }
+  
     } catch (error) {
       console.error('Error al validar la contraseña', error);
-      return false;
+      alert("Ocurrió un error al validar la contraseña.");
     }
-  
-    alert("Contraseña verificada con éxito.");
-    navigate('/modificar-campos');
   };
-  
 
   return (
     <div className="page-container-modificar-cuenta">

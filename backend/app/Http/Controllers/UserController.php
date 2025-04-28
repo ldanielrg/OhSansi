@@ -40,21 +40,6 @@ class UserController extends Controller
         return response()->json(['message' => 'Perfil actualizado exitosamente']);
     }
 
-    public function verifyPassword(Request $request)
-{
-    $request->validate([
-        'password' => 'required|string',
-    ]);
-
-    $user = $request->user();
-
-    if (!$user) {
-        return response()->json(['valid' => false, 'message' => 'Usuario no autenticado'], 401);
-    }
-
-    $passwordCorrecta = Hash::check($request->password, $user->password);
-
-    return response()->json(['valid' => $passwordCorrecta]);
-}
+    
 
 }
