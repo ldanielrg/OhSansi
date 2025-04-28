@@ -33,3 +33,12 @@
     display: flex;
     flex-direction: row;
 }
+.iconos-crud-formularios{
+    color: #003366;
+    font-size: 27px;
+    padding: 0;
+}
+.botones-iconos-crud-formularios{
+    border: none;
+    background-color: #ffff;
+}
