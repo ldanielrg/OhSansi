@@ -1,77 +1,140 @@
+/* src/styles/CrearCuenta.css */
+
+.pagina-configuracion {
+  display: flex;                 /* activa flexbox */
+  justify-content: center;       /* centra en el eje X */
+  align-items: center;           /* centra en el eje Y */
+  min-height: 100vh;             /* como mínimo toda la altura de la ventana */
+  padding: 20px;                 /* separa un poco de los bordes */
+  background-color: #FFFFFF;     /* o el color de fondo que quieras */
+}
+/* Página completa */
 .pagina-crear-cuenta {
-    background-color: #e3f4ff;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .selector-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1rem;
-  }
-  
-  .selector-tipo-cuenta {
-    padding: 0.5rem;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background-color: #2e2e38;
-    color: white;
-  }
-  
+  background-color: #FFFFFF;    /* o el color que ya uses */
+  display: flex;
+  flex-direction: column;       /* apila selector + formulario */
+  justify-content: center;      /* centra vertical */
+  align-items: center;          /* centra horizontal */
+  height: 100vh;                /* obliga a ocupar toda la altura */
+  padding: 20px;
+}
+
+
+/* Selector de tipo de cuenta */
+.selector-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+.selector-tipo-cuenta {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #003366;     /* azul primario */
+  background-color: #003366;
+  color: #FFFFFF;
+  min-width: 200px;
+}
+
+/* Formulario de cuentas */
+.formulario-cuenta {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 800px;
+  background-color: #FFFFFF;      /* azul muy suave para sección */
+  padding: 30px;
+  border-radius: 15px;
+}
+
+/* Columnas dentro del formulario */
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex: 1;
+}
+.form-column label {
+  font-weight: 500;
+  color: #003366;
+}
+.form-column input {
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #a0c8f0;
+  background-color: #e6f4ff;
+  color: #003366;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+.form-column input:focus {
+  border-color: #003366;
+  background-color: #ffffff;
+}
+
+/* Botones del formulario */
+.form-botones,
+.botones-crear-cuenta {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+/* Botón “Volver” */
+.boton-volver {
+  background-color: #e74c3c;     /* rojo */
+  color: #FFFFFF;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.boton-volver:hover {
+  background-color: #c0392b;
+}
+
+/* Botón “Crear” */
+.boton-crear {
+  background-color: #003366;      /* azul primario */
+  color: #FFFFFF;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.boton-crear:hover {
+  background-color: #002a5c;
+}
+
+/* Sonner toasts abajo a la izquierda */
+.snr-toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .formulario-cuenta {
-    display: flex;
-    gap: 2rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-  }
-  
-  .form-column {
-    display: flex;
     flex-direction: column;
-    gap: 0.8rem;
-    flex: 1;
-  }
-  
-  .form-column input {
-    padding: 0.5rem;
-    border-radius: 10px;
-    border: 1px solid #d1ecf1;
-    background-color: #d8f3ff;
-  }
-  
-  .form-botones {
-    display: flex;
-    justify-content: center;
     gap: 1.5rem;
-    width: 100%;
-    margin-top: 2rem;
   }
-  
+  .form-botones,
   .botones-crear-cuenta {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-top: 2rem;
+    flex-direction: column;
   }
-  
-  .boton-volver {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-  
+  .boton-volver,
   .boton-crear {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.5rem;
-    border-radius: 10px;
-    cursor: pointer;
+    width: 100%;
   }
-  
+  .selector-tipo-cuenta {
+    width: 100%;
+    max-width: 300px;
+  }
+}

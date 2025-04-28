@@ -14,11 +14,6 @@
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
-/* Asegura que el contenedor externo mantenga las barras */
-.container {
-    display: flex;
-    justify-content: center;
-}
 
 /* Botones y otras configuraciones no necesitan cambios, pero se mantienen */
 .role-tabs {
