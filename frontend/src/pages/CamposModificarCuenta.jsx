@@ -44,9 +44,22 @@ const CamposModificarCuenta = () => {
         return;
     }
 
+    // Validar que el nombre solo contenga letras (puede contener espacios también)
+    const nombreRegex = /^[a-zA-Z\s]+$/;
+    if (!nombreRegex.test(formData.nombreCuenta)) {
+        alert("El nombre solo puede contener letras y espacios, no números.");
+        return;
+    }
+
     // Validar email
     if (formData.email.trim() === '') {
         alert("El correo no puede estar vacío.");
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+        alert("Por favor ingresa un correo electrónico válido.");
         return;
     }
   
@@ -54,9 +67,17 @@ const CamposModificarCuenta = () => {
     if (formData.password !== '' || formData.confirmarPassword !== '') {
       // Ambas deben estar llenas
         if (formData.password.trim() === '' || formData.confirmarPassword.trim() === '') {
-            alert("Debes llenar ambos campos de contraseña.");          return;
+            alert("Debes llenar ambos campos de contraseña.");          
+            return;
         }
-    
+        
+        // La contraseña debe tener al menos 6 caracteres
+        if (formData.password.length < 6) {
+            alert("La nueva contraseña debe tener al menos 6 caracteres.");
+            return;
+        }
+  
+      // Las contraseñas deben coincidir
         if (formData.password !== formData.confirmarPassword) {
             alert("Las contraseñas no coinciden.");
             return;
