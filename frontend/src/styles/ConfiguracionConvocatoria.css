@@ -169,3 +169,22 @@
     cursor: pointer;
     color: #900;
   }
+
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .btn-warning {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  

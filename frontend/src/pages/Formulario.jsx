@@ -5,7 +5,7 @@ import Caja from '../components/Caja';
 import BotonForm from '../components/BotonForm';
 import DataTable from 'react-data-table-component';
 import RegistroForm from '../components/RegistroForm';
-import api from '../api/axios'; //ESTO ES LA API en AXIOS.
+import api from '../api/axios';
 
 
 

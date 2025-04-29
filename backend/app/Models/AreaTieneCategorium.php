@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Model;
 class AreaTieneCategorium extends Model
 {
 	protected $table = 'area_tiene_categoria';
+	protected $primaryKey = null; // No hay una sola clave primaria
 	public $incrementing = false;
 	public $timestamps = false;
 
