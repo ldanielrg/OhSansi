@@ -15,11 +15,18 @@ const ModificarCuenta = () => {
     password: ''
   });
 
+  const [loading, setLoading] = useState(false); // Agregado para manejar el estado de carga
+
+
   const onSubmit = async (e) => {
     e.preventDefault();
+
+    if (loading) return; // Evitar que se vuelva a enviar si ya está procesando
+    setLoading(true); // Comienza la carga
   
     if (formData.password.trim() === '') {
       alert("Por favor, ingresa tu contraseña.");
+      setLoading(false); // Resetear carga si hay error
       return;
     }
   
