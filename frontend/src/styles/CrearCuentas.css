@@ -23,7 +23,7 @@
 /* Selector de tipo de cuenta */
 .selector-container {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-bottom: 1rem;
 }
 .selector-tipo-cuenta {
@@ -55,22 +55,6 @@
   flex-direction: column;
   gap: 0.8rem;
   flex: 1;
-}
-.form-column label {
-  font-weight: 500;
-  color: #003366;
-}
-.form-column input {
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #a0c8f0;
-  background-color: #e6f4ff;
-  color: #003366;
-  transition: border-color 0.3s, background-color 0.3s;
-}
-.form-column input:focus {
-  border-color: #003366;
-  background-color: #ffffff;
 }
 
 /* Botones del formulario */
@@ -118,6 +102,11 @@
   left: 20px;
   z-index: 9999;
 }
+.contenedor-form-crear-cuentas{
+  display: flex;
+  justify-content: center;
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {

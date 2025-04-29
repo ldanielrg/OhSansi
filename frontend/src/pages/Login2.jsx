@@ -6,7 +6,9 @@ import FormGeneral from '../components/formularios/FormGeneral';
 import RoleTabs from '../components/RoleTabs';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-
+import RegistroForm from '../components/RegistroForm';
+import { MdEmail } from "react-icons/md";
+import { GiPadlock } from "react-icons/gi";
 
 const Login2 = () => {
     const { login } = useAuth();
@@ -31,21 +33,25 @@ const Login2 = () => {
                 return (
                     <form className="formulario-login" onSubmit={handleLogin}>
                         <div>
-                            <label>Correo</label>
-                            <input
-                            type="email"
-                            name="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            <RegistroForm
+                                label='Correo'
+                                type="email"
+                                name="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                icono={MdEmail}
+                                usarEvento={true}
                             />
                         </div>
                         <div>
-                            <label>Contraseña</label>
-                            <input
+                            <RegistroForm
+                                label='Contraseña'
                                 type="password"
                                 name="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                icono={GiPadlock}
+                                usarEvento={true}
                                 />
                         </div>
                         <div className="boton-login-wrapper">

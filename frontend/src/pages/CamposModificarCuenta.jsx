@@ -5,7 +5,7 @@ import RegistroForm from '../components/RegistroForm';
 import BotonForm from '../components/BotonForm';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext";
-import { FaRegUser, FaEye, FaEyeSlash  } from "react-icons/fa";
+import { FaRegUser} from "react-icons/fa";
 import { GiPadlock } from "react-icons/gi";
 import { MdEmail } from "react-icons/md";
 

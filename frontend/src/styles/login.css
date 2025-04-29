@@ -16,16 +16,6 @@
     color: #333333;
   }
   
-  /* Inputs redondeados */
-  .caja-body input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    background-color: #f5faff;       /* tono muy suave de azul */
-    color: #333333;
-    width: 100%;
-  }
-  
   /* Botón principal */
   .caja-body button {
     padding: 10px 16px;

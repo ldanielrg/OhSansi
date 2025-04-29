@@ -7,6 +7,13 @@ import DataTable from "react-data-table-component";
 import RegistroForm from "../components/RegistroForm";
 import api from "../api/axios";
 import * as XLSX from "xlsx";
+import { FaRegUser} from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import { MdOutlineDateRange } from "react-icons/md";
+import { FaAddressCard } from "react-icons/fa6";
+import { PiStudentFill } from "react-icons/pi";
+
+
 
 const Formulario = () => {
   const { id } = useParams();
@@ -372,12 +379,14 @@ const Formulario = () => {
                 name="nombre"
                 value={formData.nombre}
                 onChange={setFormData}
+                icono={FaRegUser}
               />
               <RegistroForm
                 label="C.I."
                 name="ci"
                 value={formData.ci}
                 onChange={setFormData}
+                icono={FaAddressCard}
               />
               <RegistroForm
                 label="Fecha de nacimiento"
@@ -385,6 +394,7 @@ const Formulario = () => {
                 type="date"
                 value={formData.fechaNac}
                 onChange={setFormData}
+                icono={MdOutlineDateRange}
               />
               <RegistroForm
                 label="Categoria"
@@ -427,12 +437,14 @@ const Formulario = () => {
                 name="apellido"
                 value={formData.apellido}
                 onChange={setFormData}
+                icono={FaRegUser}
               />
               <RegistroForm
                 label="Rude"
                 name="rude"
                 value={formData.rude}
                 onChange={setFormData}
+                icono={PiStudentFill}
               />
               <RegistroForm
                 label="Área"
@@ -464,6 +476,7 @@ const Formulario = () => {
                 name="email"
                 value={formData.email}
                 onChange={setFormData}
+                icono={MdEmail}
               />
               <div className="contenedor-boton-registrar-est">
                 <BotonForm
