@@ -10,6 +10,10 @@ import RegistroForm from '../components/RegistroForm';
 import { MdEmail } from "react-icons/md";
 import { GiPadlock } from "react-icons/gi";
 
+// Toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Login2 = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -19,56 +23,82 @@ const Login2 = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         const res = await login(email, password);
+    
         if (res.success) {
-          alert('Bienvenido');
-          navigate('/');
+            toast.success('¡Bienvenido al sistema!');
+            setTimeout(() => {
+                navigate('/');
+            }, 1500);
         } else {
-          alert(res.message);
+            // 👉 Aquí agregas la tabla de traducciones
+            const erroresTraducidos = {
+                "Invalid credentials": "Credenciales inválidas. Verifica tu correo y contraseña.",
+                "Unauthorized": "No tienes autorización para ingresar.",
+                "User not found": "Usuario no encontrado.",
+                // Agrega aquí cualquier otro mensaje que sepas que puede venir en inglés
+            };
+    
+            // 👉 Y aquí traduces
+            const mensajeTraducido = erroresTraducidos[res.message] || res.message || 'Ocurrió un error al iniciar sesión.';
+    
+            toast.error(mensajeTraducido);
         }
     };
-
+    
 
     const renderContenidoPorRol = () => {
-        
-                return (
-                    <form className="formulario-login" onSubmit={handleLogin}>
-                        <div>
-                            <RegistroForm
-                                label='Correo'
-                                type="email"
-                                name="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                icono={MdEmail}
-                                usarEvento={true}
-                            />
-                        </div>
-                        <div>
-                            <RegistroForm
-                                label='Contraseña'
-                                type="password"
-                                name="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                icono={GiPadlock}
-                                usarEvento={true}
-                                />
-                        </div>
-                        <div className="boton-login-wrapper">
-                            <button type="submit">Ingresar</button>
-                        </div>
-                    </form>
-                );
+        return (
+            <form className="formulario-login" onSubmit={handleLogin}>
+                <div>
+                    <RegistroForm
+                        label='Correo electrónico'
+                        type="email"
+                        name="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        icono={MdEmail}
+                        usarEvento={true}
+                    />
+                </div>
+                <div>
+                    <RegistroForm
+                        label='Contraseña'
+                        type="password"
+                        name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        icono={GiPadlock}
+                        usarEvento={true}
+                    />
+                </div>
+                <div className="boton-login-wrapper">
+                    <button type="submit">Ingresar</button>
+                </div>
+            </form>
+        );
     };
+    
 
     return (
-        <div className="login-page">
-            <div className="login-form-wrapper">
-                <Caja titulo="Iniciar Sesión" width='28%'>
-                    {renderContenidoPorRol()}
-                </Caja>
+        <>
+            <ToastContainer
+                position="bottom-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+                draggable
+                theme="light"
+            />
+            <div className="login-page">
+                <div className="login-form-wrapper">
+                    <Caja titulo="Iniciar Sesión" width='28%'>
+                        {renderContenidoPorRol()}
+                    </Caja>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

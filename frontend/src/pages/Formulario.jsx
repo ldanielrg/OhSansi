@@ -7,13 +7,19 @@ import DataTable from "react-data-table-component";
 import RegistroForm from "../components/RegistroForm";
 import api from "../api/axios";
 import * as XLSX from "xlsx";
-import { FaRegUser} from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
-import { MdOutlineDateRange } from "react-icons/md";
+import { FaRegUser } from "react-icons/fa";
+import { MdEmail, MdOutlineDateRange } from "react-icons/md";
 import { FaAddressCard } from "react-icons/fa6";
 import { PiStudentFill } from "react-icons/pi";
 
+// Toastify
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+// SweetAlert2
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+const MySwal = withReactContent(Swal);
 
 const Formulario = () => {
   const { id } = useParams();
@@ -63,13 +69,12 @@ const Formulario = () => {
       },
     },
   };
-  // Cargar opciones (áreas, municipios, unidades educativas)
   useEffect(() => {
     if (formData.area) {
       fetch(`http://localhost:8000/api/categorias/${formData.area}`)
         .then((res) => res.json())
         .then((data) => setCategorias(data))
-        .catch((error) => console.error("Error al obtener categorías:", error));
+        .catch((error) => toast.error("Error al obtener categorías"));
     } else {
       setCategorias([]);
     }
@@ -111,7 +116,7 @@ const Formulario = () => {
         setRowData(estudiantesFormateados);
       } catch (error) {
         console.error("Error al cargar formulario:", error);
-        alert("No se pudo cargar el formulario.");
+        toast.error("No se pudo cargar el formulario.");
       }
     };
     cargarFormulario();
@@ -124,15 +129,13 @@ const Formulario = () => {
   const handleRegistrar = () => {
     const { nombre, apellido, ci, fechaNac, rude, area, categoria } = formData;
     if (nombre.length < 6)
-      return alert("El nombre debe tener al menos 6 caracteres.");
+      return toast.warn("El nombre debe tener al menos 6 caracteres.");
     if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
-      return alert("El nombre solo puede contener letras y espacios.");
+      return toast.warn("El nombre solo puede contener letras y espacios.");
     if (!/\d{1,16}/.test(rude))
-      return alert(
-        "El RUDE debe contener solo números y como máximo 16 dígitos."
-      );
+      return toast.warn("El RUDE debe contener solo números (máx. 16 dígitos).");
     if (!/\d{1,8}/.test(ci))
-      return alert("El CI debe contener solo números y como máximo 8 dígitos.");
+      return toast.warn("El CI debe contener solo números (máx. 8 dígitos).");
 
     const areaSeleccionada = areas.find((a) => a.id_area === parseInt(area));
     const categoriaSeleccionada = categorias.find(
@@ -161,7 +164,7 @@ const Formulario = () => {
       setRowData((prev) => [...prev, nuevoEstudiante]);
     }
 
-    alert("Estudiante registrado correctamente.");
+    toast.success("Estudiante registrado correctamente.");
     setFormData({
       nombre: "",
       apellido: "",
@@ -180,25 +183,37 @@ const Formulario = () => {
     setToggleClearSelected((prev) => !prev);
   };
 
-  const handleEditar = () => {
+  const handleEditar = async () => {
     const seleccionActual = selectedRowsRef.current;
     if (seleccionActual.length === 0)
-      return alert("Por favor selecciona un registro para editar.");
+      return toast.warn("Por favor selecciona un registro para editar.");
     if (seleccionActual.length > 1)
-      return alert("Solo puedes editar un registro a la vez.");
-    if (!window.confirm("¿Estás seguro de que deseas editar este registro?"))
-      return;
+      return toast.warn("Solo puedes editar un registro a la vez.");
+
+    const result = await MySwal.fire({
+      title: '¿Editar registro?',
+      text: "¿Deseas editar este registro?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, editar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+    });
+
+    if (!result.isConfirmed) return;
 
     const seleccionado = seleccionActual[0];
     const index = rowData.findIndex((est) => est.ci === seleccionado.ci);
-    if (index === -1)
-      return alert("No se pudo encontrar el registro a editar.");
+    if (index === -1) {
+      toast.error("No se pudo encontrar el registro a editar.");
+      return;
+    }
 
     setFormData({ ...seleccionado });
     setEditIndex(index);
     setModoEdicion(true);
   };
-
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -215,7 +230,7 @@ const Formulario = () => {
 
       const rows = jsonData.slice(13);
       if (rows.length === 0)
-        return alert("El archivo no contiene datos válidos.");
+        return toast.error("El archivo no contiene datos válidos.");
 
       const nuevosEstudiantes = [];
       for (let i = 0; i < rows.length; i++) {
@@ -240,15 +255,9 @@ const Formulario = () => {
         }
 
         if (
-          !nombre ||
-          !apellido ||
-          !ci ||
-          !fechaNac ||
-          !rude ||
-          !area ||
-          !categoria
+          !nombre || !apellido || !ci || !fechaNac || !rude || !area || !categoria
         ) {
-          return alert(`Error en fila ${i + 14}: Algún campo vacío.`);
+          return toast.error(`Error en fila ${i + 14}: Algún campo vacío.`);
         }
 
         nuevosEstudiantes.push({
@@ -265,25 +274,30 @@ const Formulario = () => {
 
       if (nuevosEstudiantes.length > 0) {
         setRowData((prev) => [...prev, ...nuevosEstudiantes]);
-        alert(
-          `¡Se agregaron ${nuevosEstudiantes.length} estudiantes correctamente!`
-        );
+        toast.success(`¡Se agregaron ${nuevosEstudiantes.length} estudiantes correctamente!`);
       }
     };
     reader.readAsArrayBuffer(file);
     event.target.value = "";
   };
 
-  const handleEliminar = () => {
+  const handleEliminar = async () => {
     const seleccionActual = selectedRowsRef.current;
     if (seleccionActual.length === 0)
-      return alert("Por favor selecciona un registro para eliminar.");
-    if (
-      !window.confirm(
-        "¿Estás seguro de que deseas eliminar el/los registro(s) seleccionado(s)?"
-      )
-    )
-      return;
+      return toast.warn("Por favor selecciona un registro para eliminar.");
+
+    const result = await MySwal.fire({
+      title: '¿Eliminar registros?',
+      text: "¿Deseas eliminar el/los registros seleccionados?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+    });
+
+    if (!result.isConfirmed) return;
 
     const nuevosDatos = rowData.filter(
       (row) => !seleccionActual.some((sel) => sel.ci === row.ci)
@@ -292,11 +306,13 @@ const Formulario = () => {
     setSelectedRows([]);
     selectedRowsRef.current = [];
     setToggleClearSelected((prev) => !prev);
+
+    toast.success('Registros eliminados correctamente.');
   };
 
   const handleGuardarFormulario = async () => {
     if (rowData.length === 0) {
-      alert("No hay estudiantes registrados para guardar.");
+      toast.warn("No hay estudiantes registrados para guardar.");
       return;
     }
 
@@ -314,22 +330,35 @@ const Formulario = () => {
         idCategoria: est.id_categoria,
       })),
     };
+
     try {
-      console.log(datosEnviar);
       const response = await api.post("/inscribir", datosEnviar);
       console.log("Formulario guardado exitosamente:", response.data);
-      alert("Formulario guardado exitosamente");
-      navigate("/");
+      toast.success("Formulario guardado exitosamente.");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (error) {
       console.error("Error al guardar:", error);
-      alert("Ocurrió un error al guardar el formulario.");
+      toast.error("Ocurrió un error al guardar el formulario.");
     }
   };
 
   const fileInputRef = useRef();
 
   return (
+    
     <div className="formulario-page-container">
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="light"
+      />
       <Caja titulo="Tomar en cuenta" width="50%">
         <div>
           En caso de querer inscribir un grupo de estudiantes sin usar el
