@@ -558,7 +558,28 @@ const Formulario = () => {
               setSelectedRows(selectedRows);
               selectedRowsRef.current = selectedRows;
             }}
-            customStyles={customStyles}
+            customStyles={{
+              pagination: {
+                style: {
+                  backgroundColor: "white"
+                },
+                pageButtonsStyle: {
+                  borderRadius: "50%",
+                  margin: "2px",
+                  cursor: "pointer",
+                  color: "#fff",
+                  fill: "#fff",
+                  backgroundColor: "#1A2D5A", // azul marino
+                  "&:hover": {
+                    backgroundColor: "#27467A", // más claro al pasar el mouse
+                  },
+                  "&:disabled": {
+                    color: "#888",
+                    backgroundColor: "#ccc",
+                  },
+                },
+              },
+            }}
             noDataComponent="Aquí verás a los estudiantes que inscribiste."
             pagination
             responsive
