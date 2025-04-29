@@ -265,16 +265,14 @@ const CrearConfigurarConvocatoria = () => {
       };
       // Add the new convocatoria to the list
       updatedConvocatorias = [...existingConvocatorias, newConvocatoria];
-      toast.success("Convocatoria creada con éxito!");
+      
     }
 
     // Save the updated list back to localStorage
     localStorage.setItem("convocatorias", JSON.stringify(updatedConvocatorias));
 
-    // Navigate back to the main configuration page after saving
-    setTimeout(() => {
-      navigate('/configuracion-convocatoria');
-    }, 1500); // Espera 1.5 segundos antes de navegar
+    navigate('/configuracion-convocatoria', { state: { message: 'Convocatoria creado con éxito.', type: 'success' } });
+
   };
 
   // Handler for the "Salir" button (does not save)
