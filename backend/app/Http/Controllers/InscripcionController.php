@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;;
 class InscripcionController extends Controller{
     public function store(Request $request){
         
-
+        Log::debug($request);
 
         $validated = $request->validate([
             'id_formulario_actual' => 'required|integer',
@@ -29,7 +29,7 @@ class InscripcionController extends Controller{
             'estudiantes.*.idAarea' => 'required|integer',
             'estudiantes.*.idCategoria' => 'required|integer',
         ]);
-
+        Log::debug($validated);
         $user = $request->user();
         
         try {
