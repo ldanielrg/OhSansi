@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CrearEvento.css'; // Importaremos el CSS que crearemos
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const CrearEvento = () => {
   const [nombre, setNombre] = useState('');
   const [fechaInicio, setFechaInicio] = useState('');
@@ -38,13 +39,11 @@ const CrearEvento = () => {
 
     // 4. Guardar la lista actualizada en localStorage
     localStorage.setItem('events', JSON.stringify(updatedEvents));
-
-    // 5. Navegar de vuelta a la lista de eventos
-    navigate('/eventos'); // Asegúrate que esta ruta coincide con tu configuración de rutas
+    navigate('/eventos', { state: { message: 'Creación completada.', type: 'success' } });
   };
 
   const handleSalir = () => {
-    navigate('/eventos'); // Navegar de vuelta sin guardar
+    navigate('/eventos', { state: { message: 'Creación cancelada.', type: 'info' } });
   };
 
   return (
@@ -114,6 +113,7 @@ const CrearEvento = () => {
           </div>
         </div>
       </div>
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
 };
