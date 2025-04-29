@@ -5,9 +5,17 @@ import RegistroForm from '../components/RegistroForm';
 import BotonForm from '../components/BotonForm';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext";
-import { FaRegUser} from "react-icons/fa";
+import { FaRegUser } from "react-icons/fa";
 import { GiPadlock } from "react-icons/gi";
 import { MdEmail } from "react-icons/md";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// 👉 Agregamos SweetAlert2
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const CamposModificarCuenta = () => {
   const { token } = useAuth();
@@ -32,6 +40,7 @@ const CamposModificarCuenta = () => {
         });
       } catch (error) {
         console.error('Error al traer datos del usuario', error);
+        toast.error('No se pudieron cargar los datos del usuario.');
       }
     };
 
@@ -41,54 +50,61 @@ const CamposModificarCuenta = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar nombre
+    // Validaciones
     if (formData.nombreCuenta.trim() === '') {
-        alert("El nombre no puede estar vacío.");
-        return;
+      toast.warn("El nombre no puede estar vacío.");
+      return;
     }
 
-    // Validar que el nombre solo contenga letras (puede contener espacios también)
     const nombreRegex = /^[a-zA-Z\s]+$/;
     if (!nombreRegex.test(formData.nombreCuenta)) {
-        alert("El nombre solo puede contener letras y espacios, no números.");
-        return;
+      toast.warn("El nombre solo puede contener letras y espacios, no números.");
+      return;
     }
 
-    // Validar email
     if (formData.email.trim() === '') {
-        alert("El correo no puede estar vacío.");
-        return;
+      toast.warn("El correo no puede estar vacío.");
+      return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-        alert("Por favor ingresa un correo electrónico válido.");
-        return;
-    }
-  
-    // Si intenta cambiar contraseña
-    if (formData.password !== '' || formData.confirmarPassword !== '') {
-      // Ambas deben estar llenas
-        if (formData.password.trim() === '' || formData.confirmarPassword.trim() === '') {
-            alert("Debes llenar ambos campos de contraseña.");          
-            return;
-        }
-        
-        // La contraseña debe tener al menos 6 caracteres
-        if (formData.password.length < 6) {
-            alert("La nueva contraseña debe tener al menos 6 caracteres.");
-            return;
-        }
-  
-      // Las contraseñas deben coincidir
-        if (formData.password !== formData.confirmarPassword) {
-            alert("Las contraseñas no coinciden.");
-            return;
-        }
+      toast.warn("Por favor ingresa un correo electrónico válido.");
+      return;
     }
 
-    const confirmar = window.confirm("¿Estás seguro de que deseas guardar los cambios?");
-    if (!confirmar) return;
+    if (formData.password !== '' || formData.confirmarPassword !== '') {
+      if (formData.password.trim() === '' || formData.confirmarPassword.trim() === '') {
+        toast.warn("Debes llenar ambos campos de contraseña.");
+        return;
+      }
+
+      if (formData.password.length < 6) {
+        toast.warn("La nueva contraseña debe tener al menos 6 caracteres.");
+        return;
+      }
+
+      if (formData.password !== formData.confirmarPassword) {
+        toast.warn("Las contraseñas no coinciden.");
+        return;
+      }
+    }
+
+    // 👉 Aquí cambiamos el window.confirm por SweetAlert
+    const result = await MySwal.fire({
+      title: '¿Guardar cambios?',
+      text: "Esta acción actualizará tus datos.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, guardar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (!result.isConfirmed) {
+      return; // El usuario canceló
+    }
 
     try {
       await api.put('/user', {
@@ -97,80 +113,89 @@ const CamposModificarCuenta = () => {
         password: formData.password !== '' ? formData.password : undefined,
       });
 
-      alert('¡Datos actualizados con éxito!');
-      navigate('/');
+      toast.success('¡Datos actualizados con éxito!');
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (error) {
       console.error('Error al actualizar datos', error);
-      alert('Ocurrió un error al actualizar tus datos.');
+      toast.error('Ocurrió un error al actualizar tus datos.');
     }
   };
 
   return (
-    <div className="page-container-modificar-cuenta">
-      <section className="seccion-formulario-modificar-cuenta">
-        <h2>Modificación de la cuenta</h2>
-        <div className="cont-form-mod">
-          <p>
-            Modifica los campos que desees. Si no quieres cambiar tu contraseña puedes dejar los dos ultimos campos vacios.
-          </p>
-          <form onSubmit={onSubmit}>
-            {/* Nombre */}
-            <div className="div-label-input-modificar-cuenta">
-              <RegistroForm
-                label="Nombre"
-                name="nombreCuenta"
-                value={formData.nombreCuenta}
-                onChange={setFormData}
-                type="text"
-                icono={FaRegUser}
-              />
-            </div>
+    <>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="light"
+      />
+      <div className="page-container-modificar-cuenta">
+        <section className="seccion-formulario-modificar-cuenta">
+          <h2>Modificación de la cuenta</h2>
+          <div className="cont-form-mod">
+            <p>
+              Modifica los campos que desees. Si no quieres cambiar tu contraseña puedes dejar los dos últimos campos vacíos.
+            </p>
+            <form onSubmit={onSubmit}>
+              <div className="div-label-input-modificar-cuenta">
+                <RegistroForm
+                  label="Nombre"
+                  name="nombreCuenta"
+                  value={formData.nombreCuenta}
+                  onChange={setFormData}
+                  type="text"
+                  icono={FaRegUser}
+                />
+              </div>
 
-            {/* Email */}
-            <div className="div-label-input-modificar-cuenta">
-              <RegistroForm
-                label="Email"
-                name="email"
-                value={formData.email}
-                onChange={setFormData}
-                type="email"
-                icono={MdEmail}
-              />
-            </div>
-            {/* Nueva contraseña */}
-            <div className="div-label-input-modificar-cuenta">
-              <RegistroForm
-                label="Nueva contraseña"
-                name="password"
-                value={formData.password}
-                onChange={setFormData}
-                type="password"
-                icono={GiPadlock}
-              />
-            </div>
+              <div className="div-label-input-modificar-cuenta">
+                <RegistroForm
+                  label="Email"
+                  name="email"
+                  value={formData.email}
+                  onChange={setFormData}
+                  type="email"
+                  icono={MdEmail}
+                />
+              </div>
 
-            {/* Confirmar nueva contraseña */}
-            <div className="div-label-input-modificar-cuenta">
-              <RegistroForm
-                label="Confirmar nueva contraseña"
-                name="confirmarPassword"
-                value={formData.confirmarPassword}
-                onChange={setFormData}
-                type="password"
-                icono={GiPadlock}
-              />
-            </div>
+              <div className="div-label-input-modificar-cuenta">
+                <RegistroForm
+                  label="Nueva contraseña"
+                  name="password"
+                  value={formData.password}
+                  onChange={setFormData}
+                  type="password"
+                  icono={GiPadlock}
+                />
+              </div>
 
-            {/* Botones */}
-            <div className="div-label-input-modificar-cuenta">
-              <BotonForm texto="Volver" type="button" onClick={(e) => {e.preventDefault(); navigate('/modificar-cuenta');}} />
-              <BotonForm texto="Modificar" type="submit" />
-            </div>
-          </form>
-         
-        </div>
-      </section>
-    </div>
+              <div className="div-label-input-modificar-cuenta">
+                <RegistroForm
+                  label="Confirmar nueva contraseña"
+                  name="confirmarPassword"
+                  value={formData.confirmarPassword}
+                  onChange={setFormData}
+                  type="password"
+                  icono={GiPadlock}
+                />
+              </div>
+
+              <div className="div-label-input-modificar-cuenta">
+                <BotonForm texto="Volver" type="button" onClick={(e) => { e.preventDefault(); navigate('/modificar-cuenta'); }} />
+                <BotonForm texto="Modificar" type="submit" />
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </>
   );
 };
 
