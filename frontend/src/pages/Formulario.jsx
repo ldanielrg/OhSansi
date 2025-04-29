@@ -389,7 +389,7 @@ const Formulario = () => {
   ) : (
     
     <div className="formulario-page-container">
-      <Caja titulo="Tomar en cuenta" width="50%">
+      <Caja titulo="Tomar en cuenta">
         <div>
           En caso de querer inscribir un grupo de estudiantes sin usar el
           formulario, puede hacerlo descargando el siguiente archivo excel
