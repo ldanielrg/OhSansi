@@ -55,7 +55,7 @@ const CrearEvento = () => {
     <div className="crear-evento-page">
       <div className="container mt-4"> {/* Contenedor de Bootstrap */}
         <div className="card crear-evento-card"> {/* Usamos card para el estilo */}
-          <div className="card-header crear-evento-header">
+          <div className="crear-evento-header">
             Crear Nuevo Evento {/* Cambiado de Evento a Convocatoria para consistencia */}
           </div>
           <div className="card-body">
@@ -106,10 +106,10 @@ const CrearEvento = () => {
 
               {/* Botones */}
               <div className="d-flex justify-content-end gap-2 mt-4">
-                <button type="submit" className="btn btn-custom-primary">
+                <button type="submit" className="btn-custom-primary-aux">
                   Guardar
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={handleSalir}>
+                <button type="button" className="btn-custom-secondary-aux" onClick={handleSalir}>
                   Salir
                 </button>
               </div>
