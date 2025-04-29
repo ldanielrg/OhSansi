@@ -34,9 +34,9 @@ class CategoriaController extends Controller{
                     'id_categoria'    => $categoria->id_categoria,
                     'nombre_categoria'=> $categoria->nombre_categoria,
                     'grado_inicial_id'=> $categoria->grado_ini,
-                    'grado_inicial'   => $categoria->gradoInicial ? $categoria->gradoInicial->nombre : null,
+                    'grado_inicial_nombre'   => $categoria->gradoInicial ? $categoria->gradoInicial->nombre_grado : null,
                     'grado_final_id'  => $categoria->grado_fin,
-                    'grado_final'     => $categoria->gradoFinal ? $categoria->gradoFinal->nombre : null,
+                    'grado_final_nombre'     => $categoria->gradoFinal ? $categoria->gradoFinal->nombre_grado : null,
                 ];
             });
 

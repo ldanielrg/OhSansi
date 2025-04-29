@@ -36,6 +36,7 @@ Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asigna
 Route::get('/areas', [AreaController::class, 'index']);
 Route::delete('/area-eliminar/{id}', [AreaController::class, 'destroy']);
 Route::post('/area-crear', [AreaController::class, 'store']);
+Route::get('/area-categorias-grados', [AreaController::class, 'AreasConcategoriasConGrados']);
 
 Route::get('/categorias', [CategoriaController::class, 'todo']);
 Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
