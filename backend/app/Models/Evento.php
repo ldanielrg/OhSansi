@@ -38,7 +38,8 @@ class Evento extends Model
 	protected $fillable = [
 		'nombre_evento',
 		'fecha_inicio',
-		'fecha_final'
+		'fecha_final',
+		'id_convocatoria_convocatoria' // AGREGUE YO
 	];
 
 	public function convocatorium()
