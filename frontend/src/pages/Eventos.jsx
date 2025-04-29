@@ -2,10 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Eventos.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useLocation } from "react-router-dom";
 
 const Eventos = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const location = useLocation();
   // Nuevo: control del modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
@@ -14,7 +18,15 @@ const Eventos = () => {
   useEffect(() => {
     const storedEvents = JSON.parse(localStorage.getItem("events")) || [];
     setEvents(storedEvents);
-  }, []);
+    if (location.state?.message) {
+      const { message, type } = location.state;
+
+      toast[type](message);
+
+      // Opcional pero recomendado: limpiar el state después de mostrar la notificación
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Navegar para crear un evento nuevo
   const handleCrearEvento = () => {
@@ -24,7 +36,7 @@ const Eventos = () => {
   // Navegar para editar el evento seleccionado
   const handleEditarEvento = () => {
     if (!selectedEvent) return;
-    navigate('/editar-evento/');
+    navigate('/editar-evento');
   };
 
   // Eliminar el evento seleccionado
@@ -39,6 +51,7 @@ const Eventos = () => {
     const updatedEvents = events.filter((ev) => ev.id !== selectedEvent.id);
     localStorage.setItem("events", JSON.stringify(updatedEvents));
     setEvents(updatedEvents);
+    toast.error(`Evento "${selectedEvent.cronograma.nombre}" eliminada.`);
     setSelectedEvent(null);
     setShowDeleteModal(false); // Cerrar el modal
   };
@@ -46,6 +59,7 @@ const Eventos = () => {
   const cancelDelete = () => {
     // Simplemente cerramos el modal
     setShowDeleteModal(false);
+    toast.info('Eliminación cancelada.');
   };
 
   return (
@@ -132,6 +146,7 @@ const Eventos = () => {
           )}
         </div>
       </div>
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
 };

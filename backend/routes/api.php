@@ -36,12 +36,19 @@ Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asigna
 Route::get('/areas', [AreaController::class, 'index']);
 Route::delete('/area-eliminar/{id}', [AreaController::class, 'destroy']);
 Route::post('/area-crear', [AreaController::class, 'store']);
+Route::get('/areas-categorias-grados', [AreaController::class, 'AreasConcategoriasConGrados']);
+Route::post('/asignacionAreaCategoriaGrado', [AreaController::class, 'asignarAreaCategoriaGrado']);
+Route::post('/asignar-area-categoria', [AreaController::class, 'asignarAreaCategoria']);
+Route::delete('/eliminar-area-categoria', [AreaController::class, 'eliminarAsignacionAreaCategoria']);
+
 
 Route::get('/categorias', [CategoriaController::class, 'todo']);
 Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
 Route::get('/categorias-grados', [CategoriaController::class, 'categoriasConGrados']);
 Route::delete('/categoria-eliminar/{id}', [CategoriaController::class, 'destroy']);
 Route::post('/categoria-crear', [CategoriaController::class, 'store']);
+Route::post('/asignar-grados-categoria', [CategoriaController::class, 'asignarGradosCategoria']);
+Route::post('/limpiar-grados-categoria', [CategoriaController::class, 'limpiarGradosCategoria']);
 
 Route::get('/grados', [GradoController::class, 'todo']);
 Route::delete('/grado-eliminar/{id}', [GradoController::class, 'destroy']);

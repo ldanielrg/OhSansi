@@ -1,19 +1,24 @@
 // src/pages/ConfiguracionConvocatoria.jsx
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/ConfiguracionConvocatoria.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const ConfiguracionConvocatoria = () => {
   const [convocatorias, setConvocatorias] = useState([]);
   const [selected, setSelected] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
-
+  const location = useLocation();
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("convocatorias")) || [];
     setConvocatorias(stored);
-  }, []);
+    if (location.state?.message) {
+      toast[location.state.type](location.state.message);
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleNavigate = (path) => (e) => {
     // e.preventDefault(); // Ya no necesitamos prevenir el default aquí si solo llamamos a navigate
