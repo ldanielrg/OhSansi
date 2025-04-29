@@ -39,7 +39,7 @@ const CrearEvento = () => {
 
     // 4. Guardar la lista actualizada en localStorage
     localStorage.setItem('events', JSON.stringify(updatedEvents));
-    navigate('/eventos', { state: { message: 'Creación completada.', type: 'success' } });
+    navigate('/eventos', { state: { message: 'Creación de evento completada.', type: 'success' } });
   };
 
   const handleSalir = () => {
