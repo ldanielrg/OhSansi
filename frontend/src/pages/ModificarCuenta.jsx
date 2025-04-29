@@ -6,7 +6,8 @@ import BotonForm from '../components/BotonForm';
 import { useAuth } from "../context/AuthContext"; 
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-
+import { GiPadlock } from "react-icons/gi";
+import {FaEye, FaEyeSlash  } from "react-icons/fa";
 const ModificarCuenta = () => {
   const { token } = useAuth(); 
   const navigate = useNavigate();
@@ -46,16 +47,20 @@ const ModificarCuenta = () => {
     <div className="page-container-modificar-cuenta">
       <section className="seccion-formulario-modificar-cuenta">
         <h2>Confirmar Contraseña</h2>
+        <p>
+          Para modificar los datos de tu cuenta por favor ingresa primero tu contraseña.
+        </p>
         <div className="cont-form-mod">
-
           <form onSubmit={onSubmit}>
             <div className="div-label-input-modificar-cuenta">
               <RegistroForm
+                className='campo-contraseña-mod-cuenta'
                 label="Contraseña"
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={setFormData}
+                icono={GiPadlock}
               />
             </div>
 

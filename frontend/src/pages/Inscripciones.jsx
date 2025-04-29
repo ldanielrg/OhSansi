@@ -36,11 +36,11 @@ const Inscripciones = () => {
       name: 'Acciones',
       cell: row => (
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={() => navigate(`/formulario/${row.id_formulario}`)}>
-            <FaEdit />
+          <button className='botones-iconos-crud-formularios' onClick={() => navigate(`/formulario/${row.id_formulario}`)}>
+            <FaEdit className='iconos-crud-formularios' />
           </button>
-          <button onClick={() => eliminarFormulario(row.id_formulario)}>
-            <FaTrash />
+          <button className='botones-iconos-crud-formularios' onClick={() => eliminarFormulario(row.id_formulario)}>
+            <FaTrash className='iconos-crud-formularios' />
           </button>
         </div>
       )
@@ -84,10 +84,6 @@ const Inscripciones = () => {
 
   return (
     <div className="page-container">
-      <Caja titulo='Tomar en cuenta' width='50%'>
-        <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo, alias! Beatae, ullam dolorum...</div>
-      </Caja>
-
       <section className='seccion-crud-formularios'>
         <div className='para-separar-de-tabla-formularios'>
           <BotonForm

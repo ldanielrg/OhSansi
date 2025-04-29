@@ -5,6 +5,9 @@ import RegistroForm from '../components/RegistroForm';
 import BotonForm from '../components/BotonForm';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext";
+import { FaRegUser} from "react-icons/fa";
+import { GiPadlock } from "react-icons/gi";
+import { MdEmail } from "react-icons/md";
 
 const CamposModificarCuenta = () => {
   const { token } = useAuth();
@@ -107,6 +110,9 @@ const CamposModificarCuenta = () => {
       <section className="seccion-formulario-modificar-cuenta">
         <h2>Modificación de la cuenta</h2>
         <div className="cont-form-mod">
+          <p>
+            Modifica los campos que desees. Si no quieres cambiar tu contraseña puedes dejar los dos ultimos campos vacios.
+          </p>
           <form onSubmit={onSubmit}>
             {/* Nombre */}
             <div className="div-label-input-modificar-cuenta">
@@ -116,6 +122,7 @@ const CamposModificarCuenta = () => {
                 value={formData.nombreCuenta}
                 onChange={setFormData}
                 type="text"
+                icono={FaRegUser}
               />
             </div>
 
@@ -127,9 +134,9 @@ const CamposModificarCuenta = () => {
                 value={formData.email}
                 onChange={setFormData}
                 type="email"
+                icono={MdEmail}
               />
             </div>
-
             {/* Nueva contraseña */}
             <div className="div-label-input-modificar-cuenta">
               <RegistroForm
@@ -138,6 +145,7 @@ const CamposModificarCuenta = () => {
                 value={formData.password}
                 onChange={setFormData}
                 type="password"
+                icono={GiPadlock}
               />
             </div>
 
@@ -149,6 +157,7 @@ const CamposModificarCuenta = () => {
                 value={formData.confirmarPassword}
                 onChange={setFormData}
                 type="password"
+                icono={GiPadlock}
               />
             </div>
 

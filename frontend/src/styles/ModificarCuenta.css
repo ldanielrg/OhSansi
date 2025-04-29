@@ -16,11 +16,17 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 70%;
-    margin-bottom: 5%;
+    margin-bottom: 0;
 }
 form{
     margin-top: 3%;
 }
 .cont-form-mod{
     width: 40%;
+}
+.seccion-formulario-modificar-cuenta p, h2{
+    color: #003366;
+}
+.campo-contraseña-mod-cuenta{
+    margin-bottom: 0;;
 }

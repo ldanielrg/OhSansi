@@ -32,6 +32,47 @@
     align-items: center;
     margin-bottom: 0.8em;
 }
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.input-icon-wrapper {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    font-size: 1.2rem;
+    pointer-events: none;
+    color: #003366;
+}
+
+.input-password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    font-size: 1.2rem;
+    cursor: pointer; /* el ojo si es clickeable */
+    color: #003366;
+}
+
+.input-con-icono-real {
+    width: 100%;
+    padding: 10px 40px 10px 40px; /* Espacio a la izquierda (para icono) y derecha (para el ojo) */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+    outline: none;
+}
+
+.input-con-icono-real:focus {
+    border-color: #4CC4FF;
+}
+
 
 
 

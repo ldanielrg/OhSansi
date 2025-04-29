@@ -73,3 +73,16 @@
     border: 2px solid white !important;
     margin-bottom: 10px !important;    
 }
+.boton-descargar-excel {
+    display: inline-block;
+    padding: 8px;
+    background-color: #003366;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}  
+.boton-descargar-excel:hover {
+    background-color: #45a049;
+}
