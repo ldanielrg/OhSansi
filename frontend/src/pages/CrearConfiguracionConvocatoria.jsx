@@ -32,23 +32,28 @@ const CrearConfigurarConvocatoria = () => {
   const [selCategoriaToAddId, setSelCategoriaToAddId] = useState("");
   const [selGradoInicialToAddId, setSelGradoInicialToAddId] = useState("");
   const [selGradoFinalToAddId, setSelGradoFinalToAddId] = useState("");
+  const [areasCategoriasGrados, setAreasCategoriasGrados] = useState([]);
+
 
   const fetchDatos = async () => {
     try {
-      const [gradosRes, categoriasRes, areasRes] = await Promise.all([
+      const [gradosRes, categoriasRes, areasRes, areasCategoriasGradosRes] = await Promise.all([
         api.get('/grados'),
         api.get('/categorias'),
         api.get('/areas'),
+        api.get('/areas-categorias-grados'), // NUEVO ENDPOINT
       ]);
   
       setGrados(gradosRes.data);
       setCategorias(categoriasRes.data);
       setAreas(areasRes.data);
+      setAreasCategoriasGrados(areasCategoriasGradosRes.data); // Guarda la nueva estructura
     } catch (error) {
       console.error('Error recargando datos:', error);
       toast.error('Error recargando datos.');
     }
   };
+  
   
 
   useEffect(() => {
@@ -446,6 +451,38 @@ const CrearConfigurarConvocatoria = () => {
                       <td>{a.nombre_area}</td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+                    <div className="card">
+            <h3>Áreas, Categorías y Grados</h3>
+            <div className="tabla-lista-container">
+              <table className="tabla-lista">
+                <thead>
+                  <tr>
+                    <th>Área</th>
+                    <th>Categoría</th>
+                    <th>Grado(s)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {areasCategoriasGrados.map((area) =>
+                    area.categorias.map((categoria, idx) => (
+                      <tr key={`${area.id_area}-${categoria.id_categoria}-${idx}`}>
+                        <td>{area.nombre_area}</td>
+                        <td>{categoria.nombre_categoria}</td>
+                        <td>
+                          {categoria.grado_inicial_nombre
+                            ? categoria.grado_final_nombre
+                              ? `${categoria.grado_inicial_nombre} - ${categoria.grado_final_nombre}`
+                              : categoria.grado_inicial_nombre
+                            : 'No asignado'}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
