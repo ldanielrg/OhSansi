@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
+import RegistroForm from "../components/RegistroForm";
 import '../styles/CrearEvento.css'; // Importaremos el CSS que crearemos
+import { BsLayoutTextWindowReverse } from "react-icons/bs";
+import { BsCalendar3Event } from "react-icons/bs";
+import { MdOutlineEventAvailable } from "react-icons/md";
 
 const CrearEvento = () => {
   const [nombre, setNombre] = useState('');
@@ -58,47 +62,46 @@ const CrearEvento = () => {
             <form onSubmit={handleGuardar}>
               {/* Campo Nombre */}
               <div className="mb-3">
-                <label htmlFor="nombreEvento" className="form-label">
-                  Nombre del Evento
-                </label>
-                <input
+                
+                <RegistroForm
+                  label='Nombre del evento'
                   type="text"
                   className="form-control"
                   id="nombreEvento"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   required // Hace el campo obligatorio en HTML5
+                  usarEvento={true}
+                  icono={BsLayoutTextWindowReverse}
                 />
               </div>
 
               {/* Campo Fecha Inicio */}
               <div className="mb-3">
-                <label htmlFor="fechaInicio" className="form-label">
-                  Fecha de Inicio
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="fechaInicio"
-                  value={fechaInicio}
-                  onChange={(e) => setFechaInicio(e.target.value)}
-                  required
-                />
+              <RegistroForm
+                label="Fecha de Inicio"
+                name="fechaInicio"
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                usarEvento={true}
+                icono={BsCalendar3Event}
+              />
+
               </div>
 
               {/* Campo Fecha Fin */}
               <div className="mb-3">
-                <label htmlFor="fechaFin" className="form-label">
-                  Fecha de Fin
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="fechaFin"
-                  value={fechaFin}
-                  onChange={(e) => setFechaFin(e.target.value)}
-                  required
-                />
+              <RegistroForm
+                label="Fecha de Fin"
+                name="fechaFin"
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+                usarEvento={true}
+                icono={MdOutlineEventAvailable}
+              />
+
               </div>
 
               {/* Botones */}

@@ -110,13 +110,13 @@
 
 /* Hover para el botón primario */
 .btn-custom-primary:hover {
-  background-color: #003366; /* Azul oscuro al pasar el mouse */
-  color: #fff; /* Asegurar texto blanco */
+  background-color: #003366 !important; /* Azul oscuro al pasar el mouse */
+  color: #ffff !important; /* Asegurar texto blanco */
 }
 
 /* Estilo para el botón secundario (Salir/Cancelar) - Estilo Outline */
 .btn-custom-secondary {
-  background-color: #ffffff; /* Fondo blanco */
+  background-color: #ffff !important; /* Fondo blanco */
   color: #003366; /* Texto azul oscuro */
   padding: calc(10px - 1px) 25px; /* Padding ajustado para compensar borde */
   border: 1px solid #003366; /* Borde azul oscuro */
