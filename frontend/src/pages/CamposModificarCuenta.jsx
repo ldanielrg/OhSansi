@@ -23,6 +23,9 @@ const CamposModificarCuenta = () => {
   const { token } = useAuth();
   const navigate = useNavigate();
 
+  const [enviando, setEnviando] = useState(false);
+
+
   const [formData, setFormData] = useState({
     nombreCuenta: '',
     email: '',

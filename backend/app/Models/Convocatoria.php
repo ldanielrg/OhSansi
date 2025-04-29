@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class Convocatorium extends Model
+class Convocatoria extends Model
 {
 	protected $table = 'convocatoria';
 	protected $primaryKey = 'id_convocatoria';
