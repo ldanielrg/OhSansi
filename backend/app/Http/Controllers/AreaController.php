@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 class AreaController extends Controller{
     
     public function index()    {
+        
         return Area::all();
     }
 

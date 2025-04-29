@@ -397,7 +397,7 @@ const Formulario = () => {
         </div>
         <div className="contenedor-archivo-excel">
           <a
-            href="/plantillas/FormatoParaSubirLista.xlsx"
+            href="/public/plantillas/FormatoParaSubirLista.xlsx"
             download="FormatoParaSubirLista.xlsx"
             className="boton-descargar-excel"
           >
