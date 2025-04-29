@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/RegistroForm.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Importamos los iconos del ojo
 
 const RegistroForm = ({
     label,
@@ -8,8 +9,11 @@ const RegistroForm = ({
     type = 'text',
     options = [],
     value = '',
-    onChange
+    onChange,
+    icono: Icono
 }) => {
+    const [mostrarPassword, setMostrarPassword] = useState(false);
+
     const handleChange = (e) => {
         const val = e.target.value;
         onChange((prev) => ({
@@ -17,6 +21,13 @@ const RegistroForm = ({
             [name]: val
         }));
     };
+
+    const toggleMostrarPassword = () => {
+        setMostrarPassword((prev) => !prev);
+    };
+
+    const esPassword = type === 'password';
+    const inputType = esPassword ? (mostrarPassword ? 'text' : 'password') : type;
 
     return (
         <div className="registro-form-field">
@@ -53,16 +64,26 @@ const RegistroForm = ({
                     ))}
                 </div>
             ) : (
-                <input
-                    className="input-registro"
-                    type={type}
-                    name={name}
-                    id={name}
-                    placeholder={placeholder}
-                    value={value}
-                    onChange={handleChange}
-                    autoComplete={type === 'password' ? 'new-password' : 'off'} //AGREGUE YO
-                />
+                <div className="input-wrapper">
+                    {Icono && <span className="input-icon-wrapper"><Icono className="input-icono" /></span>}
+                    
+                    <input
+                        className="input-con-icono-real"
+                        type={inputType}
+                        name={name}
+                        id={name}
+                        placeholder={placeholder}
+                        value={value}
+                        onChange={handleChange}
+                        autoComplete={type === 'password' ? 'new-password' : 'off'}
+                    />
+
+                    {esPassword && (
+                        <span className="input-password-toggle" onClick={toggleMostrarPassword}>
+                            {mostrarPassword ? <FaEyeSlash /> : <FaEye />}
+                        </span>
+                    )}
+                </div>
             )}
         </div>
     );
