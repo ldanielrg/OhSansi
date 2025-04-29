@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\AreaTieneCategorium;
 use App\Models\Categorium;
+use Illuminate\Support\Facades\DB;
+
 
 class CategoriaController extends Controller{
    
@@ -77,4 +79,72 @@ class CategoriaController extends Controller{
             'message' => 'Categoría eliminada correctamente.',
         ]);
     }
+
+
+    public function asignarGradosCategoria(Request $request)
+    {
+        $validated = $request->validate([
+            'id_categoria' => 'required|integer|exists:categoria,id_categoria',
+            'grado_inicial_id' => 'required|integer|exists:grado,id_grado',
+            'grado_final_id' => 'required|integer|exists:grado,id_grado',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Buscar la categoría
+            $categoria = Categorium::findOrFail($validated['id_categoria']);
+
+            // Actualizar los grados inicial y final
+            $categoria->grado_ini = $validated['grado_inicial_id'];
+            $categoria->grado_fin = $validated['grado_final_id'];
+            $categoria->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Grados asignados a la categoría correctamente.'
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Error al asignar grados a categoría.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function limpiarGradosCategoria(Request $request)
+    {
+        $validated = $request->validate([
+            'id_categoria' => 'required|integer|exists:categoria,id_categoria',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $categoria = Categorium::findOrFail($validated['id_categoria']);
+
+            $categoria->grado_ini = null;
+            $categoria->grado_fin = null;
+            $categoria->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Grados limpiados de la categoría correctamente.'
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Error al limpiar grados de la categoría.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

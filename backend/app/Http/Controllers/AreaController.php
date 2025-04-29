@@ -125,4 +125,87 @@ class AreaController extends Controller{
             ], 500);
         }
     }
+
+
+    public function asignarAreaCategoria(Request $request)    {
+        $validated = $request->validate([
+            'id_area' => 'required|integer|exists:area,id_area',
+            'id_categoria' => 'required|integer|exists:categoria,id_categoria',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Verificar si ya existe la relación
+            $relacionExistente = AreaTieneCategorium::where('id_area_area', $validated['id_area'])
+                ->where('id_categoria_categoria', $validated['id_categoria'])
+                ->first();
+
+            if ($relacionExistente) {
+                return response()->json([
+                    'message' => 'Esta categoría ya está asignada a esta área.'
+                ], 409); // Conflict
+            }
+
+            // Crear nueva relación
+            AreaTieneCategorium::create([
+                'id_area_area' => $validated['id_area'],
+                'id_categoria_categoria' => $validated['id_categoria'],
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Área y categoría asignadas correctamente.'
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Error al asignar área a categoría.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    
+    public function eliminarAsignacionAreaCategoria(Request $request){
+        $validated = $request->validate([
+            'id_area' => 'required|integer|exists:area,id_area',
+            'id_categoria' => 'required|integer|exists:categoria,id_categoria',
+        ]);
+    
+        DB::beginTransaction();
+    
+        try {
+            // No usamos Eloquent->delete(), hacemos el query manual
+            $eliminados = AreaTieneCategorium::where('id_area_area', $validated['id_area'])
+                ->where('id_categoria_categoria', $validated['id_categoria'])
+                ->delete();
+    
+            if ($eliminados === 0) {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'No se encontró la asignación para eliminar.'
+                ], 404);
+            }
+    
+            DB::commit();
+    
+            return response()->json([
+                'message' => 'Asignación área-categoría eliminada correctamente.'
+            ], 200);
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+    
+            return response()->json([
+                'message' => 'Error al eliminar asignación área-categoría.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    
+
 }
