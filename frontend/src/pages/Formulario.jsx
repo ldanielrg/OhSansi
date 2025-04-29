@@ -110,7 +110,7 @@ const Formulario = () => {
           ci: est.ci,
           fechaNac: est.fecha_nacimiento,
           rude: est.rude,
-          id_area: est.idArea,
+          id_area: est.idAarea,
           nombre_area: est?.nombre_area || "",
           id_categoria: est.idCategoria,
           nombre_categoria: est?.nombre_categoria || "",
@@ -339,6 +339,7 @@ const Formulario = () => {
     };
 
     try {
+      console.log(datosEnviar);
       const response = await api.post("/inscribir", datosEnviar);
       console.log("Formulario guardado exitosamente:", response.data);
       toast.success("Formulario guardado exitosamente.");
