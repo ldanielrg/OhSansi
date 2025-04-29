@@ -31,6 +31,7 @@
 /* Estilo para el encabezado de la tarjeta */
 .crear-evento-header,
 .editar-evento-header {
+  display: flex;
   background-color: #003366; /* Fondo azul oscuro */
   color: #ffffff; /* Texto blanco */
   font-weight: bold;
@@ -38,6 +39,7 @@
   font-size: 1.4rem; /* Tamaño de fuente igual a Eventos.css */
   border-bottom: 1px solid #002244; /* Borde inferior sutil */
   text-align: left; /* Alinear a la izquierda para formularios */
+  justify-content: center;
 }
 
 /* Cuerpo de la tarjeta donde van los inputs */
@@ -94,8 +96,8 @@
 }
 
 /* Estilo para el botón primario (Guardar) - Tomado de Eventos.css */
-.btn-custom-primary {
-  background-color: #66c2ff; /* Azul claro */
+.btn-custom-primary-aux {
+  background-color: #003366; /* Azul claro */
   color: #fff;
   padding: 10px 25px; /* Padding ajustado */
   border: none;
@@ -110,13 +112,13 @@
 
 /* Hover para el botón primario */
 .btn-custom-primary:hover {
-  background-color: #003366; /* Azul oscuro al pasar el mouse */
-  color: #fff; /* Asegurar texto blanco */
+  background-color: #003366 !important; /* Azul oscuro al pasar el mouse */
+  color: #ffff !important; /* Asegurar texto blanco */
 }
 
 /* Estilo para el botón secundario (Salir/Cancelar) - Estilo Outline */
-.btn-custom-secondary {
-  background-color: #ffffff; /* Fondo blanco */
+.btn-custom-secondary-aux {
+  background-color: #ffff !important; /* Fondo blanco */
   color: #003366; /* Texto azul oscuro */
   padding: calc(10px - 1px) 25px; /* Padding ajustado para compensar borde */
   border: 1px solid #003366; /* Borde azul oscuro */

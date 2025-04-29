@@ -1,23 +1,63 @@
-// ConfiguracionCuentas.jsx
-import React from "react";
-import "../styles/ConfiguracionCuentas.css";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import IconBasurero from "../assets/basura.png";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // <-- Necesitas Axios para las peticiones
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../styles/ConfiguracionCuentas.css';
+import api from '../api/axios';
+
 
 const ConfiguracionCuentas = () => {
-  const cuentas = [
-    { id: 1, nombre: "Juan Pérez", rol: "Administrador" },
-    { id: 2, nombre: "Maria López", rol: "Director" },
-    { id: 3, nombre: "Carlos Gómez", rol: "Docente" },
-    { id: 4, nombre: "Ana Fernández", rol: "Docente" },
-  ];
+  const [cuentas, setCuentas] = useState([]);
+  const [selectedCuenta, setSelectedCuenta] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const eliminarCuenta = (nombre) => {
-    toast.error(`Cuenta eliminada: ${nombre}`, {
-      position: "bottom-right",
-      autoClose: 2000,
-    });
+  useEffect(() => {
+    fetchCuentas();
+  }, []);
+
+  const fetchCuentas = async () => {
+    try {
+      const response = await api.get('/obtener-cuentas');
+      // Ajustamos la estructura si es necesario
+      const formattedCuentas = response.data.map(user => ({
+        id: user.id,
+        nombre: user.nombre,
+        apellido: user.apellido,
+        rol: user.role
+      }));
+
+      setCuentas(formattedCuentas);
+    } catch (error) {
+      console.error('Error al cargar las cuentas:', error);
+      toast.error('No se pudieron cargar las cuentas.');
+    }
+  };
+
+  const promptDeleteCuenta = (cuenta) => {
+    setSelectedCuenta(cuenta);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteCuenta = async () => {
+    try {
+      await api.delete(`/eliminar-cuenta/${selectedCuenta.id}`);
+
+      const updatedCuentas = cuentas.filter(c => c.id !== selectedCuenta.id);
+      setCuentas(updatedCuentas);
+      toast.success(`Cuenta "${selectedCuenta.nombre}" eliminada.`);
+    } catch (error) {
+      console.error('Error al eliminar la cuenta:', error);
+      toast.error('No se pudo eliminar la cuenta.');
+    }
+
+    setShowDeleteModal(false);
+    setSelectedCuenta(null);
+  };
+
+  const cancelDeleteCuenta = () => {
+    setShowDeleteModal(false);
+    setSelectedCuenta(null);
+    toast.info('Eliminación cancelada.');
   };
 
   return (
@@ -34,16 +74,15 @@ const ConfiguracionCuentas = () => {
             </tr>
           </thead>
           <tbody>
-            {cuentas.map((cuenta) => (
+            {cuentas.map(cuenta => (
               <tr key={cuenta.id}>
                 <td>{cuenta.nombre}</td>
                 <td>{cuenta.rol}</td>
                 <td className="text-center">
                   <button
                     className="btn btn-eliminar"
-                    onClick={() => eliminarCuenta(cuenta.nombre)}
+                    onClick={() => promptDeleteCuenta(cuenta)}
                   >
-                
                     <i className="fa fa-trash"></i>
                   </button>
                 </td>
@@ -53,8 +92,27 @@ const ConfiguracionCuentas = () => {
         </table>
       </div>
 
-      {/* Contenedor de alertas abajo a la derecha */}
-      <ToastContainer />
+      {showDeleteModal && (
+        <div className="modal-container">
+          <div className="modal-content">
+            <p>¿Deseas eliminar la cuenta "{selectedCuenta?.nombre}"?</p>
+            <div style={{ marginTop: "1rem" }}>
+              <button
+                className="btn-primary"
+                onClick={confirmDeleteCuenta}
+                style={{ marginRight: "1rem" }}
+              >
+                Eliminar
+              </button>
+              <button className="btn-primary" onClick={cancelDeleteCuenta}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
 };

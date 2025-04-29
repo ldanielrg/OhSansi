@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
+import RegistroForm from "../components/RegistroForm";
 import '../styles/CrearEvento.css'; // Importaremos el CSS que crearemos
+import { BsLayoutTextWindowReverse } from "react-icons/bs";
+import { BsCalendar3Event } from "react-icons/bs";
+import { MdOutlineEventAvailable } from "react-icons/md";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CrearEvento = () => {
   const [nombre, setNombre] = useState('');
@@ -38,75 +44,72 @@ const CrearEvento = () => {
 
     // 4. Guardar la lista actualizada en localStorage
     localStorage.setItem('events', JSON.stringify(updatedEvents));
-
-    // 5. Navegar de vuelta a la lista de eventos
-    navigate('/eventos'); // Asegúrate que esta ruta coincide con tu configuración de rutas
+    navigate('/eventos', { state: { message: 'Creación completada.', type: 'success' } });
   };
 
   const handleSalir = () => {
-    navigate('/eventos'); // Navegar de vuelta sin guardar
+    navigate('/eventos', { state: { message: 'Creación cancelada.', type: 'info' } });
   };
 
   return (
     <div className="crear-evento-page">
       <div className="container mt-4"> {/* Contenedor de Bootstrap */}
         <div className="card crear-evento-card"> {/* Usamos card para el estilo */}
-          <div className="card-header crear-evento-header">
+          <div className="crear-evento-header">
             Crear Nuevo Evento {/* Cambiado de Evento a Convocatoria para consistencia */}
           </div>
           <div className="card-body">
             <form onSubmit={handleGuardar}>
               {/* Campo Nombre */}
               <div className="mb-3">
-                <label htmlFor="nombreEvento" className="form-label">
-                  Nombre del Evento
-                </label>
-                <input
+                
+                <RegistroForm
+                  label='Nombre del evento'
                   type="text"
                   className="form-control"
                   id="nombreEvento"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   required // Hace el campo obligatorio en HTML5
+                  usarEvento={true}
+                  icono={BsLayoutTextWindowReverse}
                 />
               </div>
 
               {/* Campo Fecha Inicio */}
               <div className="mb-3">
-                <label htmlFor="fechaInicio" className="form-label">
-                  Fecha de Inicio
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="fechaInicio"
-                  value={fechaInicio}
-                  onChange={(e) => setFechaInicio(e.target.value)}
-                  required
-                />
+              <RegistroForm
+                label="Fecha de Inicio"
+                name="fechaInicio"
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                usarEvento={true}
+                icono={BsCalendar3Event}
+              />
+
               </div>
 
               {/* Campo Fecha Fin */}
               <div className="mb-3">
-                <label htmlFor="fechaFin" className="form-label">
-                  Fecha de Fin
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="fechaFin"
-                  value={fechaFin}
-                  onChange={(e) => setFechaFin(e.target.value)}
-                  required
-                />
+              <RegistroForm
+                label="Fecha de Fin"
+                name="fechaFin"
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+                usarEvento={true}
+                icono={MdOutlineEventAvailable}
+              />
+
               </div>
 
               {/* Botones */}
               <div className="d-flex justify-content-end gap-2 mt-4">
-                <button type="submit" className="btn btn-custom-primary">
+                <button type="submit" className="btn-custom-primary-aux">
                   Guardar
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={handleSalir}>
+                <button type="button" className="btn-custom-secondary-aux" onClick={handleSalir}>
                   Salir
                 </button>
               </div>
@@ -114,6 +117,7 @@ const CrearEvento = () => {
           </div>
         </div>
       </div>
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
 };

@@ -23,7 +23,7 @@ class Grado extends Model
 {
 	protected $table = 'grado';
 	protected $primaryKey = 'id_grado';
-	public $incrementing = false;
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [
@@ -34,8 +34,14 @@ class Grado extends Model
 		'nombre_grado'
 	];
 
-	public function categoria_tiene_grados()
-	{
-		return $this->hasMany(CategoriaTieneGrado::class, 'id_grado_grado');
-	}
+	public function categoriasInicio()
+    {
+        return $this->hasMany(Categorium::class, 'grado_ini', 'id_grado');
+    }
+
+    public function categoriasFin()
+    {
+        return $this->hasMany(Categorium::class, 'grado_fin', 'id_grado');
+    }
+
 }
