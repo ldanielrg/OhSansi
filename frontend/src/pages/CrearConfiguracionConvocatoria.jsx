@@ -33,7 +33,11 @@ const CrearConfigurarConvocatoria = () => {
   const [selGradoInicialToAddId, setSelGradoInicialToAddId] = useState("");
   const [selGradoFinalToAddId, setSelGradoFinalToAddId] = useState("");
   const [areasCategoriasGrados, setAreasCategoriasGrados] = useState([]);
-
+  const [selectedAreaId, setSelectedAreaId] = useState('');
+  const [selectedCategoriaId, setSelectedCategoriaId] = useState('');
+  const [selectedGradoIniId, setSelectedGradoIniId] = useState('');
+  const [selectedGradoFinId, setSelectedGradoFinId] = useState('');
+  
 
   const fetchDatos = async () => {
     try {
@@ -164,6 +168,34 @@ const CrearConfigurarConvocatoria = () => {
     }
   };
   
+  const handleAsignarCategoriaAGrados = async () => {
+    if (!selectedAreaId || !selectedCategoriaId || !selectedGradoIniId || !selectedGradoFinId) {
+      toast.warn('Completa los 4 campos para asignar.');
+      return;
+    }
+  
+    try {
+      await api.post('/asignacionAreaCategoriaGrado', {
+        id_area: parseInt(selectedAreaId),
+        id_categoria: parseInt(selectedCategoriaId),
+        grado_inicial_id: parseInt(selectedGradoIniId),
+        grado_final_id: parseInt(selectedGradoFinId),
+      });
+  
+      toast.success('Asignación registrada correctamente.');
+      fetchDatos(); // refresca la tabla
+      // Resetear selects si deseas:
+      setSelectedAreaId('');
+      setSelectedCategoriaId('');
+      setSelectedGradoIniId('');
+      setSelectedGradoFinId('');
+    } catch (error) {
+      console.error(error);
+      toast.error('Error al asignar categoría a grados.');
+    }
+  };
+  
+
 
   // --- Handlers for managing Areas within the specific Convocatoria ---
 
@@ -308,6 +340,8 @@ const CrearConfigurarConvocatoria = () => {
     toast.info("Cambios descartados.");
     navigate("/configuracion-convocatoria");
   };
+
+
 
   return (
     <div className="config-page">
@@ -456,7 +490,7 @@ const CrearConfigurarConvocatoria = () => {
             </div>
           </div>
 
-                    <div className="card">
+          <div className="card">
             <h3>Áreas, Categorías y Grados</h3>
             <div className="tabla-lista-container">
               <table className="tabla-lista">
@@ -487,6 +521,56 @@ const CrearConfigurarConvocatoria = () => {
               </table>
             </div>
           </div>
+          <div style={{ marginTop: '2rem' }}>
+            <h4>Asignar Categoría a Área y Rango de Grados:</h4>
+            <div className="form-row">
+              <select value={selectedAreaId} onChange={(e) => setSelectedAreaId(e.target.value)}>
+                <option value="">Selecciona Área</option>
+                {areas.map((a) => (
+                  <option key={a.id_area} value={a.id_area}>
+                    {a.nombre_area}
+                  </option>
+                ))}
+              </select>
+
+              <select value={selectedCategoriaId} onChange={(e) => setSelectedCategoriaId(e.target.value)}>
+                <option value="">Selecciona Categoría</option>
+                {categorias.map((c) => (
+                  <option key={c.id_categoria} value={c.id_categoria}>
+                    {c.nombre_categoria}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-row">
+              <select value={selectedGradoIniId} onChange={(e) => setSelectedGradoIniId(e.target.value)}>
+                <option value="">Grado Inicial</option>
+                {grados.map((g) => (
+                  <option key={g.id_grado} value={g.id_grado}>
+                    {g.nombre_grado}
+                  </option>
+                ))}
+              </select>
+
+              <select value={selectedGradoFinId} onChange={(e) => setSelectedGradoFinId(e.target.value)}>
+                <option value="">Grado Final</option>
+                {grados.map((g) => (
+                  <option key={g.id_grado} value={g.id_grado}>
+                    {g.nombre_grado}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              className="btn-primary"
+              type="button"
+              onClick={handleAsignarCategoriaAGrados}
+              style={{ marginTop: '10px' }}
+            >
+              Crear Asignación
+            </button>
+          </div>
+
 
           {/* Sección para configurar la Convocatoria específica */}
           {/* Esta sección usa los datos de las listas globales para definir el contenido de LA convocatoria */}

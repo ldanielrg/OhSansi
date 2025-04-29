@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Area;
 use App\Models\AreaTieneCategorium;
+use App\Models\Categorium;
+use Illuminate\Support\Facades\DB;
 
 class AreaController extends Controller{
     
@@ -47,8 +49,9 @@ class AreaController extends Controller{
         ]);
     }
 
-    public function AreasConcategoriasConGrados()
-{
+
+    //Para devolver areas, categorias y grados, relacionados.
+    public function AreasConcategoriasConGrados(){
     // Traemos todas las relaciones con carga de modelos
     $relaciones = AreaTieneCategorium::with(['area', 'categorium.gradoInicial', 'categorium.gradoFinal'])->get();
 
@@ -74,7 +77,52 @@ class AreaController extends Controller{
     })->values();
 
     return response()->json($areas);
-}
+    }
 
+    //Para crear una relacion de Area-Categoria-Grados
+    public function asignarAreaCategoriaGrado(Request $request)
+    {
+        $validated = $request->validate([
+            'id_area' => 'required|integer|exists:area,id_area',
+            'id_categoria' => 'required|integer|exists:categoria,id_categoria',
+            'grado_inicial_id' => 'required|integer|exists:grado,id_grado',
+            'grado_final_id' => 'required|integer|exists:grado,id_grado',
+        ]);
 
+        DB::beginTransaction(); // <-- inicia la transacción
+
+        try {
+            // Paso 1: Verificar si existe relación Área-Categoría
+            $relacionExistente = AreaTieneCategorium::where('id_area_area', $validated['id_area'])
+                ->where('id_categoria_categoria', $validated['id_categoria'])
+                ->first();
+
+            if (!$relacionExistente) {
+                AreaTieneCategorium::create([
+                    'id_area_area' => $validated['id_area'],
+                    'id_categoria_categoria' => $validated['id_categoria'],
+                ]);
+            }
+
+            // Paso 2: Actualizar la categoría con grados inicial y final
+            $categoria = Categorium::findOrFail($validated['id_categoria']);
+            $categoria->grado_ini = $validated['grado_inicial_id'];
+            $categoria->grado_fin = $validated['grado_final_id'];
+            $categoria->save();
+
+            DB::commit(); // <-- si todo sale bien, confirmar
+
+            return response()->json([
+                'message' => 'Asignación realizada correctamente.',
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack(); // <-- si algo falla, revertir todo
+
+            return response()->json([
+                'message' => 'Error al asignar la categoría a grados.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
