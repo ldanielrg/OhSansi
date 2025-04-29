@@ -10,6 +10,8 @@ import { GiPadlock } from "react-icons/gi";
 import { MdEmail } from "react-icons/md";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { BallTriangle } from 'react-loader-spinner';
+
 
 // 👉 Agregamos SweetAlert2
 import Swal from 'sweetalert2';
@@ -41,11 +43,14 @@ const CamposModificarCuenta = () => {
       } catch (error) {
         console.error('Error al traer datos del usuario', error);
         toast.error('No se pudieron cargar los datos del usuario.');
+      } finally {
+        setCargando(false); // ✅ Cuando termine (éxito o error), se apaga el loader
       }
     };
-
+  
     fetchUsuario();
   }, []);
+  
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -122,6 +127,8 @@ const CamposModificarCuenta = () => {
       toast.error('Ocurrió un error al actualizar tus datos.');
     }
   };
+  const [cargando, setCargando] = useState(true);
+
 
   return (
     <>
@@ -135,68 +142,96 @@ const CamposModificarCuenta = () => {
         draggable
         theme="light"
       />
-      <div className="page-container-modificar-cuenta">
-        <section className="seccion-formulario-modificar-cuenta">
-          <h2>Modificación de la cuenta</h2>
-          <div className="cont-form-mod">
-            <p>
-              Modifica los campos que desees. Si no quieres cambiar tu contraseña puedes dejar los dos últimos campos vacíos.
-            </p>
-            <form onSubmit={onSubmit}>
-              <div className="div-label-input-modificar-cuenta">
-                <RegistroForm
-                  label="Nombre"
-                  name="nombreCuenta"
-                  value={formData.nombreCuenta}
-                  onChange={setFormData}
-                  type="text"
-                  icono={FaRegUser}
-                />
-              </div>
-
-              <div className="div-label-input-modificar-cuenta">
-                <RegistroForm
-                  label="Email"
-                  name="email"
-                  value={formData.email}
-                  onChange={setFormData}
-                  type="email"
-                  icono={MdEmail}
-                />
-              </div>
-
-              <div className="div-label-input-modificar-cuenta">
-                <RegistroForm
-                  label="Nueva contraseña"
-                  name="password"
-                  value={formData.password}
-                  onChange={setFormData}
-                  type="password"
-                  icono={GiPadlock}
-                />
-              </div>
-
-              <div className="div-label-input-modificar-cuenta">
-                <RegistroForm
-                  label="Confirmar nueva contraseña"
-                  name="confirmarPassword"
-                  value={formData.confirmarPassword}
-                  onChange={setFormData}
-                  type="password"
-                  icono={GiPadlock}
-                />
-              </div>
-
-              <div className="div-label-input-modificar-cuenta">
-                <BotonForm texto="Volver" type="button" onClick={(e) => { e.preventDefault(); navigate('/modificar-cuenta'); }} />
-                <BotonForm texto="Modificar" type="submit" />
-              </div>
-            </form>
-          </div>
-        </section>
-      </div>
+  
+      {cargando ? (
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          backgroundColor: "#f8f9fa" // Fondo clarito mientras carga
+        }}>
+          <BallTriangle
+            height={50}
+            width={50}
+            radius={5}
+            color="#003366"
+            ariaLabel="ball-triangle-loading"
+            visible={true}
+          />
+        </div>
+      ) : (
+        <div className="page-container-modificar-cuenta">
+          <section className="seccion-formulario-modificar-cuenta">
+            <h2>Modificación de la cuenta</h2>
+            <div className="cont-form-mod">
+              <p>
+                Modifica los campos que desees. Si no quieres cambiar tu contraseña puedes dejar los dos últimos campos vacíos.
+              </p>
+              <form onSubmit={onSubmit}>
+                <div className="div-label-input-modificar-cuenta">
+                  <RegistroForm
+                    label="Nombre"
+                    name="nombreCuenta"
+                    value={formData.nombreCuenta}
+                    onChange={setFormData}
+                    type="text"
+                    icono={FaRegUser}
+                  />
+                </div>
+  
+                <div className="div-label-input-modificar-cuenta">
+                  <RegistroForm
+                    label="Email"
+                    name="email"
+                    value={formData.email}
+                    onChange={setFormData}
+                    type="email"
+                    icono={MdEmail}
+                  />
+                </div>
+  
+                <div className="div-label-input-modificar-cuenta">
+                  <RegistroForm
+                    label="Nueva contraseña"
+                    name="password"
+                    value={formData.password}
+                    onChange={setFormData}
+                    type="password"
+                    icono={GiPadlock}
+                  />
+                </div>
+  
+                <div className="div-label-input-modificar-cuenta">
+                  <RegistroForm
+                    label="Confirmar nueva contraseña"
+                    name="confirmarPassword"
+                    value={formData.confirmarPassword}
+                    onChange={setFormData}
+                    type="password"
+                    icono={GiPadlock}
+                  />
+                </div>
+  
+                <div className="div-label-input-modificar-cuenta">
+                  <BotonForm
+                    texto="Volver"
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate('/modificar-cuenta');
+                    }}
+                  />
+                  <BotonForm texto="Modificar" type="submit" />
+                </div>
+              </form>
+            </div>
+          </section>
+        </div>
+      )}
     </>
   );
+  
 };
 
 export default CamposModificarCuenta;
