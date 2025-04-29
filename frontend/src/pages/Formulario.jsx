@@ -11,6 +11,7 @@ import { FaRegUser } from "react-icons/fa";
 import { MdEmail, MdOutlineDateRange } from "react-icons/md";
 import { FaAddressCard } from "react-icons/fa6";
 import { PiStudentFill } from "react-icons/pi";
+import { BallTriangle } from 'react-loader-spinner';
 
 // Toastify
 import { ToastContainer, toast } from 'react-toastify';
@@ -94,7 +95,10 @@ const Formulario = () => {
 
   useEffect(() => {
     const cargarFormulario = async () => {
-      if (parseInt(id) === 0) return;
+      if (parseInt(id) === 0) {
+        setCargando(false); // ✅ Si es nuevo, no carga nada
+        return;
+      }
       try {
         const response = await api.get(`/formularios/${id}`);
         const estudiantes = response.data.estudiantes;
@@ -117,10 +121,13 @@ const Formulario = () => {
       } catch (error) {
         console.error("Error al cargar formulario:", error);
         toast.error("No se pudo cargar el formulario.");
+      } finally {
+        setCargando(false); // ✅ Siempre apagar loader
       }
     };
     cargarFormulario();
   }, [id]);
+  
 
   const opcionesFiltradasUE = ue
     .filter((item) => item.municipio_id === parseInt(formData.municipio))
@@ -345,20 +352,42 @@ const Formulario = () => {
   };
 
   const fileInputRef = useRef();
+  const [cargando, setCargando] = useState(true);
+
 
   return (
+    <>
+  <ToastContainer
+    position="bottom-right"
+    autoClose={3000}
+    hideProgressBar={false}
+    newestOnTop
+    closeOnClick
+    pauseOnHover
+    draggable
+    theme="light"
+  />
+
+  {cargando ? (
+    <div style={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "80vh",
+      backgroundColor: "#f8f9fa"
+    }}>
+      <BallTriangle
+        height={50}
+        width={50}
+        radius={5}
+        color="#003366"
+        ariaLabel="ball-triangle-loading"
+        visible={true}
+      />
+    </div>
+  ) : (
     
     <div className="formulario-page-container">
-      <ToastContainer
-        position="bottom-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="light"
-      />
       <Caja titulo="Tomar en cuenta" width="50%">
         <div>
           En caso de querer inscribir un grupo de estudiantes sin usar el
@@ -556,6 +585,8 @@ const Formulario = () => {
         </div>
       </section>
     </div>
+  )}
+  </>
   );
 };
 
