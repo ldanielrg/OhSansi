@@ -3,7 +3,7 @@
 .pagina-configuracion {
   display: flex;                 /* activa flexbox */
   justify-content: center;       /* centra en el eje X */
-  align-items: center;           /* centra en el eje Y */
+  align-items: start;           /* centra en el eje Y */
   min-height: 100vh;             /* como mínimo toda la altura de la ventana */
   padding: 20px;                 /* separa un poco de los bordes */
   background-color: #FFFFFF;     /* o el color de fondo que quieras */
