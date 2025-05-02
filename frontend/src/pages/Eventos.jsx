@@ -59,15 +59,26 @@ const Eventos = () => {
     setShowDeleteModal(true);
   };
   // Función que realiza la eliminación real
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!selectedEvent) return;
-    const updatedEvents = events.filter((ev) => ev.id !== selectedEvent.id);
-    localStorage.setItem("events", JSON.stringify(updatedEvents));
-    setEvents(updatedEvents);
-    toast.error(`Evento "${selectedEvent.cronograma.nombre}" eliminada.`);
-    setSelectedEvent(null);
-    setShowDeleteModal(false); // Cerrar el modal
+  
+    try {
+      // 🔥 Eliminar del backend
+      await api.delete(`/eventos/${selectedEvent.id_evento}`);
+  
+      // 🔄 Actualizar el estado local
+      const updatedEvents = events.filter((ev) => ev.id_evento !== selectedEvent.id_evento);
+      setEvents(updatedEvents);
+      toast.success(`Evento "${selectedEvent.nombre_evento}" eliminado correctamente.`);
+    } catch (error) {
+      console.error('Error al eliminar evento:', error);
+      toast.error('No se pudo eliminar el evento.');
+    } finally {
+      setSelectedEvent(null);
+      setShowDeleteModal(false);
+    }
   };
+  
 
   const cancelDelete = () => {
     // Simplemente cerramos el modal
