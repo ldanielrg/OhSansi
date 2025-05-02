@@ -39,6 +39,8 @@ const Eventos = () => {
     }
   }, [location.state]);
 
+  const formatearFecha = (fecha) => fecha?.split('T')[0] ?? ''; // elimina la parte "T00:00:00.000Z"
+
   // Navegar para crear un evento nuevo
   const handleCrearEvento = () => {
     navigate("/crear-evento");
@@ -47,7 +49,7 @@ const Eventos = () => {
   // Navegar para editar el evento seleccionado
   const handleEditarEvento = () => {
     if (!selectedEvent) return;
-    navigate('/editar-evento');
+    navigate(`/editar-evento/${selectedEvent.id_evento}`);
   };
 
   // Eliminar el evento seleccionado
@@ -97,8 +99,9 @@ const Eventos = () => {
                     }
                   >
                     <td>{evento.nombre_evento}</td>
-          <td>{evento.fecha_inicio}</td>
-          <td>{evento.fecha_final}</td>
+                    <td>{formatearFecha(evento.fecha_inicio)}</td>
+                    <td>{formatearFecha(evento.fecha_final)}</td>
+
                   </tr>
                 ))}
               </tbody>

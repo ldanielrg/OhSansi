@@ -48,14 +48,23 @@ const CrearEvento = () => {
       toast.warn('La fecha de inicio no puede ser después de la fecha de fin.');
       return;
     }
+    // Validación extra (opcional pero buena práctica)
+  if (isNaN(new Date(fechaInicio)) || isNaN(new Date(fechaFin))) {
+    toast.error('Las fechas no son válidas.');
+    return;
+  }
 
-    try {
-      await api.post('/eventos', {
-        nombre_evento: nombre,
-        fecha_inicio: fechaInicio,
-        fecha_final: fechaFin,
-        id_convocatoria_convocatoria: idConvocatoria
-      });
+  // 🔧 Formatear fechas (YYYY-MM-DD)
+  const formatearFecha = (fecha) => new Date(fecha).toISOString().slice(0, 10);
+
+
+  try {
+    await api.post('/eventos', {
+      nombre_evento: nombre,
+      fecha_inicio: formatearFecha(fechaInicio),
+      fecha_final: formatearFecha(fechaFin),
+      id_convocatoria_convocatoria: idConvocatoria
+    });
 
       toast.success('¡Se creó un nuevo evento EXITOSAMENTE!');
 
