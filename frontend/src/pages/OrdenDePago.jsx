@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import Caja from '../components/Caja';
 import BotonForm from "../components/BotonForm";
 import api from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 import '../styles/OrdenDePago.css';
 
 const OrdenDePago = () => {
@@ -11,6 +12,8 @@ const OrdenDePago = () => {
     const [formulario, setFormulario] = useState(null);
     const [rowData, setRowData] = useState([]);
     const [cargando, setCargando] = useState(true);
+    const { user } = useAuth();
+    const navigate = useNavigate();
 
     const columns = [
         { name: "Nombre", selector: (row) => row.nombre, sortable: true },
@@ -58,12 +61,12 @@ const OrdenDePago = () => {
                     <p>Cargando datos...</p>
                 ) : (
                     <>
-                        <p><strong>ID:</strong> {formulario?.id}</p>
+                        <p><strong>ID:</strong></p>
                         <p><strong>Estado:</strong> {formulario?.estado}</p>
-                        <p><strong>Formulario: #</strong> {formulario?.numero}</p>
+                        <p><strong>Formulario: #</strong></p>
                         <p><strong>Fecha de emisión:</strong> {formulario?.fecha_emision}</p>
                         <p><strong>Fecha de vencimiento:</strong> {formulario?.fecha_vencimiento}</p>
-                        <p><strong>Nombre del responsable:</strong> {formulario?.responsable?.nombre}</p>
+                        <p><strong>Nombre del responsable:</strong> {user.name}</p>
                         <p><strong>Unidad educativa:</strong> {formulario?.unidad_educativa?.nombre}</p>
 
                         <h3>Estudiantes inscritos:</h3>
@@ -96,7 +99,11 @@ const OrdenDePago = () => {
                             }}
                         />
                         <section>
-                            <BotonForm texto='Volver'/>
+                        <BotonForm 
+  texto='Volver' 
+  onClick={() => navigate('/inscripciones')}
+/>
+
                         </section>
                     </>
                 )}
