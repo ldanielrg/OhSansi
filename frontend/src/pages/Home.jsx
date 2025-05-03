@@ -5,10 +5,15 @@ import { useNavigate } from "react-router-dom";
 import Card from "../components/Card";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Importa estilo por defecto
+import { useAuth } from "../context/AuthContext"; // ajusta si tu ruta cambia
+
+
 
 const Home = () => {
   // Hook para navegar
   const navigate = useNavigate();
+  const { roles } = useAuth();
+  const esAdmin = roles?.includes("Admin");
 
   const handleNavigateReclamos = (e) => {
     e.preventDefault();
@@ -52,7 +57,7 @@ const Home = () => {
   };
   const handleNavigateConfiguracionConvocatoria = (e) => {
     e.preventDefault();
-    navigate("/configuracion-convocatoria");
+    navigate("/crear-configuracion-convocatoria");
   };
   const handleNavigateConfiguracionEventos = (e) => {
     e.preventDefault();
@@ -165,42 +170,41 @@ const Home = () => {
                 >
                   Reclamos
                 </button>
-                <button
-                  className="btn vertical-btn btn-help "
-                  onClick={handleNavigateCrearUE}
-                >
-                  Crear UE
-                </button>
-                <button
-                  className="btn vertical-btn btn-help "
-                  onClick={handleNavigateCrearCuentas}
-                >
-                  Crear Cuentas
-                </button>
-                <button
-                  className="btn vertical-btn btn-help "
-                  onClick={handleNavigateConfiguracionConvocatoria}
-                >
-                  ConfiguracionConvocatoria
-                </button>
-                <button
-                  className="btn vertical-btn btn-help "
-                  onClick={handleNavigateEventos}
-                >
-                  Crear Eventos
-                </button>
-                <button
-                  className="btn vertical-btn btn-help "
-                  onClick={handleNavigateConfiguracionCuentas}
-                >
-                  Configuracion Cuentas
-                </button>
-                <button
-                  className="btn vertical-btn btn-help "
-                  onClick={handleNavigateConfiguracionEventos}
-                >
-                  Oscar Ordoñez
-                </button>
+                {esAdmin && (
+                  <>
+                  <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateCrearUE}
+                  >
+                    Crear UE
+                  </button>
+                  <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateCrearCuentas}
+                  >
+                    Crear Cuentas
+                  </button>
+                  <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateConfiguracionConvocatoria}
+                  >
+                    Configuración Convocatoria
+                  </button>
+                  <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateEventos}
+                  >
+                    Crear Eventos
+                  </button>
+                  <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateConfiguracionCuentas}
+                  >
+                    Configuración Cuentas
+                  </button>
+                </>
+                )}
+
               </div>
             </div>
           </div>

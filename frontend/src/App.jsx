@@ -48,7 +48,7 @@ function App() {
     <AuthProvider>
     <Routes>
       <Route path="/" element={<Layout><Home /></Layout>}/>
-      <Route path="/inscripciones" element={<Layout><Inscripciones /></Layout>}/>
+      
       <Route path="/ver" element={<Layout><Ver /></Layout>}/>
       <Route path="/disciplinas" element={<Layout><Disciplinas /></Layout>}/>
 
@@ -63,8 +63,8 @@ function App() {
       <Route path="/contactanos" element={<Layout><Contactanos /></Layout>} />
       <Route path="/preguntasfrecuentes" element={ <Layout><PreguntasFrecuentes /></Layout>}/>
       <Route path="/reclamos" element={<Layout><Reclamos /></Layout>}/>
-      <Route path="/configuracion-convocatoria" element={<Layout><ConfiguracionConvocatoria/></Layout>}/>
-      <Route path="/crear-configuracion-convocatoria" element={<Layout><CrearConfigurarConvocatoria /></Layout>}/>
+      
+      
       <Route path="/editar-configuracion-convocatoria" element={<Layout><EditarConfigurarConvocatoria /></Layout>}/>
       <Route path="/nosotros" element={<Layout><Nosotros /></Layout>}/>
       <Route path="/login" element={<Layout><Login /></Layout>}/>
@@ -73,15 +73,19 @@ function App() {
       <Route path="/formulario/:id" element={<Layout><Formulario /></Layout>} /> 
       <Route path="/modificar-campos" element={<Layout><CamposModificarCuenta /></Layout>} />
 
-
+      
 
      
       <Route path="/configuracion-cuentas" element={<Layout><ConfiguracionCuentas /></Layout>}/>
-      <Route path="/crear-ue" element={<Layout><CrearUE /></Layout>}/>
+      
 
       {/* Rutas protegidas solo para Admin/Director/Adm.Inscripción */}
       <Route element={<ProtectedRoute allowedRoles={['Admin', 'Director', 'Adm. Inscripcion']} />}>
           <Route path="/crear-cuentas" element={<Layout><CrearCuentas /></Layout>} />
+          <Route path="/inscripciones" element={<Layout><Inscripciones /></Layout>}/> 
+          <Route path="/crear-ue" element={<Layout><CrearUE /></Layout>}/>
+          <Route path="/crear-configuracion-convocatoria" element={<Layout><CrearConfigurarConvocatoria /></Layout>}/>
+          <Route path="/configuracion-convocatoria" element={<Layout><ConfiguracionConvocatoria/></Layout>}/>
       </Route>
     </Routes>
     </AuthProvider>

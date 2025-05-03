@@ -4,6 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/CrearCuentas.css';
 import api from '../api/axios';
+import RegistroForm from '../components/RegistroForm';
+import { FaRegUser} from "react-icons/fa";
+import { GiPadlock } from "react-icons/gi";
+import { MdEmail } from "react-icons/md";
+import { FaAddressCard } from "react-icons/fa6";
 
 const todasLasOpciones = [
   'Admin',
@@ -137,45 +142,45 @@ const CrearCuentas = () => {
           </select>
         </div>
 
+        <div className='contenedor-form-crear-cuentas'>
         {tipoCuenta && (
           <form className="formulario-cuenta" onSubmit={handleSubmit}>
             <div className="form-column">
-              <label>Apellidos</label>
-              <input name="apellidos" value={formData.apellidos} onChange={handleInputChange} />
+              <RegistroForm label='Apellidos' name="apellidos" value={formData.apellidos} onChange={handleInputChange} usarEvento={true} icono={FaRegUser}/>
 
-              <label>CI</label>
-              <input name="ci" value={formData.ci} onChange={handleInputChange}/>
+              <RegistroForm label='CI' name="ci" value={formData.ci} onChange={handleInputChange} usarEvento={true} icono={FaAddressCard}/>
 
-              <label>Contraseña</label>
-              <input type="password" name="password" value={formData.password} onChange={handleInputChange} />
+              <RegistroForm label='Contraseña' type="password" name="password" value={formData.password} onChange={handleInputChange} usarEvento={true} icono={GiPadlock}/>
             </div>
 
             <div className="form-column">
-              <label>Nombres</label>
-              <input name="nombres" value={formData.nombres} onChange={handleInputChange} />
 
-              <label>Correo Electrónico</label>
-              <input type="email" name="correo" value={formData.correo} onChange={handleInputChange} />
+              <RegistroForm label='Nombres' name="nombres" value={formData.nombres} onChange={handleInputChange} usarEvento={true} icono={FaRegUser}/>
 
-              <label>Confirmar Contraseña</label>
-              <input type="password" name="confirmarPassword" value={formData.confirmarPassword} onChange={handleInputChange} />
+              <RegistroForm label='Correo electronico' type="email" name="correo" value={formData.correo} onChange={handleInputChange} usarEvento={true} icono={MdEmail} />
+
+              <RegistroForm label='Confirmar contraseña' type="password" name="confirmarPassword" value={formData.confirmarPassword} onChange={handleInputChange} usarEvento={true} icono={GiPadlock}/>
             </div>
 
             {/* Mostrar el selector solo si Admin crea Director o Docente */}
             {roles.includes('Admin') && (tipoCuenta === 'Director' || tipoCuenta === 'Docente') && (
               <div className="form-column">
-                <label>Unidad Educativa</label>
-                <select
+                <RegistroForm
+                  label="Unidad Educativa"
+                  name="unidadSeleccionada"
+                  type="select"
                   value={unidadSeleccionada}
                   onChange={(e) => setUnidadSeleccionada(e.target.value)}
-                >
-                  <option value="">Selecciona Unidad Educativa</option>
-                  {unidadesEducativas.map((ue) => (
-                    <option key={ue.id} value={ue.id_ue}>
-                      {ue.nombre_ue}
-                    </option>
-                  ))}
-                </select>
+                  options={[
+                    { value: "", label: "Selecciona Unidad Educativa" },
+                    ...unidadesEducativas.map((ue) => ({
+                      value: ue.id_ue,
+                      label: ue.nombre_ue
+                    }))
+                  ]}
+                  usarEvento={true}
+                />
+
               </div>
             )}
 
@@ -185,6 +190,7 @@ const CrearCuentas = () => {
             </div>
           </form>
         )}
+        </div>
       </Caja>
     </div>
   );

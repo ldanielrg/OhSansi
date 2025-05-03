@@ -1,4 +1,5 @@
 // src/pages/Eventos.jsx
+import api from '../api/axios';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Eventos.css";
@@ -16,8 +17,18 @@ const Eventos = () => {
 
   // Cargar los eventos guardados en localStorage
   useEffect(() => {
-    const storedEvents = JSON.parse(localStorage.getItem("events")) || [];
-    setEvents(storedEvents);
+    const fetchEventos = async () => {
+      try {
+        const response = await api.get('/eventos');
+        setEvents(response.data);
+      } catch (error) {
+        console.error('Error al cargar eventos:', error);
+        toast.error('No se pudieron cargar los eventos.');
+      }
+    };
+    
+    fetchEventos();
+    
     if (location.state?.message) {
       const { message, type } = location.state;
 
@@ -79,15 +90,15 @@ const Eventos = () => {
               <tbody>
                 {events.map((evento) => (
                   <tr
-                    key={evento.id}
+                    key={evento.id_evento}
                     onClick={() => setSelectedEvent(evento)}
                     className={
-                      selectedEvent?.id === evento.id ? "fila-seleccionada" : ""
+                      selectedEvent?.id_evento === evento.id_evento ? "fila-seleccionada" : ""
                     }
                   >
-                    <td>{evento.cronograma.nombre}</td>
-                    <td>{evento.cronograma.fechaInicio}</td>
-                    <td>{evento.cronograma.fechaFin}</td>
+                    <td>{evento.nombre_evento}</td>
+          <td>{evento.fecha_inicio}</td>
+          <td>{evento.fecha_final}</td>
                   </tr>
                 ))}
               </tbody>

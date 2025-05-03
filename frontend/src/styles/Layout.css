@@ -74,3 +74,28 @@
   text-align: center;
   padding: 10px;
 }
+.user-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem;
+  z-index: 1000;
+  min-width: 150px;
+}
+
+.user-menu-dropdown .dropdown-item {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem;
+  color: black;
+  font-size: 14px;
+}
+
+.user-menu-dropdown .dropdown-item:hover {
+  background-color: #003366;
+}

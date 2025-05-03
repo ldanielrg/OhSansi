@@ -3,58 +3,59 @@
 namespace App\Http\Controllers;
 
 use App\Models\Convocatoria;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
- 
+use Illuminate\Support\Facades\Log; // ✅ Importar Log correctamente
+
 class ConvocatoriaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Mostrar todas las convocatorias.
      */
     public function index()
     {
-        return Convocatoria::all();
-    
+        return response()->json(Convocatoria::all());
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Crear una nueva convocatoria.
      */
     public function store(Request $request)
     {
-        \Log::info('Datos recibidos para convocatoria:', $request->all());
+        Log::info('Datos recibidos para convocatoria:', $request->all());
 
-        $convocatoria = \App\Models\Convocatoria::create([
-            'descripcion' => $request->input('descripcion'),
-            'id_cronog' => $request->input('id_cronog'),
-            'estado' => $request->input('estado'),
+        $convocatoria = Convocatoria::create([
             'nombre_convocatoria' => $request->input('nombre_convocatoria'),
+            'descripcion' => $request->input('descripcion'),
+            'precio' => $request->input('precio'),
+            'fecha_inicio' => $request->input('fecha_inicio'),
+            'fecha_final' => $request->input('fecha_final'),
         ]);
 
         return response()->json($convocatoria, 201);
     }
 
     /**
-     * Display the specified resource.
+     * Mostrar una convocatoria específica.
      */
     public function show(string $id)
     {
-        return Convocatoria::findOrFail($id);
+        return response()->json(Convocatoria::findOrFail($id));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualizar una convocatoria existente.
      */
     public function update(Request $request, string $id)
     {
         $convocatoria = Convocatoria::findOrFail($id);
         $convocatoria->update($request->all());
+
         return response()->json($convocatoria);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Eliminar una convocatoria.
      */
     public function destroy(string $id)
     {
@@ -62,19 +63,27 @@ class ConvocatoriaController extends Controller
         return response()->json(null, 204);
     }
 
+    /**
+     * Asignar áreas a una convocatoria (optimizado usando insertMany).
+     */
     public function asignarAreas(Request $request, $idConvocatoria)
     {
         $areaIds = $request->input('areas'); // array de id_area
-        \Log::info('Áreas recibidas para asignar:', $request->all());
+        Log::info('Áreas recibidas para asignar:', $request->all());
+
+        // 🔥 Optimización: preparar array de inserciones
+        $insertData = [];
         foreach ($areaIds as $idArea) {
-            \Log::info("Insertando area $idArea en convocatoria $idConvocatoria");
-            DB::table('convocatoria_tiene_areas')->insert([
+            $insertData[] = [
                 'id_convocatoria' => $idConvocatoria,
-                'id_area' => $idArea, 
-            ]);
+                'id_area' => $idArea,
+            ];
         }
+
+        // 🔥 Un solo insert masivo
+        DB::table('convocatoria_tiene_areas')->insert($insertData);
 
         return response()->json(['message' => 'Áreas asignadas correctamente']);
     }
-
 }
+

@@ -1,45 +1,72 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import React, { useState, useEffect } from 'react';
+import api from '../api/axios';
+
+import { useNavigate } from 'react-router-dom'
+import RegistroForm from "../components/RegistroForm";
 import '../styles/CrearEvento.css'; // Importaremos el CSS que crearemos
+import { BsLayoutTextWindowReverse } from "react-icons/bs";
+import { BsCalendar3Event } from "react-icons/bs";
+import { MdOutlineEventAvailable } from "react-icons/md";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 const CrearEvento = () => {
   const [nombre, setNombre] = useState('');
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+  const [idConvocatoria, setIdConvocatoria] = useState(''); //AGREGUE YO
+  const [convocatorias, setConvocatorias] = useState([]); //AGUEGUE YO
   const navigate = useNavigate();
 
-  const handleGuardar = (e) => {
-    e.preventDefault(); // Prevenir el envío por defecto del formulario
+  // 🔥 Traemos las convocatorias apenas entra a la página
+  useEffect(() => {
+    const fetchConvocatorias = async () => {
+      try {
+        const response = await api.get('/convocatorias');
+        console.log('Convocatorias:', response.data); // 👈 verifica esto
+        setConvocatorias(response.data);
+      } catch (error) {
+        console.error('Error al cargar convocatorias:', error);
+        toast.error('Error al cargar las convocatorias.');
+      }
+    };
+  
+    fetchConvocatorias();
+  }, []);
+  
 
-    // Validación simple (opcional pero recomendado)
-    if (!nombre || !fechaInicio || !fechaFin) {
-      alert('Por favor, completa todos los campos.');
+  const handleGuardar = async (e) => {
+    e.preventDefault();
+
+    if (!nombre || !fechaInicio || !fechaFin || !idConvocatoria) {
+      toast.warn('Por favor, completa todos los campos.');
       return;
     }
 
-    // 1. Obtener los eventos existentes de localStorage
-    const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+    if (new Date(fechaInicio) > new Date(fechaFin)) {
+      toast.warn('La fecha de inicio no puede ser después de la fecha de fin.');
+      return;
+    }
 
-    // 2. Crear el nuevo objeto de evento
-    // Usamos Date.now() para un ID simple y único (en una app real podrías usar UUID)
-    // Mantenemos la estructura con 'cronograma' como en tu Eventos.jsx
-    const nuevoEvento = {
-      id: Date.now(),
-      cronograma: {
-        nombre: nombre,
-        fechaInicio: fechaInicio,
-        fechaFin: fechaFin,
-      },
-      // Puedes añadir más campos específicos del evento aquí si los necesitas en el futuro
-    };
+    try {
+      await api.post('/eventos', {
+        nombre_evento: nombre,
+        fecha_inicio: fechaInicio,
+        fecha_final: fechaFin,
+        id_convocatoria_convocatoria: idConvocatoria
+      });
 
-    // 3. Añadir el nuevo evento a la lista
-    const updatedEvents = [...storedEvents, nuevoEvento];
+      toast.success('¡Se creó un nuevo evento EXITOSAMENTE!');
 
-    // 4. Guardar la lista actualizada en localStorage
-    localStorage.setItem('events', JSON.stringify(updatedEvents));
-    navigate('/eventos', { state: { message: 'Creación de evento completada.', type: 'success' } });
+      setTimeout(() => {
+        navigate('/eventos');
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error al crear evento:', error);
+      toast.error('Ocurrió un error al crear el evento.');
+    }
   };
 
   const handleSalir = () => {
@@ -50,62 +77,80 @@ const CrearEvento = () => {
     <div className="crear-evento-page">
       <div className="container mt-4"> {/* Contenedor de Bootstrap */}
         <div className="card crear-evento-card"> {/* Usamos card para el estilo */}
-          <div className="card-header crear-evento-header">
+          <div className="crear-evento-header">
             Crear Nuevo Evento {/* Cambiado de Evento a Convocatoria para consistencia */}
           </div>
           <div className="card-body">
             <form onSubmit={handleGuardar}>
               {/* Campo Nombre */}
               <div className="mb-3">
-                <label htmlFor="nombreEvento" className="form-label">
-                  Nombre del Evento
-                </label>
-                <input
+                
+                <RegistroForm
+                  label='Nombre del evento'
                   type="text"
                   className="form-control"
                   id="nombreEvento"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   required // Hace el campo obligatorio en HTML5
+                  usarEvento={true}
+                  icono={BsLayoutTextWindowReverse}
                 />
               </div>
 
               {/* Campo Fecha Inicio */}
               <div className="mb-3">
-                <label htmlFor="fechaInicio" className="form-label">
-                  Fecha de Inicio
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="fechaInicio"
-                  value={fechaInicio}
-                  onChange={(e) => setFechaInicio(e.target.value)}
-                  required
-                />
+              <RegistroForm
+                label="Fecha de Inicio"
+                name="fechaInicio"
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                usarEvento={true}
+                icono={BsCalendar3Event}
+              />
+
               </div>
 
               {/* Campo Fecha Fin */}
               <div className="mb-3">
-                <label htmlFor="fechaFin" className="form-label">
-                  Fecha de Fin
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="fechaFin"
-                  value={fechaFin}
-                  onChange={(e) => setFechaFin(e.target.value)}
-                  required
+              <RegistroForm
+                label="Fecha de Fin"
+                name="fechaFin"
+                type="date"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+                usarEvento={true}
+                icono={MdOutlineEventAvailable}
+              />
+              /* Campo Seleccionar Convocatoria (select dinámico) */
+              <div className="mb-3">
+                <RegistroForm
+                  label="Convocatoria"
+                  name="idConvocatoria"
+                  type="select"
+                  value={idConvocatoria}
+                  onChange={(e) => setIdConvocatoria(e.target.value)}
+                  options={[
+                    { value: "", label: "Seleccione una Convocatoria" },
+                    ...convocatorias.map((convocatoria) => ({
+                      value: convocatoria.id_convocatoria,
+                      label: convocatoria.nombre_convocatoria, // o como se llame tu campo de nombre
+                    }))
+                  ]}
+                  usarEvento={true}
+                  icono={BsLayoutTextWindowReverse}
                 />
+              </div>
+
               </div>
 
               {/* Botones */}
               <div className="d-flex justify-content-end gap-2 mt-4">
-                <button type="submit" className="btn btn-custom-primary">
+                <button type="submit" className="btn-custom-primary-aux">
                   Guardar
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={handleSalir}>
+                <button type="button" className="btn-custom-secondary-aux" onClick={handleSalir}>
                   Salir
                 </button>
               </div>

@@ -54,7 +54,8 @@ Route::get('/grados', [GradoController::class, 'todo']);
 Route::delete('/grado-eliminar/{id}', [GradoController::class, 'destroy']);
 Route::post('/grado-crear', [GradoController::class, 'store']);
 
-Route::get('/eventos', [EventoController::class, 'index']);
+// Eventos
+Route::apiResource('/eventos', EventoController::class);
 //////
 
 Route::post('/login', [AuthController::class, 'login']);//Para logueo
