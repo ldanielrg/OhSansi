@@ -5,39 +5,49 @@ namespace App\Http\Controllers;
 use App\Models\Convocatoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log; // ✅ Importar Log correctamente
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 class ConvocatoriaController extends Controller
 {
-    /**
-     * Mostrar todas las convocatorias.
-     */
-    public function index()
-    {
+    #Obtiene todas las convocatorias
+    public function index(){
         return response()->json(Convocatoria::all());
     }
 
-    /**
-     * Crear una nueva convocatoria.
-     */
-    public function store(Request $request)
-    {
+    #Para crear una convocatoria
+    public function store(Request $request){
+        Log::debug($request);
+        //Validación
+        $validator = Validator::make($request->all(), [
+            'nombre_convocatoria' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'fecha_inicio' => 'required|date',
+            'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
+            'activo' => 'required|boolean',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // 📝 Log de datos recibidos
         Log::info('Datos recibidos para convocatoria:', $request->all());
 
         $convocatoria = Convocatoria::create([
             'nombre_convocatoria' => $request->input('nombre_convocatoria'),
             'descripcion' => $request->input('descripcion'),
-            'precio' => $request->input('precio'),
             'fecha_inicio' => $request->input('fecha_inicio'),
             'fecha_final' => $request->input('fecha_final'),
+            'activo' => $request->input('activo')
         ]);
 
-        return response()->json($convocatoria, 201);
+        return response()->json([
+            'message' => 'Convocatoria creada correctamente.'
+        ], 201);
     }
 
-    /**
-     * Mostrar una convocatoria específica.
-     */
     public function show(string $id)
     {
         return response()->json(Convocatoria::findOrFail($id));

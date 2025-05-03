@@ -57,7 +57,7 @@ const Home = () => {
   };
   const handleNavigateConfiguracionConvocatoria = (e) => {
     e.preventDefault();
-    navigate("/crear-configuracion-convocatoria");
+    navigate("/configuracion-convocatoria");
   };
   const handleNavigateConfiguracionEventos = (e) => {
     e.preventDefault();
