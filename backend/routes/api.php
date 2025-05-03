@@ -5,12 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CuentaController;
 use App\Http\Controllers\PermisoController;
-
-//AGREGUE YO
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\MunicipioController;
 use App\Http\Controllers\UnidadEducativaController;
-
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\CronogramaController;
 use App\Http\Controllers\ConvocatoriaController;
@@ -20,19 +17,26 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\UserController;
 
+//Convocatorias
+Route::get('/convocatorias', [ConvocatoriaController::class, 'index']);
+Route::post('/convocatoria-crear', [ConvocatoriaController::class, 'store']);
+Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asignarAreas']);
+
+
+//Departamentos/Municipios
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
 Route::get('/municipios', [MunicipioController::class, 'sinDepartamento']);
-
+//Unidades Educativas
 Route::post('/unidad-educativa', [UnidadEducativaController::class, 'store']);
 Route::get('/unidades-educativas', [UnidadEducativaController::class, 'index']); //PARA OBTENER LOS DATOS UE
 Route::put('/unidad-educativa/{id}', [UnidadEducativaController::class, 'update']);
 Route::delete('/unidad-educativa/{id}', [UnidadEducativaController::class, 'destroy']);
 
-Route::apiResource('/convocatorias', ConvocatoriaController::class);
-Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asignarAreas']);
 
-//Rutas para gestionar convocatoria
+
+
+//Rutas para gestionar convocatorias
 Route::get('/areas', [AreaController::class, 'index']);
 Route::delete('/area-eliminar/{id}', [AreaController::class, 'destroy']);
 Route::post('/area-crear', [AreaController::class, 'store']);
@@ -69,9 +73,7 @@ Route::middleware('auth:sanctum')->post('/crear-cuenta', [CuentaController::clas
 Route::middleware('auth:sanctum')->post('/inscribir', [InscripcionController::class, 'store']);
 Route::middleware('auth:sanctum')->post('/formularios', [InscripcionController::class, 'recuperarFormularios']);
 Route::middleware('auth:sanctum')->get('/formularios/{id}', [InscripcionController::class, 'mostrarFormulario']);
-Route::middleware('auth:sanctum')->delete('/formularios/{id}', [InscripcionController::class, 'eliminarFormulario']);
-
-
+Route::middleware('auth:sanctum')->delete('/formulario-eliminar', [InscripcionController::class, 'eliminarFormulario']);
 
 //RUTAS PROTEGIDAS
 Route::middleware('auth:sanctum')->group(function () {
@@ -81,3 +83,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/permisos', [PermisoController::class, 'index']);
     Route::post('/user/verify-password', [AuthController::class, 'verifyPassword']); //AGREGUE YO PARA VERIFICAR PASSWORD 
 });
+
+#Rutas sin proteger (sólo para pruebas)
