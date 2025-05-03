@@ -20,9 +20,25 @@ use App\Http\Controllers\UserController;
 //Convocatorias
 Route::get('/convocatorias', [ConvocatoriaController::class, 'index']);
 Route::post('/convocatoria-crear', [ConvocatoriaController::class, 'store']);
-Route::post('/convocatorias/{id}/areas', [ConvocatoriaController::class, 'asignarAreas']);
+Route::get('/convocatoria-detalle/{id}', [ConvocatoriaController::class, 'show']);
+Route::post('/convocatoria-editar/{id}', [ConvocatoriaController::class, 'update']);
+Route::delete('/convocatoria-eliminar/{id}', [ConvocatoriaController::class, 'destroy']);
+//Rutas para gestionar convocatorias
+Route::get('/areas', [AreaController::class, 'index']);
+Route::delete('/area-eliminar/{id}', [AreaController::class, 'destroy']);
+Route::post('/area-crear', [AreaController::class, 'store']);
+Route::get('/areas-categorias-grados', [AreaController::class, 'AreasConcategoriasConGrados']);
+Route::post('/asignacionAreaCategoriaGrado', [AreaController::class, 'asignarAreaCategoriaGrado']);
+Route::post('/asignar-area-categoria', [AreaController::class, 'asignarAreaCategoria']);
+Route::delete('/eliminar-area-categoria', [AreaController::class, 'eliminarAsignacionAreaCategoria']);
 
-
+Route::get('/categorias', [CategoriaController::class, 'todo']);
+Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
+Route::get('/categorias-grados', [CategoriaController::class, 'categoriasConGrados']);
+Route::delete('/categoria-eliminar/{id}', [CategoriaController::class, 'destroy']);
+Route::post('/categoria-crear', [CategoriaController::class, 'store']);
+Route::post('/asignar-grados-categoria', [CategoriaController::class, 'asignarGradosCategoria']);
+Route::post('/limpiar-grados-categoria', [CategoriaController::class, 'limpiarGradosCategoria']);
 //Departamentos/Municipios
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
@@ -34,25 +50,6 @@ Route::put('/unidad-educativa/{id}', [UnidadEducativaController::class, 'update'
 Route::delete('/unidad-educativa/{id}', [UnidadEducativaController::class, 'destroy']);
 
 
-
-
-//Rutas para gestionar convocatorias
-Route::get('/areas', [AreaController::class, 'index']);
-Route::delete('/area-eliminar/{id}', [AreaController::class, 'destroy']);
-Route::post('/area-crear', [AreaController::class, 'store']);
-Route::get('/areas-categorias-grados', [AreaController::class, 'AreasConcategoriasConGrados']);
-Route::post('/asignacionAreaCategoriaGrado', [AreaController::class, 'asignarAreaCategoriaGrado']);
-Route::post('/asignar-area-categoria', [AreaController::class, 'asignarAreaCategoria']);
-Route::delete('/eliminar-area-categoria', [AreaController::class, 'eliminarAsignacionAreaCategoria']);
-
-
-Route::get('/categorias', [CategoriaController::class, 'todo']);
-Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
-Route::get('/categorias-grados', [CategoriaController::class, 'categoriasConGrados']);
-Route::delete('/categoria-eliminar/{id}', [CategoriaController::class, 'destroy']);
-Route::post('/categoria-crear', [CategoriaController::class, 'store']);
-Route::post('/asignar-grados-categoria', [CategoriaController::class, 'asignarGradosCategoria']);
-Route::post('/limpiar-grados-categoria', [CategoriaController::class, 'limpiarGradosCategoria']);
 
 Route::get('/grados', [GradoController::class, 'todo']);
 Route::delete('/grado-eliminar/{id}', [GradoController::class, 'destroy']);

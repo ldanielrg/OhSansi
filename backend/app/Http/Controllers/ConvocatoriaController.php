@@ -48,52 +48,23 @@ class ConvocatoriaController extends Controller
         ], 201);
     }
 
-    public function show(string $id)
-    {
+    #Muestra datos de una determinada convocatoria
+    public function show($id){
         return response()->json(Convocatoria::findOrFail($id));
     }
 
-    /**
-     * Actualizar una convocatoria existente.
-     */
-    public function update(Request $request, string $id)
-    {
+    #Para actualizar datos de una convocatoria
+    public function update(Request $request,$id){
         $convocatoria = Convocatoria::findOrFail($id);
         $convocatoria->update($request->all());
 
         return response()->json($convocatoria);
     }
 
-    /**
-     * Eliminar una convocatoria.
-     */
-    public function destroy(string $id)
-    {
+    #Eliminar una convocatoria.
+    public function destroy(string $id){
         Convocatoria::destroy($id);
         return response()->json(null, 204);
-    }
-
-    /**
-     * Asignar áreas a una convocatoria (optimizado usando insertMany).
-     */
-    public function asignarAreas(Request $request, $idConvocatoria)
-    {
-        $areaIds = $request->input('areas'); // array de id_area
-        Log::info('Áreas recibidas para asignar:', $request->all());
-
-        // 🔥 Optimización: preparar array de inserciones
-        $insertData = [];
-        foreach ($areaIds as $idArea) {
-            $insertData[] = [
-                'id_convocatoria' => $idConvocatoria,
-                'id_area' => $idArea,
-            ];
-        }
-
-        // 🔥 Un solo insert masivo
-        DB::table('convocatoria_tiene_areas')->insert($insertData);
-
-        return response()->json(['message' => 'Áreas asignadas correctamente']);
     }
 }
 
