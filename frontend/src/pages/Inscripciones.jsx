@@ -52,20 +52,20 @@ const Inscripciones = () => {
             className='botones-iconos-crud-formularios'
             onClick={() => navigate(`/formulario/${row.id_formulario}`)}
           >
-            <FaEdit className='iconos-crud-formularios' />
+            <FaEdit className='iconos-crud-formularios icono-editar-formulario' />
           </button>
 
           <button
             className='botones-iconos-crud-formularios'
             onClick={() => eliminarFormulario(row.id_formulario)}
           >
-            <FaTrash className='iconos-crud-formularios' />
+            <FaTrash className='iconos-crud-formularios icono-eliminar-formulario' />
           </button>
 
           <button
             className='botones-iconos-crud-formularios'
           >
-            <BsFileEarmarkText className='iconos-crud-formularios' />
+            <BsFileEarmarkText className='iconos-crud-formularios icono-orden-pago-formulario' />
           </button>
         </div>
       )
