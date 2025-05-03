@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Area;
+use App\Models\AreaTieneCategorium;
+use App\Models\Categorium;
+
 class ConvocatoriaController extends Controller
 {
     #Obtiene todas las convocatorias
@@ -65,6 +69,64 @@ class ConvocatoriaController extends Controller
     public function destroy(string $id){
         Convocatoria::destroy($id);
         return response()->json(null, 204);
+    }
+
+    #Obtiene todas las areas de determinada convocatoria
+    public function obtenerAreasPorConvocatoria($id){
+        $areas = Area::where('id_convocatoria_convocatoria', $id)->get();
+        if ($areas->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontraron áreas para esta convocatoria.'
+            ], 404);
+        }
+        return response()->json($areas);
+    }
+    #Obtiene todas las categorias de determinada convocatoria
+    public function obtenerCategoriasPorConvocatoria($id){
+        $categorias = Categorium::where('id_convocatoria_convocatoria', $id)->get();
+        if ($categorias->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontraron categorias para esta convocatoria.'
+            ], 404);
+        }
+        return response()->json($categorias);
+    }
+    #Obtiene todas las AREA-CATEGORIA para determinada Convocatoria
+    public function obtenerAreasCategoriaPorConvocatoria($idConvocatoria)    {
+        $registros = DB::table('area_tiene_categoria')
+            ->join('area', 'area.id_area', '=', 'area_tiene_categoria.id_area_area')
+            ->join('categoria', 'categoria.id_categoria', '=', 'area_tiene_categoria.id_categoria_categoria')
+            ->where('area.id_convocatoria_convocatoria', $idConvocatoria)
+            ->where('categoria.id_convocatoria_convocatoria', $idConvocatoria)
+            ->select(
+                'area_tiene_categoria.*',
+                'area.nombre_area as nombre_area',
+                'categoria.nombre_categoria as nombre_categoria'
+            )
+            ->get();
+
+        return response()->json($registros);
+    }
+
+    #Obtiene todas las AREA-CATEGORIA-GRADOS para determinada Convocatoria
+    public function obtenerAreasCategoriaGradosPorConvocatoria($idConvocatoria){
+        $registros = DB::table('area_tiene_categoria')
+            ->join('area', 'area.id_area', '=', 'area_tiene_categoria.id_area_area')
+            ->join('categoria', 'categoria.id_categoria', '=', 'area_tiene_categoria.id_categoria_categoria')
+            ->leftJoin('grado as grado_ini', 'grado_ini.id_grado', '=', 'categoria.grado_ini')
+            ->leftJoin('grado as grado_fin', 'grado_fin.id_grado', '=', 'categoria.grado_fin')
+            ->where('area.id_convocatoria_convocatoria', $idConvocatoria)
+            ->where('categoria.id_convocatoria_convocatoria', $idConvocatoria)
+            ->select(
+                'area_tiene_categoria.*',
+                'area.nombre_area as nombre_area',
+                'categoria.nombre_categoria as nombre_categoria',
+                'grado_ini.nombre_grado as nombre_grado_ini',
+                'grado_fin.nombre_grado as nombre_grado_fin'
+            )
+            ->get();
+
+        return response()->json($registros);
     }
 }
 
