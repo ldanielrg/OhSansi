@@ -64,9 +64,12 @@ const Inscripciones = () => {
 
           <button
             className='botones-iconos-crud-formularios'
+            onClick={() => navigate(`/orden-de-pago/${row.id_formulario}`)}
           >
             <BsFileEarmarkText className='iconos-crud-formularios icono-orden-pago-formulario' />
           </button>
+
+
         </div>
       )
     }

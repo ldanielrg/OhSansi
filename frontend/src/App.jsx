@@ -72,7 +72,7 @@ function App() {
       <Route path="/modificar-cuenta" element={<Layout><ModificarCuenta /></Layout>}/>
       <Route path="/formulario/:id" element={<Layout><Formulario /></Layout>} /> 
       <Route path="/modificar-campos" element={<Layout><CamposModificarCuenta /></Layout>} />
-      <Route path="/orden-de-pago" element={<Layout><OrdenDePago/></Layout>}/>
+      <Route path="/orden-de-pago/:id" element={<Layout><OrdenDePago /></Layout>} />
 
       
 
