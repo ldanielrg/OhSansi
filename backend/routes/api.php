@@ -64,6 +64,7 @@ Route::post('/grado-crear', [GradoController::class, 'store']);
 
 // Eventos
 Route::apiResource('/eventos', EventoController::class);
+Route::get('convocatorias/{id}/eventos', [EventoController::class, 'porConvocatoria']);
 
 Route::post('/login', [AuthController::class, 'login']);//Para logueo
 Route::middleware('auth:sanctum')->get('/obtener-cuentas', [CuentaController::class, 'devolverUsuarios']);//Obtiene todos los usuarios con roles
