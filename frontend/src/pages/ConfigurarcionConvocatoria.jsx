@@ -1,151 +1,77 @@
-// src/pages/ConfiguracionConvocatoria.jsx
-import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import "../styles/ConfiguracionConvocatoria.css";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import api from '../api/axios';
+import { toast, ToastContainer } from 'react-toastify';
 
-const ConfiguracionConvocatoria = () => {
-  const [convocatorias, setConvocatorias] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+const FormularioConvocatoria = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
+  const [form, setForm] = useState({
+    id_convocatoria: 0,
+    nombre_convocatoria: '',
+    descripcion: '',
+    fecha_inicio: '',
+    fecha_final: '',
+    activo: true,
+  });
+
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("convocatorias")) || [];
-    setConvocatorias(stored);
-    if (location.state?.message) {
-      toast[location.state.type](location.state.message);
-      window.history.replaceState({}, document.title);
+    if (id) fetchConvocatoria(id);
+  }, [id]);
+
+  const fetchConvocatoria = async (id) => {
+    try {
+      const { data } = await api.get(`/convocatoria-detalle/${id}`);
+      setForm({
+        id_convocatoria: data[0].id_convocatoria,
+        nombre_convocatoria: data[0].nombre_convocatoria,
+        descripcion: data[0].descripcion,
+        fecha_inicio: data[0].fecha_inicio.slice(0,10),
+        fecha_final: data[0].fecha_final.slice(0,10),
+        activo: data[0].activo,
+      });
+    } catch (error) {
+      toast.error('Error al obtener datos.');
     }
-  }, [location.state]);
-
-  const handleNavigate = (path) => (e) => {
-    // e.preventDefault(); // Ya no necesitamos prevenir el default aquí si solo llamamos a navigate
-    navigate(path);
   };
 
-  const handleCrear =
-    convocatorias.length === 0 // Mantén la restricción de 1 convocatoria
-      ? handleNavigate("/crear-configuracion-convocatoria")
-      : () => {
-          // Opcional: podrías mostrar una alerta aquí si quieres
-          // alert('Solo se permite crear una convocatoria a la vez.');
-          
-        };
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
-  // --- CORRECCIÓN AQUÍ ---
-  // Si hay una convocatoria seleccionada, navega a la ruta de edición incluyendo su ID.
-  const handleEditar = selected
-    ? handleNavigate(`/editar-configuracion-convocatoria/${selected.id}`) // <-- Pasa el ID aquí
-    : () => {}; // Si no hay nada seleccionado, no hace nada.
-  // ---------------------
-
-  const promptDelete = (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    if (selected) setShowDeleteModal(true);
-  };
-
-  const confirmDelete = () => {
-  const updated = convocatorias.filter(c => c.id !== selected.id);
-  localStorage.setItem('convocatorias', JSON.stringify(updated));
-  setConvocatorias(updated);
-  setSelected(null);
-  setShowDeleteModal(false);
-  toast.error(`Convocatoria "${selected.nombre}" eliminada.`);
-};
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-    toast.info('Eliminación cancelada.');
+    try {
+      if (id) {
+        await api.put(`/convocatoria-editar/${id}`, form);
+        navigate('/configuracion-convocatoria', { state: { message: 'Convocatoria editada con éxito.', type: 'success' } });
+      } else {
+        await api.post('/convocatoria-guardar', { ...form, id_convocatoria: 0 });
+        navigate('/configuracion-convocatoria', { state: { message: 'Convocatoria creada con éxito.', type: 'success' } });
+      }
+    } catch (error) {
+      toast.error('Error al guardar convocatoria.');
+    }
   };
 
   return (
-    <div className="config-page">
-      <div className="config-container">
-        <div className="config-header">Convocatoria</div>
-        <div className="config-body">
-          {convocatorias.length === 0 ? (
-            <p>No hay convocatoria</p>
-          ) : (
-            <table className="tabla-config">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th style={{ width: "500px" }}>Descripción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {convocatorias.map((c) => (
-                  <tr
-                    key={c.id}
-                    onClick={() => setSelected(c)}
-                    className={selected?.id === c.id ? "fila-seleccionada" : ""}
-                  >
-                    <td>{c.nombre}</td>
-                    <td>{c.descripcion}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+    <form onSubmit={handleSubmit} className="form-convocatoria">
+      <h3>{id ? 'Editar' : 'Crear'} Convocatoria</h3>
 
-          <div className="acciones-container">
-            <div className="acciones-left">
-              {/* El botón Crear se deshabilita si ya existe una convocatoria */}
-              <button
-                className="btn-primary"
-                onClick={handleCrear}
-                disabled={convocatorias.length > 0}
-              >
-                Crear
-              </button>
-              {/* El botón Editar se deshabilita si no hay selección */}
-              <button
-                className="btn-primary"
-                onClick={handleEditar}
-                disabled={!selected}
-              >
-                Editar
-              </button>
-            </div>
-            <div className="acciones-right">
-              {/* El botón Eliminar se deshabilita si no hay selección */}
-              <button
-                className="btn-primary"
-                onClick={promptDelete}
-                disabled={!selected}
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
+      <input name="nombre_convocatoria" placeholder="Nombre" value={form.nombre_convocatoria} onChange={handleChange} required />
+      <textarea name="descripcion" placeholder="Descripción" value={form.descripcion} onChange={handleChange}></textarea>
+      <input type="date" name="fecha_inicio" value={form.fecha_inicio} onChange={handleChange} required />
+      <input type="date" name="fecha_final" value={form.fecha_final} onChange={handleChange} required />
 
-          {showDeleteModal && (
-            <div className="modal-container">
-              <div className="modal-content">
-                <p>¿Deseas eliminar la convocatoria "{selected?.nombre}"?</p>{" "}
-                {/* Usar optional chaining */}
-                <div style={{ marginTop: "1rem" }}>
-                  <button
-                    className="btn-primary"
-                    onClick={confirmDelete}
-                    style={{ marginRight: "1rem" }}
-                  >
-                    Eliminar
-                  </button>
-                  <button className="btn-primary" onClick={cancelDelete}>
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      <select name="activo" value={form.activo} onChange={(e) => setForm({ ...form, activo: e.target.value === 'true' })}>
+        <option value={true}>Activo</option>
+        <option value={false}>Inactivo</option>
+      </select>
+
+      <button className="btn-primary" type="submit">{id ? 'Actualizar' : 'Crear'}</button>
+      <button className="btn-primary" type="button" onClick={() => navigate('/configuracion-convocatoria')}>Cancelar</button>
+
       <ToastContainer position="bottom-right" autoClose={3000} />
-    </div>
+    </form>
   );
 };
 
-export default ConfiguracionConvocatoria;
+export default FormularioConvocatoria;
