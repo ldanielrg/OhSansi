@@ -1,42 +1,125 @@
-/* Estilos generales para la página de edición */
+/* src/styles/EditarEvento.css */
+
+/* Página completa */
 .editar-evento-page {
-    padding: 2rem;
-    /* background-color: #f8f9fa; */
+  padding: 2rem;
+  background-color: #FFFFFF;
+  color: #003366;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Centramos la card igual que en crear */
+.editar-evento-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+
+}
+
+/* Card con sombra y bordes redondeados */
+.editar-evento-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 51, 102, 0.1);
+  overflow: hidden;
+  border: none;
+  padding: 2rem;
+}
+
+/* Header “rompe” el padding y ocupa todo el ancho */
+.editar-evento-header {
+  background-color: #003366;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: bold;
+  padding: 1rem 1.5rem;
+  margin: -2rem -2rem 1.5rem;  /* rompe el padding horizontal (2rem) */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Cuerpo de la card */
+.card-body {
+  padding: 2rem 1.5rem;
+}
+
+/* Labels e inputs */
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #003366;
+}
+.form-control {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #003366;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #003366;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.form-control:focus {
+  outline: none;
+  border-color: #001d40;
+  box-shadow: 0 0 5px rgba(0, 51, 102, 0.4);
+}
+
+/* Botones */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.btn-custom-primary-aux {
+  background-color: #003366;
+  color: #FFFFFF;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.btn-custom-primary-aux:hover:not(:disabled) {
+  background-color: #001d40;
+}
+.btn-custom-secondary-aux {
+  background-color: #FFFFFF;
+  color: #003366;
+  padding: 0.8rem 2rem;
+  border: 2px solid #003366;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.btn-custom-secondary-aux:hover:not(:disabled) {
+  background-color: #003366;
+  color: #FFFFFF;
+}
+.btn-custom-primary-aux:disabled,
+.btn-custom-secondary-aux:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem;
   }
-  
-  /* Estilos para la tarjeta (card) */
-  .editar-evento-card {
-    border: 1px solid #dee2e6;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Estilo para el encabezado de la tarjeta */
   .editar-evento-header {
-    background-color: #003366; /* Tu color primario */
-    color: #FFFFFF; /* Texto blanco */
-    font-size: 1.2rem;
-    font-weight: bold;
-    padding: 1rem 1.25rem;
+    font-size: 1.3rem;
   }
-  
-  /* Estilo personalizado para el botón primario (igual que en crear) */
-  .btn-custom-primary {
-    background-color: #003366;
-    border-color: #003366;
-    color: #FFFFFF;
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
-  
-  .btn-custom-primary:hover {
-    background-color: #002244;
-    border-color: #001a33;
-    color: #FFFFFF;
+  .btn-custom-primary-aux,
+  .btn-custom-secondary-aux {
+    width: 100%;
   }
-  
-  /* Estilos para etiquetas y inputs (igual que en crear) */
-  .form-label {
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-  }
-  
-  /* Si necesitas algún ajuste específico SOLO para la página de editar,
-     puedes añadirlo aquí usando las clases .editar-evento-* */
+}
