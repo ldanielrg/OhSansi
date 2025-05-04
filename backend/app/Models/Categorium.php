@@ -40,7 +40,8 @@ class Categorium extends Model
 		'descripcion',
 		'activo',
 		'grado_ini',
-		'grado_fin'
+		'grado_fin',
+		'id_convocatoria_convocatoria'
 	];
 
 	public function area_tiene_categoria()

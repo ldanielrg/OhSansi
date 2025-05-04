@@ -9,13 +9,12 @@ use App\Models\Categorium;
 use Illuminate\Support\Facades\DB;
 
 class AreaController extends Controller{
-    
-    public function index()    {
-        
+    #Obtiene todas la areas del sistema
+    public function index(){
         return Area::all();
     }
-
-    public function store(Request $request)    {
+    #Crea una nueva area
+    public function store(Request $request){
         // Validar que envíen un nombre
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
@@ -33,8 +32,7 @@ class AreaController extends Controller{
     }
 
     // Eliminar un área por id
-    public function destroy($id)
-    {
+    public function destroy($id){
         $area = Area::find($id);
 
         if (!$area) {
@@ -50,12 +48,10 @@ class AreaController extends Controller{
         ]);
     }
 
-
     //Para devolver areas, categorias y grados, relacionados.
-    public function AreasConcategoriasConGrados(){
+    public function AreasConcategoriasConGrados() {
     // Traemos todas las relaciones con carga de modelos
     $relaciones = AreaTieneCategorium::with(['area', 'categorium.gradoInicial', 'categorium.gradoFinal'])->get();
-
     // Agrupamos por área
     $areas = $relaciones->groupBy('id_area_area')->map(function ($items, $areaId) {
         $area = $items->first()->area; // El área es la misma para todos los items agrupados
@@ -81,8 +77,7 @@ class AreaController extends Controller{
     }
 
     //Para crear una relacion de Area-Categoria-Grados
-    public function asignarAreaCategoriaGrado(Request $request)
-    {
+    public function asignarAreaCategoriaGrado(Request $request){
         $validated = $request->validate([
             'id_area' => 'required|integer|exists:area,id_area',
             'id_categoria' => 'required|integer|exists:categoria,id_categoria',
@@ -128,7 +123,7 @@ class AreaController extends Controller{
     }
 
 
-    public function asignarAreaCategoria(Request $request)    {
+    public function asignarAreaCategoria(Request $request){
         $validated = $request->validate([
             'id_area' => 'required|integer|exists:area,id_area',
             'id_categoria' => 'required|integer|exists:categoria,id_categoria',

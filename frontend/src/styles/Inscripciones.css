@@ -42,3 +42,12 @@
     border: none;
     background-color: #ffff;
 }  
+.icono-editar-formulario{
+    color: #003366;
+}
+.icono-eliminar-formulario{
+    color: #cc3a3a;
+}
+.icono-orden-pago-formulario{
+    color: #059600;
+}
