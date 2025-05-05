@@ -42,6 +42,7 @@ import Formulario from './pages/Formulario'; //
 import CamposModificarCuenta from './pages/CamposModificarCuenta'; //
 import ConfiguracionCuentas from './pages/ConfiguracionCuentas';
 import OrdenDePago from './pages/OrdenDePago';
+import ElegirConvocatoria from "./pages/ElegirConvocatoria";
 
 function App() {
   return (
@@ -73,6 +74,7 @@ function App() {
       <Route path="/formulario/:id" element={<Layout><Formulario /></Layout>} /> 
       <Route path="/modificar-campos" element={<Layout><CamposModificarCuenta /></Layout>} />
       <Route path="/orden-de-pago/:id" element={<Layout><OrdenDePago /></Layout>} />
+      <Route path="/elegir-convocatoria" element={<Layout><ElegirConvocatoria /></Layout>} />
 
       
 
