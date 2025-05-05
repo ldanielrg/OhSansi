@@ -25,6 +25,7 @@ Route::post('/convocatoria-crear', [ConvocatoriaController::class, 'store']);
 Route::get('/convocatoria-detalle/{id_convocatoria}', [ConvocatoriaController::class, 'show']);
 Route::post('/convocatoria-editar/{id_convocatoria}', [ConvocatoriaController::class, 'update']);
 Route::delete('/convocatoria-eliminar/{id_convocatoria}', [ConvocatoriaController::class, 'destroy']);
+Route::put('/convocatoria-estado/{id_convocatoria}', [ConvocatoriaController::class, 'toggleActivo']);
 //Convocatoria Formularios
 Route::get('/formularios-convocatoria/{id_convocatoria}', [FormularioController::class, 'obtenerInscritosOficiales']);
 //Gestión de Convocatorias
