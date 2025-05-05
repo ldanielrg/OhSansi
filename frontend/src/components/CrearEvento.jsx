@@ -1,71 +1,65 @@
-
+// src/pages/CrearEvento.jsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/axios';
-
-import { useNavigate } from 'react-router-dom'
-import RegistroForm from "../components/RegistroForm";
-import '../styles/CrearEvento.css'; // Importaremos el CSS que crearemos
-import { BsLayoutTextWindowReverse } from "react-icons/bs";
-import { BsCalendar3Event } from "react-icons/bs";
-import { MdOutlineEventAvailable } from "react-icons/md";
+import RegistroForm from '../components/RegistroForm';
+import '../styles/CrearEvento.css';
+import { BsLayoutTextWindowReverse, BsCalendar3Event } from 'react-icons/bs';
+import { MdOutlineEventAvailable } from 'react-icons/md';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CrearEvento = () => {
-  const [nombre, setNombre] = useState('');
-  const [fechaInicio, setFechaInicio] = useState('');
-  const [fechaFin, setFechaFin] = useState('');
-  const [idConvocatoria, setIdConvocatoria] = useState(''); //AGREGUE YO
-  const [convocatorias, setConvocatorias] = useState([]); //AGUEGUE YO
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // 🔥 Traemos las convocatorias apenas entra a la página
+  const { idConvocatoria } = location.state || {};
   useEffect(() => {
-    const fetchConvocatorias = async () => {
-      try {
-        const response = await api.get('/convocatorias');
-        console.log('Convocatorias:', response.data); // 👈 verifica esto
-        setConvocatorias(response.data);
-      } catch (error) {
-        console.error('Error al cargar convocatorias:', error);
-        toast.error('Error al cargar las convocatorias.');
-      }
-    };
-  
-    fetchConvocatorias();
-  }, []);
-  
+    if (!idConvocatoria) {
+      toast.error('Falta el ID de convocatoria. Regresa desde la lista de eventos.');
+      navigate('/eventos');
+    }
+  }, [idConvocatoria, navigate]);
+
+  const [formData, setFormData] = useState({
+    nombre: '',
+    fechaInicio: '',
+    fechaFin: '',
+  });
 
   const handleGuardar = async (e) => {
     e.preventDefault();
+    const { nombre, fechaInicio, fechaFin } = formData;
 
-    if (!nombre || !fechaInicio || !fechaFin || !idConvocatoria) {
-      toast.warn('Por favor, completa todos los campos.');
+    // Validaciones
+    if (!nombre || !fechaInicio || !fechaFin) {
+      toast.warn('Por favor completa todos los campos.');
       return;
     }
-
     if (new Date(fechaInicio) > new Date(fechaFin)) {
-      toast.warn('La fecha de inicio no puede ser después de la fecha de fin.');
+      toast.warn('La fecha de inicio no puede ser posterior a la de fin.');
       return;
     }
+
+    // Preparamos el objeto tal como el backend lo espera
+    const payload = {
+      id_convocatoria_convocatoria: idConvocatoria,  // clave exacta de la columna
+      nombre_evento: formData.nombre,
+      fecha_inicio: formData.fechaInicio,
+      fecha_final: formData.fechaFin,
+    };
+
+    console.log('Payload a enviar:', payload);
 
     try {
-      await api.post('/eventos', {
-        nombre_evento: nombre,
-        fecha_inicio: fechaInicio,
-        fecha_final: fechaFin,
-        id_convocatoria_convocatoria: idConvocatoria
-      });
-
-      toast.success('¡Se creó un nuevo evento EXITOSAMENTE!');
-
-      setTimeout(() => {
-        navigate('/eventos');
-      }, 2000);
-      
+      const response = await api.post('/eventos', payload);
+      toast.success('¡Evento creado exitosamente!');
+      setTimeout(() => navigate('/eventos'), 1500);
     } catch (error) {
       console.error('Error al crear evento:', error);
-      toast.error('Ocurrió un error al crear el evento.');
+      // Si el backend devuelve un mensaje de error en response.data.message, lo mostramos
+      const msg = error.response?.data?.message || error.message;
+      toast.error(`Error: ${msg}`);
     }
   };
 
@@ -75,78 +69,48 @@ const CrearEvento = () => {
 
   return (
     <div className="crear-evento-page">
-      <div className="container mt-4"> {/* Contenedor de Bootstrap */}
-        <div className="card crear-evento-card"> {/* Usamos card para el estilo */}
-          <div className="crear-evento-header">
-            Crear Nuevo Evento {/* Cambiado de Evento a Convocatoria para consistencia */}
-          </div>
+      <div className="crear-evento-container">
+        <div className="crear-evento-card">
+          <div className="crear-evento-header">Crear Nuevo Evento</div>
           <div className="card-body">
             <form onSubmit={handleGuardar}>
-              {/* Campo Nombre */}
               <div className="mb-3">
-                
                 <RegistroForm
-                  label='Nombre del evento'
+                  label="Nombre del evento"
+                  name="nombre"
                   type="text"
-                  className="form-control"
-                  id="nombreEvento"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  required // Hace el campo obligatorio en HTML5
-                  usarEvento={true}
+                  value={formData.nombre}
+                  onChange={setFormData}
+                  required
                   icono={BsLayoutTextWindowReverse}
                 />
               </div>
 
-              {/* Campo Fecha Inicio */}
-              <div className="mb-3">
-              <RegistroForm
-                label="Fecha de Inicio"
-                name="fechaInicio"
-                type="date"
-                value={fechaInicio}
-                onChange={(e) => setFechaInicio(e.target.value)}
-                usarEvento={true}
-                icono={BsCalendar3Event}
-              />
-
-              </div>
-
-              {/* Campo Fecha Fin */}
-              <div className="mb-3">
-              <RegistroForm
-                label="Fecha de Fin"
-                name="fechaFin"
-                type="date"
-                value={fechaFin}
-                onChange={(e) => setFechaFin(e.target.value)}
-                usarEvento={true}
-                icono={MdOutlineEventAvailable}
-              />
-              /* Campo Seleccionar Convocatoria (select dinámico) */
               <div className="mb-3">
                 <RegistroForm
-                  label="Convocatoria"
-                  name="idConvocatoria"
-                  type="select"
-                  value={idConvocatoria}
-                  onChange={(e) => setIdConvocatoria(e.target.value)}
-                  options={[
-                    { value: "", label: "Seleccione una Convocatoria" },
-                    ...convocatorias.map((convocatoria) => ({
-                      value: convocatoria.id_convocatoria,
-                      label: convocatoria.nombre_convocatoria, // o como se llame tu campo de nombre
-                    }))
-                  ]}
-                  usarEvento={true}
-                  icono={BsLayoutTextWindowReverse}
+                  label="Fecha de Inicio"
+                  name="fechaInicio"
+                  type="date"
+                  value={formData.fechaInicio}
+                  onChange={setFormData}
+                  required
+                  icono={BsCalendar3Event}
                 />
               </div>
 
+              <div className="mb-3">
+                <RegistroForm
+                  label="Fecha de Fin"
+                  name="fechaFin"
+                  type="date"
+                  value={formData.fechaFin}
+                  onChange={setFormData}
+                  required
+                  icono={MdOutlineEventAvailable}
+                />
               </div>
 
-              {/* Botones */}
-              <div className="d-flex justify-content-end gap-2 mt-4">
+              <div className="form-actions">
                 <button type="submit" className="btn-custom-primary-aux">
                   Guardar
                 </button>

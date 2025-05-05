@@ -51,4 +51,9 @@ class EventoController extends Controller
         Evento::destroy($id);
         return response()->json(null, 204);
     }
+    public function porConvocatoria($id)
+    {
+    $eventos = Evento::where('id_convocatoria_convocatoria', $id)->get();
+    return response()->json($eventos);
+    }
 }

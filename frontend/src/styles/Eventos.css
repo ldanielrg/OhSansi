@@ -2,77 +2,122 @@
 
 .eventos-page {
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9; /* Fondo gris claro */
   min-height: 100vh;
+  display: flex;           /* Centramos el contenido */
+  align-items: flex-start; /* Alinear arriba */
+  justify-content: center;
 }
 
+/* Contenedor principal con sombra y bordes redondeados */
 .eventos-container {
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 800px;                /* Igual que tus formularios */
+  margin: 20px 0;                  /* Separación arriba/abajo */
+  background-color: #ffffff;       /* Fondo blanco */
+  border-radius: 12px;             /* Bordes redondeados */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Sombra suave */
   overflow: hidden;
-  margin: 20px auto;
-  max-width: 1200px;
+  padding: 2rem 1.5rem; /* antes no tenías padding interno */
 }
 
 .eventos-header {
   background-color: #003366;
-  color: #ffffff;
+  color: #FFFFFF;
   text-align: center;
   font-weight: bold;
-  padding: 10px 20px;
-  font-size: 1.4rem;
+  font-size: 1.8rem;
+  padding: 1rem 1.5rem;
+
+  /* —> rompe el padding horizontal del container */
+  margin: -2rem -1.5rem 1.5rem;
+
+  /* conserva los bordes redondeados solo arriba */
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 .eventos-body {
-  padding: 20px;
-  color: #333;
+  padding: 0;
   font-size: 16px;
+  padding: 1.5rem 0;    /* arriba/abajo */
 }
 
+select.form-select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #003366;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #003366;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+select.form-select:focus {
+  outline: none;
+  box-shadow: 0 0 5px #003366;
+  border-color: #003366;
+}
+
+/* Tabla de eventos */
 .tabla-eventos {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+  border: 1px solid #003366;
 }
 
 .tabla-eventos th,
 .tabla-eventos td {
-  border: 1px solid #ccc;
-  padding: 0.5rem;
-  text-align: left;
+  border: 1px solid #003366;
+  padding: 0.8rem;
+  text-align: center;
+}
+
+.tabla-eventos th {
+  background-color: #003366;
+  color: #FFFFFF;
+}
+
+.tabla-eventos td {
+  background-color: #FFFFFF;
+  color: #003366;
 }
 
 .tabla-eventos tr:hover {
-  background-color: #f5f5f5;
+  background-color: #e6f0ff;
   cursor: pointer;
 }
 
 .fila-seleccionada {
-  background-color: #003366 !important;
+  background-color: #cce4ff !important;
 }
 
 /* Botones de acción */
 .eventos-acciones {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
 .btn-primary {
   background-color: #003366;
-  color: #fff;
+  color: #FFFFFF;
   padding: 10px 20px;
   border: none;
-  border-radius: 20px;
+  border-radius: 8px;
   cursor: pointer;
   text-align: center;
   transition: background-color 0.3s ease;
   font-size: 1em;
+  min-width: 120px;
 }
 
-.btn-primary:hover {
-  background-color: #003366;
+.btn-primary:hover:not(:disabled) {
+  background-color: #001d40;
 }
 
 .btn-primary:disabled {
@@ -80,54 +125,79 @@
   cursor: not-allowed;
 }
 
-/* Posicionar y oscurecer el fondo */
+/* Modal */
 .modal-container {
   position: fixed;
   top: 0; 
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 51, 102, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999; /* Para que esté encima de todo */
+  z-index: 9999;
 }
 
-/* Contenido del modal */
 .modal-content {
-  background-color: #fff;
+  background-color: #FFFFFF;
   padding: 2rem;
   border-radius: 12px;
   text-align: center;
   max-width: 500px;
   width: 90%;
+  border: 2px solid #003366;
+  color: #003366;
 }
 
-/* Opcional: puedes agregar estilos adicionales al texto dentro del modal */
 .modal-content p {
   font-size: 1.1rem;
-  color: #333;
 }
 
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Responsive */
+@media (max-width: 768px) {
+  .tabla-eventos th,
+  .tabla-eventos td {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+
+  .eventos-header {
+    font-size: 1.5rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .eventos-acciones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .acciones-left,
+  .acciones-right {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 
-/* Solo aplica cuando el botón está deshabilitado */
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  position: relative;
+/* Ya tenías esto para el hover */
+
+.tabla-eventos tbody tr:hover {
+  color: #FFFFFF;
+  background-color: #003366;
 }
 
-/* Mostrar ícono al pasar el mouse sobre el botón deshabilitado */
-.btn-primary:disabled:hover::after {
-  position: absolute;
-  top: 50%;
-  right: -25px; /* ajusta según tu espacio */
-  transform: translateY(-50%);
-  font-size: 1.2rem;
-  color: #900;
+/* ➔ Ahora que la misma apariencia se quede al hacer click: */
+.tabla-eventos tbody tr.fila-seleccionada {
+  
+  cursor: pointer;               /* sigue indicando interactividad */
+}
+
+/* Y opcionalmente mantener el color de texto */
+.tabla-eventos tbody tr.fila-seleccionada td {
+  color: #FFFFFF;
+  background-color: #003366;
 }

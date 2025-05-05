@@ -4,6 +4,7 @@ import Caja from '../components/Caja';
 import BotonForm from '../components/BotonForm';
 import DataTable from 'react-data-table-component';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { BsFileEarmarkText } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
@@ -51,14 +52,24 @@ const Inscripciones = () => {
             className='botones-iconos-crud-formularios'
             onClick={() => navigate(`/formulario/${row.id_formulario}`)}
           >
-            <FaEdit className='iconos-crud-formularios' />
+            <FaEdit className='iconos-crud-formularios icono-editar-formulario' />
           </button>
+
           <button
             className='botones-iconos-crud-formularios'
             onClick={() => eliminarFormulario(row.id_formulario)}
           >
-            <FaTrash className='iconos-crud-formularios' />
+            <FaTrash className='iconos-crud-formularios icono-eliminar-formulario' />
           </button>
+
+          <button
+            className='botones-iconos-crud-formularios'
+            onClick={() => navigate(`/orden-de-pago/${row.id_formulario}`)}
+          >
+            <BsFileEarmarkText className='iconos-crud-formularios icono-orden-pago-formulario' />
+          </button>
+
+
         </div>
       )
     }

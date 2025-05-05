@@ -68,6 +68,7 @@ Route::delete('/unidad-educativa/{id}', [UnidadEducativaController::class, 'dest
 
 // Eventos
 Route::apiResource('/eventos', EventoController::class);
+Route::get('convocatorias/{id}/eventos', [EventoController::class, 'porConvocatoria']);
 
 //CRUD cuentas
 Route::post('/login', [AuthController::class, 'login']);//Para logueo
