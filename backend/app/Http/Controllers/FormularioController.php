@@ -49,45 +49,47 @@ class FormularioController extends Controller
     }
 
     public function obtenerInscritosOficiales($idConvocatoria){
-    $registros = DB::table('estudiante_esta_inscrito')
-        ->join('formulario', 'formulario.id_formulario', '=', 'estudiante_esta_inscrito.id_formulario_formulario')
-        ->join('estudiante', 'estudiante.id_estudiante', '=', 'estudiante_esta_inscrito.id_estudiante_estudiante')
-        ->join('area_tiene_categoria', 'area_tiene_categoria.id', '=', 'estudiante_esta_inscrito.id_inscrito_en')
-        ->join('area', 'area.id_area', '=', 'area_tiene_categoria.id_area_area')
-        ->join('categoria', 'categoria.id_categoria', '=', 'area_tiene_categoria.id_categoria_categoria')
-        ->join('unidad_educativa', 'unidad_educativa.id_ue', '=', 'formulario.id_ue_ue')
-        ->where('formulario.id_convocatoria_convocatoria', $idConvocatoria)
-        #->where('formulario.pagado', true)
-        ->select(
-            'estudiante.id_estudiante',
-            'estudiante.nombre as nombre_estudiante',
-            'estudiante.apellido as apellido_estudiante',
-            'estudiante.ci as ci',
-            'formulario.id_ue_ue as id_ue',
-            'unidad_educativa.nombre_ue',
-            'area.nombre_area',
-            'categoria.nombre_categoria',
-        )
-        ->get();
+        $registros = DB::table('estudiante_esta_inscrito')
+            ->join('formulario', 'formulario.id_formulario', '=', 'estudiante_esta_inscrito.id_formulario_formulario')
+            ->join('estudiante', 'estudiante.id_estudiante', '=', 'estudiante_esta_inscrito.id_estudiante_estudiante')
+            ->join('area_tiene_categoria', 'area_tiene_categoria.id', '=', 'estudiante_esta_inscrito.id_inscrito_en')
+            ->join('area', 'area.id_area', '=', 'area_tiene_categoria.id_area_area')
+            ->join('categoria', 'categoria.id_categoria', '=', 'area_tiene_categoria.id_categoria_categoria')
+            ->join('unidad_educativa', 'unidad_educativa.id_ue', '=', 'formulario.id_ue_ue')
+            ->where('formulario.id_convocatoria_convocatoria', $idConvocatoria)
+            #->where('formulario.pagado', true)
+            ->select(
+                'estudiante.id_estudiante',
+                'estudiante.nombre as nombre_estudiante',
+                'estudiante.apellido as apellido_estudiante',
+                'estudiante.ci as ci',
+                'formulario.id_ue_ue as id_ue',
+                'unidad_educativa.nombre_ue',
+                'area.nombre_area',
+                'categoria.nombre_categoria',
+            )
+            ->get();
 
-    // Agrupar manualmente por estudiante
-    $agrupado = $registros->groupBy('id_estudiante')->map(function ($items) {
-        $estudiante = $items->first();
-        return [
-            'ci' => $estudiante->ci,
-            'nombre' => $estudiante->nombre_estudiante,
-            'apellido' => $estudiante->apellido_estudiante,
-            'nombre_ue' => $estudiante->nombre_ue,
-            'inscripciones' => $items->map(function ($item) {
-                return [
-                    'nombre_area' => $item->nombre_area,
-                    'nombre_categoria' => $item->nombre_categoria,
-                ];
-            })->values()
-        ];
-    })->values();
+        // Agrupar manualmente por estudiante
+        $agrupado = $registros->groupBy('id_estudiante')->map(function ($items) {
+            $estudiante = $items->first();
+            return [
+                'ci' => $estudiante->ci,
+                'nombre' => $estudiante->nombre_estudiante,
+                'apellido' => $estudiante->apellido_estudiante,
+                'nombre_ue' => $estudiante->nombre_ue,
+                'inscripciones' => $items->map(function ($item) {
+                    return [
+                        'nombre_area' => $item->nombre_area,
+                        'nombre_categoria' => $item->nombre_categoria,
+                    ];
+                })->values()
+            ];
+        })->values();
 
-    return response()->json($agrupado);
+        return response()->json($agrupado);
     }
+
+    
 
 }

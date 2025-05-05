@@ -22,8 +22,8 @@ use Illuminate\Database\Eloquent\Model;
 class AreaTieneCategorium extends Model
 {
 	protected $table = 'area_tiene_categoria';
-	protected $primaryKey = null; // No hay una sola clave primaria
-	public $incrementing = false;
+	protected $primaryKey = 'id';
+	public $incrementing = true;
 	public $timestamps = false;
 
 	protected $casts = [
@@ -34,6 +34,8 @@ class AreaTieneCategorium extends Model
 	protected $fillable = [
         'id_area_area',
         'id_categoria_categoria',
+		'precio',
+		'activo'
     ];
 
 	public function categorium()

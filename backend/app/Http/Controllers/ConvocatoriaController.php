@@ -17,6 +17,32 @@ class ConvocatoriaController extends Controller
     public function index(){
         return response()->json(Convocatoria::all());
     }
+    #Obtiene todas las convocatorias ACTIVAS
+    public function indexActivas(){
+        $convocatorias = Convocatoria::where('activo', true)->get();
+
+        return response()->json($convocatorias);
+    }
+
+    public function toggleActivo($id_convocatoria){
+        $convocatoria = Convocatoria::find($id_convocatoria);
+    
+        if (!$convocatoria) {
+            return response()->json([
+                'message' => 'Convocatoria no encontrada.'
+            ], 404);
+        }
+    
+        // Cambiar estado activo al valor contrario
+        $convocatoria->activo = !$convocatoria->activo;
+        $convocatoria->save();
+    
+        return response()->json([
+            'message' => 'Estado de convocatoria actualizado.',
+            'id_convocatoria' => $convocatoria->id_convocatoria,
+            'nuevo_estado' => $convocatoria->activo
+        ]);
+    }
 
     #Para crear una convocatoria
     public function store(Request $request){
@@ -27,7 +53,7 @@ class ConvocatoriaController extends Controller
             'descripcion' => 'required|string',
             'fecha_inicio' => 'required|date',
             'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
-            'activo' => 'required|boolean',
+            //'activo' => 'required|boolean', por defecto lo pondré en TRUE
         ]);
 
         if ($validator->fails()) {
@@ -44,7 +70,7 @@ class ConvocatoriaController extends Controller
             'descripcion' => $request->input('descripcion'),
             'fecha_inicio' => $request->input('fecha_inicio'),
             'fecha_final' => $request->input('fecha_final'),
-            'activo' => $request->input('activo')
+            'activo' => true
         ]);
 
         return response()->json([
