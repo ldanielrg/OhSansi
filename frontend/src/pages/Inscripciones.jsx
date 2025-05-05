@@ -34,9 +34,9 @@ const Inscripciones = () => {
   
       setCargando(true);
       try {
-        const res = await api.get(`/formularios-convocatoria/${id}`);
+        const res = await api.get(`/recuperar-formularios/${id}`);
         console.log('Respuesta completa:', res.data);
-        setFormularios(res.data);
+        setFormularios(res.data.formularios); // 👈 extrae el array real
       } catch (error) {
         console.error('Error al recuperar formularios:', error);
         toast.error('Ocurrió un error al recuperar los formularios.');
