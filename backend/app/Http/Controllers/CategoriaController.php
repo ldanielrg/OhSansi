@@ -9,7 +9,16 @@ use Illuminate\Support\Facades\DB;
 
 
 class CategoriaController extends Controller{
-   
+
+    public function obtenerCategoriasPorConvocatoria($idConvocatoria){
+        $categorias = Categorium::where('id_convocatoria_convocatoria', $idConvocatoria)
+            ->where('activo', true)
+            ->with(['gradoInicial', 'gradoFinal']) // incluye info de grado_ini y grado_fin
+            ->get();
+
+        return response()->json($categorias);
+    }
+
     public function porArea($id_area)    {
         $resultado = AreaTieneCategorium::with('categorium')
         ->where('id_area_area', $id_area)

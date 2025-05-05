@@ -31,15 +31,17 @@ Route::get('/convocatoria-areas/{id}', [ConvocatoriaController::class, 'obtenerA
 Route::get('/convocatoria-categorias/{id}', [ConvocatoriaController::class, 'obtenerCategoriasPorConvocatoria']);
 Route::get('/convocatoria-areas-categorias/{id}', [ConvocatoriaController::class, 'obtenerAreasCategoriaPorConvocatoria']);
 Route::get('/convocatoria-areas-categorias-grados/{id}', [ConvocatoriaController::class, 'obtenerAreasCategoriaGradosPorConvocatoria']);
-
-    //Para CRUD areas
-    Route::get('/areas', [AreaController::class, 'index']);
-    Route::delete('/area-eliminar/{id}', [AreaController::class, 'destroy']);
-    Route::post('/area-crear', [AreaController::class, 'store']);
-    Route::get('/areas-categorias-grados', [AreaController::class, 'AreasConcategoriasConGrados']);
-    Route::post('/asignacionAreaCategoriaGrado', [AreaController::class, 'asignarAreaCategoriaGrado']);
+    //Para CRUD Áreas
+    Route::get('/areas/{id}', [AreaController::class, 'obtenerAreasPorConvocatoria']);
+    Route::post('/area-crear', [AreaController::class, 'store']); //necesita id_convocatoria
+    Route::post('/area-editar', [AreaController::class, 'update']);
+    Route::delete('/area-eliminar', [AreaController::class, 'destroy']); //necesita id_area, id_convocatoria
+    Route::get('/areas-categorias-grados/{id}', [AreaController::class, 'AreasConcategoriasConGradosPorConvocatoria']);
     Route::post('/asignar-area-categoria', [AreaController::class, 'asignarAreaCategoria']);
     Route::delete('/eliminar-area-categoria', [AreaController::class, 'eliminarAsignacionAreaCategoria']);
+    //Route::post('/asignacionAreaCategoriaGrado', [AreaController::class, 'asignarAreaCategoriaGrado']);
+   
+    //Para CRUD Categorias
 Route::get('/categorias', [CategoriaController::class, 'todo']);
 Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
 Route::get('/categorias-grados', [CategoriaController::class, 'categoriasConGrados']);
