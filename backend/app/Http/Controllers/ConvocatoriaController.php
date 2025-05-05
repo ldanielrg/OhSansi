@@ -17,6 +17,12 @@ class ConvocatoriaController extends Controller
     public function index(){
         return response()->json(Convocatoria::all());
     }
+    #Obtiene todas las convocatorias ACTIVAS
+    public function indexActivas(){
+        $convocatorias = Convocatoria::where('activo', true)->get();
+
+        return response()->json($convocatorias);
+    }
 
     #Para crear una convocatoria
     public function store(Request $request){

@@ -63,4 +63,9 @@ class Categorium extends Model
 	{
 		return $this->belongsTo(Grado::class, 'grado_fin', 'id_grado');
 	}
+	public function convocatoria()
+	{
+		return $this->belongsTo(Convocatoria::class, 'id_convocatoria_convocatoria');
+	}
+	
 }

@@ -43,9 +43,5 @@ class Grado extends Model
     {
         return $this->hasMany(Categorium::class, 'grado_fin', 'id_grado');
     }
-	public function convocatoria()
-	{
-		return $this->belongsTo(Convocatoria::class, 'id_convocatoria_convocatoria');
-	}
 
 }

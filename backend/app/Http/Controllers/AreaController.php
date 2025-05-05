@@ -21,12 +21,17 @@ class AreaController extends Controller{
     }
     
     #Crea una nueva area asociada a id_convocatoria
-    public function store(Request $request){
+    public function store(Request $request, $id_convocatoria){
         // Validar que envíen nombre y convocatoria
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
-            'id_convocatoria' => 'required|exists:convocatoria,id_convocatoria'
         ]);
+        // Validar que la convocatoria exista
+        if (!Convocatoria::where('id_convocatoria', $id_convocatoria)->exists()) {
+            return response()->json([
+                'message' => 'Convocatoria no encontrada.'
+            ], 404);
+        }
 
         // Crear y guardar nueva área
         $area = Area::create([
@@ -64,29 +69,21 @@ class AreaController extends Controller{
         ], 200);
     }
 
-    #Eliminar un área por id_area e id_convocatoria
-    public function destroy(Request $request){
-    $validated = $request->validate([
-        'id_convocatoria' => 'required|exists:convocatoria,id_convocatoria',
-        'id_area' => 'required|exists:area,id_area',
-    ]);
+    #Eliminar un área por id_area
+    public function destroy($id_area){
+        $area = Area::find($id_area);
 
-    // Buscar el área y verificar que pertenezca a la convocatoria
-    $area = Area::where('id_area', $validated['id_area'])
-                ->where('id_convocatoria_convocatoria', $validated['id_convocatoria'])
-                ->first();
+        if (!$area) {
+            return response()->json([
+                'message' => 'Área no encontrada.'
+            ], 404);
+        }
 
-    if (!$area) {
+        $area->delete(); // Soft delete o hard delete según configuración
+
         return response()->json([
-            'message' => 'Área no encontrada en esta convocatoria.'
-        ], 404);
-    }
-
-    $area->delete(); // Soft delete o hard delete, según configuración
-
-    return response()->json([
-        'message' => 'Área eliminada exitosamente.'
-    ]);
+            'message' => 'Área eliminada exitosamente.'
+        ]);
     }
 
 
