@@ -26,7 +26,7 @@ Route::get('/convocatoria-detalle/{id_convocatoria}', [ConvocatoriaController::c
 Route::post('/convocatoria-editar/{id_convocatoria}', [ConvocatoriaController::class, 'update']);
 Route::delete('/convocatoria-eliminar/{id_convocatoria}', [ConvocatoriaController::class, 'destroy']);
 Route::put('/convocatoria-estado/{id_convocatoria}', [ConvocatoriaController::class, 'toggleActivo']);
-//Convocatoria Formularios
+//Convocatoria Inscritos oficiales
 Route::get('/inscritos-oficiales/{id_convocatoria}', [FormularioController::class, 'obtenerInscritosOficiales']);
 //Gestión de Convocatorias
 Route::get('/convocatoria-areas/{id_convocatoria}', [ConvocatoriaController::class, 'obtenerAreasPorConvocatoria']);
@@ -56,8 +56,6 @@ Route::get('/convocatoria-areas-categorias-grados/{id_convocatoria}', [Convocato
     Route::get('/grados', [GradoController::class, 'todo']);
     Route::delete('/grado-eliminar/{id}', [GradoController::class, 'destroy']);
     Route::post('/grado-crear', [GradoController::class, 'store']);
-
-
 //Departamentos/Municipios
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
 Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
@@ -68,24 +66,21 @@ Route::get('/unidades-educativas', [UnidadEducativaController::class, 'index']);
 Route::put('/unidad-educativa/{id}', [UnidadEducativaController::class, 'update']);
 Route::delete('/unidad-educativa/{id}', [UnidadEducativaController::class, 'destroy']);
 
-
-
-
 // Eventos
 Route::apiResource('/eventos', EventoController::class);
 
+//CRUD cuentas
 Route::post('/login', [AuthController::class, 'login']);//Para logueo
 Route::middleware('auth:sanctum')->get('/obtener-cuentas', [CuentaController::class, 'devolverUsuarios']);//Obtiene todos los usuarios con roles
 Route::middleware('auth:sanctum')->delete('/eliminar-cuenta/{id}', [CuentaController::class, 'eliminarUsuario']);
 Route::middleware('auth:sanctum')->post('/crear-cuenta', [CuentaController::class, 'store']);
 
-
-
 //INSCRIPCIONES
-Route::middleware('auth:sanctum')->post('/inscribir', [InscripcionController::class, 'store']);
 Route::middleware('auth:sanctum')->post('/formularios', [InscripcionController::class, 'recuperarFormularios']);
-Route::middleware('auth:sanctum')->get('/formularios/{id}', [InscripcionController::class, 'mostrarFormulario']);
-Route::middleware('auth:sanctum')->delete('/formulario-eliminar', [InscripcionController::class, 'eliminarFormulario']);
+
+Route::middleware('auth:sanctum')->post('/inscribir', [InscripcionController::class, 'store']); //FALTA PARA CONVOCATORIAS MULTIPLES
+Route::middleware('auth:sanctum')->get('/formularios-convocatoria/{id_convocatoria}', [InscripcionController::class, 'mostrarFormulario']); //FALTA PARA CONVOCATORIAS MULTIPLES
+Route::middleware('auth:sanctum')->delete('/formulario-eliminar', [InscripcionController::class, 'eliminarFormulario']); //FALTA PARA CONVOCATORIAS MULTIPLES
 
 //RUTAS PROTEGIDAS
 Route::middleware('auth:sanctum')->group(function () {

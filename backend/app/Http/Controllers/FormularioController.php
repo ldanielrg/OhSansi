@@ -90,4 +90,6 @@ class FormularioController extends Controller
         return response()->json($agrupado);
     }
 
+    
+
 }
