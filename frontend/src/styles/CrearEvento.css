@@ -1,149 +1,189 @@
-/* Estilo general de la página */
-.crear-evento-page,
-.editar-evento-page {
-  padding: 20px;
-  background-color: #f9f9f9; /* Fondo gris claro como en Eventos.css */
-  min-height: 100vh;
-  display: flex; /* Usar flex para centrar el contenedor si es necesario */
-  align-items: flex-start; /* Alinear arriba */
-  justify-content: center;
-}
+/* src/styles/CrearEvento.css */
 
-/* Contenedor principal que centra la tarjeta */
-.crear-evento-container,
-.editar-evento-container {
-  width: 100%;
-  max-width: 800px; /* Ajusta el ancho máximo del formulario */
-  margin: 20px 0; /* Margen superior/inferior */
-}
+/* ————————————————————————————
+   Estilo general de la página de CREAR EVENTO
+   ———————————————————————————— */
 
-
-/* Estilos para la tarjeta (card) donde va el formulario */
-.crear-evento-card,
-.editar-evento-card {
-  background-color: #ffffff; /* Fondo blanco */
-  border-radius: 12px; /* Bordes redondeados como en Eventos.css */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
-  overflow: hidden; /* Para que el header no sobresalga del border-radius */
-  border: none; /* Eliminar borde si Bootstrap lo añade por defecto */
-}
-
-/* Estilo para el encabezado de la tarjeta */
-.crear-evento-header,
-.editar-evento-header {
-  display: flex;
-  background-color: #003366; /* Fondo azul oscuro */
-  color: #ffffff; /* Texto blanco */
-  font-weight: bold;
-  padding: 15px 25px; /* Padding ligeramente mayor para header de formulario */
-  font-size: 1.4rem; /* Tamaño de fuente igual a Eventos.css */
-  border-bottom: 1px solid #002244; /* Borde inferior sutil */
-  text-align: left; /* Alinear a la izquierda para formularios */
-  justify-content: center;
-}
-
-/* Cuerpo de la tarjeta donde van los inputs */
-.card-body { /* Usando la clase de Bootstrap o una propia si no usas Bootstrap */
-  padding: 25px; /* Padding interno */
-  color: #333; /* Color de texto por defecto */
-  font-size: 16px; /* Tamaño de fuente base */
-}
-
-/* Estilos para las etiquetas del formulario */
-.form-label {
-  display: block; /* Asegurar que ocupe su línea */
-  margin-bottom: 0.6rem; /* Espacio debajo de la etiqueta */
-  font-weight: 500; /* Peso semi-bold */
-  color: #333; /* Color de texto oscuro */
-  font-size: 0.95rem; /* Ligeramente más pequeño que el texto base */
-}
-
-/* Estilos para los campos de entrada (inputs) */
-.form-control {
-  display: block;
-  width: 100%;
-  padding: 0.5rem 0.75rem; /* Padding interno del input */
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #495057; /* Color de texto estándar Bootstrap */
-  background-color: #ffffff; /* Fondo blanco */
-  background-clip: padding-box;
-  border: 1px solid #ced4da; /* Borde gris claro estándar Bootstrap */
-  appearance: none;
-  border-radius: 6px; /* Bordes redondeados más sutiles para inputs */
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  box-shadow: none; /* Asegurar que no haya sombra extra */
-}
-
-/* Estilo para los campos de entrada en estado :focus */
-.form-control:focus {
-  color: #495057;
-  background-color: #ffffff;
-  border-color: #86b7fe; /* Borde azul claro al hacer foco (estándar BS) */
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); /* Resplandor azul claro (estándar BS) */
-}
-
-/* Contenedor para los botones al final del formulario */
-.form-actions {
-  margin-top: 1.5rem; /* Espacio sobre los botones */
-  padding-top: 1.5rem; /* Espacio extra */
-  border-top: 1px solid #eee; /* Línea divisoria sutil */
-  display: flex;
-  justify-content: flex-end; /* Alinear botones a la derecha */
-  gap: 1rem; /* Espacio entre botones */
-}
-
-/* Estilo para el botón primario (Guardar) - Tomado de Eventos.css */
-.btn-custom-primary-aux {
-  background-color: #003366; /* Azul claro */
-  color: #fff;
-  padding: 10px 25px; /* Padding ajustado */
-  border: none;
-  border-radius: 20px; /* Bordes muy redondeados ("pill") */
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s ease;
-  font-size: 1em;
-  font-weight: 500; /* Peso ligero */
-  line-height: 1.5;
-}
-
-/* Hover para el botón primario */
-.btn-custom-primary:hover {
-  background-color: #003366 !important; /* Azul oscuro al pasar el mouse */
-  color: #ffff !important; /* Asegurar texto blanco */
-}
-
-/* Estilo para el botón secundario (Salir/Cancelar) - Estilo Outline */
-.btn-custom-secondary-aux {
-  background-color: #ffff !important; /* Fondo blanco */
-  color: #003366; /* Texto azul oscuro */
-  padding: calc(10px - 1px) 25px; /* Padding ajustado para compensar borde */
-  border: 1px solid #003366; /* Borde azul oscuro */
-  border-radius: 20px; /* Mismos bordes redondeados */
-  cursor: pointer;
-  text-align: center;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  font-size: 1em;
-  font-weight: 500;
-  line-height: 1.5;
-}
-
-/* Hover para el botón secundario */
-.btn-custom-secondary:hover {
-  background-color: #003366; /* Fondo azul oscuro */
-  color: #ffffff; /* Texto blanco */
-}
-
-/* Estilo para botones deshabilitados (ambos tipos) */
-.btn-custom-primary:disabled,
-.btn-custom-secondary:disabled {
-  opacity: 0.6; /* Opacidad reducida */
-  cursor: not-allowed; /* Cursor indicando no permitido */
-  /* Evitar que el hover cambie el estilo si está deshabilitado */
-  background-color: revert; /* O especificar el color deshabilitado si se prefiere */
-}
-
-/* Eliminar el ::after complejo del CSS de ejemplo, ya que usualmente requiere setup adicional */
+   .crear-evento-page {
+    padding: 20px;
+    background-color: #f9f9f9; /* Fondo gris claro */
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  
+  .crear-evento-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px 0;
+    padding: 0 1rem; /* Espacio lateral */
+  }
+  
+  /* ————————————————————————————
+     Tarjeta (card) de CREAR EVENTO
+     ———————————————————————————— */
+  
+  .crear-evento-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: none;
+  }
+  
+  /* Header de la card */
+  .crear-evento-header {
+    background-color: #003366;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 1.5rem 2rem 0.5rem 2rem;    /* Header más alto y ancho */
+    font-size: 2rem;       /* Texto grande */
+    text-align: center;    /* Centrado horizontal */
+    border-bottom: none;   /* Sin línea inferior */
+    margin: -20px -20px 1.5rem; /* Rompe el padding lateral del contenedor */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+  
+  /* Cuerpo de la card */
+  .crear-evento-card .card-body {
+    padding: 25px 2rem;   /* Más espacio a izquierda y derecha */
+    color: #333;
+    font-size: 16px;
+  }
+  
+  /* ————————————————————————————
+     Formulario: labels e inputs
+     ———————————————————————————— */
+  
+  .form-label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.95rem;
+  }
+  
+  .form-control {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  
+  .form-control:focus {
+    outline: none;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  
+  /* ————————————————————————————
+     Botones
+     ———————————————————————————— */
+  
+  .form-actions {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+  
+  .btn-custom-primary-aux {
+    background-color: #003366;
+    color: #fff;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1em;
+    font-weight: 500;
+  }
+  
+  .btn-custom-primary-aux:hover:not(:disabled) {
+    background-color: #001d40;
+  }
+  
+  .btn-custom-secondary-aux {
+    background-color: #fff;
+    color: #003366;
+    padding: 9px 25px;
+    border: 2px solid #003366;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 1em;
+    font-weight: 500;
+  }
+  
+  .btn-custom-secondary-aux:hover:not(:disabled) {
+    background-color: #003366;
+    color: #fff;
+  }
+  
+  .btn-custom-primary-aux:disabled,
+  .btn-custom-secondary-aux:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* ————————————————————————————
+     Tabla de eventos (si la usas aquí)
+     ———————————————————————————— */
+  
+  .tabla-eventos {
+    margin-left: 1rem; /* Empuja un poco a la derecha */
+    width: calc(100% - 1rem);
+    border-collapse: collapse;
+    margin-top: 1rem;
+    border: 1px solid #003366;
+  }
+  
+  .tabla-eventos th,
+  .tabla-eventos td {
+    border: 1px solid #003366;
+    padding: 0.8rem;
+    text-align: center;
+  }
+  
+  /* Hover y seleccionado */
+  .tabla-eventos tbody tr {
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  .tabla-eventos tbody tr:hover,
+  .tabla-eventos tbody tr.fila-seleccionada {
+    background-color: #e6f0ff;
+    transform: scale(1.01);
+    cursor: pointer;
+  }
+  
+  /* Ajustes responsive */
+  @media (max-width: 768px) {
+    .crear-evento-card .card-body {
+      padding: 1.5rem;
+    }
+    .crear-evento-header {
+      font-size: 1.5rem;
+      padding: 1.5rem;
+      margin: -1.5rem -1rem 1rem;
+    }
+    .form-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .btn-custom-primary-aux,
+    .btn-custom-secondary-aux {
+      width: 100%;
+    }
+  }
+  

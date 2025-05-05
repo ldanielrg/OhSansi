@@ -55,7 +55,8 @@ function App() {
       //Eventos
       <Route path="/eventos" element={<Layout><Eventos /></Layout>}/>
       <Route path="/crear-evento" element={<Layout><CrearEvento /></Layout>}/>
-      <Route path="/editar-evento" element={ <Layout><EditarEvento /></Layout>}/>
+      <Route path="/editar-evento/:id" element={ <Layout><EditarEvento /></Layout>}/>
+    
      
       <Route path="/ganadores" element={<Layout><Ganadores /></Layout>}/>
       <Route path="/premiacion" element={<Layout><Premiacion /></Layout>}/>

@@ -1,109 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import '../styles/EditarEvento.css'; // Importamos el nuevo archivo CSS
+// src/pages/EditarEvento.jsx
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../api/axios";
+import "../styles/EditarEvento.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditarEvento = () => {
-  const [nombre, setNombre] = useState('');
-  const [fechaInicio, setFechaInicio] = useState('');
-  const [fechaFin, setFechaFin] = useState('');
-  const [eventoOriginal, setEventoOriginal] = useState(null); // Para guardar el evento original
-  const [cargando, setCargando] = useState(true); // Estado para indicar si se están cargando datos
-  const [error, setError] = useState(''); // Para manejar errores
-
-  const { id } = useParams(); // Obtiene el 'id' de la URL (ej: /editar-evento/1678886400000)
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  // Efecto para cargar los datos del evento cuando el componente se monta o el ID cambia
+  const [nombre, setNombre] = useState("");
+  const [fechaInicio, setFechaInicio] = useState("");
+  const [fechaFin, setFechaFin] = useState("");
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
+
+  // 1️⃣ Cargar datos del evento desde el backend
   useEffect(() => {
-    setCargando(true);
-    setError('');
-    const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
-    // Buscamos el evento. ¡Importante convertir el ID de la URL (string) a número!
-    const eventoAEditar = storedEvents.find(ev => ev.id === parseInt(id, 10));
+    const fetchEvento = async () => {
+      setCargando(true);
+      setError("");
+      try {
+        const response = await api.get(`/eventos/${id}`);
+        // La API devuelve un array con un objeto [{ ... }]
+        const data = Array.isArray(response.data)
+          ? response.data[0]
+          : response.data;
+        setNombre(data.nombre_evento);
+        // Quita la parte "T..." dejando solo "YYYY-MM-DD"
+        setFechaInicio(data.fecha_inicio.split("T")[0]);
+        setFechaFin(data.fecha_final.split("T")[0]);
+      } catch (err) {
+        console.error("Error al cargar evento:", err);
+        setError("No se pudo cargar el evento.");
+      } finally {
+        setCargando(false);
+      }
+    };
+    fetchEvento();
+  }, [id]);
 
-    if (eventoAEditar) {
-      setEventoOriginal(eventoAEditar); // Guardamos el original por si acaso
-      // Rellenamos el estado del formulario con los datos del evento encontrado
-      setNombre(eventoAEditar.cronograma.nombre);
-      setFechaInicio(eventoAEditar.cronograma.fechaInicio);
-      setFechaFin(eventoAEditar.cronograma.fechaFin);
-    } else {
-      // Si no se encuentra el evento, mostramos un error y podríamos redirigir
-      console.error(`Evento con ID ${id} no encontrado.`);
-      setError(`La convocatoria con ID ${id} no fue encontrada.`);
-      // Opcional: Redirigir después de un tiempo o inmediatamente
-      // setTimeout(() => navigate('/eventos'), 3000);
-    }
-    setCargando(false); // Terminamos la carga
-  }, [id]); // Dependencia: se ejecuta si el 'id' cambia
-
-  const handleGuardar = (e) => {
+  // 2️⃣ Función para enviar los cambios al backend
+  const handleGuardar = async (e) => {
     e.preventDefault();
 
+    // Validaciones básicas
     if (!nombre || !fechaInicio || !fechaFin) {
-      alert('Por favor, completa todos los campos.');
+      toast.warn("Por favor completa todos los campos.");
+      return;
+    }
+    if (new Date(fechaInicio) > new Date(fechaFin)) {
+      toast.warn(
+        "La fecha de inicio no puede ser posterior a la fecha de fin."
+      );
       return;
     }
 
-    // 1. Obtener los eventos existentes
-    const storedEvents = JSON.parse(localStorage.getItem('events')) || [];
+    const payload = {
+      id_evento: parseInt(id, 10),
+      nombre_evento: nombre,
+      fecha_inicio: fechaInicio,
+      fecha_final: fechaFin,
+    };
 
-    // 2. Crear la lista actualizada de eventos
-    const updatedEvents = storedEvents.map(evento => {
-      // Si el ID coincide, devolvemos el objeto modificado
-      if (evento.id === parseInt(id, 10)) {
-        return {
-          ...evento, // Mantenemos el ID original y otras propiedades si las hubiera
-          cronograma: { // Actualizamos solo el cronograma
-            nombre: nombre,
-            fechaInicio: fechaInicio,
-            fechaFin: fechaFin,
-          }
-        };
-      }
-      // Si no coincide, devolvemos el evento sin cambios
-      return evento;
-    });
-
-    // 3. Guardar la lista actualizada en localStorage
-    localStorage.setItem('events', JSON.stringify(updatedEvents));
-
-    // 4. Navegar de vuelta a la lista
-    navigate('/eventos');
+    try {
+      await api.put(`/eventos/${id}`, payload);
+      toast.success("Evento actualizado exitosamente.");
+      setTimeout(() => {
+        navigate("/eventos", {
+          state: { message: "Evento actualizado.", type: "success" },
+        });
+      }, 1500);
+    } catch (err) {
+      console.error("Error al actualizar evento:", err);
+      const msg =
+        err.response?.data?.message || "Error al actualizar el evento.";
+      toast.error(msg);
+    }
   };
 
   const handleSalir = () => {
-    navigate('/eventos');
+    navigate("/eventos");
   };
 
-  // Mientras carga, muestra un mensaje
+  // 3️⃣ Renderizado condicional
   if (cargando) {
-    return <div className="container mt-4"><p>Cargando datos de la convocatoria...</p></div>;
+    return (
+      <div className="container mt-4">
+        <p>Cargando datos del evento...</p>
+      </div>
+    );
   }
-
-  // Si hubo un error al cargar
   if (error) {
     return (
       <div className="container mt-4">
-        <div className="alert alert-danger" role="alert">
-          Error: {error}
-        </div>
-        <button className="btn btn-secondary" onClick={handleSalir}>Volver a la lista</button>
+        <div className="alert alert-danger">{error}</div>
+        <button className="btn btn-secondary" onClick={handleSalir}>
+          Volver a la lista
+        </button>
       </div>
     );
   }
 
-  // Si todo está bien, muestra el formulario
+  // 4️⃣ Formulario de edición
   return (
-    <div className="editar-evento-page"> {/* Cambiamos clase para posible CSS específico */}
-      <div className="container mt-4">
-        <div className="card editar-evento-card">
-          <div className="card-header editar-evento-header">
-            Editar Evento
-          </div>
+    <div className="editar-evento-page">
+      <div className="editar-evento-container">
+        <div className="editar-evento-card">
+          <div className="editar-evento-header">Editar Evento</div>
           <div className="card-body">
             <form onSubmit={handleGuardar}>
-              {/* Campo Nombre */}
+              {/* Nombre del Evento */}
               <div className="mb-3">
                 <label htmlFor="nombreEvento" className="form-label">
                   Nombre del Evento
@@ -118,7 +126,7 @@ const EditarEvento = () => {
                 />
               </div>
 
-              {/* Campo Fecha Inicio */}
+              {/* Fecha de Inicio */}
               <div className="mb-3">
                 <label htmlFor="fechaInicio" className="form-label">
                   Fecha de Inicio
@@ -133,7 +141,7 @@ const EditarEvento = () => {
                 />
               </div>
 
-              {/* Campo Fecha Fin */}
+              {/* Fecha de Fin */}
               <div className="mb-3">
                 <label htmlFor="fechaFin" className="form-label">
                   Fecha de Fin
@@ -150,10 +158,14 @@ const EditarEvento = () => {
 
               {/* Botones */}
               <div className="d-flex justify-content-end gap-2 mt-4">
-                <button type="submit" className="btn btn-custom-primary">
+                <button type="submit" className="btn-custom-primary-aux">
                   Guardar Cambios
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={handleSalir}>
+                <button
+                  type="button"
+                  className="btn-custom-secondary-aux"
+                  onClick={handleSalir}
+                >
                   Salir Sin Guardar
                 </button>
               </div>
@@ -161,6 +173,7 @@ const EditarEvento = () => {
           </div>
         </div>
       </div>
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
 };
