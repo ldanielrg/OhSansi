@@ -141,6 +141,7 @@ class InscripcionController extends Controller{
         }
     }
 
+    #Recupera formularios llenados por un usuario
     public function recuperarFormularios(Request $request, $id_convocatoria){
         $user = $request->user();
 
@@ -154,12 +155,14 @@ class InscripcionController extends Controller{
         ], 200);
     }
 
+    #Muestra los estudiantes inscritos en un formulario especifico
     public function mostrarFormulario($id){
-        $formulario = Formulario::with('inscripciones.estudiante', 'inscripciones.area', 'inscripciones.categorium')
+        $formulario = Formulario::with('inscripciones.estudiante', 'inscripciones.inscrito.area', 'inscripciones.inscrito.categorium')
                                 ->findOrFail($id);
 
         // Recolectar estudiantes formateados
         $estudiantes = $formulario->inscripciones->map(function ($inscripcion) {
+            $inscrito = $inscripcion->inscrito;
             return [
                 'id_estudiante' => $inscripcion->estudiante->id_estudiante ?? '',
                 'nombre' => $inscripcion->estudiante->nombre ?? '',
@@ -168,10 +171,10 @@ class InscripcionController extends Controller{
                 'ci' => $inscripcion->estudiante->ci ?? '',
                 'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento ?? '',
                 'rude' => $inscripcion->estudiante->rude ?? '',
-                'idAarea' => $inscripcion->id_area_area,
-                'nombre_area' => $inscripcion->area->nombre_area ?? '',
-                'idCategoria' => $inscripcion->id_categ,
-                'nombre_categoria' => $inscripcion->categorium->nombre_categoria ?? '',
+                'idAarea' =>  $inscrito->area->id_area,
+                'nombre_area' => $inscrito->area->nombre_area ?? '',
+                'idCategoria' => $inscrito->categorium->id_categoria,
+                'nombre_categoria' => $inscrito->categorium->nombre_categoria ?? '',
             ];
         });
 
