@@ -124,20 +124,27 @@ const Inscripciones = () => {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
     });
-
+  
     if (!result.isConfirmed) return;
-
+  
     try {
-      await api.delete(`/formularios/${id_formulario}`);
+      console.log(id_formulario)
+      await api.delete(`/formulario-eliminar/${id_formulario}`);
+  
       toast.success('Formulario eliminado exitosamente.');
-
-      // Actualizar la lista de formularios
       setFormularios(prev => prev.filter(f => f.id_formulario !== id_formulario));
     } catch (error) {
       console.error('Error al eliminar formulario:', error);
-      toast.error('Ocurrió un error al eliminar el formulario.');
+      if (error.response) {
+        console.error('Detalle del error:', error.response.data);
+        toast.error(error.response.data.message || 'Ocurrió un error al eliminar el formulario.');
+      } else {
+        toast.error('Error de conexión o inesperado.');
+      }
     }
+    
   };
+  
     return (
       <>
         <ToastContainer
