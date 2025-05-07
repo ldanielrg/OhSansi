@@ -32,8 +32,6 @@ class EstudianteEstaInscrito extends Model
 	protected $casts = [
 		'id_estudiante_estudiante' => 'int',
 		'id_formulario_formulario' => 'int',
-		'id_area_area' => 'int',
-		'id_categ' => 'int'
 	];
 
 	protected $fillable = [
@@ -54,6 +52,6 @@ class EstudianteEstaInscrito extends Model
 
 	public function inscrito()
 	{
-		return $this->belongsTo(AreaTieneCategorium::class, 'id_inscrito_en');
+		return $this->belongsTo(AreaTieneCategorium::class, 'id_inscrito_en', 'id');
 	}
 }
