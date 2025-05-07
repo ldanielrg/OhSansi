@@ -100,7 +100,7 @@ const Formulario = () => {
         return;
       }
       try {
-        const response = await api.get(`/formularios/${id}`);
+        const response = await api.get(`/formulario-detalles/${id}`);
         const estudiantes = response.data.estudiantes;
         const estudiantesFormateados = estudiantes.map((est) => ({
           id_estudiante: est.id_estudiante ?? null,

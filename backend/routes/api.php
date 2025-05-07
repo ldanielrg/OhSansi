@@ -78,7 +78,7 @@ Route::middleware('auth:sanctum')->post('/crear-cuenta', [CuentaController::clas
 
 //INSCRIPCIONES
 Route::middleware('auth:sanctum')->get('/recuperar-formularios/{id_convocatoria}', [InscripcionController::class, 'recuperarFormularios']);
-Route::middleware('auth:sanctum')->delete('/formulario-eliminar/{id_formulario}', [InscripcionController::class, 'eliminarFormulario']);
+Route::middleware('auth:sanctum')->delete('/formulario-eliminar/{id}', [InscripcionController::class, 'eliminarFormulario']); //CARAJO RAMIREZ pon completa la linea mrd
 Route::middleware('auth:sanctum')->get('/formulario-detalles/{id_formulario}', [InscripcionController::class, 'mostrarFormulario']);
 
 
