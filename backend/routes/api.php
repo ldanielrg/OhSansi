@@ -78,10 +78,12 @@ Route::middleware('auth:sanctum')->post('/crear-cuenta', [CuentaController::clas
 
 //INSCRIPCIONES
 Route::middleware('auth:sanctum')->get('/recuperar-formularios/{id_convocatoria}', [InscripcionController::class, 'recuperarFormularios']);
+Route::middleware('auth:sanctum')->delete('/formulario-eliminar', [InscripcionController::class, ' ']);
+Route::middleware('auth:sanctum')->get('/formulario-detalles/{id_formulario}', [InscripcionController::class, 'mostrarFormulario']);
 
 Route::middleware('auth:sanctum')->post('/inscribir', [InscripcionController::class, 'store']); //FALTA PARA CONVOCATORIAS MULTIPLES
-Route::middleware('auth:sanctum')->get('/formularios-convocatoria/{id_convocatoria}', [InscripcionController::class, 'mostrarFormulario']); //FALTA PARA CONVOCATORIAS MULTIPLES
-Route::middleware('auth:sanctum')->delete('/formulario-eliminar', [InscripcionController::class, 'eliminarFormulario']); //FALTA PARA CONVOCATORIAS MULTIPLES
+
+
 
 //RUTAS PROTEGIDAS
 Route::middleware('auth:sanctum')->group(function () {

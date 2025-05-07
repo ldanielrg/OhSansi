@@ -38,8 +38,7 @@ class EstudianteEstaInscrito extends Model
 
 	protected $fillable = [
 		'id_estudiante_estudiante',
-		'id_area_area',
-		'id_categ',
+		'id_inscrito_en',
 		'id_formulario_formulario'
 	];
 
@@ -53,13 +52,8 @@ class EstudianteEstaInscrito extends Model
 		return $this->belongsTo(Formulario::class, 'id_formulario_formulario');
 	}
 
-	public function area()
+	public function inscrito()
 	{
-		return $this->belongsTo(Area::class, 'id_area_area');
-	}
-
-	public function categorium()
-	{
-		return $this->belongsTo(Categorium::class, 'id_categ');
+		return $this->belongsTo(AreaTieneCategorium::class, 'id_inscrito_en');
 	}
 }
