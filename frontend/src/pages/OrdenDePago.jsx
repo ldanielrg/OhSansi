@@ -30,7 +30,7 @@ const OrdenDePago = () => {
             }
     
             try {
-                const response = await api.get(`/formularios/${id}`);
+                const response = await api.get(`/formulario-detalles/${id}`);
                 const data = response.data;
                 setFormulario(data);
     
