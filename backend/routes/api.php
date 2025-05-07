@@ -84,7 +84,7 @@ Route::middleware('auth:sanctum')->get('/formulario-detalles/{id_formulario}', [
 
 
 
-Route::middleware('auth:sanctum')->post('/inscribir', [InscripcionController::class, 'store']); //FALTA PARA CONVOCATORIAS MULTIPLES
+Route::middleware('auth:sanctum')->post('/inscripcion', [InscripcionController::class, 'inscribirEstudiantes']); //FALTA PARA CONVOCATORIAS MULTIPLES
 
 
 

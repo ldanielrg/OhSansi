@@ -6,20 +6,22 @@ use App\Models\Formulario;
 use App\Models\Registrador;
 use App\Models\Estudiante;
 use App\Models\EstudianteEstaInscrito;
+use App\Models\AreaTieneCategorium;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;;
 
 class InscripcionController extends Controller{
-    public function store(Request $request){
+    #Inscribir estudiantes (sólo inscripción)
+    public function inscribirEstudiantes(Request $request){
         
         Log::debug($request);
 
         $validated = $request->validate([
             'id_formulario_actual' => 'required|integer',
+            'id_convocatoria' => 'required|exists:convocatoria,id_convocatoria',
             'estudiantes' => 'required|array|min:1',
-            'estudiantes.*.id_estudiante' => 'nullable|exists:estudiante,id_estudiante', //Este es bueno, lo coloco porque valida también que 
-                                                 //si viene ID entonces mínimo ese id exista en la tabla estudiantes
+            'estudiantes.*.id_estudiante' => 'nullable|exists:estudiante,id_estudiante',
             'estudiantes.*.nombre' => 'required|string',
             'estudiantes.*.apellido' => 'required|string',
             'estudiantes.*.email' => 'required|email',
@@ -29,6 +31,7 @@ class InscripcionController extends Controller{
             'estudiantes.*.idAarea' => 'required|integer',
             'estudiantes.*.idCategoria' => 'required|integer',
         ]);
+        
         Log::debug($validated);
         $user = $request->user();
         
@@ -58,8 +61,9 @@ class InscripcionController extends Controller{
                 $formulario = Formulario::create([
                     'id_registrador_registrador' => $registrador->id_registrador,
                     'id_usuario' => $user->id,
-                    'id_ue_ue' => $user->id_ue_ue
-                ]);
+                    'id_ue_ue' => $user->id_ue_ue,
+                    'id_convocatoria_convocatoria' => $validated['id_convocatoria']
+                ]);                
             } else {
                 // Si no, buscar el formulario existente
                 $formulario = Formulario::find($idFormularioActual);
@@ -83,45 +87,45 @@ class InscripcionController extends Controller{
                     'rude' => $est['rude'],
                 ];
 
-                // Crear estudiante o Actualiza. Dependiendo si el id_estudiante existe
-                if (isset($est['id_estudiante'])) {
-                    // Si viene el id_estudiante, actualizamos por ID
-                    $estudiante = Estudiante::find($est['id_estudiante']);
-                    if ($estudiante) {
-                        $estudiante->update($estudianteData);
-                    } else {
-                        // Si el ID no existe (por algún error), tratar de buscar por CI
-                        $estudiante = Estudiante::firstOrCreate(
-                            ['ci' => $est['ci']],
-                            $estudianteData
-                        );
+                // Buscamos o Creamos Estudiante
+                if (empty($est['id_estudiante'])) {
+                    // No hay id_estudiante. Entonces buscar por CI
+                    $estudiante = Estudiante::where('ci', $est['ci'])->first();
+                    if (!$estudiante) {
+                        // No se encontró por CI, crear uno nuevo
+                        $estudiante = Estudiante::create($estudianteData);
                     }
                 } else {
-                    // No viene ID, entonces buscar por CI o crear. Asi evitamos duplicados p
-                    $estudiante = Estudiante::firstOrCreate(
-                        ['ci' => $est['ci']],
-                        $estudianteData
-                    );
+                    // Hay id_estudiante, entonces buscar por id.
+                    $estudiante = Estudiante::find($est['id_estudiante']);
+                    if (!$estudiante) {
+                        continue; //Si no hay id, pasamos al siguiente estudiante en la lista para isncribir.
+                    }
                 }
-                
-                
+
                 Log::debug($estudiante);
 
-                //Verificar que el estudiante no esté inscrito en es AREA-CATEGORIA
+                //Buscamos la combinación de idArea e idCategoria en la tabla "area_tiene_categoria"
+                $relacion = AreaTieneCategorium::where('id_area_area', $est['idAarea'])
+                    ->where('id_categoria_categoria', $est['idCategoria'])
+                    ->first();
+
+                if (!$relacion) {
+                    continue; //Si no existe esa Area-Categoria, pasamos al siguiente estudiante para inscribir.
+                }
+
+                //Vemos si el estudiante ya está inscrito en esa Area-Categoria
                 $yaInscrito = EstudianteEstaInscrito::where([
                     'id_estudiante_estudiante' => $estudiante->id_estudiante,
                     'id_formulario_formulario' => $formulario->id_formulario,
-                    'id_area_area' => $est['idAarea'],
-                    'id_categ' => $est['idCategoria'],
+                    'id_inscrito_en' => $relacion->id
                 ])->exists();
-
-                // Crear inscripción en tabla pivote estudiante_esta_inscrito
+                //Sólo inscribimos si no está inscrito.
                 if (!$yaInscrito) {
                     EstudianteEstaInscrito::create([
                         'id_estudiante_estudiante' => $estudiante->id_estudiante,
-                        'id_area_area' => $est['idAarea'],
-                        'id_categ' => $est['idCategoria'],
-                        'id_formulario_formulario' => $formulario->id_formulario
+                        'id_formulario_formulario' => $formulario->id_formulario,
+                        'id_inscrito_en' => $relacion->id
                     ]);
                 }
             }
@@ -141,6 +145,8 @@ class InscripcionController extends Controller{
         }
     }
 
+
+    
     #Recupera formularios llenados por un usuario
     public function recuperarFormularios(Request $request, $id_convocatoria){
         $user = $request->user();
