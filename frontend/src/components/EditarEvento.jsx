@@ -113,57 +113,50 @@ const EditarEvento = () => {
             <form onSubmit={handleGuardar}>
               {/* Nombre del Evento */}
               <div className="mb-3">
-                <RegistroForm
-                  label='Nombre del evento'
-                  type='text'
+                <label htmlFor="nombreEvento" className="form-label">
+                  Nombre del Evento
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="nombreEvento"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
-                  usarEvento={true}
-                  icono={BsLayoutTextWindowReverse}
+                  required
                 />
               </div>
 
               {/* Fecha de Inicio */}
               <div className="mb-3">
-                <RegistroForm
-                  label='Fecha de Inicio'
-                  type='date'
+                <label htmlFor="fechaInicio" className="form-label">
+                  Fecha de Inicio
+                </label>
+                <input
+                  type="date"
+                  className="form-control"
+                  id="fechaInicio"
                   value={fechaInicio}
                   onChange={(e) => setFechaInicio(e.target.value)}
-                  usarEvento={true}
-                  icono={BsCalendar3Event}
+                  required
                 />
               </div>
 
               {/* Fecha de Fin */}
               <div className="mb-3">
-                <RegistroForm
-                  label='Fecha de Fin'
-                  type='date'
+                <label htmlFor="fechaFin" className="form-label">
+                  Fecha de Fin
+                </label>
+                <input
+                  type="date"
+                  className="form-control"
+                  id="fechaFin"
                   value={fechaFin}
                   onChange={(e) => setFechaFin(e.target.value)}
-                  usarEvento={true}
-                  icono={MdOutlineEventAvailable}
+                  required
                 />
               </div>
-              <div className="mb-3">
-                <RegistroForm
-                  label='Convocatoria'
-                  name='idConvocatoria'
-                  type='select'
-                  value={idConvocatoria}
-                  onChange={(e) => setIdConvocatoria(e.target.value)}
-                  options={[
-                    { value: '', label: 'Seleccione una Convocatoria' },
-                    ...convocatorias.map(c => ({
-                      value: c.id_convocatoria,
-                      label: c.nombre_convocatoria
-                    }))
-                  ]}
-                  usarEvento={true}
-                  icono={BsLayoutTextWindowReverse}
-                />
-              </div>
+
+              {/* Botones */}
               <div className="d-flex justify-content-end gap-2 mt-4">
                 <button type="submit" className="btn-custom-primary-aux">
                   Guardar Cambios

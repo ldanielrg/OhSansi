@@ -36,11 +36,6 @@ const Eventos = () => {
     }
   }, [location.state]);
 
-<<<<<<< HEAD
-  const formatearFecha = (fecha) => fecha?.split('T')[0] ?? ''; // elimina la parte "T00:00:00.000Z"
-
-  // Navegar para crear un evento nuevo
-=======
   // Cargar eventos cuando se selecciona una convocatoria
   useEffect(() => {
     if (!idConvocatoriaSeleccionada) {
@@ -64,7 +59,6 @@ const Eventos = () => {
     fetchEventos();
   }, [idConvocatoriaSeleccionada]);
 
->>>>>>> origin/main
   const handleCrearEvento = () => {
     if (!idConvocatoriaSeleccionada) return;
     navigate("/crear-evento", {
@@ -73,43 +67,18 @@ const Eventos = () => {
   };
 
   const handleEditarEvento = () => {
-<<<<<<< HEAD
-    if (!selectedEvent) return;
-    navigate(`/editar-evento/${selectedEvent.id_evento}`);
-=======
     // Navegamos a /editar-evento/:id_evento
     navigate(`/editar-evento/${selectedEvent.id_evento}`, {
       state: {
         idConvocatoria: idConvocatoriaSeleccionada,
       },
     });
->>>>>>> origin/main
   };
 
   const handleEliminarEvento = async () => {
     if (!selectedEvent) return;
     setShowDeleteModal(true);
   };
-<<<<<<< HEAD
-  // Función que realiza la eliminación real
-  const confirmDelete = async () => {
-    if (!selectedEvent) return;
-  
-    try {
-      // 🔥 Eliminar del backend
-      await api.delete(`/eventos/${selectedEvent.id_evento}`);
-  
-      // 🔄 Actualizar el estado local
-      const updatedEvents = events.filter((ev) => ev.id_evento !== selectedEvent.id_evento);
-      setEvents(updatedEvents);
-      toast.success(`Evento "${selectedEvent.nombre_evento}" eliminado correctamente.`);
-    } catch (error) {
-      console.error('Error al eliminar evento:', error);
-      toast.error('No se pudo eliminar el evento.');
-    } finally {
-      setSelectedEvent(null);
-      setShowDeleteModal(false);
-=======
 
   const confirmDelete = async () => {
     if (!selectedEvent) return;
@@ -125,10 +94,8 @@ const Eventos = () => {
     } catch (error) {
       console.error("Error al eliminar evento:", error);
       toast.error("No se pudo eliminar el evento.");
->>>>>>> origin/main
     }
   };
-  
 
   const cancelDelete = () => {
     setShowDeleteModal(false);
@@ -180,29 +147,6 @@ const Eventos = () => {
                   <td>{evento.fecha_inicio.split("T")[0]}</td>
                   <td>{evento.fecha_final.split("T")[0]}</td>
                 </tr>
-<<<<<<< HEAD
-              </thead>
-              <tbody>
-                {events.map((evento) => (
-                  <tr
-                    key={evento.id_evento}
-                    onClick={() => setSelectedEvent(evento)}
-                    className={
-                      selectedEvent?.id_evento === evento.id_evento ? "fila-seleccionada" : ""
-                    }
-                  >
-                    <td>{evento.nombre_evento}</td>
-                    <td>{formatearFecha(evento.fecha_inicio)}</td>
-                    <td>{formatearFecha(evento.fecha_final)}</td>
-
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>No hay convocatorias creadas.</p>
-          )}
-=======
               ))}
             </tbody>
           </table>
@@ -211,7 +155,6 @@ const Eventos = () => {
         ) : (
           <p>Selecciona una convocatoria para ver sus eventos.</p>
         )}
->>>>>>> origin/main
 
         <div className="eventos-acciones d-flex justify-content-between align-items-center">
           <div className="acciones-left d-flex gap-2">

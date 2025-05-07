@@ -77,8 +77,8 @@ Route::middleware('auth:sanctum')->delete('/eliminar-cuenta/{id}', [CuentaContro
 Route::middleware('auth:sanctum')->post('/crear-cuenta', [CuentaController::class, 'store']);
 
 //INSCRIPCIONES
-Route::middleware('auth:sanctum')->post('/recuperar-formularios/{id_convocatoria}', [InscripcionController::class, 'recuperarFormularios']);
-Route::middleware('auth:sanctum')->delete('/formulario-eliminar', [InscripcionController::class, ' ']);
+Route::middleware('auth:sanctum')->get('/recuperar-formularios/{id_convocatoria}', [InscripcionController::class, 'recuperarFormularios']);
+Route::middleware('auth:sanctum')->delete('/formulario-eliminar/{id}', [InscripcionController::class, 'eliminarFormulario']); //CARAJO RAMIREZ pon completa la linea mrd
 Route::middleware('auth:sanctum')->get('/formulario-detalles/{id_formulario}', [InscripcionController::class, 'mostrarFormulario']);
 
 Route::middleware('auth:sanctum')->post('/inscribir', [InscripcionController::class, 'store']); //FALTA PARA CONVOCATORIAS MULTIPLES

@@ -40,11 +40,6 @@ const CrearEvento = () => {
       toast.warn('La fecha de inicio no puede ser posterior a la de fin.');
       return;
     }
-    // Validación extra (opcional pero buena práctica)
-  if (isNaN(new Date(fechaInicio)) || isNaN(new Date(fechaFin))) {
-    toast.error('Las fechas no son válidas.');
-    return;
-  }
 
     // Preparamos el objeto tal como el backend lo espera
     const payload = {
