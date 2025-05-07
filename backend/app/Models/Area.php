@@ -42,9 +42,9 @@ class Area extends Model
 		'id_convocatoria_convocatoria'
 	];
 
-	public function convocatorium()
+	public function convocatoria()
 	{
-		return $this->belongsTo(Convocatorium::class, 'id_convocatoria_convocatoria');
+		return $this->belongsTo(Convocatoria::class, 'id_convocatoria_convocatoria');
 	}
 
 	public function area_tiene_categoria()

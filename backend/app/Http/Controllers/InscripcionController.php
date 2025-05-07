@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;;
 class InscripcionController extends Controller{
     public function store(Request $request){
         
-
+        Log::debug($request);
 
         $validated = $request->validate([
             'id_formulario_actual' => 'required|integer',
@@ -29,7 +29,7 @@ class InscripcionController extends Controller{
             'estudiantes.*.idAarea' => 'required|integer',
             'estudiantes.*.idCategoria' => 'required|integer',
         ]);
-
+        Log::debug($validated);
         $user = $request->user();
         
         try {
@@ -141,13 +141,12 @@ class InscripcionController extends Controller{
         }
     }
 
-    public function recuperarFormularios(Request $request){
+    public function recuperarFormularios(Request $request, $id_convocatoria){
         $user = $request->user();
 
-        // Recuperar todos los formularios donde el id_usuario sea igual al del usuario autenticado
         $formularios = Formulario::where('id_usuario', $user->id)
-            ->withCount('inscripciones')  //esto usa la relación
-            //->orderBy('created_at', 'desc') quito esto porque la tabla no tiene este campo.
+            ->where('id_convocatoria_convocatoria', $id_convocatoria)
+            ->withCount('inscripciones')
             ->get();
 
         return response()->json([

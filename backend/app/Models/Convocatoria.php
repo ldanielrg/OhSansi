@@ -43,9 +43,9 @@ class Convocatoria extends Model
 	protected $fillable = [
 		'nombre_convocatoria',
 		'descripcion',
-		'precio',
 		'fecha_inicio',
-		'fecha_final'
+		'fecha_final',
+		'activo'
 	];
 
 	public function areas()

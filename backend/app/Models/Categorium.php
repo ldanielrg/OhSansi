@@ -40,7 +40,8 @@ class Categorium extends Model
 		'descripcion',
 		'activo',
 		'grado_ini',
-		'grado_fin'
+		'grado_fin',
+		'id_convocatoria_convocatoria'
 	];
 
 	public function area_tiene_categoria()
@@ -62,4 +63,9 @@ class Categorium extends Model
 	{
 		return $this->belongsTo(Grado::class, 'grado_fin', 'id_grado');
 	}
+	public function convocatoria()
+	{
+		return $this->belongsTo(Convocatoria::class, 'id_convocatoria_convocatoria');
+	}
+	
 }

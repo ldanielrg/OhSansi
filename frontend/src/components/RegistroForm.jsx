@@ -36,7 +36,7 @@ const RegistroForm = ({
 
   const esPassword = type === 'password';
   const inputType = esPassword ? (mostrarPassword ? 'text' : 'password') : type;
-
+  
   return (
     <div className="registro-form-field">
       <label className="nombre-registro">{label}</label>

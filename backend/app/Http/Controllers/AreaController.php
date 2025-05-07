@@ -7,81 +7,126 @@ use App\Models\Area;
 use App\Models\AreaTieneCategorium;
 use App\Models\Categorium;
 use Illuminate\Support\Facades\DB;
+use App\Models\Convocatoria;
+
 
 class AreaController extends Controller{
-    
-    public function index()    {
-        return Area::all();
-    }
+    #Obtiene todas la areas de una convocatoria id
+    public function obtenerAreasPorConvocatoria($idConvocatoria){
+        $areas = Area::where('id_convocatoria_convocatoria', $idConvocatoria)
+            //->where('activo', true) //si solo quiero activas
+            ->get();
 
-    public function store(Request $request)    {
-        // Validar que envíen un nombre
+        return response()->json($areas);
+    }
+    
+    #Crea una nueva area asociada a id_convocatoria
+    public function store(Request $request, $id_convocatoria){
+        // Validar que envíen nombre y convocatoria
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
         ]);
+        // Validar que la convocatoria exista
+        if (!Convocatoria::where('id_convocatoria', $id_convocatoria)->exists()) {
+            return response()->json([
+                'message' => 'Convocatoria no encontrada.'
+            ], 404);
+        }
 
         // Crear y guardar nueva área
         $area = Area::create([
             'nombre_area' => $validated['nombre'],
+            'id_convocatoria_convocatoria' => $validated['id_convocatoria'],
+            'activo' => true // por ahora siempre se crea activo.
         ]);
 
         return response()->json([
-            'message' => 'Área creada exitosamente.',
-            'area' => $area,
+            'message' => 'Área creada exitosamente.'
         ], 201);
     }
 
-    // Eliminar un área por id
-    public function destroy($id)
-    {
-        $area = Area::find($id);
+    #Editar un área asociada
+    public function update(Request $request){
+        $validated = $request->validate([
+            'id_area' => 'required|integer|exists:area,id_area',
+            'nombre_area' => 'required|string|max:255',
+            'activo' => 'nullable|boolean',
+        ]);
+
+        $area = Area::find($validated['id_area']);
+
+        $area->nombre_area = $validated['nombre_area'];
+
+        if (isset($validated['activo'])) {
+            $area->activo = $validated['activo'];
+        }
+
+        $area->save();
+
+        return response()->json([
+            'message' => 'Área actualizada correctamente.',
+            'area' => $area
+        ], 200);
+    }
+
+    #Eliminar un área por id_area
+    public function destroy($id_area){
+        $area = Area::find($id_area);
 
         if (!$area) {
             return response()->json([
-                'message' => 'Área no encontrada.',
+                'message' => 'Área no encontrada.'
             ], 404);
         }
 
-        $area->delete();
+        $area->delete(); // Soft delete o hard delete según configuración
 
         return response()->json([
-            'message' => 'Área eliminada correctamente.',
+            'message' => 'Área eliminada exitosamente.'
         ]);
     }
 
 
     //Para devolver areas, categorias y grados, relacionados.
-    public function AreasConcategoriasConGrados(){
-    // Traemos todas las relaciones con carga de modelos
-    $relaciones = AreaTieneCategorium::with(['area', 'categorium.gradoInicial', 'categorium.gradoFinal'])->get();
+    public function AreasConcategoriasConGradosPorConvocatoria($id_convocatoria){
+        $relaciones = AreaTieneCategorium::with([
+            'area',
+            'categorium.gradoInicial',
+            'categorium.gradoFinal'
+        ])
+        // Filtrar solo las áreas que pertenecen a la convocatoria deseada
+        ->whereHas('area', function ($query) use ($id_convocatoria) {
+            $query->where('id_convocatoria_convocatoria', $id_convocatoria);
+        })
+        ->get();
 
-    // Agrupamos por área
-    $areas = $relaciones->groupBy('id_area_area')->map(function ($items, $areaId) {
-        $area = $items->first()->area; // El área es la misma para todos los items agrupados
+        // Agrupar por área
+        $areas = $relaciones->groupBy('id_area_area')->map(function ($items, $areaId) {
+            $area = $items->first()->area;
 
-        return [
-            'id_area'   => $area->id_area,
-            'nombre_area' => $area->nombre_area,
-            'categorias' => $items->map(function ($item) {
-                $categoria = $item->categorium;
-                return [
-                    'id_categoria'    => $categoria->id_categoria,
-                    'nombre_categoria'=> $categoria->nombre_categoria,
-                    'grado_inicial_id'=> $categoria->grado_ini,
-                    'grado_inicial_nombre' => $categoria->gradoInicial ? $categoria->gradoInicial->nombre_grado : null,
-                    'grado_final_id'  => $categoria->grado_fin,
-                    'grado_final_nombre'   => $categoria->gradoFinal ? $categoria->gradoFinal->nombre_grado : null,
-                ];
-            })->values()
-        ];
-    })->values();
+            return [
+                'id_area' => $area->id_area,
+                'nombre_area' => $area->nombre_area,
+                'categorias' => $items->map(function ($item) {
+                    $categoria = $item->categorium;
+                    return [
+                        'id_categoria' => $categoria->id_categoria,
+                        'nombre_categoria' => $categoria->nombre_categoria,
+                        'grado_inicial_id' => $categoria->grado_ini,
+                        'grado_inicial_nombre' => $categoria->gradoInicial ? $categoria->gradoInicial->nombre_grado : null,
+                        'grado_final_id' => $categoria->grado_fin,
+                        'grado_final_nombre' => $categoria->gradoFinal ? $categoria->gradoFinal->nombre_grado : null,
+                    ];
+                })->values()
+            ];
+        })->values();
 
-    return response()->json($areas);
+        return response()->json($areas);
     }
 
     //Para crear una relacion de Area-Categoria-Grados
-    public function asignarAreaCategoriaGrado(Request $request)
-    {
+    /*
+    public function asignarAreaCategoriaGrado(Request $request){
         $validated = $request->validate([
             'id_area' => 'required|integer|exists:area,id_area',
             'id_categoria' => 'required|integer|exists:categoria,id_categoria',
@@ -125,12 +170,15 @@ class AreaController extends Controller{
             ], 500);
         }
     }
+    */
 
-
-    public function asignarAreaCategoria(Request $request)    {
+    #Relaciona un área y una categoría.
+    public function asignarAreaCategoria(Request $request){
         $validated = $request->validate([
             'id_area' => 'required|integer|exists:area,id_area',
             'id_categoria' => 'required|integer|exists:categoria,id_categoria',
+            'precio' => 'nullable|numeric|min:0',
+            //'activo' => 'nullable|boolean'
         ]);
 
         DB::beginTransaction();
@@ -151,6 +199,9 @@ class AreaController extends Controller{
             AreaTieneCategorium::create([
                 'id_area_area' => $validated['id_area'],
                 'id_categoria_categoria' => $validated['id_categoria'],
+                'precio' => $validated['precio'] ?? 0,
+                //'activo' => $validated['activo'] ?? true,
+                'activo' => true, //por ahora le pondré por defecto true.
             ]);
 
             DB::commit();
@@ -169,7 +220,7 @@ class AreaController extends Controller{
         }
     }
 
-    
+    #Elimna la relación de un área y una categoría.
     public function eliminarAsignacionAreaCategoria(Request $request){
         $validated = $request->validate([
             'id_area' => 'required|integer|exists:area,id_area',
@@ -194,7 +245,8 @@ class AreaController extends Controller{
             DB::commit();
     
             return response()->json([
-                'message' => 'Asignación área-categoría eliminada correctamente.'
+                'message' => 'Asignación área-categoría eliminada correctamente.',
+                'eliminados' => $eliminados
             ], 200);
     
         } catch (\Exception $e) {

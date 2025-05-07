@@ -110,7 +110,7 @@ const Formulario = () => {
           ci: est.ci,
           fechaNac: est.fecha_nacimiento,
           rude: est.rude,
-          id_area: est.idArea,
+          id_area: est.idAarea,
           nombre_area: est?.nombre_area || "",
           id_categoria: est.idCategoria,
           nombre_categoria: est?.nombre_categoria || "",
@@ -339,6 +339,7 @@ const Formulario = () => {
     };
 
     try {
+      console.log(datosEnviar);
       const response = await api.post("/inscribir", datosEnviar);
       console.log("Formulario guardado exitosamente:", response.data);
       toast.success("Formulario guardado exitosamente.");
@@ -388,7 +389,7 @@ const Formulario = () => {
   ) : (
     
     <div className="formulario-page-container">
-      <Caja titulo="Tomar en cuenta" width="50%">
+      <Caja titulo="Tomar en cuenta">
         <div>
           En caso de querer inscribir un grupo de estudiantes sin usar el
           formulario, puede hacerlo descargando el siguiente archivo excel
@@ -396,7 +397,7 @@ const Formulario = () => {
         </div>
         <div className="contenedor-archivo-excel">
           <a
-            href="/plantillas/FormatoParaSubirLista.xlsx"
+            href="/public/plantillas/FormatoParaSubirLista.xlsx"
             download="FormatoParaSubirLista.xlsx"
             className="boton-descargar-excel"
           >
@@ -557,7 +558,28 @@ const Formulario = () => {
               setSelectedRows(selectedRows);
               selectedRowsRef.current = selectedRows;
             }}
-            customStyles={customStyles}
+            customStyles={{
+              pagination: {
+                style: {
+                  backgroundColor: "white"
+                },
+                pageButtonsStyle: {
+                  borderRadius: "50%",
+                  margin: "2px",
+                  cursor: "pointer",
+                  color: "#fff",
+                  fill: "#fff",
+                  backgroundColor: "#1A2D5A", // azul marino
+                  "&:hover": {
+                    backgroundColor: "#27467A", // más claro al pasar el mouse
+                  },
+                  "&:disabled": {
+                    color: "#888",
+                    backgroundColor: "#ccc",
+                  },
+                },
+              },
+            }}
             noDataComponent="Aquí verás a los estudiantes que inscribiste."
             pagination
             responsive
