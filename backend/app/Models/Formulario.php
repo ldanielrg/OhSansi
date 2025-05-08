@@ -59,12 +59,17 @@ class Formulario extends Model
 
 	public function unidad_educativa()
 	{
-		return $this->belongsTo(UnidadEducativa::class, 'id_ue_ue', 'id_ue');
+		return $this->belongsTo(UnidadEducativa::class, 'id_ue_ue');
 	}
 
 	public function convocatorium()
 	{
 		return $this->belongsTo(Convocatoria::class, 'id_convocatoria_convocatoria');
+	}
+
+	public function orden_pagos()
+	{
+		return $this->hasMany(OrdenPago::class, 'id_formulario_formulario');
 	}
 
 	public function inscripciones()
