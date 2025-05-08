@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -22,29 +18,28 @@ use Illuminate\Database\Eloquent\Model;
  * 
  * @property Formulario $formulario
  * @property Collection|Comprobante[] $comprobantes
- *
- * @package App\Models
  */
 class OrdenPago extends Model
 {
 	protected $table = 'orden_pago';
-	public $incrementing = false;
+	protected $primaryKey = 'id_orden';
+	public $incrementing = true; // tu campo id_orden es AUTOINCREMENTAL
 	public $timestamps = false;
 
 	protected $casts = [
-		'id_orden' => 'int',
 		'fecha_emision' => 'datetime',
 		'fecha_vencimiento' => 'datetime',
 		'monto_total' => 'int',
 		'estado' => 'bool',
-		'id_formulario_formulario' => 'int'
+		'id_formulario_formulario' => 'int',
 	];
 
 	protected $fillable = [
 		'fecha_emision',
 		'fecha_vencimiento',
 		'monto_total',
-		'estado'
+		'estado',
+		'id_formulario_formulario', // ✅ este es requerido para la creación
 	];
 
 	public function formulario()
@@ -57,3 +52,4 @@ class OrdenPago extends Model
 		return $this->hasMany(Comprobante::class, 'id_orden_orden_pago');
 	}
 }
+

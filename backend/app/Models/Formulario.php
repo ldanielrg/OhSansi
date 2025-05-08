@@ -69,7 +69,8 @@ class Formulario extends Model
 
 	public function orden_pagos()
 	{
-		return $this->hasMany(OrdenPago::class, 'id_formulario_formulario');
+		return $this->hasMany(OrdenPago::class, 'id_formulario_formulario'); // PARA MANEJAR MAS DE UN ORDEN DE PAGO POR UN FORMULARIO
+		// return $this->hasOne(OrdenPago::class, 'id_formulario_formulario'); //PARA MANEJAR SOLO UN ORDEN DE PAGO POR FORMULARIO CREADA
 	}
 
 	public function inscripciones()
