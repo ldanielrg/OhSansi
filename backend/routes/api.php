@@ -94,4 +94,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/verify-password', [AuthController::class, 'verifyPassword']); //AGREGUE YO PARA VERIFICAR PASSWORD 
 });
 
+//ORDEN DE PAGO FORMULARIO
+use App\Http\Controllers\OrdenPagoController;
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/orden-pago/{id_formulario}', [OrdenPagoController::class, 'mostrarPorFormulario']);
+    // Route::post('/orden-pago', [OrdenPagoController::class, 'crear']); // Si decides crear manualmente el orden de pago
+});
+
+
 #Rutas sin proteger (sólo para pruebas)
