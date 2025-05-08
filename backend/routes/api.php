@@ -17,6 +17,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\FormularioController;
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrdenPagoController;
 
 //Convocatoria
 Route::get('/convocatorias', [ConvocatoriaController::class, 'index']);
@@ -95,7 +96,6 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 //ORDEN DE PAGO FORMULARIO
-use App\Http\Controllers\OrdenPagoController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orden-pago/{id_formulario}', [OrdenPagoController::class, 'mostrarPorFormulario']);

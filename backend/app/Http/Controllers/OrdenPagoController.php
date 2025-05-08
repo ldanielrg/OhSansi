@@ -16,9 +16,10 @@ class OrdenPagoController extends Controller
     {
         $user = $request->user();
 
-        $formulario = Formulario::where('id_formulario', $id_formulario)
-                                ->where('id_usuario', $user->id)
-                                ->first();
+        $formulario = Formulario::with('unidad_educativa')
+                            ->where('id_formulario', $id_formulario)
+                            ->where('id_usuario', $user->id)
+                            ->first();
 
         if (!$formulario) {
             return response()->json(['error' => 'Formulario no encontrado o no pertenece al usuario.'], 404);
@@ -30,7 +31,17 @@ class OrdenPagoController extends Controller
             return response()->json(['error' => 'Orden de pago no encontrada para este formulario.'], 404);
         }
 
-        return response()->json($orden);
+        return response()->json([
+            'id_orden' => $orden->id_orden,
+            'estado' => $orden->estado,
+            'fecha_emision' => $orden->fecha_emision?->format('Y-m-d'),
+            'fecha_vencimiento' => $orden->fecha_vencimiento?->format('Y-m-d'),
+            'monto_total' => $orden->monto_total,
+            'id_formulario' => $formulario->id_formulario,
+            'unidad_educativa' => [
+                'nombre' => $formulario->unidad_educativa->nombre_ue ?? 'No definido',
+            ],
+        ]);
     }
 
     /**

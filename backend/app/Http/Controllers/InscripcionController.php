@@ -6,6 +6,8 @@ use App\Models\Formulario;
 use App\Models\Registrador;
 use App\Models\Estudiante;
 use App\Models\EstudianteEstaInscrito;
+use App\Models\OrdenPago;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;;
@@ -125,7 +127,7 @@ class InscripcionController extends Controller{
                     ]);
                 }
             }
-
+            
             DB::commit();
 
             return response()->json([
