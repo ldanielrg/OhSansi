@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const CrearEvento = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  
   const { idConvocatoria } = location.state || {};
   useEffect(() => {
     if (!idConvocatoria) {
@@ -52,9 +52,14 @@ const CrearEvento = () => {
     console.log('Payload a enviar:', payload);
 
     try {
-      const response = await api.post('/eventos', payload);
-      toast.success('¡Evento creado exitosamente!');
-      setTimeout(() => navigate('/eventos'), 1500);
+      api.post('/eventos', payload);
+      navigate('/eventos',{
+        state: {
+          message:'!Evento creado exitosamente.',
+          type: 'success',
+          idConvocatoria: idConvocatoria     // <-- esto es nuevo
+        }
+      });
     } catch (error) {
       console.error('Error al crear evento:', error);
       // Si el backend devuelve un mensaje de error en response.data.message, lo mostramos

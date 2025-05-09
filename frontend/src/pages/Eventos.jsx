@@ -14,7 +14,7 @@ const Eventos = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
+ 
   // Cargar convocatorias al inicio
   useEffect(() => {
     const fetchConvocatorias = async () => {
