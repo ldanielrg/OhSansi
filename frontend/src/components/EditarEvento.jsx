@@ -87,15 +87,20 @@ const EditarEvento = () => {
 
   if (cargando) {
     return (
-      <div className="container mt-4 d-flex justify-content-center">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "60vh" /* Empuja el spinner hacia abajo */,
+        }}
+      >
         <BallTriangle
           height={100}
           width={100}
           radius={5}
           color="#003366"
           ariaLabel="ball-triangle-loading"
-          wrapperClass=""
-          wrapperStyle=""
           visible={true}
         />
       </div>

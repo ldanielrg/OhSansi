@@ -1,146 +1,146 @@
-// src/pages/ConfiguracionConvocatoria.jsx
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 import "../styles/ConfiguracionConvocatoria.css";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const ConfiguracionConvocatoria = () => {
   const [convocatorias, setConvocatorias] = useState([]);
-  const [selected, setSelected] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
+
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("convocatorias")) || [];
-    setConvocatorias(stored);
-    if (location.state?.message) {
-      toast[location.state.type](location.state.message);
-      window.history.replaceState({}, document.title);
+    fetchAll();
+  }, []);
+
+  const fetchAll = async () => {
+    try {
+      const { data } = await api.get("/convocatorias");
+      setConvocatorias(
+        data.map((c) => ({
+          ...c,
+          fecha_inicio: c.fecha_inicio.split("T")[0],
+          fecha_final: c.fecha_final.split("T")[0],
+        }))
+      );
+    } catch {
+      toast.error("No se pudieron cargar las convocatorias.");
     }
-  }, [location.state]);
-
-  const handleNavigate = (path) => (e) => {
-    // e.preventDefault(); // Ya no necesitamos prevenir el default aquí si solo llamamos a navigate
-    navigate(path);
   };
 
-  const handleCrear =
-    convocatorias.length === 0 // Mantén la restricción de 1 convocatoria
-      ? handleNavigate("/crear-configuracion-convocatoria")
-      : () => {
-          // Opcional: podrías mostrar una alerta aquí si quieres
-          // alert('Solo se permite crear una convocatoria a la vez.');
-          
-        };
+  const handleCrear  = () => navigate("/crear-configuracion-convocatoria");
+  const handleEditar = () => selectedId && navigate(`/editar-configuracion-convocatoria/${selectedId}`);
+  const promptDelete = () => selectedId && setShowDeleteModal(true);
 
-  // --- CORRECCIÓN AQUÍ ---
-  // Si hay una convocatoria seleccionada, navega a la ruta de edición incluyendo su ID.
-  const handleEditar = selected
-    ? handleNavigate(`/editar-configuracion-convocatoria/${selected.id}`) // <-- Pasa el ID aquí
-    : () => {}; // Si no hay nada seleccionado, no hace nada.
-  // ---------------------
-
-  const promptDelete = (e) => {
-    e.preventDefault();
-    if (selected) setShowDeleteModal(true);
+  const confirmDelete = async () => {
+    try {
+      await api.delete(`/convocatoria-eliminar/${selectedId}`);
+      toast.error("Convocatoria eliminada.");
+      setShowDeleteModal(false);
+      setSelectedId(null);
+      fetchAll();
+    } catch {
+      toast.error("No se pudo eliminar.");
+    }
   };
+  const cancelDelete = () => setShowDeleteModal(false);
 
-  const confirmDelete = () => {
-  const updated = convocatorias.filter(c => c.id !== selected.id);
-  localStorage.setItem('convocatorias', JSON.stringify(updated));
-  setConvocatorias(updated);
-  setSelected(null);
-  setShowDeleteModal(false);
-  toast.error(`Convocatoria "${selected.nombre}" eliminada.`);
-};
-
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-    toast.info('Eliminación cancelada.');
+  const toggleActivo = async (e, id) => {
+    e.stopPropagation();
+    try {
+      await api.put(`/convocatoria-estado/${id}`);
+      toast.success("Estado actualizado.");
+      fetchAll();
+    } catch {
+      toast.error("Error al cambiar estado.");
+    }
   };
 
   return (
     <div className="config-page">
       <div className="config-container">
-        <div className="config-header">Convocatoria</div>
-        <div className="config-body">
-          {convocatorias.length === 0 ? (
-            <p>No hay convocatoria</p>
-          ) : (
-            <table className="tabla-config">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th style={{ width: "500px" }}>Descripción</th>
-                </tr>
-              </thead>
-              <tbody>
-                {convocatorias.map((c) => (
-                  <tr
-                    key={c.id}
-                    onClick={() => setSelected(c)}
-                    className={selected?.id === c.id ? "fila-seleccionada" : ""}
-                  >
-                    <td>{c.nombre}</td>
-                    <td>{c.descripcion}</td>
+        <div className="config-card">
+          <div className="config-card-header">Convocatorias</div>
+          <div className="config-card-body">
+            {convocatorias.length === 0 ? (
+              <p>No hay convocatorias.</p>
+            ) : (
+              <table className="tabla-config">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Estado</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody>
+                  {convocatorias.map((c) => (
+                    <tr
+                      key={c.id_convocatoria}
+                      className={selectedId === c.id_convocatoria ? "fila-seleccionada" : ""}
+                      onClick={() => setSelectedId(c.id_convocatoria)}
+                    >
+                      <td>{c.nombre_convocatoria}</td>
+                      <td>{c.descripcion}</td>
+                      <td>{c.fecha_inicio}</td>
+                      <td>{c.fecha_final}</td>
+                      <td>
+                        <button
+                          className={`estado-badge ${c.activo ? "activo" : "inactivo"}`}
+                          onClick={(e) => toggleActivo(e, c.id_convocatoria)}
+                        >
+                          {c.activo ? "Activo" : "Inactivo"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
-          <div className="acciones-container">
-            <div className="acciones-left">
-              {/* El botón Crear se deshabilita si ya existe una convocatoria */}
-              <button
-                className="btn-primary"
-                onClick={handleCrear}
-                disabled={convocatorias.length > 0}
-              >
-                Crear
-              </button>
-              {/* El botón Editar se deshabilita si no hay selección */}
-              <button
-                className="btn-primary"
-                onClick={handleEditar}
-                disabled={!selected}
-              >
-                Editar
-              </button>
-            </div>
-            <div className="acciones-right">
-              {/* El botón Eliminar se deshabilita si no hay selección */}
-              <button
-                className="btn-primary"
-                onClick={promptDelete}
-                disabled={!selected}
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-
-          {showDeleteModal && (
-            <div className="modal-container">
-              <div className="modal-content">
-                <p>¿Deseas eliminar la convocatoria "{selected?.nombre}"?</p>{" "}
-                {/* Usar optional chaining */}
-                <div style={{ marginTop: "1rem" }}>
-                  <button
-                    className="btn-primary"
-                    onClick={confirmDelete}
-                    style={{ marginRight: "1rem" }}
-                  >
-                    Eliminar
-                  </button>
-                  <button className="btn-primary" onClick={cancelDelete}>
-                    Cancelar
-                  </button>
-                </div>
+            <div className="acciones-container">
+              <div className="acciones-left">
+                <button className="btn-crear" onClick={handleCrear}>
+                  Crear Convocatoria
+                </button>
+                <button
+                  className="btn-editar"
+                  onClick={handleEditar}
+                  disabled={!selectedId}
+                >
+                  Editar Convocatoria
+                </button>
+              </div>
+              <div className="acciones-right">
+                <button
+                  className="btn-eliminar"
+                  onClick={promptDelete}
+                  disabled={!selectedId}
+                >
+                  Eliminar Convocatoria
+                </button>
               </div>
             </div>
-          )}
+
+            {showDeleteModal && (
+              <div className="modal-container">
+                <div className="modal-content">
+                  <p>¿Eliminar convocatoria seleccionada?</p>
+                  <div className="modal-buttons">
+                    <button className="btn-crear" onClick={confirmDelete}>
+                      Sí, eliminar
+                    </button>
+                    <button className="btn-eliminar" onClick={cancelDelete}>
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <ToastContainer position="bottom-right" autoClose={3000} />
