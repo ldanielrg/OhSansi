@@ -17,6 +17,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\FormularioController;
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrdenPagoController;
 
 //Convocatoria
 Route::get('/convocatorias', [ConvocatoriaController::class, 'index']);
@@ -94,5 +95,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/permisos', [PermisoController::class, 'index']);
     Route::post('/user/verify-password', [AuthController::class, 'verifyPassword']); //AGREGUE YO PARA VERIFICAR PASSWORD 
 });
+
+//ORDEN DE PAGO FORMULARIO
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/orden-pago/{id_formulario}', [OrdenPagoController::class, 'mostrarPorFormulario']);
+    // Route::post('/orden-pago', [OrdenPagoController::class, 'crear']); // Si decides crear manualmente el orden de pago
+});
+
 
 #Rutas sin proteger (sólo para pruebas)
