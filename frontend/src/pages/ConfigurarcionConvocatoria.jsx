@@ -30,7 +30,14 @@ const ConfiguracionConvocatoria = () => {
   };
 
   const handleCrear  = () => navigate("/crear-configuracion-convocatoria");
-  const handleEditar = () => selectedId && navigate(`/editar-configuracion-convocatoria/${selectedId}`);
+  const handleEditar = () => {
+    const convocatoria = convocatorias.find(c => c.id_convocatoria === selectedId);
+    if (selectedId && convocatoria.activo) {
+      navigate(`/editar-configuracion-convocatoria/${selectedId}`);
+    } else {
+      toast.warn("Sólo puedes editar convocatorias activas.");
+    }
+  };
   const promptDelete = () => selectedId && setShowDeleteModal(true);
 
   const confirmDelete = async () => {

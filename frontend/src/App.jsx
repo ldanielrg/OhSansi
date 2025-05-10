@@ -43,6 +43,7 @@ import CamposModificarCuenta from './pages/CamposModificarCuenta'; //
 import ConfiguracionCuentas from './pages/ConfiguracionCuentas';
 import OrdenDePago from './pages/OrdenDePago';
 import ElegirConvocatoria from "./pages/ElegirConvocatoria";
+import GestionarConvocatoria from "./pages/GestionarConvocatoria";
 
 function App() {
   return (
@@ -89,7 +90,9 @@ function App() {
           <Route path="/inscripciones" element={<Layout><Inscripciones /></Layout>}/> 
           <Route path="/crear-ue" element={<Layout><CrearUE /></Layout>}/>
           <Route path="/crear-configuracion-convocatoria" element={<Layout><CrearConfigurarConvocatoria /></Layout>}/>
+          <Route path="/editar-configuracion-convocatoria/:id" element={<Layout><EditarConfigurarConvocatoria /></Layout>}/>
           <Route path="/configuracion-convocatoria" element={<Layout><ConfiguracionConvocatoria/></Layout>}/>
+          <Route path="/configuracion-convocatoria/gestionar/:id_convocatoria" element={<Layout><GestionarConvocatoria/></Layout>}/>
       </Route>
     </Routes>
     </AuthProvider>

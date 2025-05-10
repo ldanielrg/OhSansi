@@ -19,15 +19,15 @@ export default function CrearConfiguracionConvocatoria() {
   const handleCrear = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/convocatoria-crear", {
+      const res = await api.post("/convocatoria-crear", {
         nombre_convocatoria: form.nombre,
         descripcion: form.descripcion,
         fecha_inicio: form.inicio,
         fecha_final: form.fin,
       });
-      navigate("/configuracion-convocatoria", {
-        state: { message: "Convocatoria creada.", type: "success" },
-      });
+      const newId = res.data.id_convocatoria; // <-- Asume que viene aquí
+      toast.success("Convocatoria creada.");
+      navigate(`/configuracion-convocatoria`);
     } catch {
       toast.error("Error al crear convocatoria.");
     }
@@ -90,13 +90,7 @@ export default function CrearConfiguracionConvocatoria() {
                 <button type="submit" className="btn-crear">
                   Crear
                 </button>
-                <button
-                  type="button"
-                  className="btn-crear"
-                  onClick={() => navigate("/configuracion-convocatoria/gestionar")}
-                >
-                  Gestionar
-                </button>
+              
               </div>
               <div className="acciones-derecha">
                 <button
@@ -113,5 +107,5 @@ export default function CrearConfiguracionConvocatoria() {
       </div>
       <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
-);
+  );
 }
