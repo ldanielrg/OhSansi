@@ -4,3 +4,8 @@
     align-items: center;
     flex-direction: column;
 }
+.contenedor-fila-1-orden{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
