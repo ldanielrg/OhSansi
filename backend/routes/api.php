@@ -100,7 +100,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orden-pago/{id_formulario}', [OrdenPagoController::class, 'mostrarPorFormulario']);
-    // Route::post('/orden-pago', [OrdenPagoController::class, 'crear']); // Si decides crear manualmente el orden de pago
+    Route::post('/orden-pago', [OrdenPagoController::class, 'crear']); // AGREGUE YO, PARA INSERTAR DATOS EN BD
 });
 
 
