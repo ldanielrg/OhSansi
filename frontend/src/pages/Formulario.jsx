@@ -49,6 +49,9 @@ const Formulario = () => {
   const [categorias, setCategorias] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [ue, setUe] = useState([]);
+  const [searchParams] = useSearchParams();
+  const [idConvocatoria, setIdConvocatoria] = useState(null);
+
 
   const columns = [
     { name: "Nombre", selector: (row) => row.nombre, sortable: true },
@@ -70,16 +73,23 @@ const Formulario = () => {
       },
     },
   };
-  useEffect(() => {
-    if (formData.area) {
-      fetch(`http://localhost:8000/api/categorias/${formData.area}`)
-        .then((res) => res.json())
-        .then((data) => setCategorias(data))
-        .catch((error) => toast.error("Error al obtener categorías"));
-    } else {
-      setCategorias([]);
+useEffect(() => {
+  const cargarAreas = async () => {
+    if (!idConvocatoria) return;
+    try {
+      const res = await api.get(`/areas/${idConvocatoria}`);
+      setAreas(res.data);
+    } catch (error) {
+      console.error("Error al obtener áreas:", error);
+      toast.error("Error al obtener las áreas.");
     }
-  }, [formData.area]);
+  };
+
+  cargarAreas();
+}, [idConvocatoria]);
+
+
+
 
   useEffect(() => {
     fetch("http://localhost:8000/api/areas")
@@ -92,41 +102,67 @@ const Formulario = () => {
       .then((res) => res.json())
       .then((data) => setUe(data));
   }, []);
+  useEffect(() => {
+  const cargarCategorias = async () => {
+    if (!formData.area || isNaN(parseInt(formData.area))) {
+      setCategorias([]);
+      return;
+    }
+
+    try {
+      const res = await api.get(`/categorias/${formData.area}`);
+      setCategorias(res.data);
+    } catch (error) {
+      console.error("Error al obtener categorías:", error);
+      toast.error("Error al obtener las categorías.");
+    }
+  };
+
+  cargarCategorias();
+}, [formData.area]);
+
 
   useEffect(() => {
-    const cargarFormulario = async () => {
-      if (parseInt(id) === 0) {
-        setCargando(false); // ✅ Si es nuevo, no carga nada
-        return;
-      }
-      try {
-        const response = await api.get(`/formulario-detalles/${id}`);
-        const estudiantes = response.data.estudiantes;
-        const estudiantesFormateados = estudiantes.map((est) => ({
-          id_estudiante: est.id_estudiante ?? null,
-          nombre: est.nombre,
-          apellido: est.apellido,
-          email: est.email,
-          ci: est.ci,
-          fechaNac: est.fecha_nacimiento,
-          rude: est.rude,
-          id_area: est.idAarea,
-          nombre_area: est?.nombre_area || "",
-          id_categoria: est.idCategoria,
-          nombre_categoria: est?.nombre_categoria || "",
-          municipio: "",
-          unidadEducativa: "",
-        }));
-        setRowData(estudiantesFormateados);
-      } catch (error) {
-        console.error("Error al cargar formulario:", error);
-        toast.error("No se pudo cargar el formulario.");
-      } finally {
-        setCargando(false); // ✅ Siempre apagar loader
-      }
-    };
-    cargarFormulario();
-  }, [id]);
+  const cargarFormulario = async () => {
+    if (parseInt(id) === 0) {
+      setCargando(false);
+      return;
+    }
+
+    try {
+      const response = await api.get(`/formulario-detalles/${id}`);
+      const estudiantes = response.data.estudiantes;
+
+      // 👇 guardar convocatoria
+      setIdConvocatoria(response.data.id_convocatoria_convocatoria);
+
+      const estudiantesFormateados = estudiantes.map((est) => ({
+        id_estudiante: est.id_estudiante ?? null,
+        nombre: est.nombre,
+        apellido: est.apellido,
+        email: est.email,
+        ci: est.ci,
+        fechaNac: est.fecha_nacimiento,
+        rude: est.rude,
+        id_area: est.idAarea,
+        nombre_area: est?.nombre_area || "",
+        id_categoria: est.idCategoria,
+        nombre_categoria: est?.nombre_categoria || "",
+        municipio: "",
+        unidadEducativa: "",
+      }));
+      setRowData(estudiantesFormateados);
+    } catch (error) {
+      console.error("Error al cargar formulario:", error);
+      toast.error("No se pudo cargar el formulario.");
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  cargarFormulario();
+}, [id]);
+
   
 
   const opcionesFiltradasUE = ue
