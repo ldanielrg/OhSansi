@@ -8,8 +8,9 @@ import { useAuth } from "../context/AuthContext";
 import '../styles/OrdenDePago.css';
 
 const OrdenDePago = () => {
-    const { id } = useParams();
+    const { id } = useParams(); // ID del formulario
     const [formulario, setFormulario] = useState(null);
+    const [orden, setOrden] = useState(null);
     const [rowData, setRowData] = useState([]);
     const [cargando, setCargando] = useState(true);
     const { user } = useAuth();
@@ -23,17 +24,18 @@ const OrdenDePago = () => {
     ];
 
     useEffect(() => {
-        const cargarFormulario = async () => {
+        const cargarDatos = async () => {
             if (parseInt(id) === 0) {
                 setCargando(false);
                 return;
             }
-    
+
             try {
+                // 1. Datos del formulario con estudiantes
                 const response = await api.get(`/formulario-detalles/${id}`);
                 const data = response.data;
                 setFormulario(data);
-    
+
                 const estudiantes = data.estudiantes || [];
                 const estudiantesFormateados = estudiantes.map((est) => ({
                     nombre: est.nombre,
@@ -41,18 +43,20 @@ const OrdenDePago = () => {
                     nombre_area: est?.nombre_area || "",
                     nombre_categoria: est?.nombre_categoria || "",
                 }));
-    
                 setRowData(estudiantesFormateados);
+
+                // 2. Datos de la orden de pago
+                const ordenRes = await api.get(`/orden-pago/${id}`);
+                setOrden(ordenRes.data);
             } catch (error) {
-                console.error("Error al cargar formulario:", error);
+                console.error("Error al cargar los datos:", error);
             } finally {
                 setCargando(false);
             }
         };
-    
-        cargarFormulario();
+
+        cargarDatos();
     }, [id]);
-    
 
     return (
         <div className='orden-pago-container'>
@@ -61,13 +65,14 @@ const OrdenDePago = () => {
                     <p>Cargando datos...</p>
                 ) : (
                     <>
-                        <p><strong>ID:</strong></p>
-                        <p><strong>Estado:</strong> {formulario?.estado}</p>
-                        <p><strong>Formulario: #</strong></p>
-                        <p><strong>Fecha de emisión:</strong> {formulario?.fecha_emision}</p>
-                        <p><strong>Fecha de vencimiento:</strong> {formulario?.fecha_vencimiento}</p>
+                        <p><strong>ID:</strong> {orden?.id_orden}</p>
+                        <p><strong>Estado:</strong> {orden?.estado ? 'Pagado' : 'Pendiente'}</p>
+                        <p><strong>Formulario:</strong> {formulario?.id_formulario}</p>
+                        <p><strong>Fecha de emisión:</strong> {orden?.fecha_emision?.split('T')[0]}</p>
+                        <p><strong>Fecha de vencimiento:</strong> {orden?.fecha_vencimiento?.split('T')[0]}</p>
                         <p><strong>Nombre del responsable:</strong> {user.name}</p>
-                        <p><strong>Unidad educativa:</strong> {formulario?.unidad_educativa?.nombre}</p>
+                        <p><strong>Unidad educativa:</strong> {orden?.unidad_educativa?.nombre}</p>
+
 
                         <h3>Estudiantes inscritos:</h3>
                         <DataTable
@@ -77,33 +82,28 @@ const OrdenDePago = () => {
                             noDataComponent="No hay estudiantes registrados."
                             customStyles={{
                                 pagination: {
-                                style: {
-                                    backgroundColor: "white"
-                                },
-                                pageButtonsStyle: {
-                                    borderRadius: "50%",
-                                    margin: "2px",
-                                    cursor: "pointer",
-                                    color: "#fff",
-                                    fill: "#fff",
-                                    backgroundColor: "#1A2D5A", // azul marino
-                                    "&:hover": {
-                                    backgroundColor: "#27467A", // más claro al pasar el mouse
+                                    style: { backgroundColor: "white" },
+                                    pageButtonsStyle: {
+                                        borderRadius: "50%",
+                                        margin: "2px",
+                                        cursor: "pointer",
+                                        color: "#fff",
+                                        fill: "#fff",
+                                        backgroundColor: "#1A2D5A",
+                                        "&:hover": { backgroundColor: "#27467A" },
+                                        "&:disabled": {
+                                            color: "#888",
+                                            backgroundColor: "#ccc",
+                                        },
                                     },
-                                    "&:disabled": {
-                                    color: "#888",
-                                    backgroundColor: "#ccc",
-                                    },
-                                },
                                 },
                             }}
                         />
                         <section>
-                        <BotonForm 
-  texto='Volver' 
-  onClick={() => navigate('/inscripciones')}
-/>
-
+                            <BotonForm
+                                texto='Volver'
+                                onClick={() => navigate('/inscripciones')}
+                            />
                         </section>
                     </>
                 )}
@@ -113,3 +113,4 @@ const OrdenDePago = () => {
 };
 
 export default OrdenDePago;
+
