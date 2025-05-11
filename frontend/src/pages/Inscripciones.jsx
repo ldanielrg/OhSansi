@@ -90,7 +90,7 @@ const Inscripciones = () => {
 
           <button
             className='botones-iconos-crud-formularios'
-            onClick={() => navigate(`/orden-de-pago/${row.id_formulario}`)}
+            onClick={() => handleOrdenPago(row.id_formulario)}
           >
             <BsFileEarmarkText className='iconos-crud-formularios icono-orden-pago-formulario' />
           </button>
@@ -144,6 +144,36 @@ const Inscripciones = () => {
     }
     
   };
+  // AGREGUE YO
+  const handleOrdenPago = async (id_formulario) => {
+  try {
+    // Verificar si ya existe orden
+    await api.get(`/orden-pago/${id_formulario}`);
+    // Si existe, simplemente navega
+    navigate(`/orden-de-pago/${id_formulario}`);
+  } catch (error) {
+    // Si da error 404, se asume que no existe y se crea
+    if (error.response && error.response.status === 404) {
+      try {
+        // Crear la orden
+        await api.post('/orden-pago', {
+          fecha_emision: new Date().toISOString().split('T')[0],
+          fecha_vencimiento: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0], // 7 días después
+          monto_total: 20, // puedes ajustar el cálculo real en backend si prefieres
+          id_formulario_formulario: id_formulario
+        });
+        navigate(`/orden-de-pago/${id_formulario}`);
+      } catch (crearError) {
+        toast.error('No se pudo crear la orden de pago.');
+        console.error(crearError);
+      }
+    } else {
+      toast.error('Error al verificar la orden de pago.');
+      console.error(error);
+    }
+  }
+};
+// HASTA AHI
   
     return (
       <>
