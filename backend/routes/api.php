@@ -35,7 +35,7 @@ Route::get('/convocatoria-categorias/{id_convocatoria}', [ConvocatoriaController
 Route::get('/convocatoria-areas-categorias/{id_convocatoria}', [ConvocatoriaController::class, 'obtenerAreasCategoriaPorConvocatoria']);
 Route::get('/convocatoria-areas-categorias-grados/{id_convocatoria}', [ConvocatoriaController::class, 'obtenerAreasCategoriaGradosPorConvocatoria']);
     //Para CRUD Áreas
-    Route::get('/areas/{id}', [AreaController::class, 'obtenerAreasPorConvocatoria']);
+    Route::get('/areas/{id_convocatoria}', [AreaController::class, 'obtenerAreasPorConvocatoria']);
     Route::post('/area-crear/{id_convocatoria}', [AreaController::class, 'store']); //necesita id_convocatoria
     Route::post('/area-editar', [AreaController::class, 'update']);
     Route::delete('/area-eliminar/{id_area}', [AreaController::class, 'destroy']); //necesita id_area, id_convocatoria
@@ -79,10 +79,11 @@ Route::middleware('auth:sanctum')->post('/crear-cuenta', [CuentaController::clas
 
 //INSCRIPCIONES
 Route::middleware('auth:sanctum')->get('/recuperar-formularios/{id_convocatoria}', [InscripcionController::class, 'recuperarFormularios']);
-Route::middleware('auth:sanctum')->delete('/formulario-eliminar/{id}', [InscripcionController::class, 'eliminarFormulario']); //CARAJO RAMIREZ pon completa la linea mrd
+Route::middleware('auth:sanctum')->delete('/formulario-eliminar/{id}', [InscripcionController::class, 'eliminarFormulario']); 
 Route::middleware('auth:sanctum')->get('/formulario-detalles/{id_formulario}', [InscripcionController::class, 'mostrarFormulario']);
-
-Route::middleware('auth:sanctum')->post('/inscribir', [InscripcionController::class, 'store']); //FALTA PARA CONVOCATORIAS MULTIPLES
+Route::middleware('auth:sanctum')->get('/inscripcion', [InscripcionController::class, 'inscribirEstudiantes']); 
+Route::post('/editar-registro-estudiante', [InscripcionController::class, 'editarEstudiante']);
+Route::delete('/eliminar-registro-estudiante', [InscripcionController::class, 'eliminarInscripcion']);
 
 
 

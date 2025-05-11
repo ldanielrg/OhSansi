@@ -1,0 +1,318 @@
+.crear-config-page {
+    padding: 2rem;
+    background: #f9f9f9;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .crear-config-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .crear-config-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  .crear-config-header {
+    background: #003355;
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 1.5rem 2rem;
+    margin: -2px -2px 1rem;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+  
+  .crear-config-body {
+    padding: 2rem;
+  }
+  
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+  }
+  .form-row label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  .form-row input,
+  .form-row textarea {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  .fixed-desc {
+    height: 100px;
+    resize: none;
+  }
+  
+  .acciones-crear {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+  }
+  .acciones-izquierda,
+  .acciones-derecha {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .btn-crear {
+    background-color: #003366;
+    color: #ffffff;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  .btn-crear:hover {
+    background-color: #001d40;
+  }
+  
+  .btn-eliminar {
+    background-color: #003366;
+    color: #ffffff;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  .btn-eliminar:hover {
+    background-color: #001d40;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .crear-config-body { padding: 1rem; }
+    .crear-config-header {
+      font-size: 1.5rem;
+      padding: 1rem;
+      margin: -1px -1px 1rem;
+    }
+    .acciones-crear {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  .btn-gestionar {
+    background-color: #003366;
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    margin-left: 1rem;
+  }
+  
+  .btn-gestionar:hover {
+    background-color: #001d40;
+  }
+
+  /*
+  
+
+.config-page {
+  padding: 20px;
+  background-color: #FFFFFF;
+  min-height: 100vh;
+}
+
+.config-container {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  margin: 20px auto;
+  max-width: 1200px;
+}
+
+.config-header {
+  background-color: #003366;
+  color: #FFFFFF;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 1.4rem;
+}
+
+.config-body {
+  padding: 20px;
+  color: #333;
+  font-size: 16px;
+}
+
+.config-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 20px;
+  margin-bottom: 2rem;
+}
+
+.tabla-config,
+.tabla-lista,
+.tabla-convocatoria-areas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.tabla-config th,
+.tabla-config td,
+.tabla-lista th,
+.tabla-lista td,
+.tabla-convocatoria-areas th,
+.tabla-convocatoria-areas td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.tabla-lista tr:hover,
+.tabla-config tr:hover,
+.tabla-convocatoria-areas tr:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.fila-seleccionada {
+  background-color: #d2ebff !important;
+}
+
+.acciones-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.acciones-left,
+.acciones-right {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-primary {
+  background-color: #003366;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  font-size: 1em;
+}
+
+.btn-primary:hover {
+  background-color: #002a5c;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-container {
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+}
+
+.modal-content p {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.nueva-convocatoria {
+  margin-top: 2rem;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row label,
+.form-row input,
+.form-row select,
+.form-row textarea {
+  flex: 1;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.fixed-desc {
+  height: 80px;
+  resize: none;
+}
+
+.btn-remove {
+  background: none;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  color: #900;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-warning {
+  background-color: #ffc107;
+  color: black;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+  */
+  
