@@ -5,6 +5,7 @@ import api from "../api/axios";
 import "../styles/EditarEvento.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { BallTriangle } from "react-loader-spinner";
 
 const EditarEvento = () => {
   const { id } = useParams();
@@ -66,29 +67,42 @@ const EditarEvento = () => {
 
     try {
       await api.put(`/eventos/${id}`, payload);
-      toast.success("Evento actualizado exitosamente.");
-      setTimeout(() => {
-        navigate("/eventos", {
-          state: { message: "Evento actualizado.", type: "success" },
-        });
-      }, 1500);
+      navigate("/eventos", {
+        state: { message: "Evento editado exitosamente.", type: "success" },
+      });
     } catch (err) {
       console.error("Error al actualizar evento:", err);
       const msg =
         err.response?.data?.message || "Error al actualizar el evento.";
+      // aquí sí mostramos el toast de error
       toast.error(msg);
     }
   };
 
   const handleSalir = () => {
-    navigate("/eventos");
+    navigate("/eventos", {
+      state: { message: "Edición cancelada.", type: "info" },
+    });
   };
 
-  // 3️⃣ Renderizado condicional
   if (cargando) {
     return (
-      <div className="container mt-4">
-        <p>Cargando datos del evento...</p>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "60vh" /* Empuja el spinner hacia abajo */,
+        }}
+      >
+        <BallTriangle
+          height={100}
+          width={100}
+          radius={5}
+          color="#003366"
+          ariaLabel="ball-triangle-loading"
+          visible={true}
+        />
       </div>
     );
   }
