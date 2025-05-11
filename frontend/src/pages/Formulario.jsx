@@ -376,33 +376,59 @@ useEffect(() => {
   };
 
   const handleEliminar = async () => {
-    const seleccionActual = selectedRowsRef.current;
-    if (seleccionActual.length === 0)
-      return toast.warn("Por favor selecciona un registro para eliminar.");
+  const seleccionActual = selectedRowsRef.current;
+  if (seleccionActual.length === 0)
+    return toast.warn("Por favor selecciona un registro para eliminar.");
 
-    const result = await MySwal.fire({
-      title: '¿Eliminar registros?',
-      text: "¿Deseas eliminar el/los registros seleccionados?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-    });
+  const result = await MySwal.fire({
+    title: '¿Eliminar registros?',
+    text: "¿Deseas eliminar el/los registros seleccionados?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+  });
 
-    if (!result.isConfirmed) return;
+  if (!result.isConfirmed) return;
 
-    const nuevosDatos = rowData.filter(
-      (row) => !seleccionActual.some((sel) => sel.ci === row.ci)
-    );
-    setRowData(nuevosDatos);
-    setSelectedRows([]);
-    selectedRowsRef.current = [];
-    setToggleClearSelected((prev) => !prev);
+  const nuevosDatos = [...rowData];
+  let errorAlEliminar = false;
 
-    toast.success('Registros eliminados correctamente.');
-  };
+  for (const estudiante of seleccionActual) {
+    // Si tiene id_estudiante, intentar eliminar desde backend
+    if (estudiante.id_estudiante) {
+      try {
+        await api.delete('/eliminar-registro-estudiante', {
+          data: {
+            id_formulario: parseInt(id),
+            id_estudiante: estudiante.id_estudiante,
+            idArea: estudiante.id_area,
+            idCategoria: estudiante.id_categoria
+          }
+        });
+      } catch (error) {
+        console.error('Error al eliminar estudiante:', error);
+        toast.error('Error al eliminar estudiante inscrito.');
+        errorAlEliminar = true;
+        continue;
+      }
+    }
+
+    // Quitar del estado local
+    const index = nuevosDatos.findIndex((r) => r.ci === estudiante.ci);
+    if (index !== -1) nuevosDatos.splice(index, 1);
+  }
+
+  setRowData(nuevosDatos);
+  setSelectedRows([]);
+  selectedRowsRef.current = [];
+  setToggleClearSelected(prev => !prev);
+
+  if (!errorAlEliminar) toast.success('Estudiantes eliminados correctamente.');
+};
+
 
 const handleGuardarFormulario = async () => {
   if (rowData.length === 0) {
