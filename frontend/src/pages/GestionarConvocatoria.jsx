@@ -130,20 +130,41 @@ export default function GestionarConvocatoria() {
 
   const handleUpdateCat = async () => {
     if (!editCat.id) return;
-    await api.post(`/categoria-editar`, {
-      id_categoria: editCat.id,
-      nombre_categoria: editCat.nombre_categoria,
-    });
-    toast.success("Categoría actualizada");
-    setEditCat({ id: null, nombre_categoria: "" });
-    loadAll();
+
+    try {
+      await api.post(`/categoria-editar`, {
+        id_categoria: editCat.id,
+        nombre_categoria: newCat.trim(), //input actualizado
+      });
+
+      toast.success("Categoría actualizada");
+      setEditCat({ id: null, nombre_categoria: "" });
+      setNewCat(""); // limpia input
+      loadAll();
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al editar categoría.");
+    }
   };
 
   const handleDeleteCat = async (id) => {
     if (!window.confirm("¿Eliminar esta categoría?")) return;
-    await api.delete(`/categoria-eliminar/${id}`);
-    toast.error("Categoría eliminada");
-    loadAll();
+
+    try {
+      await api.delete(`/categoria-eliminar/${id}`);
+      toast.error("Categoría eliminada");
+
+      // Limpia si era la seleccionada
+      if (editCat.id === id) {
+        setEditCat({ id: null, nombre_categoria: "" });
+        setNewCat("");
+      }
+
+      loadAll();
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al eliminar categoría.");
+    }
   };
 
   const handleAssignAreaCat = async () => {
@@ -266,12 +287,13 @@ export default function GestionarConvocatoria() {
                   {categorias.map((c) => (
                     <tr
                       key={c.id_categoria}
-                      onClick={() =>
+                      onClick={() => {
                         setEditCat({
                           id: c.id_categoria,
                           nombre_categoria: c.nombre_categoria,
-                        })
-                      }
+                        });
+                        setNewCat(c.nombre_categoria); // 👈 actualiza input
+                      }}
                       className={
                         editCat.id === c.id_categoria ? "fila-seleccionada" : ""
                       }
