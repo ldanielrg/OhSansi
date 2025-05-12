@@ -61,10 +61,10 @@ export default function GestionarConvocatoria() {
   const handleCreateArea = async () => {
     if (!newArea.trim()) return toast.warn("Escribe un nombre de área.");
     try {
-      await api.post(`/area-crear/${id_convocatoria}`, {
+      await api.post(`/convocatoria/${id_convocatoria}/area`, {
         nombre: newArea.trim(),
-        id_convocatoria: Number(id_convocatoria),
       });
+
       toast.success("Área creada");
       setNewArea("");
       loadAll();
@@ -379,7 +379,5 @@ export default function GestionarConvocatoria() {
       </div>
       <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
-  );
-
-  
+  ); 
 }
