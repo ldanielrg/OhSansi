@@ -361,16 +361,21 @@ export default function GestionarConvocatoria() {
                   </tr>
                 </thead>
                 <tbody>
-                  {asignaciones.map((a, i) =>
-                    (a.categoria || []).map((c, j) => (
-                      <tr key={`${i}-${j}`}>
-                        <td>{a.nombre_area}</td>
-                        <td>{c.nombre_categoria}</td>
+                {asignaciones.map((a, i) =>
+                  (a.categorias || []).map((c, j) => (
+                    <tr key={`${i}-${j}`}>
+                      <td>{a.nombre_area}</td>
+                      <td>{c.nombre_categoria}</td>
+                      <td>
+                        {c.grado_final_nombre &&
+                        c.grado_final_nombre !== c.grado_inicial_nombre
+                          ? `${c.grado_inicial_nombre} – ${c.grado_final_nombre}`
+                          : c.grado_inicial_nombre}
+                        </td>
                         <td>
-                          {c.grado_final_nombre &&
-                          c.grado_final_nombre !== c.grado_inicial_nombre
-                            ? `${c.grado_inicial_nombre} – ${c.grado_final_nombre}`
-                            : c.grado_inicial_nombre}
+                          <button onClick={() => handleClearGrades(c.id_categoria)}>
+                            Limpiar
+                          </button>
                         </td>
                       </tr>
                     ))
