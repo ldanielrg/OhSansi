@@ -9,3 +9,7 @@
     flex-direction: row;
     justify-content: space-between;
 }
+.seccion-botones-orden{
+    display: flex;
+    justify-content: space-around;
+}
