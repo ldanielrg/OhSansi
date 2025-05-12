@@ -36,12 +36,38 @@ class AreaController extends Controller{
         // Crear y guardar nueva área
         $area = Area::create([
             'nombre_area' => $validated['nombre'],
-            'id_convocatoria_convocatoria' => $id_convocatoria,
+            'id_convocatoria_convocatoria' => $validated['id_convocatoria'], //AGREGUE YO
             'activo' => true // por ahora siempre se crea activo.
         ]);
 
         return response()->json([
             'message' => 'Área creada exitosamente.'
+        ], 201);
+    }
+
+    //AGREGUE YO EL METODO NUEVO
+    public function storeDesdeRuta(Request $request, $id_convocatoria)
+    {
+        // Validar solo el nombre del área
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+        ]);
+
+        // Asegurarse que la convocatoria exista
+        if (!Convocatoria::where('id_convocatoria', $id_convocatoria)->exists()) {
+            return response()->json(['message' => 'Convocatoria no encontrada.'], 404);
+        }
+
+        // Crear el área asociada a la convocatoria
+        $area = Area::create([
+            'nombre_area' => $validated['nombre'],
+            'id_convocatoria_convocatoria' => $id_convocatoria,
+            'activo' => true
+        ]);
+
+        return response()->json([
+            'message' => 'Área creada exitosamente.',
+            'area' => $area
         ], 201);
     }
 
@@ -195,6 +221,14 @@ class AreaController extends Controller{
                     'message' => 'No se encontró la asignación para eliminar.'
                 ], 404);
             }
+
+        // Limpiar grados en la categoría
+        $categoria = Categorium::find($validated['id_categoria']);
+        if ($categoria) {
+            $categoria->grado_ini = null;
+            $categoria->grado_fin = null;
+            $categoria->save();
+        }
     
             DB::commit();
     
