@@ -156,13 +156,23 @@ export default function GestionarConvocatoria() {
   const handleAssignGradosCat = async () => {
     if (!selCat || !selGrIni)
       return toast.warn("Selecciona categoría y grado inicial.");
-    await api.post(`/asignar-grados-categoria`, {
-      id_categoria: Number(selCat),
-      grado_inicial_id: Number(selGrIni),
-      grado_final_id: selGrFin ? Number(selGrFin) : null,
-    });
-    toast.success("Grados asignados a categoría");
-    loadAll();
+
+    try {
+      await api.post(`/asignar-grados-categoria`, {
+        id_categoria: Number(selCat),
+        grado_inicial_id: Number(selGrIni),
+        grado_final_id: selGrFin ? Number(selGrFin) : null,
+      });
+      toast.success("Grados asignados a categoría");
+      loadAll(); // recargar lista
+    } catch (err) {
+      if (err.response?.status === 409) {
+        toast.warn("Ya se asignaron los grados a esta categoría.");
+      } else {
+        console.error(err);
+        toast.error("Error al asignar grados.");
+      }
+    }
   };
 
   const handleClearGrades = async (catId) => {
