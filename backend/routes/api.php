@@ -81,7 +81,7 @@ Route::middleware('auth:sanctum')->post('/crear-cuenta', [CuentaController::clas
 Route::middleware('auth:sanctum')->get('/recuperar-formularios/{id_convocatoria}', [InscripcionController::class, 'recuperarFormularios']);
 Route::middleware('auth:sanctum')->delete('/formulario-eliminar/{id}', [InscripcionController::class, 'eliminarFormulario']); 
 Route::middleware('auth:sanctum')->get('/formulario-detalles/{id_formulario}', [InscripcionController::class, 'mostrarFormulario']);
-Route::middleware('auth:sanctum')->get('/inscripcion', [InscripcionController::class, 'inscribirEstudiantes']); 
+Route::middleware('auth:sanctum')->post('/inscripcion', [InscripcionController::class, 'inscribirEstudiantes']); 
 Route::post('/editar-registro-estudiante', [InscripcionController::class, 'editarEstudiante']);
 Route::delete('/eliminar-registro-estudiante', [InscripcionController::class, 'eliminarInscripcion']);
 

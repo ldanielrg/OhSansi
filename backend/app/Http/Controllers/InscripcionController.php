@@ -329,7 +329,8 @@ class InscripcionController extends Controller{
 
         return response()->json([
             'id_formulario' => $formulario->id_formulario,
-            'estudiantes' => $estudiantes
+    'id_convocatoria_convocatoria' => $formulario->id_convocatoria_convocatoria, // 👈 Este es clave
+    'estudiantes' => $estudiantes
         ]);
     }
 

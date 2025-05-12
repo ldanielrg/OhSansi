@@ -1,6 +1,6 @@
 import "../styles/Formulario.css";
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import Caja from "../components/Caja";
 import BotonForm from "../components/BotonForm";
 import DataTable from "react-data-table-component";
@@ -49,6 +49,9 @@ const Formulario = () => {
   const [categorias, setCategorias] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [ue, setUe] = useState([]);
+  const [searchParams] = useSearchParams();
+  const [idConvocatoria, setIdConvocatoria] = useState(null);
+
 
   const columns = [
     { name: "Nombre", selector: (row) => row.nombre, sortable: true },
@@ -70,125 +73,209 @@ const Formulario = () => {
       },
     },
   };
-  useEffect(() => {
-    if (formData.area) {
-      fetch(`http://localhost:8000/api/categorias/${formData.area}`)
-        .then((res) => res.json())
-        .then((data) => setCategorias(data))
-        .catch((error) => toast.error("Error al obtener categorías"));
-    } else {
-      setCategorias([]);
+useEffect(() => {
+  const cargarAreas = async () => {
+    if (!idConvocatoria) return;
+    try {
+      const res = await api.get(`/areas/${idConvocatoria}`);
+      setAreas(res.data);
+    } catch (error) {
+      console.error("Error al obtener áreas:", error);
+      toast.error("Error al obtener las áreas.");
     }
-  }, [formData.area]);
+  };
+
+  cargarAreas();
+}, [idConvocatoria]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/areas")
-      .then((res) => res.json())
-      .then((data) => setAreas(data));
-    fetch("http://localhost:8000/api/municipios")
-      .then((res) => res.json())
-      .then((data) => setMunicipios(data));
-    fetch("http://localhost:8000/api/unidades-educativas")
-      .then((res) => res.json())
-      .then((data) => setUe(data));
-  }, []);
+  const cargarCategorias = async () => {
+    if (!formData.area || isNaN(parseInt(formData.area))) {
+      setCategorias([]);
+      return;
+    }
+
+    try {
+      const res = await api.get(`/categorias/${formData.area}`);
+      setCategorias(res.data);
+    } catch (error) {
+      console.error("Error al obtener categorías:", error);
+      toast.error("Error al obtener las categorías.");
+    }
+  };
+
+  cargarCategorias();
+}, [formData.area]);
+
 
   useEffect(() => {
-    const cargarFormulario = async () => {
-      if (parseInt(id) === 0) {
-        setCargando(false); // ✅ Si es nuevo, no carga nada
-        return;
+  if (parseInt(id) === 0) {
+    const convocatoriaFromURL = searchParams.get("convocatoria");
+    if (convocatoriaFromURL) {
+      setIdConvocatoria(parseInt(convocatoriaFromURL));
+    } else {
+      toast.error("No se encontró la convocatoria para el nuevo formulario.");
+    }
+    setCargando(false);
+    return;
+  }
+
+  // Si no es nuevo, cargar datos del backend
+  const cargarFormulario = async () => {
+    try {
+      const response = await api.get(`/formulario-detalles/${id}`);
+      const estudiantes = response.data.estudiantes;
+
+      if (response.data.id_convocatoria_convocatoria) {
+        setIdConvocatoria(response.data.id_convocatoria_convocatoria);
+      } else {
+        toast.error("Error: la convocatoria no fue encontrada.");
       }
-      try {
-        const response = await api.get(`/formulario-detalles/${id}`);
-        const estudiantes = response.data.estudiantes;
-        const estudiantesFormateados = estudiantes.map((est) => ({
-          id_estudiante: est.id_estudiante ?? null,
-          nombre: est.nombre,
-          apellido: est.apellido,
-          email: est.email,
-          ci: est.ci,
-          fechaNac: est.fecha_nacimiento,
-          rude: est.rude,
-          id_area: est.idAarea,
-          nombre_area: est?.nombre_area || "",
-          id_categoria: est.idCategoria,
-          nombre_categoria: est?.nombre_categoria || "",
-          municipio: "",
-          unidadEducativa: "",
-        }));
-        setRowData(estudiantesFormateados);
-      } catch (error) {
-        console.error("Error al cargar formulario:", error);
-        toast.error("No se pudo cargar el formulario.");
-      } finally {
-        setCargando(false); // ✅ Siempre apagar loader
-      }
-    };
-    cargarFormulario();
-  }, [id]);
+
+      const estudiantesFormateados = estudiantes.map((est) => ({
+        id_estudiante: est.id_estudiante ?? null,
+        nombre: est.nombre,
+        apellido: est.apellido,
+        email: est.email,
+        ci: est.ci,
+        fechaNac: est.fecha_nacimiento,
+        rude: est.rude,
+        id_area: est.idAarea,
+        nombre_area: est?.nombre_area || "",
+        id_categoria: est.idCategoria,
+        nombre_categoria: est?.nombre_categoria || "",
+        municipio: "",
+        unidadEducativa: "",
+      }));
+      setRowData(estudiantesFormateados);
+    } catch (error) {
+      console.error("Error al cargar formulario:", error);
+      toast.error("No se pudo cargar el formulario.");
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  cargarFormulario();
+}, [id]);
+
+
+
   
 
   const opcionesFiltradasUE = ue
     .filter((item) => item.municipio_id === parseInt(formData.municipio))
     .map((item) => ({ value: item.id_ue, label: item.nombre_ue }));
 
-  const handleRegistrar = () => {
-    const { nombre, apellido, ci, fechaNac, rude, area, categoria } = formData;
-    if (nombre.length < 6)
-      return toast.warn("El nombre debe tener al menos 6 caracteres.");
-    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
-      return toast.warn("El nombre solo puede contener letras y espacios.");
-    if (!/\d{1,16}/.test(rude))
-      return toast.warn("El RUDE debe contener solo números (máx. 16 dígitos).");
-    if (!/\d{1,8}/.test(ci))
-      return toast.warn("El CI debe contener solo números (máx. 8 dígitos).");
+  const handleRegistrar = async () => {
+  const { nombre, apellido, ci, fechaNac, rude, area, categoria } = formData;
 
-    const areaSeleccionada = areas.find((a) => a.id_area === parseInt(area));
-    const categoriaSeleccionada = categorias.find(
-      (c) => c.id_categoria === parseInt(categoria)
-    );
+  if (nombre.length < 6)
+    return toast.warn("El nombre debe tener al menos 6 caracteres.");
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
+    return toast.warn("El nombre solo puede contener letras y espacios.");
+  if (!/\d{1,16}/.test(rude))
+    return toast.warn("El RUDE debe contener solo números (máx. 16 dígitos).");
+  if (!/\d{1,8}/.test(ci))
+    return toast.warn("El CI debe contener solo números (máx. 8 dígitos).");
 
-    const nuevoEstudiante = {
-      ...formData,
-      id_area: areaSeleccionada ? areaSeleccionada.id_area : null,
-      nombre_area: areaSeleccionada ? areaSeleccionada.nombre_area : "",
-      id_categoria: categoriaSeleccionada
-        ? categoriaSeleccionada.id_categoria
-        : null,
-      nombre_categoria: categoriaSeleccionada
-        ? categoriaSeleccionada.nombre_categoria
-        : "",
+  const areaSeleccionada = areas.find((a) => a.id_area === parseInt(area));
+  const categoriaSeleccionada = categorias.find(
+    (c) => c.id_categoria === parseInt(categoria)
+  );
+
+  const nuevoEstudiante = {
+    ...formData,
+    id_area: areaSeleccionada?.id_area ?? null,
+    nombre_area: areaSeleccionada?.nombre_area ?? "",
+    id_categoria: categoriaSeleccionada?.id_categoria ?? null,
+    nombre_categoria: categoriaSeleccionada?.nombre_categoria ?? "",
+  };
+
+  // Si es edición de estudiante ya guardado
+  if (modoEdicion && editIndex !== null && parseInt(id) !== 0) {
+    const anterior = rowData[editIndex];
+
+    const datosEditar = {
+      id_formulario: parseInt(id),
+      anterior: {
+        id_estudiante: anterior.id_estudiante,
+        idArea: anterior.id_area,
+        idCategoria: anterior.id_categoria,
+      },
+      nuevo: {
+        nombre: nuevoEstudiante.nombre,
+        apellido: nuevoEstudiante.apellido,
+        email: nuevoEstudiante.email,
+        ci: parseInt(nuevoEstudiante.ci),
+        rude: parseInt(nuevoEstudiante.rude),
+        fecha_nacimiento: nuevoEstudiante.fechaNac,
+        idArea: nuevoEstudiante.id_area,
+        idCategoria: nuevoEstudiante.id_categoria,
+      },
     };
 
+    try {
+      await api.post("/editar-registro-estudiante", datosEditar);
+      toast.success("Estudiante actualizado correctamente.");
+      setModoEdicion(false);
+      setEditIndex(null);
+
+      // Recargar el formulario actualizado
+      const response = await api.get(`/formulario-detalles/${id}`);
+      const estudiantesFormateados = response.data.estudiantes.map((est) => ({
+        id_estudiante: est.id_estudiante ?? null,
+        nombre: est.nombre,
+        apellido: est.apellido,
+        email: est.email,
+        ci: est.ci,
+        fechaNac: est.fecha_nacimiento,
+        rude: est.rude,
+        id_area: est.idAarea,
+        nombre_area: est?.nombre_area || "",
+        id_categoria: est.idCategoria,
+        nombre_categoria: est?.nombre_categoria || "",
+        municipio: "",
+        unidadEducativa: "",
+      }));
+      setRowData(estudiantesFormateados);
+    } catch (error) {
+      console.error("Error al actualizar estudiante:", error);
+      toast.error("No se pudo editar el estudiante.");
+    }
+  } else {
+    // Edición local (formulario nuevo o no guardado)
     if (modoEdicion && editIndex !== null) {
       const nuevosDatos = [...rowData];
       nuevosDatos[editIndex] = nuevoEstudiante;
       setRowData(nuevosDatos);
-      setModoEdicion(false);
-      setEditIndex(null);
     } else {
       setRowData((prev) => [...prev, nuevoEstudiante]);
     }
-
     toast.success("Estudiante registrado correctamente.");
-    setFormData({
-      nombre: "",
-      apellido: "",
-      email: "",
-      ci: "",
-      fechaNac: "",
-      rude: "",
-      area: "",
-      categoria: "",
-      ue: "",
-      municipio: "",
-      unidadEducativa: "",
-    });
-    setSelectedRows([]);
-    selectedRowsRef.current = [];
-    setToggleClearSelected((prev) => !prev);
-  };
+  }
+
+  // Reset
+  setModoEdicion(false);
+  setEditIndex(null);
+  setFormData({
+    nombre: "",
+    apellido: "",
+    email: "",
+    ci: "",
+    fechaNac: "",
+    rude: "",
+    area: "",
+    categoria: "",
+    ue: "",
+    municipio: "",
+    unidadEducativa: "",
+  });
+  setSelectedRows([]);
+  selectedRowsRef.current = [];
+  setToggleClearSelected((prev) => !prev);
+};
+
 
   const handleEditar = async () => {
     const seleccionActual = selectedRowsRef.current;
@@ -289,68 +376,96 @@ const Formulario = () => {
   };
 
   const handleEliminar = async () => {
-    const seleccionActual = selectedRowsRef.current;
-    if (seleccionActual.length === 0)
-      return toast.warn("Por favor selecciona un registro para eliminar.");
+  const seleccionActual = selectedRowsRef.current;
+  if (seleccionActual.length === 0)
+    return toast.warn("Por favor selecciona un registro para eliminar.");
 
-    const result = await MySwal.fire({
-      title: '¿Eliminar registros?',
-      text: "¿Deseas eliminar el/los registros seleccionados?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-    });
+  const result = await MySwal.fire({
+    title: '¿Eliminar registros?',
+    text: "¿Deseas eliminar el/los registros seleccionados?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+  });
 
-    if (!result.isConfirmed) return;
+  if (!result.isConfirmed) return;
 
-    const nuevosDatos = rowData.filter(
-      (row) => !seleccionActual.some((sel) => sel.ci === row.ci)
-    );
-    setRowData(nuevosDatos);
-    setSelectedRows([]);
-    selectedRowsRef.current = [];
-    setToggleClearSelected((prev) => !prev);
+  const nuevosDatos = [...rowData];
+  let errorAlEliminar = false;
 
-    toast.success('Registros eliminados correctamente.');
-  };
-
-  const handleGuardarFormulario = async () => {
-    if (rowData.length === 0) {
-      toast.warn("No hay estudiantes registrados para guardar.");
-      return;
+  for (const estudiante of seleccionActual) {
+    // Si tiene id_estudiante, intentar eliminar desde backend
+    if (estudiante.id_estudiante) {
+      try {
+        await api.delete('/eliminar-registro-estudiante', {
+          data: {
+            id_formulario: parseInt(id),
+            id_estudiante: estudiante.id_estudiante,
+            idArea: estudiante.id_area,
+            idCategoria: estudiante.id_categoria
+          }
+        });
+      } catch (error) {
+        console.error('Error al eliminar estudiante:', error);
+        toast.error('Error al eliminar estudiante inscrito.');
+        errorAlEliminar = true;
+        continue;
+      }
     }
 
-    const datosEnviar = {
-      id_formulario_actual: parseInt(id),
-      estudiantes: rowData.map((est) => ({
-        id_estudiante: est.id_estudiante ?? null,
-        nombre: est.nombre,
-        apellido: est.apellido,
-        email: est.email,
-        ci: parseInt(est.ci),
-        fecha_nacimiento: est.fechaNac,
-        rude: parseInt(est.rude),
-        idAarea: est.id_area,
-        idCategoria: est.id_categoria,
-      })),
-    };
+    // Quitar del estado local
+    const index = nuevosDatos.findIndex((r) => r.ci === estudiante.ci);
+    if (index !== -1) nuevosDatos.splice(index, 1);
+  }
 
-    try {
-      console.log(datosEnviar);
-      const response = await api.post("/inscribir", datosEnviar);
-      console.log("Formulario guardado exitosamente:", response.data);
-      toast.success("Formulario guardado exitosamente.");
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
-    } catch (error) {
-      console.error("Error al guardar:", error);
-      toast.error("Ocurrió un error al guardar el formulario.");
-    }
+  setRowData(nuevosDatos);
+  setSelectedRows([]);
+  selectedRowsRef.current = [];
+  setToggleClearSelected(prev => !prev);
+
+  if (!errorAlEliminar) toast.success('Estudiantes eliminados correctamente.');
+};
+
+
+const handleGuardarFormulario = async () => {
+  if (rowData.length === 0) {
+    toast.warn("No hay estudiantes registrados para guardar.");
+    return;
+  }
+
+  const datosEnviar = {
+    id_formulario_actual: parseInt(id),
+    id_convocatoria: idConvocatoria, // ✅ Asegúrate que esto esté definido
+    estudiantes: rowData.map((est) => ({
+      id_estudiante: est.id_estudiante ?? null,
+      nombre: est.nombre,
+      apellido: est.apellido,
+      email: est.email,
+      ci: parseInt(est.ci),
+      fecha_nacimiento: est.fechaNac,
+      rude: parseInt(est.rude),
+      idAarea: est.id_area,
+      idCategoria: est.id_categoria,
+    })),
   };
+
+  try {
+    console.log("Enviando:", datosEnviar);
+    const response = await api.post("/inscripcion", datosEnviar);
+    console.log("Formulario guardado exitosamente:", response.data);
+    toast.success("Formulario guardado exitosamente.");
+    setTimeout(() => {
+      navigate("/");
+    }, 2000);
+  } catch (error) {
+    console.error("Error al guardar:", error);
+    toast.error("Ocurrió un error al guardar el formulario.");
+  }
+};
+
 
   const fileInputRef = useRef();
   const [cargando, setCargando] = useState(true);
@@ -469,7 +584,7 @@ const Formulario = () => {
                   })),
                 ]}
               />
-              <RegistroForm
+              {/* <RegistroForm
                 label="Municipio"
                 name="municipio"
                 type="select"
@@ -482,7 +597,7 @@ const Formulario = () => {
                     label: mun.nombre,
                   })),
                 ]}
-              />
+              /> */}
               <BotonForm
                 className="boton-lista-est"
                 texto="Subir lista"
@@ -519,7 +634,7 @@ const Formulario = () => {
                   })),
                 ]}
               />
-              <RegistroForm
+              {/*<RegistroForm
                 label="Unidad Educativa"
                 name="unidadEducativa"
                 type="select"
@@ -529,7 +644,7 @@ const Formulario = () => {
                   { value: "", label: "Seleccione una Unidad Educativa" },
                   ...opcionesFiltradasUE,
                 ]}
-              />
+              />*/}
               <RegistroForm
                 label="Email"
                 name="email"
