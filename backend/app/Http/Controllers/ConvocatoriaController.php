@@ -79,8 +79,11 @@ class ConvocatoriaController extends Controller
     }
 
     #Muestra datos de una determinada convocatoria
-    public function show($id){
-        return response()->json(Convocatoria::findOrFail($id));
+    //MODIFIQUE YO
+    public function show($id_convocatoria)
+    {
+        $convocatoria = Convocatoria::where('id_convocatoria', $id_convocatoria)->get();
+        return response()->json($convocatoria);
     }
 
     #Para actualizar datos de una convocatoria
