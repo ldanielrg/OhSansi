@@ -210,11 +210,23 @@ export default function GestionarConvocatoria() {
     }
   };
 
-  const handleClearGrades = async (catId) => {
-    if (!window.confirm("¿Limpiar grados de esta categoría?")) return;
-    await api.post("/limpiar-grados-categoria", { id_categoria: catId });
-    toast.success("Grados limpiados");
-    loadAll();
+  const handleClearGrades = async (id_categoria, id_area) => {
+    if (!window.confirm("¿Eliminar la relación y limpiar grados?")) return;
+
+    try {
+      await api.delete('/eliminar-area-categoria', {
+       data: {
+          id_area,
+          id_categoria,
+        },
+      });
+
+      toast.success("Relación eliminada y grados limpiados.");
+      loadAll(); //Refresca la tabla
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al limpiar.");
+    }
   };
 
   return (
@@ -408,7 +420,7 @@ export default function GestionarConvocatoria() {
                           : c.grado_inicial_nombre}
                         </td>
                         <td>
-                          <button onClick={() => handleClearGrades(c.id_categoria)}>
+                          <button onClick={() => handleClearGrades(c.id_categoria, a.id_area)}>
                             Limpiar
                           </button>
                         </td>

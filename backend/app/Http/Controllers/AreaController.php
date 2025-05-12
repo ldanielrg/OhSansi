@@ -221,6 +221,14 @@ class AreaController extends Controller{
                     'message' => 'No se encontró la asignación para eliminar.'
                 ], 404);
             }
+
+        // Limpiar grados en la categoría
+        $categoria = Categorium::find($validated['id_categoria']);
+        if ($categoria) {
+            $categoria->grado_ini = null;
+            $categoria->grado_fin = null;
+            $categoria->save();
+        }
     
             DB::commit();
     
