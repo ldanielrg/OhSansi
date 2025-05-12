@@ -79,11 +79,12 @@ export default function GestionarConvocatoria() {
     try {
       await api.post(`/area-editar`, {
         id_area: editArea.id,
-        nombre_area: editArea.nombre_area,
+        nombre_area: newArea.trim(), //usa el input
         activo: editArea.activo,
       });
       toast.success("Área actualizada");
       setEditArea({ id: null, nombre_area: "" });
+      setNewArea(""); // limpia el input
       loadAll();
     } catch (err) {
       console.error(err);
@@ -93,9 +94,22 @@ export default function GestionarConvocatoria() {
 
   const handleDeleteArea = async (id) => {
     if (!window.confirm("¿Eliminar esta área?")) return;
-    await api.delete(`/area-eliminar/${id}`);
-    toast.error("Área eliminada");
-    loadAll();
+
+    try {
+      await api.delete(`/area-eliminar/${id}`);
+      toast.error("Área eliminada");
+
+      // Si el área eliminada estaba seleccionada para editar, limpiar
+      if (editArea.id === id) {
+        setEditArea({ id: null, nombre_area: "" });
+        setNewArea("");
+      }
+
+      loadAll(); // recargar lista de áreas
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al eliminar área.");
+    }
   };
 
   const handleCreateCat = async () => {
@@ -208,21 +222,20 @@ export default function GestionarConvocatoria() {
                   {areas.map((a) => (
                     <tr
                       key={a.id_area}
-                      onClick={() =>
+                      onClick={() => {
                         setEditArea({
                           id: a.id_area,
                           nombre_area: a.nombre_area,
-                        })
-                      }
-                      className={
-                        editArea.id === a.id_area ? "fila-seleccionada" : ""
-                      }
+                        });
+                        setNewArea(a.nombre_area); // Esto llena el input
+                      }}
+                      className={editArea.id === a.id_area ? "fila-seleccionada" : ""}
                     >
                       <td>{a.nombre_area}</td>
                       <td>
                         <button
                           onClick={(e) => {
-                            e.stopPropagation();
+                            e.stopPropagation(); // Evita que al hacer clic en el botón se seleccione la fila
                             handleDeleteArea(a.id_area);
                           }}
                         >
