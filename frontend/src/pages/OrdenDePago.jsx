@@ -138,25 +138,23 @@ const OrdenDePago = () => {
                                 onClick={() => navigate('/inscripciones')}
                             />
                             <BotonForm
-    texto='Subir comprobante'
-    onClick={() => document.getElementById("comprobanteInput").click()}
-/>
+                                texto='Subir comprobante'
+                                onClick={() => document.getElementById("comprobanteInput").click()}
+                            />
 
                         </section>
                     </>
                 )}
-            </Caja>
-            <input
-    type="file"
-    accept="image/*"
-    id="comprobanteInput"
-    style={{ display: 'none' }}
-    onChange={handleSubirComprobante}
-/>
+                </Caja>
+                <input
+                    type="file"
+                    accept="image/*"
+                    id="comprobanteInput"
+                    style={{ display: 'none' }}
+                    onChange={handleSubirComprobante}
+                />
 
         </div>
-        
-        
     );
 };
 
