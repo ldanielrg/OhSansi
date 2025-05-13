@@ -61,10 +61,10 @@ export default function GestionarConvocatoria() {
   const handleCreateArea = async () => {
     if (!newArea.trim()) return toast.warn("Escribe un nombre de área.");
     try {
-      await api.post(`/area-crear/${id_convocatoria}`, {
+      await api.post(`/convocatoria/${id_convocatoria}/area`, {
         nombre: newArea.trim(),
-        id_convocatoria: Number(id_convocatoria),
       });
+
       toast.success("Área creada");
       setNewArea("");
       loadAll();
@@ -79,11 +79,12 @@ export default function GestionarConvocatoria() {
     try {
       await api.post(`/area-editar`, {
         id_area: editArea.id,
-        nombre_area: editArea.nombre_area,
+        nombre_area: newArea.trim(), //usa el input
         activo: editArea.activo,
       });
       toast.success("Área actualizada");
       setEditArea({ id: null, nombre_area: "" });
+      setNewArea(""); // limpia el input
       loadAll();
     } catch (err) {
       console.error(err);
@@ -93,9 +94,22 @@ export default function GestionarConvocatoria() {
 
   const handleDeleteArea = async (id) => {
     if (!window.confirm("¿Eliminar esta área?")) return;
-    await api.delete(`/area-eliminar/${id}`);
-    toast.error("Área eliminada");
-    loadAll();
+
+    try {
+      await api.delete(`/area-eliminar/${id}`);
+      toast.error("Área eliminada");
+
+      // Si el área eliminada estaba seleccionada para editar, limpiar
+      if (editArea.id === id) {
+        setEditArea({ id: null, nombre_area: "" });
+        setNewArea("");
+      }
+
+      loadAll(); // recargar lista de áreas
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al eliminar área.");
+    }
   };
 
   const handleCreateCat = async () => {
@@ -116,20 +130,41 @@ export default function GestionarConvocatoria() {
 
   const handleUpdateCat = async () => {
     if (!editCat.id) return;
-    await api.post(`/categoria-editar`, {
-      id_categoria: editCat.id,
-      nombre_categoria: editCat.nombre_categoria,
-    });
-    toast.success("Categoría actualizada");
-    setEditCat({ id: null, nombre_categoria: "" });
-    loadAll();
+
+    try {
+      await api.post(`/categoria-editar`, {
+        id_categoria: editCat.id,
+        nombre_categoria: newCat.trim(), //input actualizado
+      });
+
+      toast.success("Categoría actualizada");
+      setEditCat({ id: null, nombre_categoria: "" });
+      setNewCat(""); // limpia input
+      loadAll();
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al editar categoría.");
+    }
   };
 
   const handleDeleteCat = async (id) => {
     if (!window.confirm("¿Eliminar esta categoría?")) return;
-    await api.delete(`/categoria-eliminar/${id}`);
-    toast.error("Categoría eliminada");
-    loadAll();
+
+    try {
+      await api.delete(`/categoria-eliminar/${id}`);
+      toast.error("Categoría eliminada");
+
+      // Limpia si era la seleccionada
+      if (editCat.id === id) {
+        setEditCat({ id: null, nombre_categoria: "" });
+        setNewCat("");
+      }
+
+      loadAll();
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al eliminar categoría.");
+    }
   };
 
   const handleAssignAreaCat = async () => {
@@ -156,20 +191,42 @@ export default function GestionarConvocatoria() {
   const handleAssignGradosCat = async () => {
     if (!selCat || !selGrIni)
       return toast.warn("Selecciona categoría y grado inicial.");
-    await api.post(`/asignar-grados-categoria`, {
-      id_categoria: Number(selCat),
-      grado_inicial_id: Number(selGrIni),
-      grado_final_id: selGrFin ? Number(selGrFin) : null,
-    });
-    toast.success("Grados asignados a categoría");
-    loadAll();
+
+    try {
+      await api.post(`/asignar-grados-categoria`, {
+        id_categoria: Number(selCat),
+        grado_inicial_id: Number(selGrIni),
+        grado_final_id: selGrFin ? Number(selGrFin) : null,
+      });
+      toast.success("Grados asignados a categoría");
+      loadAll(); // recargar lista
+    } catch (err) {
+      if (err.response?.status === 409) {
+        toast.warn("Ya se asignaron los grados a esta categoría.");
+      } else {
+        console.error(err);
+        toast.error("Error al asignar grados.");
+      }
+    }
   };
 
-  const handleClearGrades = async (catId) => {
-    if (!window.confirm("¿Limpiar grados de esta categoría?")) return;
-    await api.post("/limpiar-grados-categoria", { id_categoria: catId });
-    toast.success("Grados limpiados");
-    loadAll();
+  const handleClearGrades = async (id_categoria, id_area) => {
+    if (!window.confirm("¿Eliminar la relación y limpiar grados?")) return;
+
+    try {
+      await api.delete('/eliminar-area-categoria', {
+       data: {
+          id_area,
+          id_categoria,
+        },
+      });
+
+      toast.success("Relación eliminada y grados limpiados.");
+      loadAll(); //Refresca la tabla
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al limpiar.");
+    }
   };
 
   return (
@@ -198,21 +255,20 @@ export default function GestionarConvocatoria() {
                   {areas.map((a) => (
                     <tr
                       key={a.id_area}
-                      onClick={() =>
+                      onClick={() => {
                         setEditArea({
                           id: a.id_area,
                           nombre_area: a.nombre_area,
-                        })
-                      }
-                      className={
-                        editArea.id === a.id_area ? "fila-seleccionada" : ""
-                      }
+                        });
+                        setNewArea(a.nombre_area); // Esto llena el input
+                      }}
+                      className={editArea.id === a.id_area ? "fila-seleccionada" : ""}
                     >
                       <td>{a.nombre_area}</td>
                       <td>
                         <button
                           onClick={(e) => {
-                            e.stopPropagation();
+                            e.stopPropagation(); // Evita que al hacer clic en el botón se seleccione la fila
                             handleDeleteArea(a.id_area);
                           }}
                         >
@@ -243,12 +299,13 @@ export default function GestionarConvocatoria() {
                   {categorias.map((c) => (
                     <tr
                       key={c.id_categoria}
-                      onClick={() =>
+                      onClick={() => {
                         setEditCat({
                           id: c.id_categoria,
                           nombre_categoria: c.nombre_categoria,
-                        })
-                      }
+                        });
+                        setNewCat(c.nombre_categoria); // 👈 actualiza input
+                      }}
                       className={
                         editCat.id === c.id_categoria ? "fila-seleccionada" : ""
                       }
@@ -351,16 +408,21 @@ export default function GestionarConvocatoria() {
                   </tr>
                 </thead>
                 <tbody>
-                  {asignaciones.map((a, i) =>
-                    (a.categoria || []).map((c, j) => (
-                      <tr key={`${i}-${j}`}>
-                        <td>{a.nombre_area}</td>
-                        <td>{c.nombre_categoria}</td>
+                {asignaciones.map((a, i) =>
+                  (a.categorias || []).map((c, j) => (
+                    <tr key={`${i}-${j}`}>
+                      <td>{a.nombre_area}</td>
+                      <td>{c.nombre_categoria}</td>
+                      <td>
+                        {c.grado_final_nombre &&
+                        c.grado_final_nombre !== c.grado_inicial_nombre
+                          ? `${c.grado_inicial_nombre} – ${c.grado_final_nombre}`
+                          : c.grado_inicial_nombre}
+                        </td>
                         <td>
-                          {c.grado_final_nombre &&
-                          c.grado_final_nombre !== c.grado_inicial_nombre
-                            ? `${c.grado_inicial_nombre} – ${c.grado_final_nombre}`
-                            : c.grado_inicial_nombre}
+                          <button onClick={() => handleClearGrades(c.id_categoria, a.id_area)}>
+                            Limpiar
+                          </button>
                         </td>
                       </tr>
                     ))
@@ -379,7 +441,5 @@ export default function GestionarConvocatoria() {
       </div>
       <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
-  );
-
-  
+  ); 
 }

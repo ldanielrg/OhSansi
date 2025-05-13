@@ -36,6 +36,7 @@ Route::get('/convocatoria-areas-categorias/{id_convocatoria}', [ConvocatoriaCont
 Route::get('/convocatoria-areas-categorias-grados/{id_convocatoria}', [ConvocatoriaController::class, 'obtenerAreasCategoriaGradosPorConvocatoria']);
     //Para CRUD Áreas
     Route::get('/areas/{id_convocatoria}', [AreaController::class, 'obtenerAreasPorConvocatoria']);
+    Route::post('/convocatoria/{id_convocatoria}/area', [AreaController::class, 'storeDesdeRuta']); //AGREGUE YO
     Route::post('/area-crear/{id_convocatoria}', [AreaController::class, 'store']); //necesita id_convocatoria
     Route::post('/area-editar', [AreaController::class, 'update']);
     Route::delete('/area-eliminar/{id_area}', [AreaController::class, 'destroy']); //necesita id_area, id_convocatoria

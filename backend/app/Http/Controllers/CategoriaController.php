@@ -169,6 +169,13 @@ class CategoriaController extends Controller{
             // Buscar la categoría
             $categoria = Categorium::findOrFail($validated['id_categoria']);
 
+            // VERIFICAR si ya tiene grados asignados /AGREGUE YOOOO
+        if ($categoria->grado_ini || $categoria->grado_fin) {
+            return response()->json([
+                'message' => 'Ya se asignaron grados a esta categoría.'
+            ], 409); // Código HTTP 409 = conflicto
+        }
+
             // Actualizar los grados inicial y final
             $categoria->grado_ini = $validated['grado_inicial_id'];
             $categoria->grado_fin = $validated['grado_final_id'];
