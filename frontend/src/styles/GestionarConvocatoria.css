@@ -123,4 +123,9 @@
     .subrow { flex-direction: column; }
     .acciones-ger { flex-direction: column; align-items: stretch; }
   }
-  
+  .tabla-asign tbody tr.fila-seleccionada {
+    background-color: #cce4ff;   /* color de fondo */
+  }
+  .tabla-asign tbody tr.fila-seleccionada td {
+    color: #003366;             /* opcional: color de texto */
+  }

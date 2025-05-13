@@ -75,6 +75,10 @@ const Home = () => {
     e.preventDefault();
     navigate("/configuracion-cuentas");
   };
+  const handleNavigateInscritosOficiales = (e) => {
+    e.preventDefault();
+    navigate("/inscritos-oficiales");
+  };
   handleNavigateConfiguracionCuentas
   return (
     <div className="home-container container-fluid">
@@ -172,6 +176,7 @@ const Home = () => {
                 </button>
                 {esAdmin && (
                   <>
+                  <h5 className="title-bar">Logeado</h5>
                   <button
                     className="btn vertical-btn btn-help"
                     onClick={handleNavigateCrearUE}
@@ -201,6 +206,12 @@ const Home = () => {
                     onClick={handleNavigateConfiguracionCuentas}
                   >
                     Configuración Cuentas
+                  </button>
+                  <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateInscritosOficiales}
+                  >
+                    Inscritos Oficiales
                   </button>
                 </>
                 )}
