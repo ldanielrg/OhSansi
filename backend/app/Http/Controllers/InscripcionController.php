@@ -223,7 +223,7 @@ class InscripcionController extends Controller{
         if ($yaExiste) {
             return response()->json([
                 'message' => 'Ya existe una inscripción del estudiante en esa nueva área + categoría.'
-            ], 409);
+            ]);
         }
         // Paso 6: Actualizar la inscripción
         EstudianteEstaInscrito::where([
