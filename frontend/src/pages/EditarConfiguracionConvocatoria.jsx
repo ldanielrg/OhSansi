@@ -25,7 +25,7 @@ export default function EditarConfiguracionConvocatoria() {
           fin: data.fecha_final.split("T")[0],
         });
       } catch {
-        toast.error("Error cargando datos.");
+        toast.error("Error cargando datos.111111111111111111111111");
       }
     };
     cargarDatos();
