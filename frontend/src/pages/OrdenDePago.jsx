@@ -6,6 +6,8 @@ import BotonForm from "../components/BotonForm";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import '../styles/OrdenDePago.css';
+import Tesseract from 'tesseract.js';
+
 
 const OrdenDePago = () => {
     const { id } = useParams(); // ID del formulario
@@ -15,6 +17,8 @@ const OrdenDePago = () => {
     const [cargando, setCargando] = useState(true);
     const { user } = useAuth();
     const navigate = useNavigate();
+    const [textoOCR, setTextoOCR] = useState("");
+
 
     const columns = [
         { name: "Nombre", selector: (row) => row.nombre, sortable: true },
@@ -57,6 +61,29 @@ const OrdenDePago = () => {
 
         cargarDatos();
     }, [id]);
+    const handleSubirComprobante = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const imageUrl = URL.createObjectURL(file);
+
+    try {
+        const result = await Tesseract.recognize(
+            imageUrl,
+            'spa', // cambia a 'eng' si el comprobante está en inglés
+            {
+                logger: (m) => console.log(m),
+            }
+        );
+        setTextoOCR(result.data.text);
+        console.log("Texto detectado:", result.data.text);
+        alert("Texto OCR detectado:\n" + result.data.text);
+    } catch (err) {
+        console.error("Error OCR:", err);
+        alert("Hubo un error al procesar el comprobante.");
+    }
+};
+
 
     return (
         <div className='orden-pago-container'>
@@ -105,15 +132,28 @@ const OrdenDePago = () => {
                                 },
                             }}
                         />
-                        <section>
+                        <section className="seccion-botones-orden">
                             <BotonForm
                                 texto='Volver'
                                 onClick={() => navigate('/inscripciones')}
                             />
+                            <BotonForm
+                                texto='Subir comprobante'
+                                onClick={() => document.getElementById("comprobanteInput").click()}
+                            />
+
                         </section>
                     </>
                 )}
-            </Caja>
+                </Caja>
+                <input
+                    type="file"
+                    accept="image/*"
+                    id="comprobanteInput"
+                    style={{ display: 'none' }}
+                    onChange={handleSubirComprobante}
+                />
+
         </div>
     );
 };

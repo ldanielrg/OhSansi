@@ -51,3 +51,14 @@
 .icono-orden-pago-formulario{
     color: #059600;
 }
+.contenedor-botones-crud-forms{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+}
+.label-botones-crud-forms{
+    margin: 0;
+    color: #003366;
+}
