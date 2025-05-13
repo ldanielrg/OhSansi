@@ -18,14 +18,21 @@ export default function EditarConfiguracionConvocatoria() {
     const cargarDatos = async () => {
       try {
         const { data } = await api.get(`/convocatoria-detalle/${id}`);
-        setForm({
-          nombre: data.nombre_convocatoria,
-          descripcion: data.descripcion,
-          inicio: data.fecha_inicio.split("T")[0],
-          fin: data.fecha_final.split("T")[0],
-        });
-      } catch {
-        toast.error("Error cargando datos.111111111111111111111111");
+        const conv = data[0]; // tomas el primer elemento, de un array
+
+        if (conv) {
+          setForm({
+            nombre: conv.nombre_convocatoria,
+            descripcion: conv.descripcion,
+            inicio: conv.fecha_inicio?.split("T")[0] || "",
+            fin: conv.fecha_final?.split("T")[0] || "",
+          });
+        } else {
+          toast.error("No se encontró la convocatoria.");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Error cargando datos.");
       }
     };
     cargarDatos();
