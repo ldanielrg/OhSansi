@@ -44,6 +44,7 @@ import ConfiguracionCuentas from './pages/ConfiguracionCuentas';
 import OrdenDePago from './pages/OrdenDePago';
 import ElegirConvocatoria from "./pages/ElegirConvocatoria";
 import GestionarConvocatoria from "./pages/GestionarConvocatoria";
+import InscritosOficiales from "./pages/InscritosOficiales";
 
 function App() {
   return (
@@ -93,6 +94,7 @@ function App() {
           <Route path="/editar-configuracion-convocatoria/:id" element={<Layout><EditarConfigurarConvocatoria /></Layout>}/>
           <Route path="/configuracion-convocatoria" element={<Layout><ConfiguracionConvocatoria/></Layout>}/>
           <Route path="/configuracion-convocatoria/gestionar/:id_convocatoria" element={<Layout><GestionarConvocatoria/></Layout>}/>
+          <Route path="/inscritos-oficiales" element={<Layout><InscritosOficiales/></Layout>}/>
       </Route>
     </Routes>
     </AuthProvider>
