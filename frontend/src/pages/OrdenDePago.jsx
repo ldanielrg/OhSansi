@@ -137,6 +137,7 @@ const OrdenDePago = () => {
                             <BotonForm
                                 texto='Volver'
                                 onClick={() => navigate(`/inscripciones?convocatoria=${idConvocatoria || ''}`)}
+                                className="boton-volver-orden-pago"
                             />
                             <BotonForm
                                 texto='Subir comprobante'
