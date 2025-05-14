@@ -13,3 +13,8 @@
     display: flex;
     justify-content: space-around;
 }
+.boton-volver-orden-pago{
+    background-color: #ffff !important;
+    color: #003366 !important;
+    border: #003366 solid 2px !important;
+}

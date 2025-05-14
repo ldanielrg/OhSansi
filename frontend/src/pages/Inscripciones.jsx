@@ -7,6 +7,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import { BsFileEarmarkText } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
+import { useSearchParams } from 'react-router-dom';
 
 // Toastify
 import { ToastContainer, toast } from 'react-toastify';
@@ -25,6 +26,12 @@ const Inscripciones = () => {
   const navigate = useNavigate();
   const [convocatorias, setConvocatorias] = useState([]);
   const [convocatoriaSeleccionada, setConvocatoriaSeleccionada] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const handleConvocatoriaChange = (e) => {
+  const id = e.target.value;
+    setConvocatoriaSeleccionada(id);
+    setSearchParams({ convocatoria: id });
+  };
 
   useEffect(() => {
     const obtenerFormularios = async () => {
@@ -59,6 +66,13 @@ const Inscripciones = () => {
 
     obtenerConvocatorias();
   }, []);
+  useEffect(() => {
+  const idFromUrl = searchParams.get('convocatoria');
+  if (idFromUrl) {
+    setConvocatoriaSeleccionada(idFromUrl);
+  }
+}, []);
+
 
   const formularioColumns = [
     { name: 'N° de Formulario', selector: row => row.id_formulario, sortable: true },
@@ -142,29 +156,30 @@ const Inscripciones = () => {
   };
 
   const handleOrdenPago = async (id_formulario) => {
-    try {
-      await api.get(`/orden-pago/${id_formulario}`);
-      navigate(`/orden-de-pago/${id_formulario}`);
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        try {
-          await api.post('/orden-pago', {
-            fecha_emision: new Date().toISOString().split('T')[0],
-            fecha_vencimiento: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
-            monto_total: 20,
-            id_formulario_formulario: id_formulario
-          });
-          navigate(`/orden-de-pago/${id_formulario}`);
-        } catch (crearError) {
-          toast.error('No se pudo crear la orden de pago.');
-          console.error(crearError);
-        }
-      } else {
-        toast.error('Error al verificar la orden de pago.');
-        console.error(error);
+  try {
+    await api.get(`/orden-pago/${id_formulario}`);
+    navigate(`/orden-de-pago/${id_formulario}?convocatoria=${convocatoriaSeleccionada}`);
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      try {
+        await api.post('/orden-pago', {
+          fecha_emision: new Date().toISOString().split('T')[0],
+          fecha_vencimiento: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
+          monto_total: 20,
+          id_formulario_formulario: id_formulario
+        });
+        navigate(`/orden-de-pago/${id_formulario}?convocatoria=${convocatoriaSeleccionada}`);
+      } catch (crearError) {
+        toast.error('No se pudo crear la orden de pago.');
+        console.error(crearError);
       }
+    } else {
+      toast.error('Error al verificar la orden de pago.');
+      console.error(error);
     }
-  };
+  }
+};
+
 
   return (
     <>
@@ -186,7 +201,7 @@ const Inscripciones = () => {
             <select
               id="convocatoria"
               value={convocatoriaSeleccionada || ''}
-              onChange={(e) => setConvocatoriaSeleccionada(e.target.value)}
+  onChange={handleConvocatoriaChange}
             >
               <option value="">-- Selecciona una convocatoria --</option>
               {convocatorias.map(conv => (
@@ -204,8 +219,9 @@ const Inscripciones = () => {
                   texto='+ Agregar Formulario'
                   className='boton-añadir-formularios'
                   onClick={() =>
-                    navigate(`/formulario/0?convocatoria=${convocatoriaSeleccionada}`)
-                  }
+  navigate(`/formulario/0?convocatoria=${convocatoriaSeleccionada}`)
+}
+
                 />
               </div>
 
