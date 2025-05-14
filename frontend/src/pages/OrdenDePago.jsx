@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import Caja from '../components/Caja';
 import BotonForm from "../components/BotonForm";
@@ -7,7 +7,6 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import '../styles/OrdenDePago.css';
 import Tesseract from 'tesseract.js';
-
 
 const OrdenDePago = () => {
     const { id } = useParams(); // ID del formulario
@@ -18,6 +17,8 @@ const OrdenDePago = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [textoOCR, setTextoOCR] = useState("");
+    const [searchParams] = useSearchParams();
+    const idConvocatoria = searchParams.get("convocatoria");
 
 
     const columns = [
@@ -135,7 +136,7 @@ const OrdenDePago = () => {
                         <section className="seccion-botones-orden">
                             <BotonForm
                                 texto='Volver'
-                                onClick={() => navigate('/inscripciones')}
+                                onClick={() => navigate(`/inscripciones?convocatoria=${idConvocatoria || ''}`)}
                             />
                             <BotonForm
                                 texto='Subir comprobante'
