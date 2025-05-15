@@ -36,8 +36,8 @@ class Convocatoria extends Model
 	protected $casts = [
 		'id_convocatoria' => 'int',
 		'precio' => 'int',
-		'fecha_inicio' => 'datetime',
-		'fecha_final' => 'datetime'
+		'fecha_inicio' => 'date:Y-m-d',
+		'fecha_final' => 'date:Y-m-d'
 	];
 
 	protected $fillable = [
