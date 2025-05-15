@@ -3,11 +3,18 @@ import React, { useState } from "react";
 import "../styles/Layout.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { BallTriangle } from 'react-loader-spinner';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cerrandoSesion, setCerrandoSesion] = useState(false);
+
+
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
@@ -17,6 +24,26 @@ const Layout = ({ children }) => {
     navigate(ruta);
     closeMenu();
   };
+  const handleCerrarSesion = async () => {
+  setCerrandoSesion(true);
+  try {
+    // Si tienes una función de logout real, colócala aquí (por ejemplo: await logout();)
+    await new Promise(resolve => setTimeout(resolve, 1500)); // Simula delay de logout
+
+    toast.success("Has cerrado sesión correctamente");
+
+    setTimeout(() => {
+      navigate("/login"); // Cambia la ruta si deseas otro destino
+    }, 1500);
+  } catch (error) {
+    console.error("Error al cerrar sesión", error);
+    toast.error("Ocurrió un error al cerrar sesión");
+  } finally {
+    setCerrandoSesion(false);
+  }
+};
+
+
 
   return (
     <div>
@@ -92,9 +119,18 @@ const Layout = ({ children }) => {
                     <button className="dropdown-item" onClick={handleNavigate("/modificar-cuenta")}>
                       Modificar cuenta
                     </button>
-                    <button className="dropdown-item" onClick={handleNavigate("/logout")}>
-                      Cerrar sesión
+                    <button className="dropdown-item" onClick={handleCerrarSesion} disabled={cerrandoSesion}>
+                      {cerrandoSesion ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <BallTriangle height={20} width={20} color="#003366" />
+                          Cerrando sesión...
+                        </div>
+                      ) : (
+                        "Cerrar sesión"
+                      )}
                     </button>
+
+
                   </div>
                 )}
               </li>
@@ -115,6 +151,21 @@ const Layout = ({ children }) => {
 
       {/* Footer */}
       <footer className="footer">Copyright © 2025 | ByteSoft</footer>
+      <>
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
+      </>
+
     </div>
   );
 };
