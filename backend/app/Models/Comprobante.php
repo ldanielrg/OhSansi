@@ -30,14 +30,16 @@ class Comprobante extends Model
 	protected $casts = [
 		'id_comprobante' => 'int',
 		'imagen' => 'bytea',
-		'id_orden_orden_pago' => 'int',
-		'id_formulario_formulario_orden_pago' => 'int'
+		'codigo' => 'string',
+		'id_orden_pago' => 'int',
+		
 	];
 
 	protected $fillable = [
+		'id_comprobante',
+		'codigo',
 		'imagen',
-		'id_orden_orden_pago',
-		'id_formulario_formulario_orden_pago'
+		'id_orden_pago'
 	];
 
 	public function orden_pago()

@@ -38,7 +38,8 @@ class Formulario extends Model
 		'id_registrador_registrador' => 'int',
 		'id_ue_ue' => 'int',
 		'id_convocatoria_convocatoria' => 'int',
-		'id_usuario' => 'int'
+		'id_usuario' => 'int',
+		'activo' => 'boolean',
 	];
 
 	protected $fillable = [
@@ -46,6 +47,7 @@ class Formulario extends Model
 		'id_ue_ue',
 		'id_convocatoria_convocatoria',
 		'id_usuario',
+		'activo'
 	];
 
 	public function registrador()
