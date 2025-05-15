@@ -67,11 +67,11 @@
 
 
 .seccion-botones-inscripciones-convocatoria{
-    width: 50%;
+    width: 100%;
     border: none;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 3rem;
 }
 .label-seleccionar-convocatoria{
     margin-bottom: 3rem;
