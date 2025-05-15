@@ -85,7 +85,7 @@ function App() {
       
 
       {/* Rutas protegidas solo para Admin/Director/Adm.Inscripción */}
-      <Route element={<ProtectedRoute allowedRoles={['Admin', 'Director', 'Adm. Inscripcion']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['Admin', 'Director', 'Docente','Adm. Inscripcion']} />}>
           <Route path="/crear-cuentas" element={<Layout><CrearCuentas /></Layout>} />
           <Route path="/inscripciones" element={<Layout><Inscripciones /></Layout>}/> 
           <Route path="/crear-ue" element={<Layout><CrearUE /></Layout>}/>
