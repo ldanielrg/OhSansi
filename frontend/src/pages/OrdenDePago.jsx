@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import Caja from '../components/Caja';
 import BotonForm from "../components/BotonForm";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import '../styles/OrdenDePago.css';
+import Tesseract from 'tesseract.js';
+import { BallTriangle } from 'react-loader-spinner';
+
 
 const OrdenDePago = () => {
     const { id } = useParams(); // ID del formulario
@@ -15,6 +18,10 @@ const OrdenDePago = () => {
     const [cargando, setCargando] = useState(true);
     const { user } = useAuth();
     const navigate = useNavigate();
+    const [textoOCR, setTextoOCR] = useState("");
+    const [searchParams] = useSearchParams();
+    const idConvocatoria = searchParams.get("convocatoria");
+
 
     const columns = [
         { name: "Nombre", selector: (row) => row.nombre, sortable: true },
@@ -57,13 +64,52 @@ const OrdenDePago = () => {
 
         cargarDatos();
     }, [id]);
+    const handleSubirComprobante = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const imageUrl = URL.createObjectURL(file);
+
+    try {
+        const result = await Tesseract.recognize(
+            imageUrl,
+            'spa', // cambia a 'eng' si el comprobante está en inglés
+            {
+                logger: (m) => console.log(m),
+            }
+        );
+        setTextoOCR(result.data.text);
+        console.log("Texto detectado:", result.data.text);
+        alert("Texto OCR detectado:\n" + result.data.text);
+    } catch (err) {
+        console.error("Error OCR:", err);
+        alert("Hubo un error al procesar el comprobante.");
+    }
+};
+
 
     return (
         <div className='orden-pago-container'>
             <Caja titulo='Detalle de orden de pago'>
                 {cargando ? (
-                    <p>Cargando datos...</p>
-                ) : (
+    <div style={{
+        height: '70vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)'
+    }}>
+        <BallTriangle
+            height={50}
+            width={50}
+            color="#003366"
+            ariaLabel="ball-triangle-loading"
+            visible={true}
+        />
+    </div>
+    ) : (
+
                     <>
                     <div className="contenedor-fila-1-orden">
                         <p><strong>ID: </strong> {orden?.id_orden}</p>
@@ -105,15 +151,29 @@ const OrdenDePago = () => {
                                 },
                             }}
                         />
-                        <section>
+                        <section className="seccion-botones-orden">
                             <BotonForm
                                 texto='Volver'
-                                onClick={() => navigate('/inscripciones')}
+                                onClick={() => navigate(`/inscripciones?convocatoria=${idConvocatoria || ''}`)}
+                                className="boton-volver-orden-pago"
                             />
+                            <BotonForm
+                                texto='Subir comprobante'
+                                onClick={() => document.getElementById("comprobanteInput").click()}
+                            />
+
                         </section>
                     </>
                 )}
-            </Caja>
+                </Caja>
+                <input
+                    type="file"
+                    accept="image/*"
+                    id="comprobanteInput"
+                    style={{ display: 'none' }}
+                    onChange={handleSubirComprobante}
+                />
+
         </div>
     );
 };
