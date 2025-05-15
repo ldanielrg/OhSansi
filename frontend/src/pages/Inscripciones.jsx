@@ -27,6 +27,8 @@ const Inscripciones = () => {
   const [convocatorias, setConvocatorias] = useState([]);
   const [convocatoriaSeleccionada, setConvocatoriaSeleccionada] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [cargandoConvocatorias, setCargandoConvocatorias] = useState(true);
+
   const handleConvocatoriaChange = (e) => {
   const id = e.target.value;
     setConvocatoriaSeleccionada(id);
@@ -61,11 +63,14 @@ const Inscripciones = () => {
         setConvocatorias(res.data.filter(c => c.activo));
       } catch (error) {
         console.error('Error al obtener convocatorias:', error);
+      } finally {
+        setCargandoConvocatorias(false); // importante: en el finally
       }
     };
-
     obtenerConvocatorias();
   }, []);
+
+
   useEffect(() => {
   const idFromUrl = searchParams.get('convocatoria');
   if (idFromUrl) {
@@ -179,6 +184,10 @@ const Inscripciones = () => {
     }
   }
 };
+const handleConvocatoriaChangeManual = (id) => {
+  setConvocatoriaSeleccionada(id);
+  setSearchParams({ convocatoria: id });
+};
 
 
   return (
@@ -196,21 +205,38 @@ const Inscripciones = () => {
 
       <div className="page-container">
         <section className='seccion-crud-formularios'>
+          {!convocatoriaSeleccionada && (
           <div className='para-separar-de-tabla-formularios'>
-            <label htmlFor="convocatoria">Selecciona una convocatoria:</label>
-            <select
-              id="convocatoria"
-              value={convocatoriaSeleccionada || ''}
-  onChange={handleConvocatoriaChange}
-            >
-              <option value="">-- Selecciona una convocatoria --</option>
-              {convocatorias.map(conv => (
-                <option key={conv.id_convocatoria} value={conv.id_convocatoria}>
-                  {conv.nombre_convocatoria}
-                </option>
-              ))}
-            </select>
+            <h3 className='label-seleccionar-convocatoria'>Selecciona la convocatoria donde quieres inscribir</h3>
+
+            {cargandoConvocatorias ? (
+              <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+                <BallTriangle
+                  height={50}
+                  width={50}
+                  radius={5}
+                  color="#003366"
+                  ariaLabel="ball-triangle-loading"
+                  visible={true}
+                />
+              </div>
+            ) : (
+              <div className="seccion-botones-inscripciones-convocatoria">
+                {convocatorias.map((conv) => (
+                  <button
+                    key={conv.id_convocatoria}
+                    onClick={() => handleConvocatoriaChangeManual(conv.id_convocatoria)}
+                    className={`botones-inscripciones-convocatoria ${
+                      convocatoriaSeleccionada === conv.id_convocatoria ? 'activo' : ''
+                    }`}
+                  >
+                    {conv.nombre_convocatoria}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+        )}
 
           {convocatoriaSeleccionada && (
             <>

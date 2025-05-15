@@ -31,7 +31,9 @@
 }
 .para-separar-de-tabla-formularios{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 .iconos-crud-formularios{
     color: #003366;
@@ -61,4 +63,48 @@
 .label-botones-crud-forms{
     margin: 0;
     color: #003366;
+}
+
+
+.seccion-botones-inscripciones-convocatoria{
+    width: 50%;
+    border: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.label-seleccionar-convocatoria{
+    margin-bottom: 3rem;
+}
+.botones-inscripciones-convocatoria{
+    background-color: #ffff;
+    color: #003366;
+    padding: 1rem 2rem 1rem 2rem;
+    border-radius: 1rem;
+    border: none;
+    transition: all 1000ms;
+    position: relative;
+    overflow: hidden;
+    outline: 2px solid #003366;
+}
+.botones-inscripciones-convocatoria:hover {
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+.botones-inscripciones-convocatoria::before {
+    content: "";
+    position: absolute;
+    left: -50px;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background-color: #003366;
+    transform: skewX(45deg);
+    z-index: -1;
+    transition: width 1000ms;
+}
+
+.botones-inscripciones-convocatoria:hover::before {
+    width: 250%;
 }

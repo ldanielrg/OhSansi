@@ -8,6 +8,8 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cerrandoSesion, setCerrandoSesion] = useState(false);
+
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);

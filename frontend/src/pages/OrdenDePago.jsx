@@ -7,6 +7,8 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import '../styles/OrdenDePago.css';
 import Tesseract from 'tesseract.js';
+import { BallTriangle } from 'react-loader-spinner';
+
 
 const OrdenDePago = () => {
     const { id } = useParams(); // ID del formulario
@@ -90,8 +92,24 @@ const OrdenDePago = () => {
         <div className='orden-pago-container'>
             <Caja titulo='Detalle de orden de pago'>
                 {cargando ? (
-                    <p>Cargando datos...</p>
-                ) : (
+    <div style={{
+        height: '70vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)'
+    }}>
+        <BallTriangle
+            height={50}
+            width={50}
+            color="#003366"
+            ariaLabel="ball-triangle-loading"
+            visible={true}
+        />
+    </div>
+    ) : (
+
                     <>
                     <div className="contenedor-fila-1-orden">
                         <p><strong>ID: </strong> {orden?.id_orden}</p>
