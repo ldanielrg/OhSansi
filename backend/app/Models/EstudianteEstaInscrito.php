@@ -32,12 +32,14 @@ class EstudianteEstaInscrito extends Model
 	protected $casts = [
 		'id_estudiante_estudiante' => 'int',
 		'id_formulario_formulario' => 'int',
+		'team', 'int',
 	];
 
 	protected $fillable = [
 		'id_estudiante_estudiante',
 		'id_inscrito_en',
-		'id_formulario_formulario'
+		'id_formulario_formulario',
+		'team',
 	];
 
 	public function estudiante()
