@@ -1,12 +1,11 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:8000/api/convocatorias';
+import api from '../api/axios'; // ajusta la ruta si es necesario
 
 export const crearConvocatoria = async (convocatoria) => {
-  return await axios.post(API_URL, convocatoria);
+  return await api.post('/convocatorias', convocatoria);
 };
+
 export const asignarAreasAConvocatoria = async (idConvocatoria, areas) => {
-  return await axios.post(`http://localhost:8000/api/convocatorias/${idConvocatoria}/areas`, {
+  return await api.post(`/convocatorias/${idConvocatoria}/areas`, {
     areas: areas
   });
 };

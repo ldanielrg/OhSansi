@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import DataTable from 'react-data-table-component';
 import '../styles/CrearUE.css'; // estilos específicos del formulario
+import api from '../api/axios';
 
 const CrearUE = () => {
   const navigate = useNavigate();
@@ -33,28 +34,36 @@ const CrearUE = () => {
     { name: 'Municipio', selector: row => row.municipio_nombre || '—' },
   ];
 
-  useEffect(() => {
-    fetch('http://localhost:8000/api/departamentos')
-      .then(res => res.json())
-      .then(data => setDepartamentos(data));
-      // Cargar las unidades educativas existentes, //AGREGUE PARA LA TABLA
-    fetch('http://localhost:8000/api/unidades-educativas')
-    .then(res => res.json())
-    .then(data => setUnidadesEducativas(data));
+    useEffect(() => {
+    const cargarDatos = async () => {
+      try {
+        const [departamentosRes, unidadesRes] = await Promise.all([
+          api.get('/departamentos'),
+          api.get('/unidades-educativas')
+        ]);
+        setDepartamentos(departamentosRes.data);
+        setUnidadesEducativas(unidadesRes.data);
+      } catch (error) {
+        console.error('Error al cargar datos iniciales:', error);
+      }
+    };
+
+    cargarDatos();
   }, []);
 
-  const handleDepartamentoChange = (selected) => {
+
+  const handleDepartamentoChange = async (selected) => {
     const id = selected?.value || '';
     setForm({ ...form, departamento_id: id, municipio_id: '' });
 
-    fetch(`http://localhost:8000/api/municipios/${id}`)
-      .then(res => res.json())
-      .then(data => setMunicipios(data));
+    try {
+      const res = await api.get(`/municipios/${id}`);
+      setMunicipios(res.data);
+    } catch (error) {
+      console.error('Error al cargar municipios:', error);
+    }
   };
 
-  const handleMunicipioChange = (selected) => {
-    setForm({ ...form, municipio_id: selected?.value || '' });
-  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -95,123 +104,102 @@ const CrearUE = () => {
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-  
+
     const endpoint = modoEdicion
-      ? `http://localhost:8000/api/unidad-educativa/${form.id}`
-      : 'http://localhost:8000/api/unidad-educativa';
-  
-    const method = modoEdicion ? 'PUT' : 'POST';
-  
+      ? `/unidad-educativa/${form.id}`
+      : '/unidad-educativa';
+
     try {
-      const res = await fetch(endpoint, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      });
-  
-      const data = await res.json();
-  
-      if (res.status === 409) {
-        alert('⚠️ El RUE ingresado ya existe.');
-      } else if (res.ok) {
-        if (modoEdicion) {
-          // Actualizar la unidad educativa en la tabla local
-          const nuevasUEs = [...unidadesEducativas];
-          nuevasUEs[editIndex] = data;
-          setUnidadesEducativas(nuevasUEs);
-        } else {
-          // Agregar nueva unidad educativa a la tabla local
-          setUnidadesEducativas(prev => [...prev, data]);
-        }
-  
-        alert(`✅ Unidad Educativa ${modoEdicion ? 'actualizada' : 'creada'} con éxito.`);
-  
-        // Resetear el formulario y estados auxiliares
-        //setForm({ nombre: '', rue: '', departamento_id: '', municipio_id: '' });
-        setForm(initialForm);
-        setMunicipios([]);
-        setErrors({});
-        setModoEdicion(false);
-        setEditIndex(null);
-      } else if (res.status === 422) {
-        setErrors(data.errors || {});
+      const res = modoEdicion
+        ? await api.put(endpoint, form)
+        : await api.post(endpoint, form);
+
+      const data = res.data;
+
+      if (modoEdicion) {
+        const nuevasUEs = [...unidadesEducativas];
+        nuevasUEs[editIndex] = data;
+        setUnidadesEducativas(nuevasUEs);
       } else {
-        alert(data.message || 'Ocurrió un error al registrar la Unidad Educativa.');
+        setUnidadesEducativas(prev => [...prev, data]);
       }
+
+      alert(`✅ Unidad Educativa ${modoEdicion ? 'actualizada' : 'creada'} con éxito.`);
+
+      setForm(initialForm);
+      setMunicipios([]);
+      setErrors({});
+      setModoEdicion(false);
+      setEditIndex(null);
+
     } catch (error) {
-      console.error(error);
-      alert('Error de conexión con el servidor, porque sera');
+      if (error.response?.status === 409) {
+        alert('⚠️ El RUE ingresado ya existe.');
+      } else if (error.response?.status === 422) {
+        setErrors(error.response.data.errors || {});
+      } else {
+        console.error(error);
+        alert('❌ Ocurrió un error al registrar la Unidad Educativa.');
+      }
     }
   };
 
+
   //PARA EDITAR
-  const handleEditar = () => {
-  if (selectedUEs.length === 0) {
-    alert('NO seleccionaste ningun dato para editar.');
-    return;
-  }
-  
-  if (selectedUEs.length > 1) {
-    alert('Solo selecciona un dato para editar.');
-    return;
-  }
+  const handleEditar = async () => {
+    if (selectedUEs.length !== 1) {
+      alert('Debes seleccionar exactamente una Unidad Educativa para editar.');
+      return;
+    }
 
-  const seleccionada = selectedUEs[0];
-  const index = unidadesEducativas.findIndex(ue => ue.id === seleccionada.id);
+    const seleccionada = selectedUEs[0];
+    const index = unidadesEducativas.findIndex(ue => ue.id === seleccionada.id);
 
-  setForm({ 
-    id: seleccionada.id,
-    nombre: seleccionada.nombre,
-    rue: seleccionada.rue,
-    departamento_id: seleccionada.departamento_id,
-    municipio_id: seleccionada.municipio_id
-  });
-  setEditIndex(index);
-  setModoEdicion(true);
+    setForm({
+      id: seleccionada.id,
+      nombre: seleccionada.nombre,
+      rue: seleccionada.rue,
+      departamento_id: seleccionada.departamento_id,
+      municipio_id: seleccionada.municipio_id
+    });
+    setEditIndex(index);
+    setModoEdicion(true);
 
-  // Cargar municipios del departamento seleccionado
-  fetch(`http://localhost:8000/api/municipios/${seleccionada.departamento_id}`)
-    .then(res => res.json())
-    .then(data => setMunicipios(data));
+    try {
+      const res = await api.get(`/municipios/${seleccionada.departamento_id}`);
+      setMunicipios(res.data);
+    } catch (error) {
+      console.error('Error al cargar municipios para edición:', error);
+    }
 
-    //HACER UN SCROLL, HACIA EL FORMULARIO
     document.getElementById('formulario-ue')?.scrollIntoView({ behavior: 'smooth' });
-
   };
+
 
   //FUNCION PARA ELIMINAR
   const handleEliminar = async () => {
-    if (selectedUEs.length === 0) {
-      alert('NO seleccionaste ningun dato para eliminar.');
+    if (selectedUEs.length !== 1) {
+      alert('Debes seleccionar exactamente una Unidad Educativa para eliminar.');
       return;
     }
 
-    if (selectedUEs.length > 1) {
-      alert('Solo selecciona un dato para eliminar.');
-      return;
-    }
-
-    const ue = selectedUEs[0]; //UNIDAD EDUCATIVA SELECCIONADA
+    const ue = selectedUEs[0];
     const confirmacion = window.confirm(`⚠️ ¿Estás seguro de eliminar la: \n"${ue.nombre}"?`);
 
-  
     if (!confirmacion) return;
-  
+
     try {
-      await fetch(`http://localhost:8000/api/unidad-educativa/${ue.id}`, {
-        method: 'DELETE',
-      });  
-  
+      await api.delete(`/unidad-educativa/${ue.id}`);
       const nuevasUEs = unidadesEducativas.filter(item => item.id !== ue.id);
-  
       setUnidadesEducativas(nuevasUEs);
       setSelectedUEs([]);
-      alert('✅ "${ue.nombre}", fue eliminada correctamente.');
+      alert(`✅ "${ue.nombre}" fue eliminada correctamente.`);
     } catch (error) {
       console.error(error);
       alert('❌ Error al eliminar.');
     }
   };
+
 
   const customStyles = {
     headCells: {

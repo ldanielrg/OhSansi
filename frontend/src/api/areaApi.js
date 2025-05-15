@@ -1,8 +1,6 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:8000/api/areas';
+import api from '../api/axios'; // o la ruta correcta según dónde esté este archivo
 
 export const obtenerAreas = async () => {
-  const res = await axios.get(API_URL);
+  const res = await api.get('/areas');
   return res.data;
 };
