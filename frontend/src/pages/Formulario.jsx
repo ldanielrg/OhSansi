@@ -170,8 +170,8 @@ useEffect(() => {
   const handleRegistrar = async () => {
   const { nombre, apellido, ci, fechaNac, rude, area, categoria } = formData;
 
-  if (nombre.length < 6)
-    return toast.warn("El nombre debe tener al menos 6 caracteres.");
+  if (nombre.length < 3)
+    return toast.warn("El nombre debe tener al menos 3 caracteres.");
   if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
     return toast.warn("El nombre solo puede contener letras y espacios.");
   if (!/\d{1,16}/.test(rude))

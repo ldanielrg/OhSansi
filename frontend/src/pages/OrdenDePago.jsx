@@ -90,6 +90,16 @@ const OrdenDePago = () => {
 
     return (
         <div className='orden-pago-container'>
+            <Caja titulo='Tomar en cuenta'>
+            <div className="contenedor-descargar-archivo">
+                <p> <strong>Pasos para completar el pago correctamente:</strong>
+                    <br /> 1.- Descargar la orden de Pago.
+                    <br />2.- Llevar la orden de pago y cancelar el monto en Cajas del campus central de la UMSS.
+                    <br />3.- Introducir el codigo del recibo y subir una foto del recibo en esta pagina.
+                    <br />4.- Esperar el mensaje de confirmacion del Pago
+                </p>
+            </div>
+            </Caja>
             <Caja titulo='Detalle de orden de pago'>
                 {cargando ? (
     <div style={{
