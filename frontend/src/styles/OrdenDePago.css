@@ -3,6 +3,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    color: #003366;
 }
 .contenedor-fila-1-orden{
     display: flex;
