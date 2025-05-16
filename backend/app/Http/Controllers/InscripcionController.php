@@ -30,6 +30,7 @@ class InscripcionController extends Controller{
             'estudiantes.*.rude' => 'required|integer|min:1',
             'estudiantes.*.idAarea' => 'required|integer',
             'estudiantes.*.idCategoria' => 'required|integer',
+            'estudiantes.*.team' => 'required|integer|min:0',
         ]);
         
         Log::debug($validated);
@@ -125,7 +126,8 @@ class InscripcionController extends Controller{
                     EstudianteEstaInscrito::create([
                         'id_estudiante_estudiante' => $estudiante->id_estudiante,
                         'id_formulario_formulario' => $formulario->id_formulario,
-                        'id_inscrito_en' => $relacion->id
+                        'id_inscrito_en' => $relacion->id,
+                        'team' => $est['team']
                     ]);
                 }
             }
@@ -161,7 +163,8 @@ class InscripcionController extends Controller{
             'nuevo.rude' => 'required|integer',
             'nuevo.fecha_nacimiento' => 'required|date',
             'nuevo.idArea' => 'required|integer',
-            'nuevo.idCategoria' => 'required|integer'
+            'nuevo.idCategoria' => 'required|integer',
+            'nuevo.team' => 'required|integer|min:0',
         ]);
     
         // Paso 1: Buscar la relación actual (área + categoría)
@@ -231,7 +234,8 @@ class InscripcionController extends Controller{
             'id_formulario_formulario' => $inscripcion->id_formulario_formulario,
             'id_inscrito_en' => $inscripcion->id_inscrito_en
         ])->update([
-            'id_inscrito_en' => $nuevaRelacion->id
+            'id_inscrito_en' => $nuevaRelacion->id,
+            'team' => $validated['nuevo']['team']
         ]);
         return response()->json([
             'message' => 'Inscripción y datos del estudiante actualizados correctamente.'
@@ -309,9 +313,9 @@ class InscripcionController extends Controller{
         $formulario = Formulario::with('inscripciones.estudiante', 'inscripciones.inscrito.area', 'inscripciones.inscrito.categorium')
                                 ->findOrFail($id);
 
-        // Recolectar estudiantes formateados
         $estudiantes = $formulario->inscripciones->map(function ($inscripcion) {
             $inscrito = $inscripcion->inscrito;
+
             return [
                 'id_estudiante' => $inscripcion->estudiante->id_estudiante ?? '',
                 'nombre' => $inscripcion->estudiante->nombre ?? '',
@@ -320,19 +324,24 @@ class InscripcionController extends Controller{
                 'ci' => $inscripcion->estudiante->ci ?? '',
                 'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento ?? '',
                 'rude' => $inscripcion->estudiante->rude ?? '',
-                'idAarea' =>  $inscrito->area->id_area,
+
+                'idAarea' => $inscrito->area->id_area ?? '',
                 'nombre_area' => $inscrito->area->nombre_area ?? '',
-                'idCategoria' => $inscrito->categorium->id_categoria,
+                'idCategoria' => $inscrito->categorium->id_categoria ?? '',
                 'nombre_categoria' => $inscrito->categorium->nombre_categoria ?? '',
+
+                'team' => $inscripcion->team ?? null,
+                'precio' => $inscrito->precio ?? null
             ];
         });
 
         return response()->json([
             'id_formulario' => $formulario->id_formulario,
-        'id_convocatoria_convocatoria' => $formulario->id_convocatoria_convocatoria, // 👈 Este es clave
-        'estudiantes' => $estudiantes
-            ]);
+            'id_convocatoria_convocatoria' => $formulario->id_convocatoria_convocatoria,
+            'estudiantes' => $estudiantes
+        ]);
     }
+
 
     public function eliminarFormulario(Request $request, $id){
         $user = $request->user(); // Usuario autenticado
