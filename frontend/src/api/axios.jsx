@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'ohsansi-production.up.railway.app/api', // ajusta si usas otra URL
+    baseURL: 'https://ohsansi-production.up.railway.app/api', // ajusta si usas otra URL
     
 });
 
