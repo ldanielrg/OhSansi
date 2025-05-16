@@ -34,6 +34,7 @@ const OrdenDePago = () => {
         { name: "Apellido", selector: (row) => row.apellido, sortable: true },
         { name: "Área", selector: (row) => row.nombre_area },
         { name: "Categoría", selector: (row) => row.nombre_categoria },
+        { name: "Precio (Bs)", selector: (row) => row.precio }
     ];
 
     useEffect(() => {
