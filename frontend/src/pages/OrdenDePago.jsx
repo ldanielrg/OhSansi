@@ -10,6 +10,10 @@ import '../styles/OrdenDePago.css';
 import Tesseract from 'tesseract.js';
 import { BallTriangle } from 'react-loader-spinner';
 import { TbNumber } from "react-icons/tb";
+import { useRef } from "react";
+import html2pdf from "html2pdf.js";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 
 const OrdenDePago = () => {
@@ -26,6 +30,7 @@ const OrdenDePago = () => {
     const [tamanoImagen, setTamanoImagen] = useState(null);
     const [codigoManual, setCodigoManual] = useState("");
     const [imagenRecibo, setImagenRecibo] = useState(null);
+    const pdfRef = useRef();
 
 
 
@@ -104,6 +109,117 @@ const OrdenDePago = () => {
         }
     };
 
+    const handleDescargarPDF = async () => {
+    // Crea un contenedor temporal en el DOM
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.left = "-9999px";
+    container.style.top = "0";
+    container.style.width = "800px";
+    container.style.padding = "40px";
+    container.style.background = "white";
+    container.style.fontFamily = "Arial, sans-serif";
+    container.style.color = "black";
+
+    // Genera el HTML con los datos
+    container.innerHTML = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; background: white; color: black;">
+            <div style="display: flex; align-items: center; justify-content: flex-start;margin-bottom: 20px;">
+                <div style="display:flex; flex-direction: row; justify-content: center; align-items:center">
+                    <img src="/images/logoUMSS.png" style="height: 80px; padding:0; margin:0" alt="Logo UMSS" />
+                    <div style="margin-right:20px; margin-left: 20px; padding: 0px 0px 0px 0px">
+                        <h2 style="margin: 0;text-align: center; color: #000; font-weight: 300; font-size: 25px">UNIVERSIDAD MAYOR DE SAN SIMÓN</h2>
+                        <h3 style="margin: 0;text-align: center; font-size: 20px">OLIMPIADAS “OH SANSI”</h3>
+                    </div>
+                    <img src="/images/logoOHSANSI.png" style="height: 80px; padding:0; margin:0" alt="Logo UMSS" />
+                </div>
+            </div>
+
+        <h4 style="text-align: start; padding-top: 15px; font-size: 20px"> <strong>DETALLE DE ORDEN DE PAGO:</strong> </h4>
+
+        <p><strong>Código:</strong> ${orden.id_orden}</p>
+        <p><strong>Nombre del responsable:</strong> ${user.name}</p>
+        <p><strong>CI:</strong> ${user.ci || "---"}</p>
+        <p><strong>Unidad Educativa:</strong> ${orden.unidad_educativa?.nombre}</p>
+        <p><strong>Fecha de emisión:</strong> ${orden.fecha_emision}</p>
+        <p><strong>Fecha de vencimiento:</strong> ${orden.fecha_vencimiento}</p>
+        <p><strong>Monto total:</strong> ${orden.monto_total} Bs</p>
+        <p><strong>Estudiantes inscritos:</strong> ${rowData.length}</p>
+
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+      <thead>
+        <tr>
+          <th style="border: 1px solid black; padding: 6px;">Nombre</th>
+          <th style="border: 1px solid black; padding: 6px;">Apellido</th>
+          <th style="border: 1px solid black; padding: 6px;">Área</th>
+          <th style="border: 1px solid black; padding: 6px;">Categoría</th>
+          <th style="border: 1px solid black; padding: 6px;">Precio (Bs)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rowData.map(est => `
+          <tr>
+            <td style="border: 1px solid black; padding: 6px;">${est.nombre}</td>
+            <td style="border: 1px solid black; padding: 6px;">${est.apellido}</td>
+            <td style="border: 1px solid black; padding: 6px;">${est.nombre_area}</td>
+            <td style="border: 1px solid black; padding: 6px;">${est.nombre_categoria}</td>
+            <td style="border: 1px solid black; padding: 6px;">${est.precio}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+
+        <p style="margin-top: 60px; text-align: center;">____________________<br />Responsable de delegación</p>
+    `;
+
+    document.body.appendChild(container);
+
+    // Captura el contenido con html2canvas
+    const canvas = await html2canvas(container, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+    let page = 1;
+    const totalPages = Math.ceil(imgHeight / pdfHeight);
+
+    while (heightLeft > 0) {
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+
+        // Pie de página
+        pdf.setFontSize(9);
+        pdf.text(
+        "Av. Oquendo Prolongación Jordán, Cajas, Planta Baja, Tel.: 4666631",
+        pdfWidth / 2,
+        pdfHeight - 15,
+        { align: "center" }
+        );
+        pdf.text(
+        "E-mail: drei@umss.edu.bo — web: http://www.drei.umss.edu.bo — Cochabamba - Bolivia",
+        pdfWidth / 2,
+        pdfHeight - 10,
+        { align: "center" }
+        );
+        pdf.text(`Página ${page} de ${totalPages}`, pdfWidth - 20, pdfHeight - 5);
+
+        heightLeft -= pdfHeight;
+        position -= pdfHeight;
+
+        if (heightLeft > 0) {
+        pdf.addPage();
+        page++;
+        }
+    }
+
+    pdf.save(`orden_pago_${formulario.id_formulario}.pdf`);
+    document.body.removeChild(container); // Limpia el DOM
+    };
 
     return (
         <div className='orden-pago-container'>
@@ -116,6 +232,8 @@ const OrdenDePago = () => {
                     <br />4.- Subir una foto del recibo que no pese mas de 2MB o 2048kb.
                     <br />5.- Esperar el mensaje de confirmacion del Pago
                 </p>
+                <BotonForm texto="Descargar PDF" onClick={handleDescargarPDF} className="btn-descargar-pdf" />
+
             </div>
             </Caja>
             <Caja titulo='Detalle de orden de pago'>
@@ -233,7 +351,6 @@ const OrdenDePago = () => {
                         <BotonForm texto='Verificar pago' onClick={verificarPago} />
                     </div>
                 </Caja>
-
         </div>
     );
 };
