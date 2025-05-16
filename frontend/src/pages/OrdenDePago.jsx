@@ -56,6 +56,7 @@ const OrdenDePago = () => {
                     apellido: est.apellido,
                     nombre_area: est?.nombre_area || "",
                     nombre_categoria: est?.nombre_categoria || "",
+                    precio: est?.precio || 0
                 }));
                 setRowData(estudiantesFormateados);
 
