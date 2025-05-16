@@ -238,23 +238,23 @@ const OrdenDePago = () => {
             </Caja>
             <Caja titulo='Detalle de orden de pago'>
                 {cargando ? (
-    <div style={{
-        height: '70vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)'
-    }}>
-        <BallTriangle
-            height={50}
-            width={50}
-            color="#003366"
-            ariaLabel="ball-triangle-loading"
-            visible={true}
-        />
-    </div>
-    ) : (
+                <div style={{
+                    height: '70vh',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                }}>
+                    <BallTriangle
+                        height={50}
+                        width={50}
+                        color="#003366"
+                        ariaLabel="ball-triangle-loading"
+                        visible={true}
+                    />
+                </div>
+                ) : (
 
                     <>
                     <div className="contenedor-fila-1-orden">
@@ -297,13 +297,7 @@ const OrdenDePago = () => {
                                 },
                             }}
                         />
-                        <section className="seccion-botones-orden">
-                            <BotonForm
-                                texto='Volver'
-                                onClick={() => navigate(`/inscripciones?convocatoria=${idConvocatoria || ''}`)}
-                                className="boton-volver-orden-pago"
-                            />
-                            
+                        <section className="seccion-botones-orden"> 
 
                         </section>
                     </>
@@ -351,6 +345,11 @@ const OrdenDePago = () => {
                         <BotonForm texto='Verificar pago' onClick={verificarPago} />
                     </div>
                 </Caja>
+                <BotonForm
+                                texto='Volver'
+                                onClick={() => navigate(`/inscripciones?convocatoria=${idConvocatoria || ''}`)}
+                                className="boton-volver-orden-pago"
+                            />
         </div>
     );
 };
