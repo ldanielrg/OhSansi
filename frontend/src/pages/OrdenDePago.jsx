@@ -5,9 +5,11 @@ import Caja from '../components/Caja';
 import BotonForm from "../components/BotonForm";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import RegistroForm from '../components/RegistroForm';
 import '../styles/OrdenDePago.css';
 import Tesseract from 'tesseract.js';
 import { BallTriangle } from 'react-loader-spinner';
+import { TbNumber } from "react-icons/tb";
 
 
 const OrdenDePago = () => {
@@ -21,6 +23,10 @@ const OrdenDePago = () => {
     const [textoOCR, setTextoOCR] = useState("");
     const [searchParams] = useSearchParams();
     const idConvocatoria = searchParams.get("convocatoria");
+    const [tamanoImagen, setTamanoImagen] = useState(null);
+    const [codigoManual, setCodigoManual] = useState("");
+    const [imagenRecibo, setImagenRecibo] = useState(null);
+
 
 
     const columns = [
@@ -64,28 +70,37 @@ const OrdenDePago = () => {
 
         cargarDatos();
     }, [id]);
-    const handleSubirComprobante = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
 
-    const imageUrl = URL.createObjectURL(file);
+    const verificarPago = async () => {
+        if (!codigoManual || !imagenRecibo) {
+            alert("Debes ingresar el código y subir una imagen del recibo.");
+            return;
+        }
 
-    try {
-        const result = await Tesseract.recognize(
+        const imageUrl = URL.createObjectURL(imagenRecibo);
+
+        try {
+            const result = await Tesseract.recognize(
             imageUrl,
-            'spa', // cambia a 'eng' si el comprobante está en inglés
+            "spa",
             {
                 logger: (m) => console.log(m),
             }
-        );
-        setTextoOCR(result.data.text);
-        console.log("Texto detectado:", result.data.text);
-        alert("Texto OCR detectado:\n" + result.data.text);
-    } catch (err) {
-        console.error("Error OCR:", err);
-        alert("Hubo un error al procesar el comprobante.");
-    }
-};
+            );
+
+            const texto = result.data.text;
+            console.log("Texto OCR detectado:", texto);
+
+            if (texto.includes(codigoManual)) {
+            alert("✅ Código verificado con éxito. ¡Recibo válido!");
+            } else {
+            alert("❌ El código no coincide con el contenido del recibo.");
+            }
+        } catch (error) {
+            console.error("Error al procesar imagen:", error);
+            alert("Hubo un error al leer el recibo.");
+        }
+    };
 
 
     return (
@@ -93,10 +108,11 @@ const OrdenDePago = () => {
             <Caja titulo='Tomar en cuenta'>
             <div className="contenedor-descargar-archivo">
                 <p> <strong>Pasos para completar el pago correctamente:</strong>
-                    <br /> 1.- Descargar la orden de Pago.
+                    <br />1.- Descargar la orden de Pago.
                     <br />2.- Llevar la orden de pago y cancelar el monto en Cajas del campus central de la UMSS.
-                    <br />3.- Introducir el codigo del recibo y subir una foto del recibo en esta pagina.
-                    <br />4.- Esperar el mensaje de confirmacion del Pago
+                    <br />3.- Introducir el codigo del recibo.
+                    <br />4.- Subir una foto del recibo que no pese mas de 2MB o 2048kb.
+                    <br />5.- Esperar el mensaje de confirmacion del Pago
                 </p>
             </div>
             </Caja>
@@ -167,22 +183,54 @@ const OrdenDePago = () => {
                                 onClick={() => navigate(`/inscripciones?convocatoria=${idConvocatoria || ''}`)}
                                 className="boton-volver-orden-pago"
                             />
-                            <BotonForm
-                                texto='Subir comprobante'
-                                onClick={() => document.getElementById("comprobanteInput").click()}
-                            />
+                            
 
                         </section>
                     </>
                 )}
                 </Caja>
-                <input
-                    type="file"
-                    accept="image/*"
-                    id="comprobanteInput"
-                    style={{ display: 'none' }}
-                    onChange={handleSubirComprobante}
-                />
+                <Caja titulo='Verificacion del pago'>
+                    <div className="contenedor-verificar-pago">
+                        <div className="contenedor-registro-form-pago">
+                        <RegistroForm
+                            type="text"
+                            label="Ingresa el código de tu recibo"
+                            icono={TbNumber}
+                            name="codigo"
+                            value={codigoManual}
+                            onChange={(e) => setCodigoManual(e.target.value)}
+                            usarEvento={true}
+                        />
+
+                            <p>Sube la foto de tu recibo</p>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (file) {
+                                    const sizeKB = file.size / 1024;
+                                    if (sizeKB > 2048) {
+                                        alert("La imagen excede el tamaño máximo permitido de 2 MB.");
+                                        e.target.value = "";
+                                        setTamanoImagen(null);
+                                        setImagenRecibo(null);
+                                        return;
+                                    }
+                                    setTamanoImagen(sizeKB.toFixed(2));
+                                    setImagenRecibo(file); // guarda imagen para el botón
+                                    }
+                                }}
+                                />
+                                {tamanoImagen && (
+                                <p style={{ marginTop: '8px' }}>
+                                    Tamaño de imagen: <strong>{tamanoImagen} KB</strong>
+                                </p>
+                                )}
+                        </div>
+                        <BotonForm texto='Verificar pago' onClick={verificarPago} />
+                    </div>
+                </Caja>
 
         </div>
     );
