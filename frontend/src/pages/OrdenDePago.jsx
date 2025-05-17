@@ -143,7 +143,6 @@ const OrdenDePago = () => {
         <p><strong>Unidad Educativa:</strong> ${orden.unidad_educativa?.nombre}</p>
         <p><strong>Fecha de emisión:</strong> ${orden.fecha_emision}</p>
         <p><strong>Fecha de vencimiento:</strong> ${orden.fecha_vencimiento}</p>
-        <p><strong>Monto total:</strong> ${orden.monto_total} Bs</p>
         <p><strong>Estudiantes inscritos:</strong> ${rowData.length}</p>
 
         <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
@@ -168,6 +167,9 @@ const OrdenDePago = () => {
         `).join("")}
       </tbody>
     </table>
+    <div style="display: flex; justify-content: end">
+        <p><strong>Monto total:</strong> ${orden.monto_total} Bs</p>
+    </div>
 
         <p style="margin-top: 60px; text-align: center;">____________________<br />Responsable de delegación</p>
     `;
