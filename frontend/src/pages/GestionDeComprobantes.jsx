@@ -56,7 +56,7 @@ const GestionDeComprobantes = () => {
 
   const columnas = [
     { name: "ID", selector: row => row.id_comprobante, sortable: true },
-    { name: "Código", selector: row => row.codigo, sortable: true },
+    { name: "Código introducido", selector: row => row.codigo, sortable: true },
     {
       name: "Fotografía",
       cell: row => (
