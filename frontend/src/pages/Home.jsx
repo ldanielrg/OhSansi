@@ -79,6 +79,10 @@ const Home = () => {
     e.preventDefault();
     navigate("/inscritos-oficiales");
   };
+  const handleNavigateGestionComprobantes = (e) => {
+    e.preventDefault();
+    navigate("/gestion-comprobantes");
+  };
   handleNavigateConfiguracionCuentas
   return (
     <div className="home-container container-fluid">
@@ -212,6 +216,12 @@ const Home = () => {
                     onClick={handleNavigateInscritosOficiales}
                   >
                     Inscritos Oficiales
+                  </button>
+                  <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateGestionComprobantes}
+                  >
+                    Gestion de comprobantes
                   </button>
                 </>
                 )}
