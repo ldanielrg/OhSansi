@@ -98,11 +98,8 @@ function App() {
           <Route path="/configuracion-convocatoria" element={<Layout><ConfiguracionConvocatoria/></Layout>}/>
           <Route path="/configuracion-convocatoria/gestionar/:id_convocatoria" element={<Layout><GestionarConvocatoria/></Layout>}/>
           <Route path="/inscritos-oficiales" element={<Layout><InscritosOficiales/></Layout>}/>
-<<<<<<< HEAD
           <Route path="/logueado" element={<Layout><Logueado/></Layout>}/>
-=======
           <Route path="/gestion-comprobantes" element={<Layout><GestionDeComprobantes /></Layout>} />
->>>>>>> main
       </Route>
     </Routes>
     </AuthProvider>
