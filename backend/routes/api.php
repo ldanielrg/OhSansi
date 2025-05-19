@@ -85,8 +85,8 @@ Route::middleware('auth:sanctum')->get('/formulario-detalles/{id_formulario}', [
 Route::middleware('auth:sanctum')->post('/inscripcion', [InscripcionController::class, 'inscribirEstudiantes']); 
 Route::post('/editar-registro-estudiante', [InscripcionController::class, 'editarEstudiante']);
 Route::delete('/eliminar-registro-estudiante', [InscripcionController::class, 'eliminarInscripcion']);
-
-
+Route::get('/dame-mi-team', [InscripcionController::class, 'obtenerSiguienteTeam']);
+Route::get('/participantes', [InscripcionController::class, 'obtenerNroParticipantes']);
 
 //RUTAS PROTEGIDAS
 Route::middleware('auth:sanctum')->group(function () {

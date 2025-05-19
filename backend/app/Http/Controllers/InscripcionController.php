@@ -379,5 +379,67 @@ class InscripcionController extends Controller{
         }
     }
 
+    #Esto te dá el nro del team que te corresponde.
+    public function obtenerSiguienteTeam(Request $request){
+        $idArea = $request->input('idArea');
+        $idCategoria = $request->input('idCategoria');
 
+        // Validación básica (opcional pero recomendado)
+        if (!$idArea || !$idCategoria) {
+            return response()->json([
+                'error' => 'Faltan idArea o idCategoria en la solicitud.'
+            ], 422);
+        }
+
+        // Buscar el id de area_tiene_categoria
+        $inscritoEn = DB::table('area_tiene_categoria')
+            ->where('id_area_area', $idArea)
+            ->where('id_categoria_categoria', $idCategoria)
+            ->value('id');
+
+        if (!$inscritoEn) {
+            return response()->json([
+                'error' => 'No se encontró una combinación válida en area_tiene_categoria.'
+            ], 404);
+        }
+
+        // Buscar el último número de team asociado a ese id_inscrito_en
+        $ultimoTeam = DB::table('estudiante_esta_inscrito')
+            ->where('id_inscrito_en', $inscritoEn)
+            ->max('team');
+
+        $siguienteTeam = $ultimoTeam ? $ultimoTeam + 1 : 1;
+
+        return response()->json([
+            'siguiente_team' => $siguienteTeam,
+            //'id_inscrito_en' => $inscritoEn
+        ]);
+    }
+
+    #Esto te dá cuantos participantes deben haber en esa area-categoria
+    public function obtenerNroParticipantes(Request $request){
+        $idArea = $request->input('idArea');
+        $idCategoria = $request->input('idCategoria');
+
+        if (!$idArea || !$idCategoria) {
+            return response()->json([
+                'error' => 'Faltan idArea o idCategoria.'
+            ], 422);
+        }
+
+        $nroParticipantes = DB::table('area_tiene_categoria')
+            ->where('id_area_area', $idArea)
+            ->where('id_categoria_categoria', $idCategoria)
+            ->value('nro_participantes');
+
+        if (is_null($nroParticipantes)) {
+            return response()->json([
+                'error' => 'No se encontró esa combinación Area-Categoria O el valor es NULL'
+            ], 404);
+        }
+
+        return response()->json([
+            'nro_participantes' => $nroParticipantes
+        ]);
+    }
 }
