@@ -27,15 +27,20 @@ class AreaTieneCategorium extends Model
 	public $timestamps = false;
 
 	protected $casts = [
+		'id'  => 'int',
 		'id_categoria_categoria' => 'int',
-		'id_area_area' => 'int'
+		'id_area_area' => 'int',
+		'precio' => 'decimal:2',
+        'activo' => 'boolean',
+        'nro_participantes' => 'integer',
 	];
 	
 	protected $fillable = [
         'id_area_area',
         'id_categoria_categoria',
 		'precio',
-		'activo'
+		'activo',
+		'nro_participantes',
     ];
 
 	public function categorium()

@@ -30,8 +30,8 @@ class Evento extends Model
 
     protected $casts = [
         'id_evento' => 'int',
-        'fecha_inicio' => 'date',
-        'fecha_final' => 'date',
+        'fecha_inicio' => 'date:Y-m-d',
+        'fecha_final' => 'date:Y-m-d',
         'id_convocatoria_convocatoria' => 'int'
     ];
 

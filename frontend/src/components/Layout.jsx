@@ -19,6 +19,8 @@ const Layout = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { roles } = useAuth();
   const esAdmin = roles?.includes("Admin");
+  const [cerrandoSesion, setCerrandoSesion] = useState(false);
+
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);

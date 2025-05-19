@@ -46,6 +46,8 @@ import ElegirConvocatoria from "./pages/ElegirConvocatoria";
 import GestionarConvocatoria from "./pages/GestionarConvocatoria";
 import InscritosOficiales from "./pages/InscritosOficiales";
 import Logueado from "./pages/Logueado.jsx"
+import GestionDeComprobantes from "./pages/GestionDeComprobantes";
+
 
 function App() {
   return (
@@ -87,7 +89,7 @@ function App() {
       
 
       {/* Rutas protegidas solo para Admin/Director/Adm.Inscripción */}
-      <Route element={<ProtectedRoute allowedRoles={['Admin', 'Director', 'Adm. Inscripcion']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['Admin', 'Director', 'Docente','Adm. Inscripcion']} />}>
           <Route path="/crear-cuentas" element={<Layout><CrearCuentas /></Layout>} />
           <Route path="/inscripciones" element={<Layout><Inscripciones /></Layout>}/> 
           <Route path="/crear-ue" element={<Layout><CrearUE /></Layout>}/>
@@ -96,7 +98,11 @@ function App() {
           <Route path="/configuracion-convocatoria" element={<Layout><ConfiguracionConvocatoria/></Layout>}/>
           <Route path="/configuracion-convocatoria/gestionar/:id_convocatoria" element={<Layout><GestionarConvocatoria/></Layout>}/>
           <Route path="/inscritos-oficiales" element={<Layout><InscritosOficiales/></Layout>}/>
+<<<<<<< HEAD
           <Route path="/logueado" element={<Layout><Logueado/></Layout>}/>
+=======
+          <Route path="/gestion-comprobantes" element={<Layout><GestionDeComprobantes /></Layout>} />
+>>>>>>> main
       </Route>
     </Routes>
     </AuthProvider>

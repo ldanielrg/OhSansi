@@ -10,9 +10,14 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Area;
 use App\Models\AreaTieneCategorium;
 use App\Models\Categorium;
+use App\Traits\RegistraBitacora;
+
 
 class ConvocatoriaController extends Controller
 {
+
+    use RegistraBitacora;
+
     #Obtiene todas las convocatorias
     public function index(){
         return response()->json(Convocatoria::all());
@@ -80,8 +85,7 @@ class ConvocatoriaController extends Controller
 
     #Muestra datos de una determinada convocatoria
     //MODIFIQUE YO
-    public function show($id_convocatoria)
-    {
+    public function show($id_convocatoria){
         $convocatoria = Convocatoria::where('id_convocatoria', $id_convocatoria)->get();
         return response()->json($convocatoria);
     }
@@ -96,7 +100,17 @@ class ConvocatoriaController extends Controller
 
     #Eliminar una convocatoria.
     public function destroy(string $id){
+        $convocatoria = Convocatoria::findOrFail($id);
+        $datosAntes = $convocatoria->toArray();
         Convocatoria::destroy($id);
+        $this->guardarBitacora(
+            'eliminación',
+            'convocatoria',
+            $id,
+            'Eliminación de convocatoria',
+            $datosAntes
+        );
+
         return response()->json(null, 204);
     }
 

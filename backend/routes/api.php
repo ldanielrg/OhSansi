@@ -25,7 +25,7 @@ Route::get('/convocatorias-activas', [ConvocatoriaController::class, 'indexActiv
 Route::post('/convocatoria-crear', [ConvocatoriaController::class, 'store']);
 Route::get('/convocatoria-detalle/{id_convocatoria}', [ConvocatoriaController::class, 'show']);
 Route::post('/convocatoria-editar/{id_convocatoria}', [ConvocatoriaController::class, 'update']);
-Route::delete('/convocatoria-eliminar/{id_convocatoria}', [ConvocatoriaController::class, 'destroy']);
+Route::middleware('auth:sanctum')->delete('/convocatoria-eliminar/{id_convocatoria}', [ConvocatoriaController::class, 'destroy']);
 Route::put('/convocatoria-estado/{id_convocatoria}', [ConvocatoriaController::class, 'toggleActivo']);
 //Convocatoria Inscritos oficiales
 Route::get('/inscritos-oficiales/{id_convocatoria}', [FormularioController::class, 'obtenerInscritosOficiales']);
@@ -85,8 +85,8 @@ Route::middleware('auth:sanctum')->get('/formulario-detalles/{id_formulario}', [
 Route::middleware('auth:sanctum')->post('/inscripcion', [InscripcionController::class, 'inscribirEstudiantes']); 
 Route::post('/editar-registro-estudiante', [InscripcionController::class, 'editarEstudiante']);
 Route::delete('/eliminar-registro-estudiante', [InscripcionController::class, 'eliminarInscripcion']);
-
-
+Route::get('/dame-mi-team', [InscripcionController::class, 'obtenerSiguienteTeam']);
+Route::get('/participantes', [InscripcionController::class, 'obtenerNroParticipantes']);
 
 //RUTAS PROTEGIDAS
 Route::middleware('auth:sanctum')->group(function () {
