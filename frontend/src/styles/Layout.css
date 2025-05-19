@@ -9,7 +9,7 @@
 /* Header con fondo (imagen o color sólido) */
 .header {
   position: relative;
-  background: url('/src/assets/fondo.svg') no-repeat center center;
+  
   background-size: cover;
   padding: 20px;
   height: 250px;
@@ -98,4 +98,8 @@
 
 .user-menu-dropdown .dropdown-item:hover {
   background-color: #003366;
+}
+
+.me-2:hover {
+  border-bottom: 2px solid #FFFFFF;
 }

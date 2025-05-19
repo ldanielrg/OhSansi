@@ -3,6 +3,14 @@ import React, { useState } from "react";
 import "../styles/Layout.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import iconoHome from "/src/assets/icono1.svg";
+import iconoInscripciones from "/src/assets/icono2.svg";
+import iconoEventos from "/src/assets/icono3.svg";
+import logoInstituto from "/src/assets/umss.svg";
+import logoEmpresa from "/src/assets/LOGO.png";
+import fondo from "/src/assets/fondo.svg";
+import iconoNosotros from "/src/assets/icono4.svg";
+import iconoLogin from "/src/assets/icono5.svg";
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -24,19 +32,30 @@ const Layout = ({ children }) => {
       <div className=""></div>
 
       {/* Header */}
-      <header className="header">
+      <header
+        className="header"
+        style={{
+          backgroundImage: `url(${fondo})`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center center",
+          backgroundSize: "cover",
+          padding: "20px",
+          height: "250px",
+          position: "relative",
+        }}
+      >
         <div className="container">
           <div className="row align-items-center">
             <div className="col">
               <img
-                src="/src/assets/umss.svg"
+                src={logoInstituto}
                 alt="Logo Instituto"
                 className="logo-instituto"
               />
             </div>
             <div className="col text-end">
               <img
-                src="/src/assets/LOGO.png"
+                src={logoEmpresa}
                 alt="Logo Empresa"
                 className="logo-empresa"
               />
@@ -50,26 +69,58 @@ const Layout = ({ children }) => {
         <div className="container d-flex justify-content-between align-items-center">
           <ul className="navbar-nav d-flex flex-row" id="left-menu">
             <li className="nav-item me-3">
-              <a className="nav-link text-white" href="#" onClick={handleNavigate("/")}>
-                <img src="/src/assets/icono1.svg" alt="Home Icon" style={{ width: "20px", marginRight: "5px" }} />
+              <a
+                className="nav-link text-white"
+                href="#"
+                onClick={handleNavigate("/")}
+              >
+                <img
+                  src={iconoHome}
+                  alt="Home Icon"
+                  style={{ width: "20px", marginRight: "5px" }}
+                />
                 Inicio
               </a>
             </li>
             <li className="nav-item me-3">
-              <a className="nav-link text-white" href="#" onClick={handleNavigate("/inscripciones")}>
-                <img src="/src/assets/icono2.svg" alt="Inscripciones Icon" style={{ width: "20px", marginRight: "5px" }} />
+              <a
+                className="nav-link text-white"
+                href="#"
+                onClick={handleNavigate("/inscripciones")}
+              >
+                <img
+                  src={iconoInscripciones}
+                  alt="Inscripciones Icon"
+                  style={{ width: "20px", marginRight: "5px" }}
+                />
                 Inscripciones
               </a>
             </li>
             <li className="nav-item me-3">
-              <a className="nav-link text-white" href="#" onClick={handleNavigate("/eventos")}>
-                <img src="/src/assets/icono3.svg" alt="Eventos Icon" style={{ width: "20px", marginRight: "5px" }} />
+              <a
+                className="nav-link text-white"
+                href="#"
+                onClick={handleNavigate("/eventos")}
+              >
+                <img
+                  src={iconoEventos}
+                  alt="Eventos Icon"
+                  style={{ width: "20px", marginRight: "5px" }}
+                />
                 Eventos
               </a>
             </li>
             <li className="nav-item me-3">
-              <a className="nav-link text-white" href="#" onClick={handleNavigate("/nosotros")}>
-                <img src="/src/assets/icono4.svg" alt="Nosotros Icon" style={{ width: "20px", marginRight: "5px" }} />
+              <a
+                className="nav-link text-white"
+                href="#"
+                onClick={handleNavigate("/nosotros")}
+              >
+                <img
+                  src={iconoNosotros}
+                  alt="Nosotros Icon"
+                  style={{ width: "20px", marginRight: "5px" }}
+                />
                 Nosotros
               </a>
             </li>
@@ -79,20 +130,31 @@ const Layout = ({ children }) => {
           <ul className="navbar-nav" id="right-menu">
             {user ? (
               <li className="nav-item d-flex align-items-center position-relative text-white">
-                <div className="d-flex align-items-center" onClick={toggleMenu} style={{ cursor: 'pointer' }}>
+                <div
+                  className="d-flex align-items-center me-2"
+                  onClick={toggleMenu}
+                  style={{ cursor: "pointer" }}
+                >
                   <img
-                    src="/src/assets/icono5.svg"
+                    
+                    src={iconoLogin}
                     alt="User Icon"
                     style={{ width: "20px", marginRight: "5px" }}
                   />
-                  <span className="me-2">Hola, {user.name}</span>
+                  <span>Hola, {user.name}</span>
                 </div>
                 {menuOpen && (
                   <div className="user-menu-dropdown">
-                    <button className="dropdown-item" onClick={handleNavigate("/modificar-cuenta")}>
+                    <button
+                      className="dropdown-item"
+                      onClick={handleNavigate("/modificar-cuenta")}
+                    >
                       Modificar cuenta
                     </button>
-                    <button className="dropdown-item" onClick={handleNavigate("/logout")}>
+                    <button
+                      className="dropdown-item"
+                      onClick={handleNavigate("/logout")}
+                    >
                       Cerrar sesión
                     </button>
                   </div>
@@ -100,8 +162,16 @@ const Layout = ({ children }) => {
               </li>
             ) : (
               <li className="nav-item">
-                <a className="nav-link text-white" href="#" onClick={handleNavigate("/login")}>
-                  <img src="/src/assets/icono5.svg" alt="Ingresar Icon" style={{ width: "20px", marginRight: "5px" }} />
+                <a
+                  className="nav-link text-white"
+                  href="#"
+                  onClick={handleNavigate("/login")}
+                >
+                  <img
+                    src="/src/assets/icono5.svg"
+                    alt="Ingresar Icon"
+                    style={{ width: "20px", marginRight: "5px" }}
+                  />
                   Ingresar
                 </a>
               </li>
