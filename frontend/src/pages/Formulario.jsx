@@ -562,20 +562,43 @@ const handleTipoParticipacion = (e) => {
           width="99%"
           className="caja-formulario-est"
         >
-          <RegistroForm
-          label="Tipo de Participación"
-          name="tipoParticipacion"
-          type="select"
-          value={tipoParticipacion}
-          onChange={handleTipoParticipacion}
-          usarEvento={true}
-          options={[
-            { value: "Individual", label: "Individual" },
-            { value: "Duo", label: "Duo" },
-            { value: "Trio", label: "Trio" },
-            { value: "Cuarteto", label: "Cuarteto" }
-          ]}
-        />
+        <p>Escoge un Área y Categoria para inscribir</p>
+        <RegistroForm
+                label="Área"
+                name="area"
+                type="select"
+                value={formulariosEquipo[formIndexActivo].area}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "area", e.target.value)
+                }
+                usarEvento={true}
+                options={[
+                  { value: "", label: "Seleccione una Área" },
+                  ...areas.map((area) => ({
+                    value: area.id_area,
+                    label: area.nombre_area,
+                  })),
+                ]}
+              />
+              <RegistroForm
+                label="Categoria"
+                name="categoria"
+                type="select"
+                value={formulariosEquipo[formIndexActivo].categoria}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "categoria", e.target.value)
+                }
+                usarEvento={true}
+                options={[
+                  { value: "", label: "Seleccione una Categoria" },
+                  ...categorias.map((cat) => ({
+                    value: cat.id_categoria,
+                    label: cat.nombre_categoria,
+                  })),
+                ]}
+              />
+              
+          <p>Se habilitarán uno o más formularios de inscripcion segun la categoria que has eligido:</p>
           <div className="tabs-participantes">
             {Array.from({ length: numParticipantes }, (_, index) => (
               <button
@@ -621,23 +644,7 @@ const handleTipoParticipacion = (e) => {
                 usarEvento={true}
                 icono={MdOutlineDateRange}
               />
-              <RegistroForm
-                label="Categoria"
-                name="categoria"
-                type="select"
-                value={formulariosEquipo[formIndexActivo].categoria}
-                onChange={(e) =>
-                  actualizarFormulario(formIndexActivo, "categoria", e.target.value)
-                }
-                usarEvento={true}
-                options={[
-                  { value: "", label: "Seleccione una Categoria" },
-                  ...categorias.map((cat) => ({
-                    value: cat.id_categoria,
-                    label: cat.nombre_categoria,
-                  })),
-                ]}
-              />
+              
             </section>
 
             <section className="seccion-form">
@@ -661,23 +668,7 @@ const handleTipoParticipacion = (e) => {
                 usarEvento={true}
                 icono={PiStudentFill}
               />
-              <RegistroForm
-                label="Área"
-                name="area"
-                type="select"
-                value={formulariosEquipo[formIndexActivo].area}
-                onChange={(e) =>
-                  actualizarFormulario(formIndexActivo, "area", e.target.value)
-                }
-                usarEvento={true}
-                options={[
-                  { value: "", label: "Seleccione una Área" },
-                  ...areas.map((area) => ({
-                    value: area.id_area,
-                    label: area.nombre_area,
-                  })),
-                ]}
-              />
+              
               <RegistroForm
                 label="Email"
                 name="email"
