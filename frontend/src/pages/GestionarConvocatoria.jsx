@@ -11,6 +11,8 @@ export default function GestionarConvocatoria() {
   const navigate = useNavigate();
 
   const [convName, setConvName] = useState("");
+  const [precio, setPrecio] = useState("");
+  const [participantes, setParticipantes] = useState("");
 
   // Listas
   const [areas, setAreas] = useState([]);
@@ -379,6 +381,7 @@ export default function GestionarConvocatoria() {
                     </option>
                   ))}
                 </select>
+
                 <select
                   value={selCat}
                   onChange={(e) => setSelCat(e.target.value)}
@@ -390,6 +393,26 @@ export default function GestionarConvocatoria() {
                     </option>
                   ))}
                 </select>
+
+                <input
+                  type="number"
+                  placeholder="Precio"
+                  value={precio}
+                  onChange={(e) => setPrecio(e.target.value)}
+                  min="0"
+                />
+
+                <select
+                  value={participantes}
+                  onChange={(e) => setParticipantes(e.target.value)}
+                >
+                  <option value="">Participantes</option>
+                  <option value="Individual">Individual</option>
+                  <option value="Duo">Duo</option>
+                  <option value="Trio">Trío</option>
+                  <option value="Cuarteto">Cuarteto</option>
+                </select>
+
                 <button onClick={handleAssignAreaCat}>Asignar</button>
                 <button
                   onClick={handleUpdateAssignAreaCat}
