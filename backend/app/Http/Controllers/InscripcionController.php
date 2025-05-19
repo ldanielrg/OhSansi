@@ -30,6 +30,7 @@ class InscripcionController extends Controller{
             'estudiantes.*.rude' => 'required|integer|min:1',
             'estudiantes.*.idAarea' => 'required|integer',
             'estudiantes.*.idCategoria' => 'required|integer',
+            'estudiantes.*.team' => 'required|integer|min:0',
         ]);
         
         Log::debug($validated);
@@ -125,7 +126,8 @@ class InscripcionController extends Controller{
                     EstudianteEstaInscrito::create([
                         'id_estudiante_estudiante' => $estudiante->id_estudiante,
                         'id_formulario_formulario' => $formulario->id_formulario,
-                        'id_inscrito_en' => $relacion->id
+                        'id_inscrito_en' => $relacion->id,
+                        'team' => $est['team']
                     ]);
                 }
             }
@@ -161,7 +163,8 @@ class InscripcionController extends Controller{
             'nuevo.rude' => 'required|integer',
             'nuevo.fecha_nacimiento' => 'required|date',
             'nuevo.idArea' => 'required|integer',
-            'nuevo.idCategoria' => 'required|integer'
+            'nuevo.idCategoria' => 'required|integer',
+            'nuevo.team' => 'required|integer|min:0',
         ]);
     
         // Paso 1: Buscar la relación actual (área + categoría)
@@ -231,7 +234,8 @@ class InscripcionController extends Controller{
             'id_formulario_formulario' => $inscripcion->id_formulario_formulario,
             'id_inscrito_en' => $inscripcion->id_inscrito_en
         ])->update([
-            'id_inscrito_en' => $nuevaRelacion->id
+            'id_inscrito_en' => $nuevaRelacion->id,
+            'team' => $validated['nuevo']['team']
         ]);
         return response()->json([
             'message' => 'Inscripción y datos del estudiante actualizados correctamente.'
@@ -309,9 +313,9 @@ class InscripcionController extends Controller{
         $formulario = Formulario::with('inscripciones.estudiante', 'inscripciones.inscrito.area', 'inscripciones.inscrito.categorium')
                                 ->findOrFail($id);
 
-        // Recolectar estudiantes formateados
         $estudiantes = $formulario->inscripciones->map(function ($inscripcion) {
             $inscrito = $inscripcion->inscrito;
+
             return [
                 'id_estudiante' => $inscripcion->estudiante->id_estudiante ?? '',
                 'nombre' => $inscripcion->estudiante->nombre ?? '',
@@ -320,19 +324,24 @@ class InscripcionController extends Controller{
                 'ci' => $inscripcion->estudiante->ci ?? '',
                 'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento ?? '',
                 'rude' => $inscripcion->estudiante->rude ?? '',
-                'idAarea' =>  $inscrito->area->id_area,
+
+                'idAarea' => $inscrito->area->id_area ?? '',
                 'nombre_area' => $inscrito->area->nombre_area ?? '',
-                'idCategoria' => $inscrito->categorium->id_categoria,
+                'idCategoria' => $inscrito->categorium->id_categoria ?? '',
                 'nombre_categoria' => $inscrito->categorium->nombre_categoria ?? '',
+
+                'team' => $inscripcion->team ?? null,
+                'precio' => $inscrito->precio ?? null
             ];
         });
 
         return response()->json([
             'id_formulario' => $formulario->id_formulario,
-        'id_convocatoria_convocatoria' => $formulario->id_convocatoria_convocatoria, // 👈 Este es clave
-        'estudiantes' => $estudiantes
-            ]);
+            'id_convocatoria_convocatoria' => $formulario->id_convocatoria_convocatoria,
+            'estudiantes' => $estudiantes
+        ]);
     }
+
 
     public function eliminarFormulario(Request $request, $id){
         $user = $request->user(); // Usuario autenticado
@@ -370,5 +379,67 @@ class InscripcionController extends Controller{
         }
     }
 
+    #Esto te dá el nro del team que te corresponde.
+    public function obtenerSiguienteTeam(Request $request){
+        $idArea = $request->input('idArea');
+        $idCategoria = $request->input('idCategoria');
 
+        // Validación básica (opcional pero recomendado)
+        if (!$idArea || !$idCategoria) {
+            return response()->json([
+                'error' => 'Faltan idArea o idCategoria en la solicitud.'
+            ], 422);
+        }
+
+        // Buscar el id de area_tiene_categoria
+        $inscritoEn = DB::table('area_tiene_categoria')
+            ->where('id_area_area', $idArea)
+            ->where('id_categoria_categoria', $idCategoria)
+            ->value('id');
+
+        if (!$inscritoEn) {
+            return response()->json([
+                'error' => 'No se encontró una combinación válida en area_tiene_categoria.'
+            ], 404);
+        }
+
+        // Buscar el último número de team asociado a ese id_inscrito_en
+        $ultimoTeam = DB::table('estudiante_esta_inscrito')
+            ->where('id_inscrito_en', $inscritoEn)
+            ->max('team');
+
+        $siguienteTeam = $ultimoTeam ? $ultimoTeam + 1 : 1;
+
+        return response()->json([
+            'siguiente_team' => $siguienteTeam,
+            //'id_inscrito_en' => $inscritoEn
+        ]);
+    }
+
+    #Esto te dá cuantos participantes deben haber en esa area-categoria
+    public function obtenerNroParticipantes(Request $request){
+        $idArea = $request->input('idArea');
+        $idCategoria = $request->input('idCategoria');
+
+        if (!$idArea || !$idCategoria) {
+            return response()->json([
+                'error' => 'Faltan idArea o idCategoria.'
+            ], 422);
+        }
+
+        $nroParticipantes = DB::table('area_tiene_categoria')
+            ->where('id_area_area', $idArea)
+            ->where('id_categoria_categoria', $idCategoria)
+            ->value('nro_participantes');
+
+        if (is_null($nroParticipantes)) {
+            return response()->json([
+                'error' => 'No se encontró esa combinación Area-Categoria O el valor es NULL'
+            ], 404);
+        }
+
+        return response()->json([
+            'nro_participantes' => $nroParticipantes
+        ]);
+    }
 }
