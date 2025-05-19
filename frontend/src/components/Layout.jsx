@@ -11,11 +11,14 @@ import logoEmpresa from "/src/assets/LOGO.png";
 import fondo from "/src/assets/fondo.svg";
 import iconoNosotros from "/src/assets/icono4.svg";
 import iconoLogin from "/src/assets/icono5.svg";
+import iconoAjuste from "/src/assets/iconoAjuste.png";
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { roles } = useAuth();
+  const esAdmin = roles?.includes("Admin");
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
@@ -124,6 +127,24 @@ const Layout = ({ children }) => {
                 Nosotros
               </a>
             </li>
+            {esAdmin && (
+              <>
+                <li className="nav-item me-3">
+                  <a
+                    className="nav-link text-white"
+                    href="#"
+                    onClick={handleNavigate("/logueado")}
+                  >
+                    <img
+                      src={iconoAjuste}
+                      alt="Nosotros Icon"
+                      style={{ width: "20px", marginRight: "5px" }}
+                    />
+                    Logueado
+                  </a>
+                </li>
+              </>
+            )}
           </ul>
 
           {/* Botón User a la derecha */}
@@ -136,7 +157,6 @@ const Layout = ({ children }) => {
                   style={{ cursor: "pointer" }}
                 >
                   <img
-                    
                     src={iconoLogin}
                     alt="User Icon"
                     style={{ width: "20px", marginRight: "5px" }}
