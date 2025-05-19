@@ -29,7 +29,7 @@ class Comprobante extends Model
 
 	protected $casts = [
 		'id_comprobante' => 'int',
-		'imagen' => 'bytea',
+		'imagen' => 'string',
 		'codigo' => 'string',
 		'id_orden_pago' => 'int',
 		
