@@ -51,17 +51,31 @@ const Formulario = () => {
   const [ue, setUe] = useState([]);
   const [searchParams] = useSearchParams();
   const [idConvocatoria, setIdConvocatoria] = useState(null);
+  const [tipoParticipacion, setTipoParticipacion] = useState("Individual");
+const [numParticipantes, setNumParticipantes] = useState(1);
+const [formIndexActivo, setFormIndexActivo] = useState(0);
+const [formulariosEquipo, setFormulariosEquipo] = useState([
+  { nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: "" }
+]);
+const [contadorEquipos, setContadorEquipos] = useState(1); // para generar id_equipo incremental
+const [idEquipoEnEdicion, setIdEquipoEnEdicion] = useState(null);
 
 
-  const columns = [
-    { name: "Nombre", selector: (row) => row.nombre, sortable: true },
-    { name: "Apellido", selector: (row) => row.apellido, sortable: true },
-    { name: "CI", selector: (row) => row.ci },
-    { name: "Fecha de Nacimiento", selector: (row) => row.fechaNac },
-    { name: "Rude", selector: (row) => row.rude },
-    { name: "Área", selector: (row) => row.nombre_area },
-    { name: "Categoría", selector: (row) => row.nombre_categoria },
-  ];
+
+  
+
+
+const columns = [
+  { name: "Nombre", selector: (row) => row.nombre, sortable: true },
+  { name: "Apellido", selector: (row) => row.apellido, sortable: true },
+  { name: "CI", selector: (row) => row.ci },
+  { name: "Fecha de Nacimiento", selector: (row) => row.fechaNac },
+  { name: "Rude", selector: (row) => row.rude },
+  { name: "Área", selector: (row) => row.nombre_area },
+  { name: "Categoría", selector: (row) => row.nombre_categoria },
+  { name: "Id equipo", selector: (row) => row.id_equipo },
+  { name: "Tipo de equipo", selector: (row) => row.tipo_equipo }
+];
 
   const customStyles = {
     headCells: {
@@ -88,15 +102,17 @@ useEffect(() => {
   cargarAreas();
 }, [idConvocatoria]);
 
-  useEffect(() => {
-  const cargarCategorias = async () => {
-    if (!formData.area || isNaN(parseInt(formData.area))) {
-      setCategorias([]);
-      return;
-    }
+useEffect(() => {
+  const areaActual = formulariosEquipo[formIndexActivo]?.area;
 
+  if (!areaActual || isNaN(parseInt(areaActual))) {
+    setCategorias([]);
+    return;
+  }
+
+  const cargarCategorias = async () => {
     try {
-      const res = await api.get(`/categorias/${formData.area}`);
+      const res = await api.get(`/categorias/${areaActual}`);
       setCategorias(res.data);
     } catch (error) {
       console.error("Error al obtener categorías:", error);
@@ -105,7 +121,8 @@ useEffect(() => {
   };
 
   cargarCategorias();
-}, [formData.area]);
+}, [formIndexActivo, formulariosEquipo[formIndexActivo]?.area]);
+
 
 
   useEffect(() => {
@@ -167,147 +184,127 @@ useEffect(() => {
     .filter((item) => item.municipio_id === parseInt(formData.municipio))
     .map((item) => ({ value: item.id_ue, label: item.nombre_ue }));
 
+
+
   const handleRegistrar = async () => {
-  const { nombre, apellido, ci, fechaNac, rude, area, categoria } = formData;
+  // Validar todos los estudiantes del equipo
+  for (let i = 0; i < formulariosEquipo.length; i++) {
+    const estudiante = formulariosEquipo[i];
+    const { nombre, apellido, ci, fechaNac, rude, area, categoria } = estudiante;
 
-  if (nombre.length < 3)
-    return toast.warn("El nombre debe tener al menos 3 caracteres.");
-  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
-    return toast.warn("El nombre solo puede contener letras y espacios.");
-  if (!/\d{1,16}/.test(rude))
-    return toast.warn("El RUDE debe contener solo números (máx. 16 dígitos).");
-  if (!/\d{1,8}/.test(ci))
-    return toast.warn("El CI debe contener solo números (máx. 8 dígitos).");
-
-  const areaSeleccionada = areas.find((a) => a.id_area === parseInt(area));
-  const categoriaSeleccionada = categorias.find(
-    (c) => c.id_categoria === parseInt(categoria)
-  );
-
-  const nuevoEstudiante = {
-    ...formData,
-    id_area: areaSeleccionada?.id_area ?? null,
-    nombre_area: areaSeleccionada?.nombre_area ?? "",
-    id_categoria: categoriaSeleccionada?.id_categoria ?? null,
-    nombre_categoria: categoriaSeleccionada?.nombre_categoria ?? "",
-  };
-
-  // Si es edición de estudiante ya guardado
-  if (modoEdicion && editIndex !== null && parseInt(id) !== 0) {
-    const anterior = rowData[editIndex];
-
-    const datosEditar = {
-      id_formulario: parseInt(id),
-      anterior: {
-        id_estudiante: anterior.id_estudiante,
-        idArea: anterior.id_area,
-        idCategoria: anterior.id_categoria,
-      },
-      nuevo: {
-        nombre: nuevoEstudiante.nombre,
-        apellido: nuevoEstudiante.apellido,
-        email: nuevoEstudiante.email,
-        ci: parseInt(nuevoEstudiante.ci),
-        rude: parseInt(nuevoEstudiante.rude),
-        fecha_nacimiento: nuevoEstudiante.fechaNac,
-        idArea: nuevoEstudiante.id_area,
-        idCategoria: nuevoEstudiante.id_categoria,
-      },
-    };
-
-    try {
-      await api.post("/editar-registro-estudiante", datosEditar);
-      toast.success("Estudiante actualizado correctamente.");
-      setModoEdicion(false);
-      setEditIndex(null);
-
-      // Recargar el formulario actualizado
-      const response = await api.get(`/formulario-detalles/${id}`);
-      const estudiantesFormateados = response.data.estudiantes.map((est) => ({
-        id_estudiante: est.id_estudiante ?? null,
-        nombre: est.nombre,
-        apellido: est.apellido,
-        email: est.email,
-        ci: est.ci,
-        fechaNac: est.fecha_nacimiento,
-        rude: est.rude,
-        id_area: est.idAarea,
-        nombre_area: est?.nombre_area || "",
-        id_categoria: est.idCategoria,
-        nombre_categoria: est?.nombre_categoria || "",
-        municipio: "",
-        unidadEducativa: "",
-      }));
-      setRowData(estudiantesFormateados);
-    } catch (error) {
-      console.error("Error al actualizar estudiante:", error);
-      toast.error("No se pudo editar el estudiante.");
-    }
-  } else {
-    // Edición local (formulario nuevo o no guardado)
-    if (modoEdicion && editIndex !== null) {
-      const nuevosDatos = [...rowData];
-      nuevosDatos[editIndex] = nuevoEstudiante;
-      setRowData(nuevosDatos);
-    } else {
-      setRowData((prev) => [...prev, nuevoEstudiante]);
-    }
-    toast.success("Estudiante registrado correctamente.");
+    if (nombre.length < 2)
+      return toast.warn(`Nombre inválido en integrante ${i + 1}`);
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
+      return toast.warn(`Nombre con caracteres inválidos en integrante ${i + 1}`);
+    if (!/\d{1,16}/.test(rude))
+      return toast.warn(`RUDE inválido en integrante ${i + 1}`);
+    if (!/\d{1,8}/.test(ci))
+      return toast.warn(`CI inválido en integrante ${i + 1}`);
   }
 
-  // Reset
-  setModoEdicion(false);
-  setEditIndex(null);
-  setFormData({
-    nombre: "",
-    apellido: "",
-    email: "",
-    ci: "",
-    fechaNac: "",
-    rude: "",
-    area: "",
-    categoria: "",
-    ue: "",
-    municipio: "",
-    unidadEducativa: "",
+  const nuevoIdEquipo = contadorEquipos;
+  const nuevosEstudiantes = formulariosEquipo.map((est) => {
+    const areaSeleccionada = areas.find((a) => a.id_area === parseInt(est.area));
+    const categoriaSeleccionada = categorias.find(
+      (c) => c.id_categoria === parseInt(est.categoria)
+    );
+
+    return {
+      ...est,
+      id_area: areaSeleccionada?.id_area ?? null,
+      nombre_area: areaSeleccionada?.nombre_area ?? "",
+      id_categoria: categoriaSeleccionada?.id_categoria ?? null,
+      nombre_categoria: categoriaSeleccionada?.nombre_categoria ?? "",
+      id_equipo: nuevoIdEquipo,
+      tipo_equipo: tipoParticipacion
+    };
   });
+
+  setRowData((prev) => {
+  if (modoEdicion && idEquipoEnEdicion !== null) {
+    // Quitar estudiantes anteriores del equipo
+    const sinEquipoAnterior = prev.filter(e => e.id_equipo !== idEquipoEnEdicion);
+    return [...sinEquipoAnterior, ...nuevosEstudiantes.map(est => ({
+      ...est,
+      id_equipo: idEquipoEnEdicion
+    }))];
+  } else {
+    return [...prev, ...nuevosEstudiantes];
+  }
+});
+
+  toast.success(`Equipo ${tipoParticipacion} registrado correctamente.`);
+
+  // Reset
+  setContadorEquipos((prev) => prev + 1);
+  setFormulariosEquipo(
+    Array.from({ length: numParticipantes }, () => ({
+      nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
+    }))
+  );
+  setFormIndexActivo(0);
   setSelectedRows([]);
   selectedRowsRef.current = [];
   setToggleClearSelected((prev) => !prev);
+  setModoEdicion(false);
+setIdEquipoEnEdicion(null);
+
 };
 
 
-  const handleEditar = async () => {
-    const seleccionActual = selectedRowsRef.current;
-    if (seleccionActual.length === 0)
-      return toast.warn("Por favor selecciona un registro para editar.");
-    if (seleccionActual.length > 1)
-      return toast.warn("Solo puedes editar un registro a la vez.");
 
-    const result = await MySwal.fire({
-      title: '¿Editar registro?',
-      text: "¿Deseas editar este registro?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, editar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-    });
+const handleEditar = async () => {
+  const seleccionActual = selectedRowsRef.current;
 
-    if (!result.isConfirmed) return;
+  if (seleccionActual.length === 0) {
+    return toast.warn("Por favor selecciona un equipo para editar.");
+  }
 
-    const seleccionado = seleccionActual[0];
-    const index = rowData.findIndex((est) => est.ci === seleccionado.ci);
-    if (index === -1) {
-      toast.error("No se pudo encontrar el registro a editar.");
-      return;
-    }
+  const idEquipo = seleccionActual[0]?.id_equipo;
+  const mismosEquipos = seleccionActual.every(est => est.id_equipo === idEquipo);
 
-    setFormData({ ...seleccionado });
-    setEditIndex(index);
-    setModoEdicion(true);
-  };
+  if (!mismosEquipos) {
+    return toast.warn("Solo puedes editar estudiantes del mismo equipo.");
+  }
+
+  const result = await MySwal.fire({
+    title: '¿Editar equipo?',
+    text: "Podrás editar a todos los estudiantes del grupo al que pertenece el seleccionado",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, editar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (!result.isConfirmed) return;
+
+  const equipoCompleto = rowData.filter(est => est.id_equipo === idEquipo);
+
+  const tipoDetectado = equipoCompleto[0]?.tipo_equipo || "Individual";
+  const cantidad = equipoCompleto.length;
+
+  setTipoParticipacion(tipoDetectado);
+  setNumParticipantes(cantidad);
+  setFormIndexActivo(0);
+  setFormulariosEquipo(
+    equipoCompleto.map(est => ({
+      nombre: est.nombre,
+      apellido: est.apellido,
+      ci: est.ci,
+      fechaNac: est.fechaNac,
+      rude: est.rude,
+      area: est.id_area?.toString() || "",
+      categoria: est.id_categoria?.toString() || "",
+      email: est.email
+    }))
+  );
+
+  setModoEdicion(true);
+  setIdEquipoEnEdicion(idEquipo);
+};
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -381,8 +378,8 @@ useEffect(() => {
     return toast.warn("Por favor selecciona un registro para eliminar.");
 
   const result = await MySwal.fire({
-    title: '¿Eliminar registros?',
-    text: "¿Deseas eliminar el/los registros seleccionados?",
+    title: '¿Eliminar grupo?',
+    text: "Si eliminas a un estudiante que pertenece a un grupo, automaticamente se eliminará todo el grupo",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, eliminar',
@@ -466,6 +463,26 @@ const handleGuardarFormulario = async () => {
   }
 };
 
+const actualizarFormulario = (index, campo, valor) => {
+  setFormulariosEquipo((prev) => {
+    const nuevos = [...prev];
+    nuevos[index][campo] = valor;
+    return nuevos;
+  });
+};
+
+const handleTipoParticipacion = (e) => {
+  const value = e.target.value;
+  setTipoParticipacion(value);
+  const cantidad = value === "Duo" ? 2 : value === "Trio" ? 3 : value === "Cuarteto" ? 4 : 1;
+  setNumParticipantes(cantidad);
+  setFormIndexActivo(0);
+  setFormulariosEquipo(
+    Array.from({ length: cantidad }, () => ({
+      nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
+    }))
+  );
+};
 
   const fileInputRef = useRef();
   const [cargando, setCargando] = useState(true);
@@ -537,45 +554,82 @@ const handleGuardarFormulario = async () => {
         </div>
       </Caja>
       <section className="contenedor-form-info">
-        <div className="boton-eliminar-form">
-          <BotonForm texto="X" className="boton-eliminar-form-bf" />
-        </div>
+        
+
 
         <Caja
           titulo={`Formulario de Inscripción #${id}`}
           width="99%"
           className="caja-formulario-est"
         >
+          <RegistroForm
+          label="Tipo de Participación"
+          name="tipoParticipacion"
+          type="select"
+          value={tipoParticipacion}
+          onChange={handleTipoParticipacion}
+          usarEvento={true}
+          options={[
+            { value: "Individual", label: "Individual" },
+            { value: "Duo", label: "Duo" },
+            { value: "Trio", label: "Trio" },
+            { value: "Cuarteto", label: "Cuarteto" }
+          ]}
+        />
+          <div className="tabs-participantes">
+            {Array.from({ length: numParticipantes }, (_, index) => (
+              <button
+                key={index}
+                className={`tab-boton-form-ins ${index === formIndexActivo ? "activo" : ""}`}
+                onClick={() => setFormIndexActivo(index)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+
           <div className="contenedor-secciones-form">
             <section className="seccion-form">
               <RegistroForm
                 label="Nombres"
                 name="nombre"
-                value={formData.nombre}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].nombre}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "nombre", e.target.value)
+                }
+                usarEvento={true}
                 icono={FaRegUser}
               />
               <RegistroForm
                 label="C.I."
                 name="ci"
-                value={formData.ci}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].ci}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "ci", e.target.value)
+                }
+                usarEvento={true}
                 icono={FaAddressCard}
               />
               <RegistroForm
                 label="Fecha de nacimiento"
                 name="fechaNac"
                 type="date"
-                value={formData.fechaNac}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].fechaNac}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "fechaNac", e.target.value)
+                }
+                usarEvento={true}
                 icono={MdOutlineDateRange}
               />
               <RegistroForm
                 label="Categoria"
                 name="categoria"
                 type="select"
-                value={formData.categoria}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].categoria}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "categoria", e.target.value)
+                }
+                usarEvento={true}
                 options={[
                   { value: "", label: "Seleccione una Categoria" },
                   ...categorias.map((cat) => ({
@@ -584,48 +638,38 @@ const handleGuardarFormulario = async () => {
                   })),
                 ]}
               />
-              {/* <RegistroForm
-                label="Municipio"
-                name="municipio"
-                type="select"
-                value={formData.municipio}
-                onChange={setFormData}
-                options={[
-                  { value: "", label: "Seleccione un Municipio" },
-                  ...municipios.map((mun) => ({
-                    value: mun.id,
-                    label: mun.nombre,
-                  })),
-                ]}
-              /> */}
-              <BotonForm
-                className="boton-lista-est"
-                texto="Subir lista"
-                onClick={() => fileInputRef.current.click()}
-              />
             </section>
 
             <section className="seccion-form">
               <RegistroForm
                 label="Apellidos"
                 name="apellido"
-                value={formData.apellido}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].apellido}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "apellido", e.target.value)
+                }
+                usarEvento={true}
                 icono={FaRegUser}
               />
               <RegistroForm
                 label="Rude"
                 name="rude"
-                value={formData.rude}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].rude}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "rude", e.target.value)
+                }
+                usarEvento={true}
                 icono={PiStudentFill}
               />
               <RegistroForm
                 label="Área"
                 name="area"
                 type="select"
-                value={formData.area}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].area}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "area", e.target.value)
+                }
+                usarEvento={true}
                 options={[
                   { value: "", label: "Seleccione una Área" },
                   ...areas.map((area) => ({
@@ -634,34 +678,34 @@ const handleGuardarFormulario = async () => {
                   })),
                 ]}
               />
-              {/*<RegistroForm
-                label="Unidad Educativa"
-                name="unidadEducativa"
-                type="select"
-                value={formData.unidadEducativa}
-                onChange={setFormData}
-                options={[
-                  { value: "", label: "Seleccione una Unidad Educativa" },
-                  ...opcionesFiltradasUE,
-                ]}
-              />*/}
               <RegistroForm
                 label="Email"
                 name="email"
-                value={formData.email}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].email}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "email", e.target.value)
+                }
+                usarEvento={true}
                 icono={MdEmail}
               />
-              <div className="contenedor-boton-registrar-est">
-                <BotonForm
-                  texto={modoEdicion ? "Guardar" : "Registrar"}
-                  onClick={handleRegistrar}
-                />
-              </div>
             </section>
           </div>
         </Caja>
 
+
+        
+        <div className="contenedor-boton-registrar-est">
+          <BotonForm
+          className="boton-ins-lista"
+          texto="Subir lista"
+          onClick={() => fileInputRef.current.click()}
+        />
+          <BotonForm
+            className="boton-ins-guardar"
+            texto={modoEdicion ? "Guardar" : "Registrar"}
+            onClick={handleRegistrar}
+          />
+        </div>
         <Caja titulo="Estudiantes inscritos" width="99%">
           <DataTable
             columns={columns}
@@ -670,9 +714,22 @@ const handleGuardarFormulario = async () => {
             selectableRowsNoSelectAll
             clearSelectedRows={toggleClearSelected}
             onSelectedRowsChange={({ selectedRows }) => {
-              setSelectedRows(selectedRows);
-              selectedRowsRef.current = selectedRows;
-            }}
+  if (selectedRows.length === 0) {
+    setSelectedRows([]);
+    selectedRowsRef.current = [];
+    return;
+  }
+
+  const primerSeleccionado = selectedRows[0];
+  const idEquipo = primerSeleccionado.id_equipo;
+
+  // Obtener todos los estudiantes del mismo equipo
+  const mismoEquipo = rowData.filter(est => est.id_equipo === idEquipo);
+
+  setSelectedRows(mismoEquipo);
+  selectedRowsRef.current = mismoEquipo;
+}}
+
             customStyles={{
               pagination: {
                 style: {
