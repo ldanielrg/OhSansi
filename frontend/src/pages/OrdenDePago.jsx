@@ -100,9 +100,28 @@ const OrdenDePago = () => {
 
             if (texto.includes(codigoManual)) {
             alert("✅ Código verificado con éxito. ¡Recibo válido!");
-            } else {
-            alert("❌ El código no coincide con el contenido del recibo.");
-            }
+            // 🔁 Enviar al backend después del éxito
+            
+            try {
+                const formData = new FormData();
+                formData.append("codigo", codigoManual);
+                formData.append("imagen", imagenRecibo);
+                formData.append("id_orden_pago", orden.id_orden); // ID real de la orden
+
+                await api.post("/guardar-comprobante", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                });
+
+            alert("📝 Comprobante guardado correctamente.");
+        } catch (err) {
+            console.error("Error al guardar comprobante:", err);
+            alert("❌ Error al guardar el comprobante.");
+        }
+    } else {
+      alert("❌ El código no coincide con el contenido del recibo.");
+    }
         } catch (error) {
             console.error("Error al procesar imagen:", error);
             alert("Hubo un error al leer el recibo.");

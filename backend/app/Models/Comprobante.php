@@ -29,25 +29,21 @@ class Comprobante extends Model
 
 	protected $casts = [
 		'id_comprobante' => 'int',
-		'imagen' => 'bytea',
-		'codigo' => 'string',
-		'id_orden_pago' => 'int',
-		
+        'codigo' => 'string',
+        'id_orden_pago' => 'int',
+        'estado' => 'boolean',
+        'imagen' => 'string',
 	];
 
 	protected $fillable = [
-		'id_comprobante',
 		'codigo',
-		'imagen',
-		'id_orden_pago'
+        'id_orden_pago',
+        'estado',
+        'imagen',
 	];
 
 	public function orden_pago()
-	{
-		return $this->belongsTo(OrdenPago::class, 'id_orden_orden_pago')
-					->where('orden_pago.id_orden', '=', 'comprobante.id_orden_orden_pago')
-					->where('orden_pago.id_formulario_formulario', '=', 'comprobante.id_orden_orden_pago')
-					->where('orden_pago.id_orden', '=', 'comprobante.id_formulario_formulario_orden_pago')
-					->where('orden_pago.id_formulario_formulario', '=', 'comprobante.id_formulario_formulario_orden_pago');
-	}
+    {
+        return $this->belongsTo(OrdenPago::class, 'id_orden_pago', 'id_orden');
+    }
 }
