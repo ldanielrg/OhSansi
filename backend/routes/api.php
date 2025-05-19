@@ -25,7 +25,7 @@ Route::get('/convocatorias-activas', [ConvocatoriaController::class, 'indexActiv
 Route::post('/convocatoria-crear', [ConvocatoriaController::class, 'store']);
 Route::get('/convocatoria-detalle/{id_convocatoria}', [ConvocatoriaController::class, 'show']);
 Route::post('/convocatoria-editar/{id_convocatoria}', [ConvocatoriaController::class, 'update']);
-Route::delete('/convocatoria-eliminar/{id_convocatoria}', [ConvocatoriaController::class, 'destroy']);
+Route::middleware('auth:sanctum')->delete('/convocatoria-eliminar/{id_convocatoria}', [ConvocatoriaController::class, 'destroy']);
 Route::put('/convocatoria-estado/{id_convocatoria}', [ConvocatoriaController::class, 'toggleActivo']);
 //Convocatoria Inscritos oficiales
 Route::get('/inscritos-oficiales/{id_convocatoria}', [FormularioController::class, 'obtenerInscritosOficiales']);
