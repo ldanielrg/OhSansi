@@ -108,11 +108,38 @@
 .botones-inscripciones-convocatoria:hover::before {
     width: 250%;
 }
+@media (max-width: 810px){
+    .contenedor-botones-crud-forms{
+        margin: 0px;
+
+    }
+}
+@media (max-width: 705px){
+    .label-botones-crud-forms{
+        font-size: 12px;
+    }
+    .seccion-crud-formularios{
+        width: 90%;
+        margin: 10px;
+    }
+}
+@media (max-width: 620px){
+    .seccion-crud-formularios{
+        width: 100%;
+        margin:0;
+    }
+}
+
 @media (max-width: 600px){
-  .seccion-botones-inscripciones-convocatoria{
-    width: 75%;
+    .seccion-botones-inscripciones-convocatoria{
+        width: 75%;
 }
   .botones-campos-mod{
         padding: 15px;
+    }
+}
+@media (max-width: 558px){
+    .label-botones-crud-forms{
+        font-size: 10px;
     }
 }
