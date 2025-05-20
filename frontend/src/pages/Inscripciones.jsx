@@ -28,6 +28,8 @@ const Inscripciones = () => {
   const [convocatoriaSeleccionada, setConvocatoriaSeleccionada] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [cargandoConvocatorias, setCargandoConvocatorias] = useState(true);
+  const [pagandoId, setPagandoId] = useState(null);
+
 
   const handleConvocatoriaChange = (e) => {
   const id = e.target.value;
@@ -111,7 +113,12 @@ const Inscripciones = () => {
               className='botones-iconos-crud-formularios'
               onClick={() => handleOrdenPago(row.id_formulario)}
             >
-              <BsFileEarmarkText className='iconos-crud-formularios icono-orden-pago-formulario' />
+              {pagandoId === row.id_formulario ? (
+  <BallTriangle height={20} width={20} color="#003366" />
+) : (
+  <BsFileEarmarkText className='iconos-crud-formularios icono-orden-pago-formulario' />
+)}
+
             </button>
             <p className='label-botones-crud-forms'>Pago</p>
           </div>
@@ -160,7 +167,9 @@ const Inscripciones = () => {
     }
   };
 
-  const handleOrdenPago = async (id_formulario) => {
+const handleOrdenPago = async (id_formulario) => {
+  setPagandoId(id_formulario); // 🚀 Activar loader
+
   try {
     await api.get(`/orden-pago/${id_formulario}`);
     navigate(`/orden-de-pago/${id_formulario}?convocatoria=${convocatoriaSeleccionada}`);
@@ -182,8 +191,11 @@ const Inscripciones = () => {
       toast.error('Error al verificar la orden de pago.');
       console.error(error);
     }
+  } finally {
+    setPagandoId(null); // ✅ Desactivar loader
   }
 };
+
 const handleConvocatoriaChangeManual = (id) => {
   setConvocatoriaSeleccionada(id);
   setSearchParams({ convocatoria: id });
