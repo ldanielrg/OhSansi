@@ -119,6 +119,29 @@ class ComprobanteController extends Controller
     return response()->json($pendientes);
 }
 
+    public function actualizarEstado($id, Request $request)
+    {
+        $validated = $request->validate([
+            'estado' => 'required|boolean',
+        ]);
+
+        $comprobante = Comprobante::findOrFail($id);
+        $comprobante->estado = $validated['estado'];
+        $comprobante->save();
+
+        // Si lo marcaron como válido, actualizar también orden y formulario
+        if ($validated['estado']) {
+            $orden = OrdenPago::findOrFail($comprobante->id_orden_pago);
+            $orden->estado = true;
+            $orden->save();
+
+            $formulario = Formulario::findOrFail($orden->id_formulario_formulario);
+            $formulario->pagado = true;
+            $formulario->save();
+        }
+
+        return response()->json(['message' => 'Estado actualizado con éxito.']);
+    }
 
 }
 

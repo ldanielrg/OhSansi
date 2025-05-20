@@ -169,14 +169,44 @@ const GestionDeComprobantes = () => {
 };
 
 
-  const handleEstadoChange = (index, nuevoEstado) => {
-    const copia = [...comprobantes];
-    copia[index].estado = nuevoEstado;
-    setComprobantes(copia);
+  const handleEstadoChange = async (index, nuevoEstadoTexto) => {
+  const nuevoEstado = nuevoEstadoTexto === "Valido"; // Convertir a booleano
 
-    // Aquí puedes hacer un PATCH al backend si deseas guardar el nuevo estado
-    // await api.patch(`/comprobante/${copia[index].id_comprobante}`, { estado: nuevoEstado });
-  };
+  // Actualiza el estado visualmente
+  const copia = [...comprobantes];
+  copia[index].estado = nuevoEstado;
+  setComprobantes(copia);
+
+  // Si se seleccionó "Valido", hacer la petición al backend
+  if (nuevoEstado) {
+    try {
+      const id = copia[index].id_comprobante;
+
+      const response = await api.patch(`/comprobantes/${id}`, {
+        estado: true
+      });
+
+      console.log("✅ Estado actualizado en la BD:", response.data);
+
+      Swal.fire({
+        icon: "success",
+        title: "Estado actualizado",
+        text: "El comprobante, la orden y el formulario fueron marcados como válidos."
+      });
+
+    } catch (error) {
+      console.error("❌ Error al actualizar estado en la BD:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo actualizar el estado. Intenta nuevamente."
+      });
+    }
+  }
+};
+
+
 
   const columnas = [
     { name: "ID", selector: row => row.id_comprobante, sortable: true },
@@ -205,22 +235,23 @@ const GestionDeComprobantes = () => {
     },
 
     {
-      name: "Estado",
-      cell: (row, index) => (
-        <select
-          value={row.estado ? "Valido" : "Invalido"}
-          onChange={(e) => handleEstadoChange(index, e.target.value === "Valido")}
-          style={{
-            padding: "4px 8px",
-            borderRadius: "4px",
-            border: "1px solid #ccc"
-          }}
-        >
-          <option value="Invalido">Inválido</option>
-          <option value="Valido">Válido</option>
-        </select>
-      )
+        name: "Estado",
+        cell: (row, index) => (
+            <select
+                value={row.estado ? "Valido" : "Invalido"}
+                onChange={(e) => handleEstadoChange(index, e.target.value)} // 👈 PASA EL TEXTO
+                style={{
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                    border: "1px solid #ccc"
+                }}
+            >
+                <option value="Invalido">Inválido</option>
+                <option value="Valido">Válido</option>
+            </select>
+        )
     }
+
   ];
 
   return (
