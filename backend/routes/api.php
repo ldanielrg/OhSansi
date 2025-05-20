@@ -18,6 +18,7 @@ use App\Http\Controllers\FormularioController;
 use App\Http\Controllers\GradoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdenPagoController;
+use App\Http\Controllers\ComprobanteController;
 
 //Convocatoria
 Route::get('/convocatorias', [ConvocatoriaController::class, 'index']);
@@ -104,5 +105,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orden-pago', [OrdenPagoController::class, 'crear']); // AGREGUE YO, PARA INSERTAR DATOS EN BD
 });
 
+
+//COMPROBANTE DE PAGO
+Route::post('/guardar-comprobante', [ComprobanteController::class, 'store']);
+Route::get('/verificar-codigo/{codigo}', [ComprobanteController::class, 'verificarCodigo']);
+Route::get('/comprobantes-pendientes', [ComprobanteController::class, 'comprobantesPendientes']);
+Route::patch('/comprobantes/{id}', [ComprobanteController::class, 'actualizarEstado']);
 
 #Rutas sin proteger (sólo para pruebas)

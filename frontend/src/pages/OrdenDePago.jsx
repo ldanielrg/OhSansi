@@ -79,35 +79,67 @@ const OrdenDePago = () => {
     }, [id]);
 
     const verificarPago = async () => {
-        if (!codigoManual || !imagenRecibo) {
-            alert("Debes ingresar el código y subir una imagen del recibo.");
+    if (!codigoManual || !imagenRecibo) {
+        alert("Debes ingresar el código y subir una imagen del recibo.");
+        return;
+    }
+
+    try {
+        // Paso 1: Verificar si ya fue validado anteriormente
+        const check = await api.get(`/verificar-codigo/${codigoManual}`);
+        if (check.data.verificado) {
+            alert("⚠️ Este comprobante ya fue verificado anteriormente.");
             return;
         }
 
+        // Paso 2: Ejecutar OCR
         const imageUrl = URL.createObjectURL(imagenRecibo);
+        const result = await Tesseract.recognize(imageUrl, "spa", {
+            logger: (m) => console.log(m),
+        });
 
-        try {
-            const result = await Tesseract.recognize(
-            imageUrl,
-            "spa",
-            {
-                logger: (m) => console.log(m),
-            }
-            );
+        const texto = result.data.text;
+        console.log("Texto OCR detectado:", texto);
 
-            const texto = result.data.text;
-            console.log("Texto OCR detectado:", texto);
+        // Paso 3: Preparar datos para guardar comprobante
+        const formData = new FormData();
+        formData.append("codigo", codigoManual);
+        formData.append("imagen", imagenRecibo);
+        formData.append("id_orden_pago", orden.id_orden);
+        formData.append("codigo_ocr", texto);
 
-            if (texto.includes(codigoManual)) {
+        // Paso 4: Enviar al backend
+        await api.post("/guardar-comprobante", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        // Paso 5: Mostrar resultado
+        if (texto.includes(codigoManual)) {
             alert("✅ Código verificado con éxito. ¡Recibo válido!");
-            } else {
+        } else {
             alert("❌ El código no coincide con el contenido del recibo.");
-            }
-        } catch (error) {
-            console.error("Error al procesar imagen:", error);
-            alert("Hubo un error al leer el recibo.");
         }
-    };
+
+        // Paso 6: Limpiar los campos del formulario
+        setCodigoManual("");
+        setImagenRecibo(null);
+        setTamanoImagen(null);
+        document.querySelector("input[type='file']").value = "";
+
+    } catch (err) {
+        console.error("Error al verificar o guardar comprobante:", err);
+
+        if (err.response?.status === 422) {
+            const errores = err.response.data.errors;
+            const mensaje = Object.values(errores).flat().join("\n");
+            alert(`❌ Error de validación:\n${mensaje}`);
+        } else {
+            alert("❌ Error al procesar el comprobante.");
+        }
+    }
+};
+
+
 
     const handleDescargarPDF = async () => {
     // Crea un contenedor temporal en el DOM
