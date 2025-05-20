@@ -1,0 +1,80 @@
+/* src/pages/Logueado.css */
+
+/* Página */
+.config-page {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Contenedor centrado */
+.config-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Card grande con sombra */
+.config-card {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+/* Header */
+.config-card-header {
+  background-color: #003355;
+  color: #FFFFFF;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 1.5rem 2rem;
+  margin: -2px -2px 1rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* Body */
+.config-card-body {
+  padding: 2rem;
+  color: #003366;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.5rem;
+}
+
+/* Hover invertido */
+.vertical-btn:hover {
+  background-color: #003366 !important;
+  color: #FFFFFF !important;
+}
+
+.config-page .btn-news {
+  width: 100%;
+  background-color: #FFFFFF;
+  color: #003366;
+  border: 2px solid #003366;
+  padding: 1.2rem 1.5rem;    /* Más alto */
+  font-size: 1.3rem;         /* Fuente más grande */
+  font-weight: 600;          /* Texto más grueso */
+  letter-spacing: 0.05em;
+  text-align: center;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              transform 0.2s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .config-card-body {
+    padding: 1rem;
+  }
+}
