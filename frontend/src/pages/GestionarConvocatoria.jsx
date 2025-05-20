@@ -488,6 +488,8 @@ export default function GestionarConvocatoria() {
                     <th>Área</th>
                     <th>Categoría</th>
                     <th>Grados</th>
+                    <th>Precio</th> {/* Nueva columna */}
+                    <th>Participantes</th> {/* Nueva columna */}
                     <th>Limpiar</th>
                   </tr>
                 </thead>
@@ -503,9 +505,8 @@ export default function GestionarConvocatoria() {
                           setSelGrFin(
                             c.grado_final_id != null
                               ? String(c.grado_final_id)
-                              : String(c.grado_inicial_id) // si no hay grado_final, usamos el inicial
+                              : String(c.grado_inicial_id)
                           );
-                          // guardamos la selección para el resaltado
                           setSelectedAssign({
                             area: a.id_area,
                             categoria: c.id_categoria,
@@ -527,6 +528,8 @@ export default function GestionarConvocatoria() {
                             ? `${c.grado_inicial_nombre} – ${c.grado_final_nombre}`
                             : c.grado_inicial_nombre}
                         </td>
+                        <td>100</td> {/* Precio estático */}
+                        <td>Individual</td> {/* Participantes estático */}
                         <td>
                           <button
                             onClick={() =>
