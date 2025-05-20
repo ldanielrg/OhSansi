@@ -376,7 +376,19 @@ const OrdenDePago = () => {
                                 </p>
                                 )}
                         </div>
-                        <BotonForm texto='Verificar pago' onClick={verificarPago} />
+                        {orden?.estado === true ? (
+                        <BotonForm
+                            texto='Pagado'
+                            className='boton-pago-deshabilitado'
+                            disabled={true}
+                        />
+                        ) : (
+                        <BotonForm
+                            texto='Verificar pago'
+                            onClick={verificarPago}
+                        />
+                        )}
+                    <p>Consulta esta seccion para saber si tu recibo ha sido registrado correctamente.</p>
                     </div>
                 </Caja>
                 <BotonForm
