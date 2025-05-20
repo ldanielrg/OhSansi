@@ -1,61 +1,84 @@
 /* Layout.css */
 
-/* Barra superior */
-.top-bar {
-  background-color: #003366;
-  padding: 20px;
-}
-
 /* Header con fondo (imagen o color sólido) */
 .header {
   position: relative;
-  background: url('/src/assets/fondo.svg') no-repeat center center;
   background-size: cover;
+  background-position: center;
   padding: 20px;
-  height: 250px;
+  /* altura flexible: si hay contenido, crece; si no, mínimo 150px */
+  min-height: 150px;
 }
 
-/* Logos */
-/* Ajuste general para que las imágenes no se salgan del contenedor y sean responsivas */
-.logo-instituto, .logo-empresa {
+/* Logos: quitan el height fijo y usan max-width/height */
+/* además los centran en su contenedor */
+.logo-instituto,
+.logo-empresa {
+  display: block;
   max-width: 100%;
-  height: auto;          /* Mantiene proporción */
-  
+  height: auto;
+  margin: 0 auto;
 }
 
-/* Si deseas un límite de altura para que no crezcan demasiado en pantallas grandes */
-.logo-instituto, .logo-empresa {
-  max-height: 400px;      /* Ajusta a tu gusto */
-  height: 250px;
+/* Si quieres un límite de altura relativo, usa max-height en vez de height */
+.logo-instituto,
+.logo-empresa {
+  max-height: 200px;  /* ajusta a tu gusto */
 }
 
-/* Para "subir" un poco el logo del instituto, podrías jugar con un margin negativo
-   o un position relative y top negativo. Por ejemplo: */
+/* Ajuste vertical: usa padding/margin en vez de top fijo */
 .logo-instituto {
-  position: relative;
-  top: -45px;            /* Sube la imagen 10px hacia arriba */
+  margin-top: -30px;  /* sube un poco, adapta valor */
 }
 
+/* Responsive para pantallas medianas/pequeñas */
+@media (max-width: 992px) {
+  .header {
+    min-height: 120px;
+    padding: 15px;
+  }
+  .logo-instituto,
+  .logo-empresa {
+    max-height: 160px;
+  }
+}
 
-/* Navbar */
+@media (max-width: 768px) {
+  .header {
+    min-height: 100px;
+    padding: 10px;
+  }
+  .logo-instituto,
+  .logo-empresa {
+    max-height: 120px;
+  }
+}
+
+@media (max-width: 576px) {
+  .header {
+    /* deja que el contenido decida la altura */
+    min-height: auto;
+    padding: 8px;
+  }
+  .logo-instituto,
+  .logo-empresa {
+    max-height: 100px;
+    margin-top: -20px;
+  }
+}
+
+/* Navbar y demás no cambian, pero asegúrate que no haya width fijos */
 .custom-navbar {
-  --background: linear-gradient(to left, #003366 0%, #e43339 100%);
-    padding: 5px;
-    overflow: visible;
-    background: #f7ba2b;
-    background: var(--background);
-    position: relative;
-    z-index: 1;
+  padding: 5px;
+  background: var(--background, linear-gradient(to left, #003366 0%, #e43339 100%));
 }
 
 /* Links del navbar */
 .custom-navbar .nav-link {
   color: #FFFFFF;
-  /* Quitar subrayado al pasar hover si deseas */
   text-decoration: none;
 }
 
-/* Efecto subrayado o borde inferior al hover (opcional) */
 .custom-navbar .nav-link:hover {
   border-bottom: 2px solid #FFFFFF;
 }
@@ -74,6 +97,8 @@
   text-align: center;
   padding: 10px;
 }
+
+/* Dropdown usuario */
 .user-menu-dropdown {
   position: absolute;
   top: 100%;
@@ -98,4 +123,8 @@
 
 .user-menu-dropdown .dropdown-item:hover {
   background-color: #003366;
+}
+
+.me-2:hover {
+  border-bottom: 2px solid #FFFFFF;
 }
