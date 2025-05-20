@@ -39,7 +39,8 @@ const OrdenDePago = () => {
         { name: "Apellido", selector: (row) => row.apellido, sortable: true },
         { name: "Área", selector: (row) => row.nombre_area },
         { name: "Categoría", selector: (row) => row.nombre_categoria },
-        { name: "Precio (Bs)", selector: (row) => row.precio }
+        { name: "Precio (Bs)", selector: (row) => row.precio },
+        { name: "Id equipo", selector: (row) => row.id_equipo }
     ];
 
     useEffect(() => {
@@ -61,7 +62,8 @@ const OrdenDePago = () => {
                     apellido: est.apellido,
                     nombre_area: est?.nombre_area || "",
                     nombre_categoria: est?.nombre_categoria || "",
-                    precio: est?.precio || 0
+                    precio: est?.precio || 0,
+                    id_equipo: est.team ?? null
                 }));
                 setRowData(estudiantesFormateados);
 
@@ -374,7 +376,19 @@ const OrdenDePago = () => {
                                 </p>
                                 )}
                         </div>
-                        <BotonForm texto='Verificar pago' onClick={verificarPago} />
+                        {orden?.estado === true ? (
+                        <BotonForm
+                            texto='Pagado'
+                            className='boton-pago-deshabilitado'
+                            disabled={true}
+                        />
+                        ) : (
+                        <BotonForm
+                            texto='Verificar pago'
+                            onClick={verificarPago}
+                        />
+                        )}
+                    <p>Consulta esta seccion para saber si tu recibo ha sido registrado correctamente.</p>
                     </div>
                 </Caja>
                 <BotonForm
