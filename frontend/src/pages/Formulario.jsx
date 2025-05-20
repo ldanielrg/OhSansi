@@ -697,11 +697,22 @@ const actualizarFormulario = (index, campo, valor) => {
           <div className="contenedor-secciones-form">
             <section className="seccion-form">
               <RegistroForm
+                className='registro-form-ins-nombre'
                 label="Nombres"
                 name="nombre"
                 value={formulariosEquipo[formIndexActivo].nombre}
                 onChange={(e) =>
                   actualizarFormulario(formIndexActivo, "nombre", e.target.value)
+                }
+                usarEvento={true}
+                icono={FaRegUser}
+              />
+              <RegistroForm
+                label="Apellidos"
+                name="apellido"
+                value={formulariosEquipo[formIndexActivo].apellido}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "apellido", e.target.value)
                 }
                 usarEvento={true}
                 icono={FaRegUser}
@@ -728,19 +739,8 @@ const actualizarFormulario = (index, campo, valor) => {
                 icono={MdOutlineDateRange}
               />
               
-            </section>
 
-            <section className="seccion-form">
-              <RegistroForm
-                label="Apellidos"
-                name="apellido"
-                value={formulariosEquipo[formIndexActivo].apellido}
-                onChange={(e) =>
-                  actualizarFormulario(formIndexActivo, "apellido", e.target.value)
-                }
-                usarEvento={true}
-                icono={FaRegUser}
-              />
+              
               <RegistroForm
                 label="Rude"
                 name="rude"
