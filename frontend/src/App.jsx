@@ -45,6 +45,9 @@ import OrdenDePago from './pages/OrdenDePago';
 import ElegirConvocatoria from "./pages/ElegirConvocatoria";
 import GestionarConvocatoria from "./pages/GestionarConvocatoria";
 import InscritosOficiales from "./pages/InscritosOficiales";
+import Logueado from "./pages/Logueado.jsx"
+import GestionDeComprobantes from "./pages/GestionDeComprobantes";
+
 
 function App() {
   return (
@@ -95,6 +98,8 @@ function App() {
           <Route path="/configuracion-convocatoria" element={<Layout><ConfiguracionConvocatoria/></Layout>}/>
           <Route path="/configuracion-convocatoria/gestionar/:id_convocatoria" element={<Layout><GestionarConvocatoria/></Layout>}/>
           <Route path="/inscritos-oficiales" element={<Layout><InscritosOficiales/></Layout>}/>
+          <Route path="/logueado" element={<Layout><Logueado/></Layout>}/>
+          <Route path="/gestion-comprobantes" element={<Layout><GestionDeComprobantes /></Layout>} />
       </Route>
     </Routes>
     </AuthProvider>

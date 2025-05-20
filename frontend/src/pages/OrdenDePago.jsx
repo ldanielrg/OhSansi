@@ -79,60 +79,66 @@ const OrdenDePago = () => {
     }, [id]);
 
     const verificarPago = async () => {
-        if (!codigoManual || !imagenRecibo) {
-            alert("Debes ingresar el código y subir una imagen del recibo.");
+    if (!codigoManual || !imagenRecibo) {
+        alert("Debes ingresar el código y subir una imagen del recibo.");
+        return;
+    }
+
+    try {
+        // Paso 1: Verificar si ya fue validado anteriormente
+        const check = await api.get(`/verificar-codigo/${codigoManual}`);
+        if (check.data.verificado) {
+            alert("⚠️ Este comprobante ya fue verificado anteriormente.");
             return;
         }
 
-        try {
-            // ✅ Paso 1: Verificar si ya fue validado antes
-            const check = await api.get(`/verificar-codigo/${codigoManual}`);
-            if (check.data.verificado) {
-                alert("⚠️ Este comprobante ya fue verificado anteriormente.");
-                return;
-            }
+        // Paso 2: Ejecutar OCR
+        const imageUrl = URL.createObjectURL(imagenRecibo);
+        const result = await Tesseract.recognize(imageUrl, "spa", {
+            logger: (m) => console.log(m),
+        });
 
-            // ✅ Paso 2: OCR con Tesseract
-            const imageUrl = URL.createObjectURL(imagenRecibo);
-            const result = await Tesseract.recognize(imageUrl, "spa", {
-                logger: (m) => console.log(m),
-            });
+        const texto = result.data.text;
+        console.log("Texto OCR detectado:", texto);
 
-            const texto = result.data.text;
-            console.log("Texto OCR detectado:", texto);
+        // Paso 3: Preparar datos para guardar comprobante
+        const formData = new FormData();
+        formData.append("codigo", codigoManual);
+        formData.append("imagen", imagenRecibo);
+        formData.append("id_orden_pago", orden.id_orden);
+        formData.append("codigo_ocr", texto);
 
-            // ✅ Paso 3: Comparar código y enviar al backend
-            if (texto.includes(codigoManual)) {
-                alert("✅ Código verificado con éxito. ¡Recibo válido!");
+        // Paso 4: Enviar al backend
+        await api.post("/guardar-comprobante", formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
 
-                const formData = new FormData();
-                formData.append("codigo", codigoManual);
-                formData.append("imagen", imagenRecibo);
-                formData.append("id_orden_pago", orden.id_orden);
-                formData.append("codigo_ocr", texto);
-
-                await api.post("/guardar-comprobante", formData, {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                });
-
-                alert("📝 Comprobante guardado correctamente.");
-            } else {
-                alert("❌ El código no coincide con el contenido del recibo.");
-            }
-        } catch (err) {
-            console.error("Error al verificar o guardar comprobante:", err);
-
-            if (err.response && err.response.status === 422) {
-                const errores = err.response.data.errors;
-                const mensaje = Object.values(errores).flat().join("\n");
-                alert(`❌ Error de validación:\n${mensaje}`);
-            } else {
-                alert("❌ Error al procesar el comprobante.");
-            }
+        // Paso 5: Mostrar resultado
+        if (texto.includes(codigoManual)) {
+            alert("✅ Código verificado con éxito. ¡Recibo válido!");
+        } else {
+            alert("❌ El código no coincide con el contenido del recibo.");
         }
-    };
+
+        // Paso 6: Limpiar los campos del formulario
+        setCodigoManual("");
+        setImagenRecibo(null);
+        setTamanoImagen(null);
+        document.querySelector("input[type='file']").value = "";
+
+    } catch (err) {
+        console.error("Error al verificar o guardar comprobante:", err);
+
+        if (err.response?.status === 422) {
+            const errores = err.response.data.errors;
+            const mensaje = Object.values(errores).flat().join("\n");
+            alert(`❌ Error de validación:\n${mensaje}`);
+        } else {
+            alert("❌ Error al procesar el comprobante.");
+        }
+    }
+};
+
 
 
     const handleDescargarPDF = async () => {
@@ -169,7 +175,6 @@ const OrdenDePago = () => {
         <p><strong>Unidad Educativa:</strong> ${orden.unidad_educativa?.nombre}</p>
         <p><strong>Fecha de emisión:</strong> ${orden.fecha_emision}</p>
         <p><strong>Fecha de vencimiento:</strong> ${orden.fecha_vencimiento}</p>
-        <p><strong>Monto total:</strong> ${orden.monto_total} Bs</p>
         <p><strong>Estudiantes inscritos:</strong> ${rowData.length}</p>
 
         <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
@@ -194,6 +199,9 @@ const OrdenDePago = () => {
         `).join("")}
       </tbody>
     </table>
+    <div style="display: flex; justify-content: end">
+        <p><strong>Monto total:</strong> ${orden.monto_total} Bs</p>
+    </div>
 
         <p style="margin-top: 60px; text-align: center;">____________________<br />Responsable de delegación</p>
     `;

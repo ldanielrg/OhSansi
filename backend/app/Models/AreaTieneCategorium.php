@@ -32,8 +32,7 @@ class AreaTieneCategorium extends Model
 		'id_area_area' => 'int',
 		'precio' => 'decimal:2',
         'activo' => 'boolean',
-        'min' => 'integer',     
-        'max' => 'integer',
+        'nro_participantes' => 'integer',
 	];
 	
 	protected $fillable = [
@@ -41,8 +40,7 @@ class AreaTieneCategorium extends Model
         'id_categoria_categoria',
 		'precio',
 		'activo',
-		'min',
-		'max'
+		'nro_participantes',
     ];
 
 	public function categorium()

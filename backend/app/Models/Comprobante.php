@@ -10,12 +10,13 @@ class Comprobante extends Model
     protected $primaryKey = 'id_comprobante';
     public $timestamps = false;
 
-    protected $casts = [
-        'codigo' => 'string',
-        'id_orden_pago' => 'int',
-        'estado' => 'boolean',
-        'imagen' => 'string'
-    ];
+	protected $casts = [
+		'id_comprobante' => 'int',
+		'imagen' => 'string',
+		'codigo' => 'string',
+		'id_orden_pago' => 'int',
+		
+	];
 
     protected $fillable = [
         'codigo',

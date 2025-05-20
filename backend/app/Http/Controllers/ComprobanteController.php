@@ -17,7 +17,8 @@ class ComprobanteController extends Controller
     {
         // Validación de entrada
         $validated = $request->validate([
-            'codigo' => 'required|numeric|unique:comprobante,codigo',
+            //'codigo' => 'required|numeric|unique:comprobante,codigo',
+            'codigo' => 'required|numeric',
             'id_orden_pago' => 'required|integer|exists:orden_pago,id_orden',
             'imagen' => 'required|file|mimes:jpeg,png,jpg,bmp,webp|max:2048',
             'codigo_ocr' => 'nullable|string'
