@@ -84,49 +84,56 @@ const OrdenDePago = () => {
             return;
         }
 
-        const imageUrl = URL.createObjectURL(imagenRecibo);
-
         try {
-            const result = await Tesseract.recognize(
-            imageUrl,
-            "spa",
-            {
-                logger: (m) => console.log(m),
+            // ✅ Paso 1: Verificar si ya fue validado antes
+            const check = await api.get(`/verificar-codigo/${codigoManual}`);
+            if (check.data.verificado) {
+                alert("⚠️ Este comprobante ya fue verificado anteriormente.");
+                return;
             }
-            );
+
+            // ✅ Paso 2: OCR con Tesseract
+            const imageUrl = URL.createObjectURL(imagenRecibo);
+            const result = await Tesseract.recognize(imageUrl, "spa", {
+                logger: (m) => console.log(m),
+            });
 
             const texto = result.data.text;
             console.log("Texto OCR detectado:", texto);
 
+            // ✅ Paso 3: Comparar código y enviar al backend
             if (texto.includes(codigoManual)) {
-            alert("✅ Código verificado con éxito. ¡Recibo válido!");
-            // 🔁 Enviar al backend después del éxito
-            
-            try {
+                alert("✅ Código verificado con éxito. ¡Recibo válido!");
+
                 const formData = new FormData();
                 formData.append("codigo", codigoManual);
                 formData.append("imagen", imagenRecibo);
-                formData.append("id_orden_pago", orden.id_orden); // ID real de la orden
+                formData.append("id_orden_pago", orden.id_orden);
+                formData.append("codigo_ocr", texto);
 
                 await api.post("/guardar-comprobante", formData, {
                     headers: {
-                        "Content-Type": "multipart/form-data"
-                    }
+                        "Content-Type": "multipart/form-data",
+                    },
                 });
 
-            alert("📝 Comprobante guardado correctamente.");
+                alert("📝 Comprobante guardado correctamente.");
+            } else {
+                alert("❌ El código no coincide con el contenido del recibo.");
+            }
         } catch (err) {
-            console.error("Error al guardar comprobante:", err);
-            alert("❌ Error al guardar el comprobante.");
-        }
-    } else {
-      alert("❌ El código no coincide con el contenido del recibo.");
-    }
-        } catch (error) {
-            console.error("Error al procesar imagen:", error);
-            alert("Hubo un error al leer el recibo.");
+            console.error("Error al verificar o guardar comprobante:", err);
+
+            if (err.response && err.response.status === 422) {
+                const errores = err.response.data.errors;
+                const mensaje = Object.values(errores).flat().join("\n");
+                alert(`❌ Error de validación:\n${mensaje}`);
+            } else {
+                alert("❌ Error al procesar el comprobante.");
+            }
         }
     };
+
 
     const handleDescargarPDF = async () => {
     // Crea un contenedor temporal en el DOM
