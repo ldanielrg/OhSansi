@@ -147,8 +147,8 @@ class InscripcionController extends Controller{
         }
     }
 
-    #Editar, tanto datos personales como la inscripción de un estudiante
-    public function editarEstudiante(Request $request){
+    #ANTIGUO EDITAR
+    public function editarEstudianteANTIGUO(Request $request){
         $validated = $request->validate([
             'id_formulario' => 'required|integer|exists:formulario,id_formulario',
     
@@ -241,11 +241,68 @@ class InscripcionController extends Controller{
             'message' => 'Inscripción y datos del estudiante actualizados correctamente.'
         ]);
     }
+    #NUEVO EDITAR ESTUDIANTE
+    public function editarEstudiante(Request $request){
+        $validated = $request->validate([
+            'id_formulario' => 'required|integer|exists:formulario,id_formulario',
 
+            'anterior.id_estudiante' => 'required|integer|exists:estudiante,id_estudiante',
 
-    /*Antigua función de eliminar individualmente
+            'nuevo.nombre' => 'required|string',
+            'nuevo.apellido' => 'required|string',
+            'nuevo.email' => 'required|email',
+            'nuevo.ci' => 'required|integer',
+            'nuevo.rude' => 'required|integer',
+            'nuevo.fecha_nacimiento' => 'required|date',
+        ]);
+
+        // Paso 1: Buscar el estudiante actual
+        $estudiante = Estudiante::find($validated['anterior']['id_estudiante']);
+
+        if (!$estudiante) {
+            return response()->json([
+                'message' => 'Estudiante no encontrado.'
+            ], 404);
+        }
+
+        // Paso 2: Verificar duplicidad de CI si fue cambiado
+        if ($validated['nuevo']['ci'] != $estudiante->ci) {
+            $ciDuplicado = Estudiante::where('ci', $validated['nuevo']['ci'])->exists();
+            if ($ciDuplicado) {
+                return response()->json([
+                    'message' => 'El CI ingresado ya está registrado en otro estudiante.'
+                ], 422);
+            }
+        }
+
+        // Paso 3: Verificar duplicidad de RUDE si fue cambiado
+        if ($validated['nuevo']['rude'] != $estudiante->rude) {
+            $rudeDuplicado = Estudiante::where('rude', $validated['nuevo']['rude'])->exists();
+            if ($rudeDuplicado) {
+                return response()->json([
+                    'message' => 'El RUDE ingresado ya está registrado en otro estudiante.'
+                ], 422);
+            }
+        }
+
+        // Paso 4: Actualizar los datos permitidos
+        $estudiante->update([
+            'nombre' => $validated['nuevo']['nombre'],
+            'apellido' => $validated['nuevo']['apellido'],
+            'email' => $validated['nuevo']['email'],
+            'ci' => $validated['nuevo']['ci'],
+            'rude' => $validated['nuevo']['rude'],
+            'fecha_nacimiento' => $validated['nuevo']['fecha_nacimiento'],
+        ]);
+
+        return response()->json([
+            'message' => 'Datos del estudiante actualizados correctamente.'
+        ]);
+    }
+
+    #ANTIGUO ELIMIANAR
     #Elimina un registro de inscripción de un estudiante. Si el estudiante ya no tiene formularios a su nombre, también lo elimina.
-    public function eliminarInscripcion(Request $request){
+    public function eliminarInscripcionANTIGUO(Request $request){
         $validated = $request->validate([
             'id_formulario' => 'required|exists:formulario,id_formulario',
             'id_estudiante' => 'required|exists:estudiante,id_estudiante',
@@ -297,8 +354,6 @@ class InscripcionController extends Controller{
             'message' => 'Inscripción eliminada correctamente.'
         ]);
     }
-    */
-
     #Nueva función para eliminar a todo el equipo
     public function eliminarInscripcion(Request $request){
         $validated = $request->validate([
