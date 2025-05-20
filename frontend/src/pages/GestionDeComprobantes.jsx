@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/*import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -111,4 +111,133 @@ const columnas = [
     );
     };
 
+export default GestionDeComprobantes;*/
+
+import React, { useEffect, useState } from "react";
+import DataTable from "react-data-table-component";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import api from "../api/axios";
+import "../styles/GestionDeComprobantes.css";
+import Caja from '../components/Caja';
+
+const MySwal = withReactContent(Swal);
+
+const GestionDeComprobantes = () => {
+  const [comprobantes, setComprobantes] = useState([]);
+
+  useEffect(() => {
+  const fetchComprobantes = async () => {
+    try {
+      const response = await api.get("/comprobantes-pendientes");
+
+      // 👇 Aquí haces el fix para que las rutas funcionen correctamente en el navegador
+      const comprobantesFormateados = response.data.map(c => ({
+        ...c,
+        //imagen: `http://localhost:8000${c.imagen}`  // ajusta si usas dominio distinto
+        imagen: c.imagen //AGREGUE YO
+      }));
+
+      setComprobantes(comprobantesFormateados);
+    } catch (error) {
+      console.error("❌ Error al cargar comprobantes:", error);
+    }
+  };
+
+  fetchComprobantes();
+}, []);
+
+
+  const handleVerImagen = (imagenSrc) => {
+  MySwal.fire({
+    title: "Fotografía del Comprobante",
+    html: imagenSrc ? (
+      <img
+        src={imagenSrc}
+        alt="Sin imagen"
+        style={{ width: "100%", maxHeight: "80vh", objectFit: "contain", borderRadius: "8px" }}
+      />
+    ) : (
+      <div>
+        <p style={{ color: "#888" }}>Sin imagen</p>
+      </div>
+    ),
+    showCloseButton: true,
+    showConfirmButton: false,
+    width: "80%",
+  });
+};
+
+
+  const handleEstadoChange = (index, nuevoEstado) => {
+    const copia = [...comprobantes];
+    copia[index].estado = nuevoEstado;
+    setComprobantes(copia);
+
+    // Aquí puedes hacer un PATCH al backend si deseas guardar el nuevo estado
+    // await api.patch(`/comprobante/${copia[index].id_comprobante}`, { estado: nuevoEstado });
+  };
+
+  const columnas = [
+    { name: "ID", selector: row => row.id_comprobante, sortable: true },
+    { name: "Código introducido", selector: row => row.codigo, sortable: true },
+    {
+        name: "Fotografía",
+        cell: row => (
+            row.imagen ? (
+                <img
+                    src={row.imagen}
+                    alt="Sin imagen"
+                    onClick={() => handleVerImagen(row.imagen)}
+                    style={{
+                        width: 60,
+                        height: 60,
+                        objectFit: "cover",
+                        cursor: "pointer",
+                        borderRadius: "6px",
+                        border: "1px solid #ccc"
+                    }}
+                />
+            ) : (
+                <span style={{ fontSize: "12px", color: "#999" }}>Sin imagen</span>
+            )
+        )
+    },
+
+    {
+      name: "Estado",
+      cell: (row, index) => (
+        <select
+          value={row.estado ? "Valido" : "Invalido"}
+          onChange={(e) => handleEstadoChange(index, e.target.value === "Valido")}
+          style={{
+            padding: "4px 8px",
+            borderRadius: "4px",
+            border: "1px solid #ccc"
+          }}
+        >
+          <option value="Invalido">Inválido</option>
+          <option value="Valido">Válido</option>
+        </select>
+      )
+    }
+  ];
+
+  return (
+    <div className="contenedor-gestion-comprobantes">
+      <Caja>
+        <h2>Gestión de Comprobantes (Pendientes)</h2>
+        <DataTable
+          columns={columnas}
+          data={comprobantes}
+          pagination
+          highlightOnHover
+          noDataComponent="No hay comprobantes pendientes."
+        />
+      </Caja>
+    </div>
+  );
+};
+
 export default GestionDeComprobantes;
+

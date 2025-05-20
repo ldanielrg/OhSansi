@@ -42,8 +42,10 @@ class ComprobanteController extends Controller
             // Guardar imagen en disco
             $imagen = $request->file('imagen');
             $filename = 'comprobante_' . time() . '.' . $imagen->getClientOriginalExtension();
-            $path = $imagen->storeAs('public/comprobantes', $filename);
-            $rutaPublica = Storage::url($path); // Genera: /storage/comprobantes/...
+            //$path = $imagen->storeAs('public/comprobantes', $filename);
+            $path = $imagen->storeAs('comprobantes', $filename); // sin "public/"
+            //$rutaPublica = Storage::url($path); // Genera: /storage/comprobantes/...
+            $rutaPublica = '/storage/comprobantes/' . $filename;
 
             // Crear el comprobante con estado = false
             $comprobante = Comprobante::create([
@@ -103,6 +105,20 @@ class ComprobanteController extends Controller
             'ruta_imagen' => $comprobante->imagen ?? null
         ]);
     }
+
+    // ComprobanteController.php
+    public function comprobantesPendientes()
+{
+    $pendientes = Comprobante::where('estado', false)->get();
+
+    foreach ($pendientes as $c) {
+         Log::info("Comprobante pendiente:", $c->toArray());
+        $c->imagen = asset($c->imagen); // esto convierte '/storage/...' en 'http://localhost:8000/storage/...'
+    }
+
+    return response()->json($pendientes);
+}
+
 
 }
 

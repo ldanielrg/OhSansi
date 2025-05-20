@@ -109,5 +109,6 @@ Route::middleware('auth:sanctum')->group(function () {
 //COMPROBANTE DE PAGO
 Route::post('/guardar-comprobante', [ComprobanteController::class, 'store']);
 Route::get('/verificar-codigo/{codigo}', [ComprobanteController::class, 'verificarCodigo']);
+Route::get('/comprobantes-pendientes', [ComprobanteController::class, 'comprobantesPendientes']);
 
 #Rutas sin proteger (sólo para pruebas)
