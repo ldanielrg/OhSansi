@@ -59,6 +59,7 @@ const [formulariosEquipo, setFormulariosEquipo] = useState([
 ]);
 const [contadorEquipos, setContadorEquipos] = useState(1); // para generar id_equipo incremental
 const [idEquipoEnEdicion, setIdEquipoEnEdicion] = useState(null);
+const [registrando, setRegistrando] = useState(false);
 
 
 
@@ -233,7 +234,9 @@ useEffect(() => {
 
 
 const handleRegistrar = async () => {
-  // Validar todos los estudiantes del equipo
+  if (registrando) return;
+
+  // Validaciones primero
   for (let i = 0; i < formulariosEquipo.length; i++) {
     const estudiante = formulariosEquipo[i];
     const { nombre, apellido, ci, fechaNac, rude, area, categoria } = estudiante;
@@ -246,50 +249,44 @@ const handleRegistrar = async () => {
       return toast.warn(`RUDE inválido en integrante ${i + 1}`);
     if (!/\d{1,8}/.test(ci))
       return toast.warn(`CI inválido en integrante ${i + 1}`);
+
     const fechaNacimiento = new Date(fechaNac);
     const hoy = new Date();
 
-    if (!fechaNac || isNaN(fechaNacimiento)) {
+    if (!fechaNac || isNaN(fechaNacimiento))
       return toast.warn(`Fecha de nacimiento inválida en integrante ${i + 1}`);
-    }
-
-    if (fechaNacimiento > hoy) {
-      return toast.warn(`La fecha de nacimiento no puede ser en el futuro (integrante ${i + 1})`);
-    }
-
+    if (fechaNacimiento > hoy)
+      return toast.warn(`La fecha no puede ser en el futuro (integrante ${i + 1})`);
   }
+
+  // ✅ Solo después de las validaciones
+  setRegistrando(true);
 
   let idEquipo = contadorEquipos;
 
-  // Si NO estamos en modo edición, obtenemos el número de equipo desde la API
   if (!modoEdicion) {
     try {
       const area = formulariosEquipo[0].area;
       const categoria = formulariosEquipo[0].categoria;
 
       const res = await api.get('/dame-mi-team', {
-        params: {
-          id_area: area,
-          id_categoria: categoria
-        }
+        params: { id_area: area, id_categoria: categoria }
       });
 
       idEquipo = res.data.siguiente_team;
     } catch (error) {
       console.error("Error al obtener el número de equipo:", error);
       toast.error("No se pudo obtener el número de equipo.");
+      setRegistrando(false); // ← necesario aquí también
       return;
     }
   } else {
     idEquipo = idEquipoEnEdicion;
   }
 
-  // Construir los nuevos estudiantes
   const nuevosEstudiantes = formulariosEquipo.map((est) => {
     const areaSeleccionada = areas.find((a) => a.id_area === parseInt(est.area));
-    const categoriaSeleccionada = categorias.find(
-      (c) => c.id_categoria === parseInt(est.categoria)
-    );
+    const categoriaSeleccionada = categorias.find((c) => c.id_categoria === parseInt(est.categoria));
 
     return {
       ...est,
@@ -298,11 +295,10 @@ const handleRegistrar = async () => {
       id_categoria: categoriaSeleccionada?.id_categoria ?? null,
       nombre_categoria: categoriaSeleccionada?.nombre_categoria ?? "",
       id_equipo: idEquipo,
-      team: idEquipo // <- este es el campo que el backend espera
+      team: idEquipo
     };
   });
 
-  // Enviar a la API `/inscripcion`
   const datosEnviar = {
     id_formulario_actual: parseInt(id),
     id_convocatoria: idConvocatoria,
@@ -322,39 +318,44 @@ const handleRegistrar = async () => {
 
   try {
     const res = await api.post("/inscripcion", datosEnviar);
-    // Si el formulario fue recién creado, guardamos el ID para próximas inscripciones
+
     if (parseInt(id) === 0 && res.data?.id_formulario) {
       navigate(`/formulario/${res.data.id_formulario}`);
       return;
     }
+
     if (res.data.estudiantes) {
+  const estudiantesNormalizados = res.data.estudiantes.map(est => ({
+    ...est,
+    fechaNac: est.fecha_nac // 👈 transforma correctamente aquí
+  }));
+
   setRowData((prev) => {
     if (modoEdicion && idEquipoEnEdicion !== null) {
       const sinEquipoAnterior = prev.filter(e => e.id_equipo !== idEquipoEnEdicion);
-      return [...sinEquipoAnterior, ...res.data.estudiantes];
+      return [...sinEquipoAnterior, ...estudiantesNormalizados];
     } else {
-      return [...prev, ...res.data.estudiantes];
+      return [...prev, ...estudiantesNormalizados];
     }
   });
 }
+
+
+
     toast.success("Estudiantes registrados correctamente en el sistema.");
   } catch (error) {
     console.error("Error al registrar estudiantes en backend:", error);
     toast.error("Error al registrar estudiantes en el servidor.");
-    return;
+  } finally {
+    setRegistrando(false); // ✅ Siempre se reinicia
   }
-
-
-
 
   // Reset
   toast.success(`Equipo registrado correctamente.`);
   setContadorEquipos((prev) => prev + 1);
-  setFormulariosEquipo(
-    Array.from({ length: numParticipantes }, () => ({
-      nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
-    }))
-  );
+  setFormulariosEquipo(Array.from({ length: numParticipantes }, () => ({
+    nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
+  })));
   setFormIndexActivo(0);
   setSelectedRows([]);
   selectedRowsRef.current = [];
@@ -775,10 +776,12 @@ const actualizarFormulario = (index, campo, valor) => {
           onClick={() => fileInputRef.current.click()}
         />
           <BotonForm
-            className="boton-ins-guardar"
-            texto={modoEdicion ? "Guardar" : "Registrar"}
-            onClick={handleRegistrar}
-          />
+  className="boton-ins-guardar"
+  texto={registrando ? "Registrando..." : (modoEdicion ? "Guardar" : "Registrar")}
+  onClick={handleRegistrar}
+  disabled={registrando}
+/>
+
         </div>
         <Caja titulo="Estudiantes inscritos" width="99%">
           <DataTable
