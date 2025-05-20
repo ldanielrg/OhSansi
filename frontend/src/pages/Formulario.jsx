@@ -51,7 +51,7 @@ const Formulario = () => {
   const [ue, setUe] = useState([]);
   const [searchParams] = useSearchParams();
   const [idConvocatoria, setIdConvocatoria] = useState(null);
-  const [tipoParticipacion, setTipoParticipacion] = useState("Individual");
+
 const [numParticipantes, setNumParticipantes] = useState(1);
 const [formIndexActivo, setFormIndexActivo] = useState(0);
 const [formulariosEquipo, setFormulariosEquipo] = useState([
@@ -126,7 +126,13 @@ useEffect(() => {
 
 
   useEffect(() => {
-  if (parseInt(id) === 0) {
+  const formularioId = parseInt(id);
+  if (isNaN(formularioId)) {
+    toast.error("ID de formulario inválido.");
+    return;
+  }
+
+  if (formularioId === 0) {
     const convocatoriaFromURL = searchParams.get("convocatoria");
     if (convocatoriaFromURL) {
       setIdConvocatoria(parseInt(convocatoriaFromURL));
@@ -137,7 +143,6 @@ useEffect(() => {
     return;
   }
 
-  // Si no es nuevo, cargar datos del backend
   const cargarFormulario = async () => {
     try {
       const response = await api.get(`/formulario-detalles/${id}`);
@@ -157,13 +162,18 @@ useEffect(() => {
         ci: est.ci,
         fechaNac: est.fecha_nacimiento,
         rude: est.rude,
-        id_area: est.idAarea,
+        id_area: est.id_area,
         nombre_area: est?.nombre_area || "",
-        id_categoria: est.idCategoria,
+        id_categoria: est.id_categoria,
         nombre_categoria: est?.nombre_categoria || "",
+        id_equipo: est.id_equipo,
+        tipo_equipo: est.tipo_equipo,
         municipio: "",
         unidadEducativa: "",
+        id_equipo: est.team
+
       }));
+
       setRowData(estudiantesFormateados);
     } catch (error) {
       console.error("Error al cargar formulario:", error);
@@ -178,6 +188,43 @@ useEffect(() => {
 
 
 
+useEffect(() => {
+  const area = formulariosEquipo[formIndexActivo]?.area;
+  const categoria = formulariosEquipo[formIndexActivo]?.categoria;
+
+  if (!area || !categoria) return;
+
+  const obtenerCantidadParticipantes = async () => {
+    try {
+      const res = await api.get(`/participantes`, {
+        params: {
+          id_area: area,
+          id_categoria: categoria
+        }
+      });
+      console.log("Respuesta de participantes:", res.data);
+
+      const cantidad = parseInt(res.data?.cantidad || 1);
+
+      setNumParticipantes(cantidad);
+      setFormIndexActivo(0);
+      setFormulariosEquipo(
+        Array.from({ length: cantidad }, () => ({
+          nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area, categoria, email: ""
+        }))
+      );
+    } catch (error) {
+      console.error("Error al obtener cantidad de participantes:", error);
+      toast.error("No se pudo obtener la cantidad de integrantes para esta categoría.");
+    }
+  };
+
+  obtenerCantidadParticipantes();
+}, [formulariosEquipo[formIndexActivo]?.categoria]);
+
+
+
+
   
 
   const opcionesFiltradasUE = ue
@@ -186,7 +233,7 @@ useEffect(() => {
 
 
 
-  const handleRegistrar = async () => {
+const handleRegistrar = async () => {
   // Validar todos los estudiantes del equipo
   for (let i = 0; i < formulariosEquipo.length; i++) {
     const estudiante = formulariosEquipo[i];
@@ -200,9 +247,45 @@ useEffect(() => {
       return toast.warn(`RUDE inválido en integrante ${i + 1}`);
     if (!/\d{1,8}/.test(ci))
       return toast.warn(`CI inválido en integrante ${i + 1}`);
+    const fechaNacimiento = new Date(fechaNac);
+    const hoy = new Date();
+
+    if (!fechaNac || isNaN(fechaNacimiento)) {
+      return toast.warn(`Fecha de nacimiento inválida en integrante ${i + 1}`);
+    }
+
+    if (fechaNacimiento > hoy) {
+      return toast.warn(`La fecha de nacimiento no puede ser en el futuro (integrante ${i + 1})`);
+    }
+
   }
 
-  const nuevoIdEquipo = contadorEquipos;
+  let idEquipo = contadorEquipos;
+
+  // Si NO estamos en modo edición, obtenemos el número de equipo desde la API
+  if (!modoEdicion) {
+    try {
+      const area = formulariosEquipo[0].area;
+      const categoria = formulariosEquipo[0].categoria;
+
+      const res = await api.get('/dame-mi-team', {
+        params: {
+          id_area: area,
+          id_categoria: categoria
+        }
+      });
+
+      idEquipo = res.data.siguiente_team;
+    } catch (error) {
+      console.error("Error al obtener el número de equipo:", error);
+      toast.error("No se pudo obtener el número de equipo.");
+      return;
+    }
+  } else {
+    idEquipo = idEquipoEnEdicion;
+  }
+
+  // Construir los nuevos estudiantes
   const nuevosEstudiantes = formulariosEquipo.map((est) => {
     const areaSeleccionada = areas.find((a) => a.id_area === parseInt(est.area));
     const categoriaSeleccionada = categorias.find(
@@ -215,27 +298,58 @@ useEffect(() => {
       nombre_area: areaSeleccionada?.nombre_area ?? "",
       id_categoria: categoriaSeleccionada?.id_categoria ?? null,
       nombre_categoria: categoriaSeleccionada?.nombre_categoria ?? "",
-      id_equipo: nuevoIdEquipo,
-      tipo_equipo: tipoParticipacion
+      id_equipo: idEquipo,
+      team: idEquipo // <- este es el campo que el backend espera
     };
   });
 
-  setRowData((prev) => {
-  if (modoEdicion && idEquipoEnEdicion !== null) {
-    // Quitar estudiantes anteriores del equipo
-    const sinEquipoAnterior = prev.filter(e => e.id_equipo !== idEquipoEnEdicion);
-    return [...sinEquipoAnterior, ...nuevosEstudiantes.map(est => ({
-      ...est,
-      id_equipo: idEquipoEnEdicion
-    }))];
-  } else {
-    return [...prev, ...nuevosEstudiantes];
-  }
-});
+  // Enviar a la API `/inscripcion`
+  const datosEnviar = {
+    id_formulario_actual: parseInt(id),
+    id_convocatoria: idConvocatoria,
+    estudiantes: nuevosEstudiantes.map((est) => ({
+      id_estudiante: null,
+      nombre: est.nombre,
+      apellido: est.apellido,
+      email: est.email,
+      ci: parseInt(est.ci),
+      fecha_nacimiento: est.fechaNac,
+      rude: parseInt(est.rude),
+      idAarea: est.id_area,
+      idCategoria: est.id_categoria,
+      team: est.team
+    }))
+  };
 
-  toast.success(`Equipo ${tipoParticipacion} registrado correctamente.`);
+  try {
+    const res = await api.post("/inscripcion", datosEnviar);
+    // Si el formulario fue recién creado, guardamos el ID para próximas inscripciones
+    if (parseInt(id) === 0 && res.data?.id_formulario) {
+      navigate(`/formulario/${res.data.id_formulario}`);
+      return;
+    }
+    if (res.data.estudiantes) {
+  setRowData((prev) => {
+    if (modoEdicion && idEquipoEnEdicion !== null) {
+      const sinEquipoAnterior = prev.filter(e => e.id_equipo !== idEquipoEnEdicion);
+      return [...sinEquipoAnterior, ...res.data.estudiantes];
+    } else {
+      return [...prev, ...res.data.estudiantes];
+    }
+  });
+}
+    toast.success("Estudiantes registrados correctamente en el sistema.");
+  } catch (error) {
+    console.error("Error al registrar estudiantes en backend:", error);
+    toast.error("Error al registrar estudiantes en el servidor.");
+    return;
+  }
+
+
+
 
   // Reset
+  toast.success(`Equipo registrado correctamente.`);
   setContadorEquipos((prev) => prev + 1);
   setFormulariosEquipo(
     Array.from({ length: numParticipantes }, () => ({
@@ -247,9 +361,10 @@ useEffect(() => {
   selectedRowsRef.current = [];
   setToggleClearSelected((prev) => !prev);
   setModoEdicion(false);
-setIdEquipoEnEdicion(null);
-
+  setIdEquipoEnEdicion(null);
 };
+
+
 
 
 
@@ -282,10 +397,9 @@ const handleEditar = async () => {
 
   const equipoCompleto = rowData.filter(est => est.id_equipo === idEquipo);
 
-  const tipoDetectado = equipoCompleto[0]?.tipo_equipo || "Individual";
   const cantidad = equipoCompleto.length;
 
-  setTipoParticipacion(tipoDetectado);
+
   setNumParticipantes(cantidad);
   setFormIndexActivo(0);
   setFormulariosEquipo(
@@ -428,40 +542,10 @@ const handleEditar = async () => {
 
 
 const handleGuardarFormulario = async () => {
-  if (rowData.length === 0) {
-    toast.warn("No hay estudiantes registrados para guardar.");
-    return;
-  }
-
-  const datosEnviar = {
-    id_formulario_actual: parseInt(id),
-    id_convocatoria: idConvocatoria, // ✅ Asegúrate que esto esté definido
-    estudiantes: rowData.map((est) => ({
-      id_estudiante: est.id_estudiante ?? null,
-      nombre: est.nombre,
-      apellido: est.apellido,
-      email: est.email,
-      ci: parseInt(est.ci),
-      fecha_nacimiento: est.fechaNac,
-      rude: parseInt(est.rude),
-      idAarea: est.id_area,
-      idCategoria: est.id_categoria,
-    })),
-  };
-
-  try {
-    console.log("Enviando:", datosEnviar);
-    const response = await api.post("/inscripcion", datosEnviar);
-    console.log("Formulario guardado exitosamente:", response.data);
-    toast.success("Formulario guardado exitosamente.");
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
-  } catch (error) {
-    console.error("Error al guardar:", error);
-    toast.error("Ocurrió un error al guardar el formulario.");
-  }
+  toast.info("Todos los estudiantes ya han sido registrados.");
+  navigate(`/inscripciones?convocatoria=${idConvocatoria}`);
 };
+
 
 const actualizarFormulario = (index, campo, valor) => {
   setFormulariosEquipo((prev) => {
@@ -471,18 +555,7 @@ const actualizarFormulario = (index, campo, valor) => {
   });
 };
 
-const handleTipoParticipacion = (e) => {
-  const value = e.target.value;
-  setTipoParticipacion(value);
-  const cantidad = value === "Duo" ? 2 : value === "Trio" ? 3 : value === "Cuarteto" ? 4 : 1;
-  setNumParticipantes(cantidad);
-  setFormIndexActivo(0);
-  setFormulariosEquipo(
-    Array.from({ length: cantidad }, () => ({
-      nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
-    }))
-  );
-};
+
 
   const fileInputRef = useRef();
   const [cargando, setCargando] = useState(true);
