@@ -59,6 +59,7 @@ const [formulariosEquipo, setFormulariosEquipo] = useState([
 ]);
 const [contadorEquipos, setContadorEquipos] = useState(1); // para generar id_equipo incremental
 const [idEquipoEnEdicion, setIdEquipoEnEdicion] = useState(null);
+const [idEstudianteEnEdicion, setIdEstudianteEnEdicion] = useState(null);
 const [registrando, setRegistrando] = useState(false);
 
 
@@ -187,39 +188,39 @@ useEffect(() => {
 
 
 
-useEffect(() => {
-  const area = formulariosEquipo[formIndexActivo]?.area;
-  const categoria = formulariosEquipo[formIndexActivo]?.categoria;
+  useEffect(() => {
+    const area = formulariosEquipo[formIndexActivo]?.area;
+    const categoria = formulariosEquipo[formIndexActivo]?.categoria;
 
-  if (!area || !categoria) return;
+    // ⛔ Evita reiniciar si estás editando un estudiante
+    if (!area || !categoria || modoEdicion) return;
 
-  const obtenerCantidadParticipantes = async () => {
-    try {
-      const res = await api.get(`/participantes`, {
-        params: {
-          id_area: area,
-          id_categoria: categoria
-        }
-      });
-      console.log("Respuesta de participantes:", res.data);
+    const obtenerCantidadParticipantes = async () => {
+      try {
+        const res = await api.get(`/participantes`, {
+          params: {
+            id_area: area,
+            id_categoria: categoria
+          }
+        });
 
-      const cantidad = parseInt(res.data?.cantidad || 1);
+        const cantidad = parseInt(res.data?.cantidad || 1);
 
-      setNumParticipantes(cantidad);
-      setFormIndexActivo(0);
-      setFormulariosEquipo(
-        Array.from({ length: cantidad }, () => ({
-          nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area, categoria, email: ""
-        }))
-      );
-    } catch (error) {
-      console.error("Error al obtener cantidad de participantes:", error);
-      toast.error("No se pudo obtener la cantidad de integrantes para esta categoría.");
-    }
-  };
+        setNumParticipantes(cantidad);
+        setFormIndexActivo(0);
+        setFormulariosEquipo(
+          Array.from({ length: cantidad }, () => ({
+            nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area, categoria, email: ""
+          }))
+        );
+      } catch (error) {
+        toast.error("No se pudo obtener la cantidad de integrantes para esta categoría.");
+      }
+    };
 
-  obtenerCantidadParticipantes();
-}, [formulariosEquipo[formIndexActivo]?.categoria]);
+    obtenerCantidadParticipantes();
+  }, [formulariosEquipo[formIndexActivo]?.categoria]);
+
 
 
 
@@ -316,6 +317,45 @@ const handleRegistrar = async () => {
   };
 
   try {
+    console.log("ESTO VA ANTES DE MODO EDICIÓN")
+    if (modoEdicion) {
+      const estudiante = formulariosEquipo[0];
+      console.log("ENTRANDO A MI IF")
+      const payload = {
+        id_formulario: parseInt(id),
+        anterior: {
+          id_estudiante: idEstudianteEnEdicion
+        },
+        nuevo: {
+          nombre: estudiante.nombre,
+          apellido: estudiante.apellido,
+          email: estudiante.email,
+          ci: parseInt(estudiante.ci),
+          rude: parseInt(estudiante.rude),
+          fecha_nacimiento: estudiante.fechaNac
+        }
+      };
+
+      try {
+        await api.post('/editar-registro-estudiante', payload);
+        toast.success('Estudiante actualizado correctamente.');
+
+        // actualiza la tabla
+        setRowData(prev => prev.map(est =>
+          est.id_estudiante === idEstudianteEnEdicion
+            ? { ...est, ...payload.nuevo, fechaNac: payload.nuevo.fecha_nacimiento }
+            : est
+        ));
+      } catch (error) {
+        console.error('Error al editar estudiante:', error);
+        toast.error(error.response?.data?.message || 'Error al actualizar el estudiante.');
+      } finally {
+        setRegistrando(false);
+        resetEdicion();
+      }
+
+      return;
+    }
     const res = await api.post("/inscripcion", datosEnviar);
 
     if (parseInt(id) === 0 && res.data?.id_formulario) {
@@ -394,29 +434,29 @@ const handleEditar = async () => {
 
   if (!result.isConfirmed) return;
 
-  const equipoCompleto = rowData.filter(est => est.id_equipo === idEquipo);
+  const estudiante = seleccionActual[0];
 
-  const cantidad = equipoCompleto.length;
+  setFormulariosEquipo([{
+    nombre: estudiante.nombre,
+    apellido: estudiante.apellido,
+    ci: estudiante.ci,
+    fechaNac: estudiante.fechaNac,
+    rude: estudiante.rude,
+    area: estudiante.id_area?.toString() || "",
+    categoria: estudiante.id_categoria?.toString() || "",
+    email: estudiante.email
+  }]);
 
-
-  setNumParticipantes(cantidad);
+  setNumParticipantes(1);
   setFormIndexActivo(0);
-  setFormulariosEquipo(
-    equipoCompleto.map(est => ({
-      nombre: est.nombre,
-      apellido: est.apellido,
-      ci: est.ci,
-      fechaNac: est.fechaNac,
-      rude: est.rude,
-      area: est.id_area?.toString() || "",
-      categoria: est.id_categoria?.toString() || "",
-      email: est.email
-    }))
-  );
-
   setModoEdicion(true);
-  setIdEquipoEnEdicion(idEquipo);
-};
+  setIdEquipoEnEdicion(estudiante.id_equipo); // opcional
+  setIdEstudianteEnEdicion(estudiante.id_estudiante); // ✅ necesario
+
+
+    setModoEdicion(true);
+    setIdEquipoEnEdicion(idEquipo);
+  };
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -548,6 +588,17 @@ const handleEliminar = async () => {
   }
 };
 
+const resetEdicion = () => {
+  setModoEdicion(false);
+  setIdEstudianteEnEdicion(null);
+  setFormulariosEquipo([{
+    nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
+  }]);
+  setFormIndexActivo(0);
+  setSelectedRows([]);
+  selectedRowsRef.current = [];
+  setToggleClearSelected(prev => !prev);
+};
 
 
 
