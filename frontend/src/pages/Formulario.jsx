@@ -74,8 +74,7 @@ const columns = [
   { name: "Rude", selector: (row) => row.rude },
   { name: "Área", selector: (row) => row.nombre_area },
   { name: "Categoría", selector: (row) => row.nombre_categoria },
-  { name: "Id equipo", selector: (row) => row.id_equipo },
-  { name: "Tipo de equipo", selector: (row) => row.tipo_equipo }
+  { name: "Id equipo", selector: (row) => row.id_equipo }
 ];
 
   const customStyles = {

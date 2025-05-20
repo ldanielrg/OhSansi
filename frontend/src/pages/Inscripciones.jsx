@@ -80,7 +80,7 @@ const Inscripciones = () => {
 
 
   const formularioColumns = [
-    { name: 'N° de Formulario', selector: row => row.id_formulario, sortable: true },
+    { name: 'ID de Formulario', selector: row => row.id_formulario, sortable: true },
     { name: 'Cantidad Estudiantes', selector: row => row.inscripciones_count},
     {
       name: 'Acciones',
