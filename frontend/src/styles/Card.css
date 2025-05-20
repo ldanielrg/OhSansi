@@ -47,3 +47,49 @@
   display: block;
   margin: 0 auto; /* centra el icono dentro de su contenedor */
 }
+
+/* Responsive ajustes para card */
+@media (max-width: 768px) {
+    .custom-card {
+        width: 90%;
+        margin-bottom: 15px;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .btn-card {
+        padding: 8px 14px;
+        font-size: 0.95rem;
+    }
+
+    .card-img-top {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .custom-card {
+        width: 95%;
+        margin-bottom: 12px;
+    }
+
+    .card-body {
+        padding: 12px;
+    }
+
+    .btn-card {
+        padding: 7px 12px;
+        font-size: 0.9rem;
+    }
+
+    .card-img-top {
+        padding: 12px;
+    }
+
+    .btn-icon {
+        width: 50px;
+        height: 50px;
+    }
+}

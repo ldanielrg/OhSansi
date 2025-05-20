@@ -6,8 +6,10 @@ import Card from "../components/Card";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Importa estilo por defecto
 import { useAuth } from "../context/AuthContext"; // ajusta si tu ruta cambia
-
-
+import imageOlimpics from "/src/assets/hd/olimpiadas.jpg";
+import imageInscripcion from "/src/assets/hd/inscripciones.jpg";
+import imageDiscipline from "/src/assets/hd/disciplinas.jpg";
+import imageEvents from "/src/assets/hd/eventos.jpg";
 
 const Home = () => {
   // Hook para navegar
@@ -95,28 +97,28 @@ const Home = () => {
           <div className="cards-section row">
             <div className="col-md-6">
               <Card
-                image="/src/assets/hd/olimpiadas.jpg"
+                image={imageOlimpics}
                 buttonText="Ver más"
                 onClick={handleNavigateVer}
               />
             </div>
             <div className="col-md-6">
               <Card
-                image="/src/assets/hd/inscripciones.jpg"
+                image={imageInscripcion}
                 buttonText="Inscripciones"
                 onClick={handleNavigateInscripciones}
               />
             </div>
             <div className="col-md-6">
               <Card
-                image="/src/assets/hd/disciplinas.jpg"
+                image={imageDiscipline}
                 buttonText="Disciplinas"
                 onClick={handleNavigateDisciplinas}
               />
             </div>
             <div className="col-md-6">
               <Card
-                image="/src/assets/hd/eventos.jpg"
+                image={imageEvents}
                 buttonText="Eventos"
                 onClick={handleNavigateEventos}
               />
