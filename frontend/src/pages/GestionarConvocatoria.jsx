@@ -172,6 +172,17 @@ export default function GestionarConvocatoria() {
   };
 
   const handleAssignAreaCat = async () => {
+    if (!selArea || !selCat || !precio || !participantes) {
+      alert("Por favor completa todos los campos.");
+      return;
+    }
+
+    const datos = {
+      id_area: selArea,
+      id_categoria: selCat,
+      precio: precio,
+      participantes: participantes,
+    };
     if (!selArea || !selCat) return toast.warn("Selecciona área y categoría.");
     try {
       await api.post(`/asignar-area-categoria`, {

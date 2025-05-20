@@ -1,32 +1,98 @@
-.page-container-modificar-cuenta{
-    width: auto;
-    height: auto;
-    display: flex;
-    justify-content: center;
+.page-container-modificar-cuenta {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem; /* Espaciado lateral en móviles */
 }
-.seccion-formulario-modificar-cuenta{
-    width: 80%;
-    display: flex;
+
+.seccion-formulario-modificar-cuenta {
+  width: 80%;
+  max-width: 700px; /* Ancho máximo fijo para grandes pantallas */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.div-label-input-modificar-cuenta {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+form {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.cont-form-mod {
+  width: 100%;
+}
+
+.seccion-formulario-modificar-cuenta p,
+.seccion-formulario-modificar-cuenta h2 {
+  color: #003366;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.campo-contraseña-mod-cuenta {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+/* Responsive Design */
+
+@media (max-width: 1024px) {
+  .seccion-formulario-modificar-cuenta {
+    width: 90%;
+  }
+
+  .div-label-input-modificar-cuenta {
+    gap: 1.5rem;
+  }
+
+  .cont-form-mod {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .seccion-formulario-modificar-cuenta {
+    width: 95%;
+  }
+
+  .div-label-input-modificar-cuenta {
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    gap: 1rem;
+  }
+
+  form {
+    margin-top: 1.5rem;
+  }
 }
-.div-label-input-modificar-cuenta{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 70%;
-    margin-bottom: 0;
-}
-form{
-    margin-top: 3%;
-}
-.cont-form-mod{
-    width: 40%;
-}
-.seccion-formulario-modificar-cuenta p, h2{
-    color: #003366;
-}
-.campo-contraseña-mod-cuenta{
-    margin-bottom: 0;;
+
+@media (max-width: 500px) {
+  .page-container-modificar-cuenta {
+    padding: 1.5rem 0.8rem;
+  }
+
+  .seccion-formulario-modificar-cuenta {
+    width: 100%;
+  }
+
+  .seccion-formulario-modificar-cuenta h2 {
+    font-size: 1.4rem;
+  }
+
+  .div-label-input-modificar-cuenta {
+    gap: 0.8rem;
+  }
+
+  form {
+    margin-top: 1rem;
+  }
 }

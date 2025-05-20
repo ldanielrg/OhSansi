@@ -106,4 +106,75 @@
   .boton-login-wrapper .btn-primary:hover {
     background-color: #002a5c;
   }
-  
+  /* Responsive adicional */
+@media (max-width: 1024px) {
+  .login-form-wrapper .caja {
+    width: 45% !important; /* Más ancho en tablets medianas */
+  }
+}
+
+@media (max-width: 768px) {
+  .login-form-wrapper .caja {
+    width: 60% !important; /* Mayor ancho en tablets pequeñas */
+  }
+
+  .formulario-login {
+    padding: 0 15px; /* padding lateral reducido */
+  }
+
+  .boton-login-wrapper button {
+    width: 100%; /* botón al 100% en móviles */
+    padding: 12px 0;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 550px) {
+  .login-form-wrapper .caja {
+    width: 80% !important; /* ocupa más ancho en móviles */
+  }
+
+  .caja-body {
+    padding: 15px; /* padding reducido */
+  }
+
+  .formulario-login {
+    padding: 0 10px;
+  }
+
+  .boton-login-wrapper {
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .boton-login-wrapper button {
+    width: 100%;
+    padding: 14px 0;
+    font-size: 1rem;
+  }
+
+  /* inputs más cómodos en móvil */
+  .caja-body input {
+    padding: 10px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .login-form-wrapper .caja {
+    width: 95% !important; /* casi todo el ancho disponible */
+  }
+
+  .role-tabs-wrapper {
+    padding: 8px 10px;
+  }
+
+  .role-tabs {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  }
+
+  .boton-login-wrapper button {
+    font-size: 0.9rem;
+    padding: 12px 0;
+  }
+}
