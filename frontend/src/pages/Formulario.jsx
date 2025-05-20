@@ -155,24 +155,23 @@ useEffect(() => {
       }
 
       const estudiantesFormateados = estudiantes.map((est) => ({
-        id_estudiante: est.id_estudiante ?? null,
-        nombre: est.nombre,
-        apellido: est.apellido,
-        email: est.email,
-        ci: est.ci,
-        fechaNac: est.fecha_nacimiento,
-        rude: est.rude,
-        id_area: est.id_area,
-        nombre_area: est?.nombre_area || "",
-        id_categoria: est.id_categoria,
-        nombre_categoria: est?.nombre_categoria || "",
-        id_equipo: est.id_equipo,
-        tipo_equipo: est.tipo_equipo,
-        municipio: "",
-        unidadEducativa: "",
-        id_equipo: est.team
+  id_estudiante: est.id_estudiante ?? null,
+  nombre: est.nombre,
+  apellido: est.apellido,
+  email: est.email,
+  ci: est.ci,
+  fechaNac: est.fecha_nacimiento,
+  rude: est.rude,
+  id_area: est.idAarea ?? null,
+  nombre_area: est?.nombre_area || "",
+  id_categoria: est.idCategoria ?? null,
+  nombre_categoria: est?.nombre_categoria || "",
+  id_equipo: est.team ?? null,
+  tipo_equipo: est.tipo_equipo ?? null,
+  municipio: "",
+  unidadEducativa: ""
+}));
 
-      }));
 
       setRowData(estudiantesFormateados);
     } catch (error) {
@@ -486,14 +485,27 @@ const handleEditar = async () => {
     event.target.value = "";
   };
 
-  const handleEliminar = async () => {
+const handleEliminar = async () => {
   const seleccionActual = selectedRowsRef.current;
-  if (seleccionActual.length === 0)
-    return toast.warn("Por favor selecciona un registro para eliminar.");
+
+  if (seleccionActual.length === 0) {
+    return toast.warn("Por favor selecciona un estudiante para eliminar.");
+  }
+
+  const estudianteBase = seleccionActual[0];
+  const idEquipo = estudianteBase.id_equipo;
+
+  if (!idEquipo || !estudianteBase.id_area || !estudianteBase.id_categoria) {
+    toast.error("Faltan datos necesarios para eliminar el equipo.");
+    console.warn("Datos faltantes:", estudianteBase);
+    return;
+  }
+
+  const estudiantesAEliminar = rowData.filter(est => est.id_equipo === idEquipo);
 
   const result = await MySwal.fire({
-    title: '¿Eliminar grupo?',
-    text: "Si eliminas a un estudiante que pertenece a un grupo, automaticamente se eliminará todo el grupo",
+    title: '¿Eliminar equipo?',
+    text: `Se eliminarán ${estudiantesAEliminar.length} estudiante(s) del equipo ${idEquipo}.`,
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, eliminar',
@@ -504,41 +516,39 @@ const handleEditar = async () => {
 
   if (!result.isConfirmed) return;
 
-  const nuevosDatos = [...rowData];
-  let errorAlEliminar = false;
+  try {
+    console.log("Eliminando equipo con datos:", {
+      id_formulario: parseInt(id),
+      id_estudiante: estudianteBase.id_estudiante,
+      idArea: estudianteBase.id_area,
+      idCategoria: estudianteBase.id_categoria,
+      idEquipo: estudianteBase.id_equipo,
+    });
 
-  for (const estudiante of seleccionActual) {
-    // Si tiene id_estudiante, intentar eliminar desde backend
-    if (estudiante.id_estudiante) {
-      try {
-        await api.delete('/eliminar-registro-estudiante', {
-          data: {
-            id_formulario: parseInt(id),
-            id_estudiante: estudiante.id_estudiante,
-            idArea: estudiante.id_area,
-            idCategoria: estudiante.id_categoria
-          }
-        });
-      } catch (error) {
-        console.error('Error al eliminar estudiante:', error);
-        toast.error('Error al eliminar estudiante inscrito.');
-        errorAlEliminar = true;
-        continue;
+    await api.delete('/eliminar-registro-estudiante', {
+      data: {
+        id_formulario: parseInt(id),
+        id_estudiante: estudianteBase.id_estudiante,
+        idArea: estudianteBase.id_area,
+        idCategoria: estudianteBase.id_categoria,
+        idEquipo: estudianteBase.id_equipo
       }
-    }
+    });
 
-    // Quitar del estado local
-    const index = nuevosDatos.findIndex((r) => r.ci === estudiante.ci);
-    if (index !== -1) nuevosDatos.splice(index, 1);
+    // Actualizar tabla local
+    setRowData((prev) => prev.filter(est => est.id_equipo !== idEquipo));
+    setSelectedRows([]);
+    selectedRowsRef.current = [];
+    setToggleClearSelected(prev => !prev);
+
+    toast.success('Estudiantes del equipo eliminados correctamente.');
+  } catch (error) {
+    console.error('Error al eliminar estudiante:', error);
+    toast.error('Error al eliminar estudiante inscrito.');
   }
-
-  setRowData(nuevosDatos);
-  setSelectedRows([]);
-  selectedRowsRef.current = [];
-  setToggleClearSelected(prev => !prev);
-
-  if (!errorAlEliminar) toast.success('Estudiantes eliminados correctamente.');
 };
+
+
 
 
 const handleGuardarFormulario = async () => {
