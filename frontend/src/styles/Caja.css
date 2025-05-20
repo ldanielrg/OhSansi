@@ -22,3 +22,38 @@
     padding: 10px;
     font-size: 16px;
 }
+
+/* Responsive ajustes para la caja */
+@media (max-width: 768px) {
+    .caja-container {
+        width: 90%;
+        margin-bottom: 15px;
+    }
+
+    .caja-header {
+        font-size: 1.3rem;
+        padding: 12px 15px;
+    }
+
+    .caja-body {
+        padding: 12px 15px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .caja-container {
+        width: 95%;
+        margin-bottom: 12px;
+    }
+
+    .caja-header {
+        font-size: 1.2rem;
+        padding: 10px 12px;
+    }
+
+    .caja-body {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+}

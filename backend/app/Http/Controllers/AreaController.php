@@ -46,8 +46,7 @@ class AreaController extends Controller{
     }
 
     //AGREGUE YO EL METODO NUEVO
-    public function storeDesdeRuta(Request $request, $id_convocatoria)
-    {
+    public function storeDesdeRuta(Request $request, $id_convocatoria){
         // Validar solo el nombre del área
         $validated = $request->validate([
             'nombre' => 'required|string|max:255',
@@ -150,14 +149,13 @@ class AreaController extends Controller{
         return response()->json($areas);
     }
 
-   
-
     #Relaciona un área y una categoría.
     public function asignarAreaCategoria(Request $request){
         $validated = $request->validate([
             'id_area' => 'required|integer|exists:area,id_area',
             'id_categoria' => 'required|integer|exists:categoria,id_categoria',
             'precio' => 'nullable|numeric|min:0',
+            'nro_participantes' => 'integer|min:1',
             //'activo' => 'nullable|boolean'
         ]);
 
@@ -180,6 +178,7 @@ class AreaController extends Controller{
                 'id_area_area' => $validated['id_area'],
                 'id_categoria_categoria' => $validated['id_categoria'],
                 'precio' => $validated['precio'] ?? 0,
+                'nro_participantes' => $validated['nro_participantes'],
                 //'activo' => $validated['activo'] ?? true,
                 'activo' => true, //por ahora le pondré por defecto true.
             ]);

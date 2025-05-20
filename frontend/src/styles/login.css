@@ -1,109 +1,157 @@
-/* estilos/ChatTheme.css */
+/* ✅ CSS optimizado y responsive */
 
-/* Contenedor principal de formularios */
+/* Página de login (contenedor general) */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f4f8;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+/* Wrapper del formulario */
+.login-form-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Caja contenedora del formulario */
+.login-form-wrapper .caja {
+  width: 400px; /* ancho fijo en desktop grande */
+  max-width: 100%;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+/* Caja-body (contenido del formulario) */
 .caja-body {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    background-color: #ffffff;        /* fondo blanco */
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Inputs del formulario más cómodos */
+.caja-body input {
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Etiquetas */
+.caja-body label {
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 0.5rem;
+}
+
+/* Botón principal */
+.caja-body button {
+  padding: 12px;
+  border-radius: 20px;
+  background-color: #003366;
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.caja-body button:hover {
+  background-color: #002a5c;
+}
+
+/* Formulario de login (inputs internos) */
+.formulario-login {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Wrapper botón login */
+.boton-login-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Tabs roles responsive */
+.role-tabs-wrapper {
+  width: 100%;
+  background-color: #003366;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  justify-content: center;
+}
+
+.role-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 6px;
+  width: 100%;
+}
+
+/* Ajustes Responsive específicos */
+@media (max-width: 1024px) {
+  .login-form-wrapper .caja {
+    width: 500px;
   }
-  
-  /* Etiquetas */
-  .caja-body label {
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: #333333;
+}
+
+@media (max-width: 768px) {
+  .login-form-wrapper .caja {
+    width: 80%;
   }
-  
-  /* Botón principal */
+}
+
+@media (max-width: 550px) {
+  .login-form-wrapper .caja {
+    width: 90%;
+  }
+
+  .caja-body {
+    padding: 1.2rem;
+  }
+
+  .caja-body input {
+    padding: 10px;
+    font-size: 1rem;
+  }
+
   .caja-body button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 20px;
-    background-color: #003366;       /* nuestro azul primario */
-    color: #ffffff;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: 1rem;
   }
-  
-  .caja-body button:hover {
-    background-color: #002a5c;       /* azul más oscuro al hover */
-  }
-  
-  /* Página de login */
-  .login-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 0;
-    background-color: #f0f4f8;       /* gris muy claro */
-    min-height: 100vh;
-  }
-  
-  /* Wrapper del formulario */
-  .login-form-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    width: 100%;
-  }
-  
-  /* Barra de roles (debajo del header) */
-  .barra-roles-wrapper {
-    width: 100%;
-    background-color: #f0f4f8;
-    padding: 0;
-    margin: 0;
-  }
-  
-  /* Pestañas de roles */
+
   .role-tabs-wrapper {
-    width: 100%;
-    background-color: #003366;       /* azul primario */
-    padding: 10px 20px;
-    border-radius: 10px 10px 0 0;
-    display: flex;
-    justify-content: center;
+    padding: 8px;
   }
-  
-  /* Botones de roles */
+}
+
+@media (max-width: 380px) {
+  .login-form-wrapper .caja {
+    width: 98%;
+  }
+
+  .caja-body {
+    padding: 1rem;
+  }
+
+  .caja-body button {
+    font-size: 0.9rem;
+  }
+
   .role-tabs {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
   }
-  
-  /* Formulario de login */
-  .formulario-login {
-    padding: 0 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  /* Wrapper del botón de login */
-  .boton-login-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 8px;
-  }
-  
-  /* Botón de login usando nuestra clase .btn-primary */
-  .boton-login-wrapper .btn-primary {
-    padding: 10px 16px;
-    background-color: #003366;
-    color: #ffffff;
-    border: none;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .boton-login-wrapper .btn-primary:hover {
-    background-color: #002a5c;
-  }
-  
+}
