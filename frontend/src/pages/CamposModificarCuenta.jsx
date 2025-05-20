@@ -172,7 +172,7 @@ const CamposModificarCuenta = () => {
                 Modifica los campos que desees. Si no quieres cambiar tu contraseña puedes dejar los dos últimos campos vacíos.
               </p>
               <form onSubmit={onSubmit}>
-                <div className="div-label-input-modificar-cuenta">
+                <div className="div-label-input-modificar-cuenta-aux">
                   <RegistroForm
                     label="Nombre"
                     name="nombreCuenta"
@@ -183,7 +183,7 @@ const CamposModificarCuenta = () => {
                   />
                 </div>
   
-                <div className="div-label-input-modificar-cuenta">
+                <div className="div-label-input-modificar-cuenta-aux">
                   <RegistroForm
                     label="Email"
                     name="email"
@@ -194,7 +194,7 @@ const CamposModificarCuenta = () => {
                   />
                 </div>
   
-                <div className="div-label-input-modificar-cuenta">
+                <div className="div-label-input-modificar-cuenta-aux">
                   <RegistroForm
                     label="Nueva contraseña"
                     name="password"
@@ -205,7 +205,7 @@ const CamposModificarCuenta = () => {
                   />
                 </div>
   
-                <div className="div-label-input-modificar-cuenta">
+                <div className="div-label-input-modificar-cuenta-aux">
                   <RegistroForm
                     label="Confirmar nueva contraseña"
                     name="confirmarPassword"
@@ -216,8 +216,9 @@ const CamposModificarCuenta = () => {
                   />
                 </div>
   
-                <div className="div-label-input-modificar-cuenta">
+                <div className="seccion-botones-campos-mod">
                   <BotonForm
+                  className="botones-campos-mod"
                     texto="Volver"
                     type="button"
                     onClick={(e) => {
@@ -225,7 +226,7 @@ const CamposModificarCuenta = () => {
                       navigate('/modificar-cuenta');
                     }}
                   />
-                  <BotonForm texto="Modificar" type="submit" />
+                  <BotonForm className="botones-campos-mod" texto="Modificar" type="submit" />
                 </div>
               </form>
             </div>
