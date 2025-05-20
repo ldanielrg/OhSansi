@@ -52,16 +52,30 @@ const Formulario = () => {
   const [searchParams] = useSearchParams();
   const [idConvocatoria, setIdConvocatoria] = useState(null);
 
+const [numParticipantes, setNumParticipantes] = useState(1);
+const [formIndexActivo, setFormIndexActivo] = useState(0);
+const [formulariosEquipo, setFormulariosEquipo] = useState([
+  { nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: "" }
+]);
+const [contadorEquipos, setContadorEquipos] = useState(1); // para generar id_equipo incremental
+const [idEquipoEnEdicion, setIdEquipoEnEdicion] = useState(null);
 
-  const columns = [
-    { name: "Nombre", selector: (row) => row.nombre, sortable: true },
-    { name: "Apellido", selector: (row) => row.apellido, sortable: true },
-    { name: "CI", selector: (row) => row.ci },
-    { name: "Fecha de Nacimiento", selector: (row) => row.fechaNac },
-    { name: "Rude", selector: (row) => row.rude },
-    { name: "Área", selector: (row) => row.nombre_area },
-    { name: "Categoría", selector: (row) => row.nombre_categoria },
-  ];
+
+
+  
+
+
+const columns = [
+  { name: "Nombre", selector: (row) => row.nombre, sortable: true },
+  { name: "Apellido", selector: (row) => row.apellido, sortable: true },
+  { name: "CI", selector: (row) => row.ci },
+  { name: "Fecha de Nacimiento", selector: (row) => row.fechaNac },
+  { name: "Rude", selector: (row) => row.rude },
+  { name: "Área", selector: (row) => row.nombre_area },
+  { name: "Categoría", selector: (row) => row.nombre_categoria },
+  { name: "Id equipo", selector: (row) => row.id_equipo },
+  { name: "Tipo de equipo", selector: (row) => row.tipo_equipo }
+];
 
   const customStyles = {
     headCells: {
@@ -88,15 +102,17 @@ useEffect(() => {
   cargarAreas();
 }, [idConvocatoria]);
 
-  useEffect(() => {
-  const cargarCategorias = async () => {
-    if (!formData.area || isNaN(parseInt(formData.area))) {
-      setCategorias([]);
-      return;
-    }
+useEffect(() => {
+  const areaActual = formulariosEquipo[formIndexActivo]?.area;
 
+  if (!areaActual || isNaN(parseInt(areaActual))) {
+    setCategorias([]);
+    return;
+  }
+
+  const cargarCategorias = async () => {
     try {
-      const res = await api.get(`/categorias/${formData.area}`);
+      const res = await api.get(`/categorias/${areaActual}`);
       setCategorias(res.data);
     } catch (error) {
       console.error("Error al obtener categorías:", error);
@@ -105,11 +121,18 @@ useEffect(() => {
   };
 
   cargarCategorias();
-}, [formData.area]);
+}, [formIndexActivo, formulariosEquipo[formIndexActivo]?.area]);
+
 
 
   useEffect(() => {
-  if (parseInt(id) === 0) {
+  const formularioId = parseInt(id);
+  if (isNaN(formularioId)) {
+    toast.error("ID de formulario inválido.");
+    return;
+  }
+
+  if (formularioId === 0) {
     const convocatoriaFromURL = searchParams.get("convocatoria");
     if (convocatoriaFromURL) {
       setIdConvocatoria(parseInt(convocatoriaFromURL));
@@ -120,7 +143,6 @@ useEffect(() => {
     return;
   }
 
-  // Si no es nuevo, cargar datos del backend
   const cargarFormulario = async () => {
     try {
       const response = await api.get(`/formulario-detalles/${id}`);
@@ -140,13 +162,18 @@ useEffect(() => {
         ci: est.ci,
         fechaNac: est.fecha_nacimiento,
         rude: est.rude,
-        id_area: est.idAarea,
+        id_area: est.id_area,
         nombre_area: est?.nombre_area || "",
-        id_categoria: est.idCategoria,
+        id_categoria: est.id_categoria,
         nombre_categoria: est?.nombre_categoria || "",
+        id_equipo: est.id_equipo,
+        tipo_equipo: est.tipo_equipo,
         municipio: "",
         unidadEducativa: "",
+        id_equipo: est.team
+
       }));
+
       setRowData(estudiantesFormateados);
     } catch (error) {
       console.error("Error al cargar formulario:", error);
@@ -161,153 +188,237 @@ useEffect(() => {
 
 
 
+useEffect(() => {
+  const area = formulariosEquipo[formIndexActivo]?.area;
+  const categoria = formulariosEquipo[formIndexActivo]?.categoria;
+
+  if (!area || !categoria) return;
+
+  const obtenerCantidadParticipantes = async () => {
+    try {
+      const res = await api.get(`/participantes`, {
+        params: {
+          id_area: area,
+          id_categoria: categoria
+        }
+      });
+      console.log("Respuesta de participantes:", res.data);
+
+      const cantidad = parseInt(res.data?.cantidad || 1);
+
+      setNumParticipantes(cantidad);
+      setFormIndexActivo(0);
+      setFormulariosEquipo(
+        Array.from({ length: cantidad }, () => ({
+          nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area, categoria, email: ""
+        }))
+      );
+    } catch (error) {
+      console.error("Error al obtener cantidad de participantes:", error);
+      toast.error("No se pudo obtener la cantidad de integrantes para esta categoría.");
+    }
+  };
+
+  obtenerCantidadParticipantes();
+}, [formulariosEquipo[formIndexActivo]?.categoria]);
+
+
+
+
   
 
   const opcionesFiltradasUE = ue
     .filter((item) => item.municipio_id === parseInt(formData.municipio))
     .map((item) => ({ value: item.id_ue, label: item.nombre_ue }));
 
-  const handleRegistrar = async () => {
-  const { nombre, apellido, ci, fechaNac, rude, area, categoria } = formData;
 
-  if (nombre.length < 3)
-    return toast.warn("El nombre debe tener al menos 3 caracteres.");
-  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
-    return toast.warn("El nombre solo puede contener letras y espacios.");
-  if (!/\d{1,16}/.test(rude))
-    return toast.warn("El RUDE debe contener solo números (máx. 16 dígitos).");
-  if (!/\d{1,8}/.test(ci))
-    return toast.warn("El CI debe contener solo números (máx. 8 dígitos).");
 
-  const areaSeleccionada = areas.find((a) => a.id_area === parseInt(area));
-  const categoriaSeleccionada = categorias.find(
-    (c) => c.id_categoria === parseInt(categoria)
-  );
+const handleRegistrar = async () => {
+  // Validar todos los estudiantes del equipo
+  for (let i = 0; i < formulariosEquipo.length; i++) {
+    const estudiante = formulariosEquipo[i];
+    const { nombre, apellido, ci, fechaNac, rude, area, categoria } = estudiante;
 
-  const nuevoEstudiante = {
-    ...formData,
-    id_area: areaSeleccionada?.id_area ?? null,
-    nombre_area: areaSeleccionada?.nombre_area ?? "",
-    id_categoria: categoriaSeleccionada?.id_categoria ?? null,
-    nombre_categoria: categoriaSeleccionada?.nombre_categoria ?? "",
-  };
+    if (nombre.length < 2)
+      return toast.warn(`Nombre inválido en integrante ${i + 1}`);
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
+      return toast.warn(`Nombre con caracteres inválidos en integrante ${i + 1}`);
+    if (!/\d{1,16}/.test(rude))
+      return toast.warn(`RUDE inválido en integrante ${i + 1}`);
+    if (!/\d{1,8}/.test(ci))
+      return toast.warn(`CI inválido en integrante ${i + 1}`);
+    const fechaNacimiento = new Date(fechaNac);
+    const hoy = new Date();
 
-  // Si es edición de estudiante ya guardado
-  if (modoEdicion && editIndex !== null && parseInt(id) !== 0) {
-    const anterior = rowData[editIndex];
-
-    const datosEditar = {
-      id_formulario: parseInt(id),
-      anterior: {
-        id_estudiante: anterior.id_estudiante,
-        idArea: anterior.id_area,
-        idCategoria: anterior.id_categoria,
-      },
-      nuevo: {
-        nombre: nuevoEstudiante.nombre,
-        apellido: nuevoEstudiante.apellido,
-        email: nuevoEstudiante.email,
-        ci: parseInt(nuevoEstudiante.ci),
-        rude: parseInt(nuevoEstudiante.rude),
-        fecha_nacimiento: nuevoEstudiante.fechaNac,
-        idArea: nuevoEstudiante.id_area,
-        idCategoria: nuevoEstudiante.id_categoria,
-      },
-    };
-
-    try {
-      await api.post("/editar-registro-estudiante", datosEditar);
-      toast.success("Estudiante actualizado correctamente.");
-      setModoEdicion(false);
-      setEditIndex(null);
-
-      // Recargar el formulario actualizado
-      const response = await api.get(`/formulario-detalles/${id}`);
-      const estudiantesFormateados = response.data.estudiantes.map((est) => ({
-        id_estudiante: est.id_estudiante ?? null,
-        nombre: est.nombre,
-        apellido: est.apellido,
-        email: est.email,
-        ci: est.ci,
-        fechaNac: est.fecha_nacimiento,
-        rude: est.rude,
-        id_area: est.idAarea,
-        nombre_area: est?.nombre_area || "",
-        id_categoria: est.idCategoria,
-        nombre_categoria: est?.nombre_categoria || "",
-        municipio: "",
-        unidadEducativa: "",
-      }));
-      setRowData(estudiantesFormateados);
-    } catch (error) {
-      console.error("Error al actualizar estudiante:", error);
-      toast.error("No se pudo editar el estudiante.");
+    if (!fechaNac || isNaN(fechaNacimiento)) {
+      return toast.warn(`Fecha de nacimiento inválida en integrante ${i + 1}`);
     }
-  } else {
-    // Edición local (formulario nuevo o no guardado)
-    if (modoEdicion && editIndex !== null) {
-      const nuevosDatos = [...rowData];
-      nuevosDatos[editIndex] = nuevoEstudiante;
-      setRowData(nuevosDatos);
-    } else {
-      setRowData((prev) => [...prev, nuevoEstudiante]);
+
+    if (fechaNacimiento > hoy) {
+      return toast.warn(`La fecha de nacimiento no puede ser en el futuro (integrante ${i + 1})`);
     }
-    toast.success("Estudiante registrado correctamente.");
+
   }
 
-  // Reset
-  setModoEdicion(false);
-  setEditIndex(null);
-  setFormData({
-    nombre: "",
-    apellido: "",
-    email: "",
-    ci: "",
-    fechaNac: "",
-    rude: "",
-    area: "",
-    categoria: "",
-    ue: "",
-    municipio: "",
-    unidadEducativa: "",
+  let idEquipo = contadorEquipos;
+
+  // Si NO estamos en modo edición, obtenemos el número de equipo desde la API
+  if (!modoEdicion) {
+    try {
+      const area = formulariosEquipo[0].area;
+      const categoria = formulariosEquipo[0].categoria;
+
+      const res = await api.get('/dame-mi-team', {
+        params: {
+          id_area: area,
+          id_categoria: categoria
+        }
+      });
+
+      idEquipo = res.data.siguiente_team;
+    } catch (error) {
+      console.error("Error al obtener el número de equipo:", error);
+      toast.error("No se pudo obtener el número de equipo.");
+      return;
+    }
+  } else {
+    idEquipo = idEquipoEnEdicion;
+  }
+
+  // Construir los nuevos estudiantes
+  const nuevosEstudiantes = formulariosEquipo.map((est) => {
+    const areaSeleccionada = areas.find((a) => a.id_area === parseInt(est.area));
+    const categoriaSeleccionada = categorias.find(
+      (c) => c.id_categoria === parseInt(est.categoria)
+    );
+
+    return {
+      ...est,
+      id_area: areaSeleccionada?.id_area ?? null,
+      nombre_area: areaSeleccionada?.nombre_area ?? "",
+      id_categoria: categoriaSeleccionada?.id_categoria ?? null,
+      nombre_categoria: categoriaSeleccionada?.nombre_categoria ?? "",
+      id_equipo: idEquipo,
+      team: idEquipo // <- este es el campo que el backend espera
+    };
   });
+
+  // Enviar a la API `/inscripcion`
+  const datosEnviar = {
+    id_formulario_actual: parseInt(id),
+    id_convocatoria: idConvocatoria,
+    estudiantes: nuevosEstudiantes.map((est) => ({
+      id_estudiante: null,
+      nombre: est.nombre,
+      apellido: est.apellido,
+      email: est.email,
+      ci: parseInt(est.ci),
+      fecha_nacimiento: est.fechaNac,
+      rude: parseInt(est.rude),
+      idAarea: est.id_area,
+      idCategoria: est.id_categoria,
+      team: est.team
+    }))
+  };
+
+  try {
+    const res = await api.post("/inscripcion", datosEnviar);
+    // Si el formulario fue recién creado, guardamos el ID para próximas inscripciones
+    if (parseInt(id) === 0 && res.data?.id_formulario) {
+      navigate(`/formulario/${res.data.id_formulario}`);
+      return;
+    }
+    if (res.data.estudiantes) {
+  setRowData((prev) => {
+    if (modoEdicion && idEquipoEnEdicion !== null) {
+      const sinEquipoAnterior = prev.filter(e => e.id_equipo !== idEquipoEnEdicion);
+      return [...sinEquipoAnterior, ...res.data.estudiantes];
+    } else {
+      return [...prev, ...res.data.estudiantes];
+    }
+  });
+}
+    toast.success("Estudiantes registrados correctamente en el sistema.");
+  } catch (error) {
+    console.error("Error al registrar estudiantes en backend:", error);
+    toast.error("Error al registrar estudiantes en el servidor.");
+    return;
+  }
+
+
+
+
+  // Reset
+  toast.success(`Equipo registrado correctamente.`);
+  setContadorEquipos((prev) => prev + 1);
+  setFormulariosEquipo(
+    Array.from({ length: numParticipantes }, () => ({
+      nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
+    }))
+  );
+  setFormIndexActivo(0);
   setSelectedRows([]);
   selectedRowsRef.current = [];
   setToggleClearSelected((prev) => !prev);
+  setModoEdicion(false);
+  setIdEquipoEnEdicion(null);
 };
 
 
-  const handleEditar = async () => {
-    const seleccionActual = selectedRowsRef.current;
-    if (seleccionActual.length === 0)
-      return toast.warn("Por favor selecciona un registro para editar.");
-    if (seleccionActual.length > 1)
-      return toast.warn("Solo puedes editar un registro a la vez.");
 
-    const result = await MySwal.fire({
-      title: '¿Editar registro?',
-      text: "¿Deseas editar este registro?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, editar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-    });
 
-    if (!result.isConfirmed) return;
 
-    const seleccionado = seleccionActual[0];
-    const index = rowData.findIndex((est) => est.ci === seleccionado.ci);
-    if (index === -1) {
-      toast.error("No se pudo encontrar el registro a editar.");
-      return;
-    }
+const handleEditar = async () => {
+  const seleccionActual = selectedRowsRef.current;
 
-    setFormData({ ...seleccionado });
-    setEditIndex(index);
-    setModoEdicion(true);
-  };
+  if (seleccionActual.length === 0) {
+    return toast.warn("Por favor selecciona un equipo para editar.");
+  }
+
+  const idEquipo = seleccionActual[0]?.id_equipo;
+  const mismosEquipos = seleccionActual.every(est => est.id_equipo === idEquipo);
+
+  if (!mismosEquipos) {
+    return toast.warn("Solo puedes editar estudiantes del mismo equipo.");
+  }
+
+  const result = await MySwal.fire({
+    title: '¿Editar equipo?',
+    text: "Podrás editar a todos los estudiantes del grupo al que pertenece el seleccionado",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, editar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (!result.isConfirmed) return;
+
+  const equipoCompleto = rowData.filter(est => est.id_equipo === idEquipo);
+
+  const cantidad = equipoCompleto.length;
+
+
+  setNumParticipantes(cantidad);
+  setFormIndexActivo(0);
+  setFormulariosEquipo(
+    equipoCompleto.map(est => ({
+      nombre: est.nombre,
+      apellido: est.apellido,
+      ci: est.ci,
+      fechaNac: est.fechaNac,
+      rude: est.rude,
+      area: est.id_area?.toString() || "",
+      categoria: est.id_categoria?.toString() || "",
+      email: est.email
+    }))
+  );
+
+  setModoEdicion(true);
+  setIdEquipoEnEdicion(idEquipo);
+};
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -381,8 +492,8 @@ useEffect(() => {
     return toast.warn("Por favor selecciona un registro para eliminar.");
 
   const result = await MySwal.fire({
-    title: '¿Eliminar registros?',
-    text: "¿Deseas eliminar el/los registros seleccionados?",
+    title: '¿Eliminar grupo?',
+    text: "Si eliminas a un estudiante que pertenece a un grupo, automaticamente se eliminará todo el grupo",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, eliminar',
@@ -431,40 +542,19 @@ useEffect(() => {
 
 
 const handleGuardarFormulario = async () => {
-  if (rowData.length === 0) {
-    toast.warn("No hay estudiantes registrados para guardar.");
-    return;
-  }
-
-  const datosEnviar = {
-    id_formulario_actual: parseInt(id),
-    id_convocatoria: idConvocatoria, // ✅ Asegúrate que esto esté definido
-    estudiantes: rowData.map((est) => ({
-      id_estudiante: est.id_estudiante ?? null,
-      nombre: est.nombre,
-      apellido: est.apellido,
-      email: est.email,
-      ci: parseInt(est.ci),
-      fecha_nacimiento: est.fechaNac,
-      rude: parseInt(est.rude),
-      idAarea: est.id_area,
-      idCategoria: est.id_categoria,
-    })),
-  };
-
-  try {
-    console.log("Enviando:", datosEnviar);
-    const response = await api.post("/inscripcion", datosEnviar);
-    console.log("Formulario guardado exitosamente:", response.data);
-    toast.success("Formulario guardado exitosamente.");
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
-  } catch (error) {
-    console.error("Error al guardar:", error);
-    toast.error("Ocurrió un error al guardar el formulario.");
-  }
+  toast.info("Todos los estudiantes ya han sido registrados.");
+  navigate(`/inscripciones?convocatoria=${idConvocatoria}`);
 };
+
+
+const actualizarFormulario = (index, campo, valor) => {
+  setFormulariosEquipo((prev) => {
+    const nuevos = [...prev];
+    nuevos[index][campo] = valor;
+    return nuevos;
+  });
+};
+
 
 
   const fileInputRef = useRef();
@@ -537,95 +627,24 @@ const handleGuardarFormulario = async () => {
         </div>
       </Caja>
       <section className="contenedor-form-info">
-        <div className="boton-eliminar-form">
-          <BotonForm texto="X" className="boton-eliminar-form-bf" />
-        </div>
+        
+
 
         <Caja
           titulo={`Formulario de Inscripción #${id}`}
           width="99%"
           className="caja-formulario-est"
         >
-          <div className="contenedor-secciones-form">
-            <section className="seccion-form">
-              <RegistroForm
-                label="Nombres"
-                name="nombre"
-                value={formData.nombre}
-                onChange={setFormData}
-                icono={FaRegUser}
-              />
-              <RegistroForm
-                label="C.I."
-                name="ci"
-                value={formData.ci}
-                onChange={setFormData}
-                icono={FaAddressCard}
-              />
-              <RegistroForm
-                label="Fecha de nacimiento"
-                name="fechaNac"
-                type="date"
-                value={formData.fechaNac}
-                onChange={setFormData}
-                icono={MdOutlineDateRange}
-              />
-              <RegistroForm
-                label="Categoria"
-                name="categoria"
-                type="select"
-                value={formData.categoria}
-                onChange={setFormData}
-                options={[
-                  { value: "", label: "Seleccione una Categoria" },
-                  ...categorias.map((cat) => ({
-                    value: cat.id_categoria,
-                    label: cat.nombre_categoria,
-                  })),
-                ]}
-              />
-              {/* <RegistroForm
-                label="Municipio"
-                name="municipio"
-                type="select"
-                value={formData.municipio}
-                onChange={setFormData}
-                options={[
-                  { value: "", label: "Seleccione un Municipio" },
-                  ...municipios.map((mun) => ({
-                    value: mun.id,
-                    label: mun.nombre,
-                  })),
-                ]}
-              /> */}
-              <BotonForm
-                className="boton-lista-est"
-                texto="Subir lista"
-                onClick={() => fileInputRef.current.click()}
-              />
-            </section>
-
-            <section className="seccion-form">
-              <RegistroForm
-                label="Apellidos"
-                name="apellido"
-                value={formData.apellido}
-                onChange={setFormData}
-                icono={FaRegUser}
-              />
-              <RegistroForm
-                label="Rude"
-                name="rude"
-                value={formData.rude}
-                onChange={setFormData}
-                icono={PiStudentFill}
-              />
-              <RegistroForm
+        <p>Escoge un Área y Categoria para inscribir</p>
+        <RegistroForm
                 label="Área"
                 name="area"
                 type="select"
-                value={formData.area}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].area}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "area", e.target.value)
+                }
+                usarEvento={true}
                 options={[
                   { value: "", label: "Seleccione una Área" },
                   ...areas.map((area) => ({
@@ -634,34 +653,123 @@ const handleGuardarFormulario = async () => {
                   })),
                 ]}
               />
-              {/*<RegistroForm
-                label="Unidad Educativa"
-                name="unidadEducativa"
+              <RegistroForm
+                label="Categoria"
+                name="categoria"
                 type="select"
-                value={formData.unidadEducativa}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].categoria}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "categoria", e.target.value)
+                }
+                usarEvento={true}
                 options={[
-                  { value: "", label: "Seleccione una Unidad Educativa" },
-                  ...opcionesFiltradasUE,
+                  { value: "", label: "Seleccione una Categoria" },
+                  ...categorias.map((cat) => ({
+                    value: cat.id_categoria,
+                    label: cat.nombre_categoria,
+                  })),
                 ]}
-              />*/}
+              />
+              
+          <p>Se habilitarán uno o más formularios de inscripcion segun la categoria que has eligido:</p>
+          <div className="tabs-participantes">
+            {Array.from({ length: numParticipantes }, (_, index) => (
+              <button
+                key={index}
+                className={`tab-boton-form-ins ${index === formIndexActivo ? "activo" : ""}`}
+                onClick={() => setFormIndexActivo(index)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+
+          <div className="contenedor-secciones-form">
+            <section className="seccion-form">
+              <RegistroForm
+                label="Nombres"
+                name="nombre"
+                value={formulariosEquipo[formIndexActivo].nombre}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "nombre", e.target.value)
+                }
+                usarEvento={true}
+                icono={FaRegUser}
+              />
+              <RegistroForm
+                label="C.I."
+                name="ci"
+                value={formulariosEquipo[formIndexActivo].ci}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "ci", e.target.value)
+                }
+                usarEvento={true}
+                icono={FaAddressCard}
+              />
+              <RegistroForm
+                label="Fecha de nacimiento"
+                name="fechaNac"
+                type="date"
+                value={formulariosEquipo[formIndexActivo].fechaNac}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "fechaNac", e.target.value)
+                }
+                usarEvento={true}
+                icono={MdOutlineDateRange}
+              />
+              
+            </section>
+
+            <section className="seccion-form">
+              <RegistroForm
+                label="Apellidos"
+                name="apellido"
+                value={formulariosEquipo[formIndexActivo].apellido}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "apellido", e.target.value)
+                }
+                usarEvento={true}
+                icono={FaRegUser}
+              />
+              <RegistroForm
+                label="Rude"
+                name="rude"
+                value={formulariosEquipo[formIndexActivo].rude}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "rude", e.target.value)
+                }
+                usarEvento={true}
+                icono={PiStudentFill}
+              />
+              
               <RegistroForm
                 label="Email"
                 name="email"
-                value={formData.email}
-                onChange={setFormData}
+                value={formulariosEquipo[formIndexActivo].email}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "email", e.target.value)
+                }
+                usarEvento={true}
                 icono={MdEmail}
               />
-              <div className="contenedor-boton-registrar-est">
-                <BotonForm
-                  texto={modoEdicion ? "Guardar" : "Registrar"}
-                  onClick={handleRegistrar}
-                />
-              </div>
             </section>
           </div>
         </Caja>
 
+
+        
+        <div className="contenedor-boton-registrar-est">
+          <BotonForm
+          className="boton-ins-lista"
+          texto="Subir lista"
+          onClick={() => fileInputRef.current.click()}
+        />
+          <BotonForm
+            className="boton-ins-guardar"
+            texto={modoEdicion ? "Guardar" : "Registrar"}
+            onClick={handleRegistrar}
+          />
+        </div>
         <Caja titulo="Estudiantes inscritos" width="99%">
           <DataTable
             columns={columns}
@@ -670,9 +778,22 @@ const handleGuardarFormulario = async () => {
             selectableRowsNoSelectAll
             clearSelectedRows={toggleClearSelected}
             onSelectedRowsChange={({ selectedRows }) => {
-              setSelectedRows(selectedRows);
-              selectedRowsRef.current = selectedRows;
-            }}
+  if (selectedRows.length === 0) {
+    setSelectedRows([]);
+    selectedRowsRef.current = [];
+    return;
+  }
+
+  const primerSeleccionado = selectedRows[0];
+  const idEquipo = primerSeleccionado.id_equipo;
+
+  // Obtener todos los estudiantes del mismo equipo
+  const mismoEquipo = rowData.filter(est => est.id_equipo === idEquipo);
+
+  setSelectedRows(mismoEquipo);
+  selectedRowsRef.current = mismoEquipo;
+}}
+
             customStyles={{
               pagination: {
                 style: {

@@ -81,7 +81,7 @@ const Inscripciones = () => {
 
   const formularioColumns = [
     { name: 'N° de Formulario', selector: row => row.id_formulario, sortable: true },
-    { name: 'Cantidad Estudiantes', selector: row => row.inscripciones_count },
+    { name: 'Cantidad Estudiantes', selector: row => row.inscripciones_count},
     {
       name: 'Acciones',
       cell: row => (
@@ -273,7 +273,6 @@ const handleConvocatoriaChangeManual = (id) => {
                   columns={formularioColumns}
                   data={formularios}
                   noDataComponent='Aún no se han registrado formularios.'
-                  pagination
                   customStyles={customStyles}
                 />
               )}
