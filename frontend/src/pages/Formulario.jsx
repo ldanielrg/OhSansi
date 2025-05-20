@@ -59,6 +59,7 @@ const [formulariosEquipo, setFormulariosEquipo] = useState([
 ]);
 const [contadorEquipos, setContadorEquipos] = useState(1); // para generar id_equipo incremental
 const [idEquipoEnEdicion, setIdEquipoEnEdicion] = useState(null);
+const [registrando, setRegistrando] = useState(false);
 
 
 
@@ -73,8 +74,7 @@ const columns = [
   { name: "Rude", selector: (row) => row.rude },
   { name: "Área", selector: (row) => row.nombre_area },
   { name: "Categoría", selector: (row) => row.nombre_categoria },
-  { name: "Id equipo", selector: (row) => row.id_equipo },
-  { name: "Tipo de equipo", selector: (row) => row.tipo_equipo }
+  { name: "Id equipo", selector: (row) => row.id_equipo }
 ];
 
   const customStyles = {
@@ -155,24 +155,23 @@ useEffect(() => {
       }
 
       const estudiantesFormateados = estudiantes.map((est) => ({
-        id_estudiante: est.id_estudiante ?? null,
-        nombre: est.nombre,
-        apellido: est.apellido,
-        email: est.email,
-        ci: est.ci,
-        fechaNac: est.fecha_nacimiento,
-        rude: est.rude,
-        id_area: est.id_area,
-        nombre_area: est?.nombre_area || "",
-        id_categoria: est.id_categoria,
-        nombre_categoria: est?.nombre_categoria || "",
-        id_equipo: est.id_equipo,
-        tipo_equipo: est.tipo_equipo,
-        municipio: "",
-        unidadEducativa: "",
-        id_equipo: est.team
+  id_estudiante: est.id_estudiante ?? null,
+  nombre: est.nombre,
+  apellido: est.apellido,
+  email: est.email,
+  ci: est.ci,
+  fechaNac: est.fecha_nacimiento,
+  rude: est.rude,
+  id_area: est.idAarea ?? null,
+  nombre_area: est?.nombre_area || "",
+  id_categoria: est.idCategoria ?? null,
+  nombre_categoria: est?.nombre_categoria || "",
+  id_equipo: est.team ?? null,
+  tipo_equipo: est.tipo_equipo ?? null,
+  municipio: "",
+  unidadEducativa: ""
+}));
 
-      }));
 
       setRowData(estudiantesFormateados);
     } catch (error) {
@@ -234,7 +233,9 @@ useEffect(() => {
 
 
 const handleRegistrar = async () => {
-  // Validar todos los estudiantes del equipo
+  if (registrando) return;
+
+  // Validaciones primero
   for (let i = 0; i < formulariosEquipo.length; i++) {
     const estudiante = formulariosEquipo[i];
     const { nombre, apellido, ci, fechaNac, rude, area, categoria } = estudiante;
@@ -247,50 +248,44 @@ const handleRegistrar = async () => {
       return toast.warn(`RUDE inválido en integrante ${i + 1}`);
     if (!/\d{1,8}/.test(ci))
       return toast.warn(`CI inválido en integrante ${i + 1}`);
+
     const fechaNacimiento = new Date(fechaNac);
     const hoy = new Date();
 
-    if (!fechaNac || isNaN(fechaNacimiento)) {
+    if (!fechaNac || isNaN(fechaNacimiento))
       return toast.warn(`Fecha de nacimiento inválida en integrante ${i + 1}`);
-    }
-
-    if (fechaNacimiento > hoy) {
-      return toast.warn(`La fecha de nacimiento no puede ser en el futuro (integrante ${i + 1})`);
-    }
-
+    if (fechaNacimiento > hoy)
+      return toast.warn(`La fecha no puede ser en el futuro (integrante ${i + 1})`);
   }
+
+  // ✅ Solo después de las validaciones
+  setRegistrando(true);
 
   let idEquipo = contadorEquipos;
 
-  // Si NO estamos en modo edición, obtenemos el número de equipo desde la API
   if (!modoEdicion) {
     try {
       const area = formulariosEquipo[0].area;
       const categoria = formulariosEquipo[0].categoria;
 
       const res = await api.get('/dame-mi-team', {
-        params: {
-          id_area: area,
-          id_categoria: categoria
-        }
+        params: { id_area: area, id_categoria: categoria }
       });
 
       idEquipo = res.data.siguiente_team;
     } catch (error) {
       console.error("Error al obtener el número de equipo:", error);
       toast.error("No se pudo obtener el número de equipo.");
+      setRegistrando(false); // ← necesario aquí también
       return;
     }
   } else {
     idEquipo = idEquipoEnEdicion;
   }
 
-  // Construir los nuevos estudiantes
   const nuevosEstudiantes = formulariosEquipo.map((est) => {
     const areaSeleccionada = areas.find((a) => a.id_area === parseInt(est.area));
-    const categoriaSeleccionada = categorias.find(
-      (c) => c.id_categoria === parseInt(est.categoria)
-    );
+    const categoriaSeleccionada = categorias.find((c) => c.id_categoria === parseInt(est.categoria));
 
     return {
       ...est,
@@ -299,11 +294,10 @@ const handleRegistrar = async () => {
       id_categoria: categoriaSeleccionada?.id_categoria ?? null,
       nombre_categoria: categoriaSeleccionada?.nombre_categoria ?? "",
       id_equipo: idEquipo,
-      team: idEquipo // <- este es el campo que el backend espera
+      team: idEquipo
     };
   });
 
-  // Enviar a la API `/inscripcion`
   const datosEnviar = {
     id_formulario_actual: parseInt(id),
     id_convocatoria: idConvocatoria,
@@ -323,39 +317,44 @@ const handleRegistrar = async () => {
 
   try {
     const res = await api.post("/inscripcion", datosEnviar);
-    // Si el formulario fue recién creado, guardamos el ID para próximas inscripciones
+
     if (parseInt(id) === 0 && res.data?.id_formulario) {
       navigate(`/formulario/${res.data.id_formulario}`);
       return;
     }
+
     if (res.data.estudiantes) {
+  const estudiantesNormalizados = res.data.estudiantes.map(est => ({
+    ...est,
+    fechaNac: est.fecha_nac // 👈 transforma correctamente aquí
+  }));
+
   setRowData((prev) => {
     if (modoEdicion && idEquipoEnEdicion !== null) {
       const sinEquipoAnterior = prev.filter(e => e.id_equipo !== idEquipoEnEdicion);
-      return [...sinEquipoAnterior, ...res.data.estudiantes];
+      return [...sinEquipoAnterior, ...estudiantesNormalizados];
     } else {
-      return [...prev, ...res.data.estudiantes];
+      return [...prev, ...estudiantesNormalizados];
     }
   });
 }
+
+
+
     toast.success("Estudiantes registrados correctamente en el sistema.");
   } catch (error) {
     console.error("Error al registrar estudiantes en backend:", error);
     toast.error("Error al registrar estudiantes en el servidor.");
-    return;
+  } finally {
+    setRegistrando(false); // ✅ Siempre se reinicia
   }
-
-
-
 
   // Reset
   toast.success(`Equipo registrado correctamente.`);
   setContadorEquipos((prev) => prev + 1);
-  setFormulariosEquipo(
-    Array.from({ length: numParticipantes }, () => ({
-      nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
-    }))
-  );
+  setFormulariosEquipo(Array.from({ length: numParticipantes }, () => ({
+    nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
+  })));
   setFormIndexActivo(0);
   setSelectedRows([]);
   selectedRowsRef.current = [];
@@ -486,14 +485,27 @@ const handleEditar = async () => {
     event.target.value = "";
   };
 
-  const handleEliminar = async () => {
+const handleEliminar = async () => {
   const seleccionActual = selectedRowsRef.current;
-  if (seleccionActual.length === 0)
-    return toast.warn("Por favor selecciona un registro para eliminar.");
+
+  if (seleccionActual.length === 0) {
+    return toast.warn("Por favor selecciona un estudiante para eliminar.");
+  }
+
+  const estudianteBase = seleccionActual[0];
+  const idEquipo = estudianteBase.id_equipo;
+
+  if (!idEquipo || !estudianteBase.id_area || !estudianteBase.id_categoria) {
+    toast.error("Faltan datos necesarios para eliminar el equipo.");
+    console.warn("Datos faltantes:", estudianteBase);
+    return;
+  }
+
+  const estudiantesAEliminar = rowData.filter(est => est.id_equipo === idEquipo);
 
   const result = await MySwal.fire({
-    title: '¿Eliminar grupo?',
-    text: "Si eliminas a un estudiante que pertenece a un grupo, automaticamente se eliminará todo el grupo",
+    title: '¿Eliminar equipo?',
+    text: `Se eliminarán ${estudiantesAEliminar.length} estudiante(s) del equipo ${idEquipo}.`,
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Sí, eliminar',
@@ -504,41 +516,39 @@ const handleEditar = async () => {
 
   if (!result.isConfirmed) return;
 
-  const nuevosDatos = [...rowData];
-  let errorAlEliminar = false;
+  try {
+    console.log("Eliminando equipo con datos:", {
+      id_formulario: parseInt(id),
+      id_estudiante: estudianteBase.id_estudiante,
+      idArea: estudianteBase.id_area,
+      idCategoria: estudianteBase.id_categoria,
+      idEquipo: estudianteBase.id_equipo,
+    });
 
-  for (const estudiante of seleccionActual) {
-    // Si tiene id_estudiante, intentar eliminar desde backend
-    if (estudiante.id_estudiante) {
-      try {
-        await api.delete('/eliminar-registro-estudiante', {
-          data: {
-            id_formulario: parseInt(id),
-            id_estudiante: estudiante.id_estudiante,
-            idArea: estudiante.id_area,
-            idCategoria: estudiante.id_categoria
-          }
-        });
-      } catch (error) {
-        console.error('Error al eliminar estudiante:', error);
-        toast.error('Error al eliminar estudiante inscrito.');
-        errorAlEliminar = true;
-        continue;
+    await api.delete('/eliminar-registro-estudiante', {
+      data: {
+        id_formulario: parseInt(id),
+        id_estudiante: estudianteBase.id_estudiante,
+        idArea: estudianteBase.id_area,
+        idCategoria: estudianteBase.id_categoria,
+        idEquipo: estudianteBase.id_equipo
       }
-    }
+    });
 
-    // Quitar del estado local
-    const index = nuevosDatos.findIndex((r) => r.ci === estudiante.ci);
-    if (index !== -1) nuevosDatos.splice(index, 1);
+    // Actualizar tabla local
+    setRowData((prev) => prev.filter(est => est.id_equipo !== idEquipo));
+    setSelectedRows([]);
+    selectedRowsRef.current = [];
+    setToggleClearSelected(prev => !prev);
+
+    toast.success('Estudiantes del equipo eliminados correctamente.');
+  } catch (error) {
+    console.error('Error al eliminar estudiante:', error);
+    toast.error('Error al eliminar estudiante inscrito.');
   }
-
-  setRowData(nuevosDatos);
-  setSelectedRows([]);
-  selectedRowsRef.current = [];
-  setToggleClearSelected(prev => !prev);
-
-  if (!errorAlEliminar) toast.success('Estudiantes eliminados correctamente.');
 };
+
+
 
 
 const handleGuardarFormulario = async () => {
@@ -687,11 +697,22 @@ const actualizarFormulario = (index, campo, valor) => {
           <div className="contenedor-secciones-form">
             <section className="seccion-form">
               <RegistroForm
+                className='registro-form-ins-nombre'
                 label="Nombres"
                 name="nombre"
                 value={formulariosEquipo[formIndexActivo].nombre}
                 onChange={(e) =>
                   actualizarFormulario(formIndexActivo, "nombre", e.target.value)
+                }
+                usarEvento={true}
+                icono={FaRegUser}
+              />
+              <RegistroForm
+                label="Apellidos"
+                name="apellido"
+                value={formulariosEquipo[formIndexActivo].apellido}
+                onChange={(e) =>
+                  actualizarFormulario(formIndexActivo, "apellido", e.target.value)
                 }
                 usarEvento={true}
                 icono={FaRegUser}
@@ -718,19 +739,8 @@ const actualizarFormulario = (index, campo, valor) => {
                 icono={MdOutlineDateRange}
               />
               
-            </section>
 
-            <section className="seccion-form">
-              <RegistroForm
-                label="Apellidos"
-                name="apellido"
-                value={formulariosEquipo[formIndexActivo].apellido}
-                onChange={(e) =>
-                  actualizarFormulario(formIndexActivo, "apellido", e.target.value)
-                }
-                usarEvento={true}
-                icono={FaRegUser}
-              />
+              
               <RegistroForm
                 label="Rude"
                 name="rude"
@@ -765,10 +775,12 @@ const actualizarFormulario = (index, campo, valor) => {
           onClick={() => fileInputRef.current.click()}
         />
           <BotonForm
-            className="boton-ins-guardar"
-            texto={modoEdicion ? "Guardar" : "Registrar"}
-            onClick={handleRegistrar}
-          />
+  className="boton-ins-guardar"
+  texto={registrando ? "Registrando..." : (modoEdicion ? "Guardar" : "Registrar")}
+  onClick={handleRegistrar}
+  disabled={registrando}
+/>
+
         </div>
         <Caja titulo="Estudiantes inscritos" width="99%">
           <DataTable
