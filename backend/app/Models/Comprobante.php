@@ -14,7 +14,7 @@ class Comprobante extends Model
 		'id_comprobante' => 'int',
 		'imagen' => 'string',
 		'codigo' => 'string',
-		'id_orden_pago' => 'int',
+		'id_orden_pago' => 'int', 
 		
 	];
 

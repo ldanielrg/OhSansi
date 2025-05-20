@@ -294,12 +294,10 @@ const OrdenDePago = () => {
                     <div className="contenedor-fila-1-orden">
                         <p><strong>ID: </strong> {orden?.id_orden}</p>
                         <p><strong>Estado: </strong> {orden?.estado ? 'Pagado' : 'Pendiente'}</p>
-                        <p><strong>Formulario: </strong> {formulario?.id_formulario}</p>
                         <p><strong>Fecha de emisión: </strong> {orden?.fecha_emision?.split('T')[0]}</p>
                         <p><strong>Fecha de vencimiento: </strong> {orden?.fecha_vencimiento?.split('T')[0]}</p>
-                    </div>
 
-                    <div className="contenedor-fila-1-orden">
+                        <p><strong>Formulario: </strong> {formulario?.id_formulario}</p>
                         <p><strong>Nombre del responsable: </strong> {user.name}</p>
                         <p><strong>Unidad educativa: </strong> {orden?.unidad_educativa?.nombre}</p>
                         <p><strong>Monto total: </strong>{orden?.monto_total} Bs</p>

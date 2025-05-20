@@ -30,8 +30,22 @@
 }
 
 .contenedor-boton-registrar-est{
+    width: 100%;
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
+    
+}
+.boton-ins-lista{
+    background-color: white;
+    color: #003366;
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+.boton-ins-guardar{
+    background-color: white;
+    color: #003366;
+    margin-bottom: 20px;
+    margin-right: 10px;
 }
 
 .contenedor-botones-tabla-est-inscritos{
@@ -47,6 +61,7 @@
     flex-direction: column;
     align-items: center;
     border-radius: 12px;
+    padding-top: 1%;
 }
 
 .botones-editar-eliminar-tabla-est{
@@ -85,4 +100,17 @@
 }  
 .boton-descargar-excel:hover {
     background-color: #45a049;
+}
+.tabs-participantes {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.tab-boton-form-ins{
+    background-color: white !important;
+    color: #003366 !important;
+}
+.tab-boton-form-ins.activo{
+    background-color: #003366 !important;
+    color: white !important;
 }
