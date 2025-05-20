@@ -127,6 +127,13 @@
         width: 90%;
         margin: 10px;
     }
+    .para-separar-de-tabla-formularios{
+        justify-content: center;
+        width: 80%;
+    }
+    .seccion-crud-formularios{
+        align-items: center;
+    }
 }
 @media (max-width: 620px){
     .seccion-crud-formularios{
