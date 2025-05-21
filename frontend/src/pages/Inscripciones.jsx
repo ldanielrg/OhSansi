@@ -28,6 +28,8 @@ const Inscripciones = () => {
   const [convocatoriaSeleccionada, setConvocatoriaSeleccionada] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [cargandoConvocatorias, setCargandoConvocatorias] = useState(true);
+  const [pagandoId, setPagandoId] = useState(null);
+
 
   const handleConvocatoriaChange = (e) => {
   const id = e.target.value;
@@ -80,44 +82,60 @@ const Inscripciones = () => {
 
 
   const formularioColumns = [
-    { name: 'N° de Formulario', selector: row => row.id_formulario, sortable: true },
-    { name: 'Cantidad Estudiantes', selector: row => row.inscripciones_count },
+    { name: 'ID de Formulario', selector: row => row.id_formulario, sortable: true },
+    { name: 'Cantidad Estudiantes', selector: row => row.inscripciones_count},
     {
-      name: 'Acciones',
-      cell: row => (
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <div className='contenedor-botones-crud-forms'>
-            <button
-              className='botones-iconos-crud-formularios'
-              onClick={() => navigate(`/formulario/${row.id_formulario}`)}
-            >
-              <FaEdit className='iconos-crud-formularios icono-editar-formulario' />
-            </button>
-            <p className='label-botones-crud-forms'>Editar</p>
-          </div>
+  name: 'Acciones',
+  cell: row => {
+    const estaPagado = row.pagado === true;
 
-          <div className='contenedor-botones-crud-forms'>
-            <button
-              className='botones-iconos-crud-formularios'
-              onClick={() => eliminarFormulario(row.id_formulario)}
-            >
-              <FaTrash className='iconos-crud-formularios icono-eliminar-formulario' />
-            </button>
-            <p className='label-botones-crud-forms'>Eliminar</p>
-          </div>
-
-          <div className='contenedor-botones-crud-forms'>
-            <button
-              className='botones-iconos-crud-formularios'
-              onClick={() => handleOrdenPago(row.id_formulario)}
-            >
-              <BsFileEarmarkText className='iconos-crud-formularios icono-orden-pago-formulario' />
-            </button>
-            <p className='label-botones-crud-forms'>Pago</p>
-          </div>
+    return (
+      <div style={{ display: 'flex', gap: '10px' }}>
+        {/* Editar */}
+        <div className='contenedor-botones-crud-forms'>
+          <button
+            className={`botones-iconos-crud-formularios ${estaPagado ? 'boton-deshabilitado' : ''}`}
+            onClick={() => !estaPagado && navigate(`/formulario/${row.id_formulario}`)}
+            disabled={estaPagado}
+            title={estaPagado ? 'Formulario pagado - no editable' : 'Editar formulario'}
+          >
+            <FaEdit className='iconos-crud-formularios icono-editar-formulario' />
+          </button>
+          <p className='label-botones-crud-forms'>Editar</p>
         </div>
-      )
-    }
+
+        {/* Eliminar */}
+        <div className='contenedor-botones-crud-forms'>
+          <button
+            className={`botones-iconos-crud-formularios ${estaPagado ? 'boton-deshabilitado' : ''}`}
+            onClick={() => !estaPagado && eliminarFormulario(row.id_formulario)}
+            disabled={estaPagado}
+            title={estaPagado ? 'Formulario pagado - no se puede eliminar' : 'Eliminar formulario'}
+          >
+            <FaTrash className='iconos-crud-formularios icono-eliminar-formulario' />
+          </button>
+          <p className='label-botones-crud-forms'>Eliminar</p>
+        </div>
+
+        {/* Orden de pago */}
+        <div className='contenedor-botones-crud-forms'>
+          <button
+            className='botones-iconos-crud-formularios'
+            onClick={() => handleOrdenPago(row.id_formulario)}
+          >
+            {pagandoId === row.id_formulario ? (
+              <BallTriangle height={20} width={20} color="#003366" />
+            ) : (
+              <BsFileEarmarkText className='iconos-crud-formularios icono-orden-pago-formulario' />
+            )}
+          </button>
+          <p className='label-botones-crud-forms'>Pago</p>
+        </div>
+      </div>
+    );
+  }
+}
+
   ];
 
   const customStyles = {
@@ -160,7 +178,9 @@ const Inscripciones = () => {
     }
   };
 
-  const handleOrdenPago = async (id_formulario) => {
+const handleOrdenPago = async (id_formulario) => {
+  setPagandoId(id_formulario); // 🚀 Activar loader
+
   try {
     await api.get(`/orden-pago/${id_formulario}`);
     navigate(`/orden-de-pago/${id_formulario}?convocatoria=${convocatoriaSeleccionada}`);
@@ -182,8 +202,11 @@ const Inscripciones = () => {
       toast.error('Error al verificar la orden de pago.');
       console.error(error);
     }
+  } finally {
+    setPagandoId(null); // ✅ Desactivar loader
   }
 };
+
 const handleConvocatoriaChangeManual = (id) => {
   setConvocatoriaSeleccionada(id);
   setSearchParams({ convocatoria: id });
@@ -273,7 +296,6 @@ const handleConvocatoriaChangeManual = (id) => {
                   columns={formularioColumns}
                   data={formularios}
                   noDataComponent='Aún no se han registrado formularios.'
-                  pagination
                   customStyles={customStyles}
                 />
               )}

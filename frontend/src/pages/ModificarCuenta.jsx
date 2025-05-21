@@ -68,7 +68,7 @@ const ModificarCuenta = () => {
 
       <section className="seccion-formulario-modificar-cuenta">
         <h2>Confirmar Contraseña</h2>
-        <p>
+        <p className="p-texto-modificar-cuenta">
           Para modificar los datos de tu cuenta por favor ingresa primero tu contraseña.
         </p>
         <div className="cont-form-mod">

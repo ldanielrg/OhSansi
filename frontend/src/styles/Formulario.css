@@ -1,3 +1,6 @@
+.content-area{
+        padding: 20px 0px 20px 0px;
+    }
 .formulario-page-container{
     display: flex;
     flex-direction: column;
@@ -10,13 +13,10 @@
     justify-content: center;
 }
 .seccion-form{
-    flex: 1; /* 🔁 Ocupa el mismo espacio que sus hermanos */
-    padding: 1rem;
-    box-sizing: border-box; /* Importante para que padding no rompa el layout */
-    padding: 0;
-    justify-content: center !important;
-    align-items: center;
-    padding-left: 1%;
+    width: 100%;
+    display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 3 columnas iguales */
+  gap: 10px; /* espacio entre los elementos */
 }
 .checkbox-multiple-generos{
     display: flex;
@@ -30,8 +30,22 @@
 }
 
 .contenedor-boton-registrar-est{
+    width: 100%;
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
+    
+}
+.boton-ins-lista{
+    background-color: white;
+    color: #003366;
+    margin-bottom: 20px;
+    margin-left: 10px;
+}
+.boton-ins-guardar{
+    background-color: white;
+    color: #003366;
+    margin-bottom: 20px;
+    margin-right: 10px;
 }
 
 .contenedor-botones-tabla-est-inscritos{
@@ -47,6 +61,7 @@
     flex-direction: column;
     align-items: center;
     border-radius: 12px;
+    padding-top: 1%;
 }
 
 .botones-editar-eliminar-tabla-est{
@@ -85,4 +100,33 @@
 }  
 .boton-descargar-excel:hover {
     background-color: #45a049;
+}
+.tabs-participantes {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.tab-boton-form-ins{
+    background-color: white !important;
+    color: #003366 !important;
+}
+.tab-boton-form-ins.activo{
+    background-color: #003366 !important;
+    color: white !important;
+}
+
+@media (max-width: 660px){
+    .seccion-form{
+        grid-template-columns: repeat(1, 1fr);
+    }
+    
+}
+@media (max-width: 555px){
+    .caja-body input{
+        padding-left: 35px;
+    }
+    .contenedor-form-info{
+        width: 90%;
+    }
+    
 }

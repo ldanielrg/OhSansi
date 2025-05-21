@@ -1,5 +1,50 @@
+
+.seccion-formulario-modificar-cuenta{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .boton-volver-form-campos-mod{
     background-color: #ffff !important;
     color: #003366;
     border: 2px solid #003366;
+}
+.cont-form-mod{
+    width: 50%;
+}
+.div-label-input-modificar-cuenta-aux{
+    width: 100%;
+}
+.seccion-botones-campos-mod{
+    display: flex;
+    justify-content: space-between;
+}
+
+@media (max-width: 768px){
+  .cont-form-mod {
+    width: 60%;
+  }
+}
+@media (max-width: 600px){
+  .cont-form-mod {
+    width: 75%;
+  }
+  .botones-campos-mod{
+        padding: 15px;
+    }
+}
+@media (max-width: 480px){
+    .cont-form-mod {
+        width: 85%;
+        justify-content: start;
+    }
+    .botones-campos-mod{
+        padding: 10px;
+    }
+}
+@media (max-width: 400px){
+    .cont-form-mod {
+        width: 100%;
+        justify-content: start;
+    }
 }

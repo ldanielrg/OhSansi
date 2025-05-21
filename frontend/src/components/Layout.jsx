@@ -12,6 +12,7 @@ import fondo from "/src/assets/fondo.svg";
 import iconoNosotros from "/src/assets/icono4.svg";
 import iconoLogin from "/src/assets/icono5.svg";
 import iconoAjuste from "/src/assets/iconoAjuste.png";
+import iconoCandado from "/src/assets/icono5.svg"
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -190,7 +191,7 @@ const Layout = ({ children }) => {
                   onClick={handleNavigate("/login")}
                 >
                   <img
-                    src="/src/assets/icono5.svg"
+                    src={iconoCandado}
                     alt="Ingresar Icon"
                     style={{ width: "20px", marginRight: "5px" }}
                   />

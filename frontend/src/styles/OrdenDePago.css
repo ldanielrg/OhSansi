@@ -6,10 +6,10 @@
     color: #003366;
 }
 .contenedor-fila-1-orden{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
+    display: grid;
+     grid-template-columns: repeat(4, 1fr); /* 3 columnas de igual ancho */
+    gap: 10px; /* Espacio entre los elementos */
+    }
 .seccion-botones-orden{
     display: flex;
     justify-content: space-around;
@@ -27,4 +27,28 @@
 }
 .contenedor-registro-form-pago{
     width: 50%;
+}
+.boton-pago-deshabilitado {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #ccc !important;
+  color: #666 !important;
+}
+
+
+
+@media (max-width: 1628px){
+    .contenedor-fila-1-orden{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+@media (max-width: 1087px){
+    .contenedor-fila-1-orden{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 738px){
+    .contenedor-fila-1-orden{
+        grid-template-columns: repeat(1, 1fr);
+    }
 }

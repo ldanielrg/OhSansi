@@ -28,7 +28,7 @@ class ConvocatoriaController extends Controller
 
         return response()->json($convocatorias);
     }
-
+    #Cambia el estado de una convocatoria de activa a inactiva, y viceversa.
     public function toggleActivo($id_convocatoria){
         $convocatoria = Convocatoria::find($id_convocatoria);
     

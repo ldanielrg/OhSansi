@@ -67,10 +67,9 @@
 
 
 .seccion-botones-inscripciones-convocatoria{
-    width: 100%;
+    width: 60%;
     border: none;
-    display: flex;
-    justify-content: center;
+    display: grid;
     gap: 3rem;
 }
 .label-seleccionar-convocatoria{
@@ -90,7 +89,7 @@
 }
 .botones-inscripciones-convocatoria:hover {
     color: #ffffff;
-    transform: scale(1.1);
+    transform: scale(1.03);
 }
 
 .botones-inscripciones-convocatoria::before {
@@ -103,9 +102,56 @@
     background-color: #003366;
     transform: skewX(45deg);
     z-index: -1;
-    transition: width 1000ms;
+    transition: width 1500ms;
 }
+.boton-deshabilitado {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 
 .botones-inscripciones-convocatoria:hover::before {
     width: 250%;
+}
+@media (max-width: 810px){
+    .contenedor-botones-crud-forms{
+        margin: 0px;
+
+    }
+}
+@media (max-width: 705px){
+    .label-botones-crud-forms{
+        font-size: 12px;
+    }
+    .seccion-crud-formularios{
+        width: 90%;
+        margin: 10px;
+    }
+    .para-separar-de-tabla-formularios{
+        justify-content: center;
+        width: 80%;
+    }
+    .seccion-crud-formularios{
+        align-items: center;
+    }
+}
+@media (max-width: 620px){
+    .seccion-crud-formularios{
+        width: 100%;
+        margin:0;
+    }
+}
+
+@media (max-width: 600px){
+    .seccion-botones-inscripciones-convocatoria{
+        width: 75%;
+}
+  .botones-campos-mod{
+        padding: 15px;
+    }
+}
+@media (max-width: 558px){
+    .label-botones-crud-forms{
+        font-size: 10px;
+    }
 }

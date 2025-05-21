@@ -13,142 +13,152 @@ use Illuminate\Support\Facades\Log;;
 
 class InscripcionController extends Controller{
     #Inscribir estudiantes (sólo inscripción)
-    public function inscribirEstudiantes(Request $request){
-        
-        Log::debug($request);
+    public function inscribirEstudiantes(Request $request)
+{
+    Log::debug($request);
 
-        $validated = $request->validate([
-            'id_formulario_actual' => 'required|integer',
-            'id_convocatoria' => 'required|exists:convocatoria,id_convocatoria',
-            'estudiantes' => 'required|array|min:1',
-            'estudiantes.*.id_estudiante' => 'nullable|exists:estudiante,id_estudiante',
-            'estudiantes.*.nombre' => 'required|string',
-            'estudiantes.*.apellido' => 'required|string',
-            'estudiantes.*.email' => 'required|email',
-            'estudiantes.*.ci' => 'required|integer|min:1',
-            'estudiantes.*.fecha_nacimiento' => 'required|date',
-            'estudiantes.*.rude' => 'required|integer|min:1',
-            'estudiantes.*.idAarea' => 'required|integer',
-            'estudiantes.*.idCategoria' => 'required|integer',
-            'estudiantes.*.team' => 'required|integer|min:0',
-        ]);
-        
-        Log::debug($validated);
-        $user = $request->user();
-        
-        try {
-            DB::beginTransaction();
+    $validated = $request->validate([
+        'id_formulario_actual' => 'required|integer',
+        'id_convocatoria' => 'required|exists:convocatoria,id_convocatoria',
+        'estudiantes' => 'required|array|min:1',
+        'estudiantes.*.id_estudiante' => 'nullable|exists:estudiante,id_estudiante',
+        'estudiantes.*.nombre' => 'required|string',
+        'estudiantes.*.apellido' => 'required|string',
+        'estudiantes.*.email' => 'required|email',
+        'estudiantes.*.ci' => 'required|integer|min:1',
+        'estudiantes.*.fecha_nacimiento' => 'required|date',
+        'estudiantes.*.rude' => 'required|integer|min:1',
+        'estudiantes.*.idAarea' => 'required|integer',
+        'estudiantes.*.idCategoria' => 'required|integer',
+        'estudiantes.*.team' => 'required|integer|min:0',
+    ]);
 
-            $registradorData = [
-                'nombre' => $user->name,    
-                'apellido' => $user->apellido ?? '', 
-                'email' => $user->email,
-                'ci' => $user->ci,
+    Log::debug($validated);
+    $user = $request->user();
+
+    try {
+        DB::beginTransaction();
+
+        $registradorData = [
+            'nombre' => $user->name,
+            'apellido' => $user->apellido ?? '',
+            'email' => $user->email,
+            'ci' => $user->ci,
+        ];
+
+        $registrador = Registrador::firstOrCreate(
+            ['ci' => $registradorData['ci']],
+            $registradorData
+        );
+        Log::debug($registrador);
+
+        $idFormularioActual = $request->input('id_formulario_actual');
+
+        // Crear nuevo formulario si es 0
+        if ($idFormularioActual == 0) {
+            $formulario = Formulario::create([
+                'id_registrador_registrador' => $registrador->id_registrador,
+                'id_usuario' => $user->id,
+                'id_ue_ue' => $user->id_ue_ue,
+                'id_convocatoria_convocatoria' => $validated['id_convocatoria']
+            ]);
+        } else {
+            $formulario = Formulario::find($idFormularioActual);
+            if (!$formulario) {
+                return response()->json(['error' => 'Formulario no encontrado.'], 404);
+            }
+        }
+
+        Log::debug($formulario);
+
+        // Para devolver al frontend
+        $estudiantesRegistrados = [];
+
+        foreach ($request->estudiantes as $est) {
+            $estudianteData = [
+                'id_estudiante' => $est['id_estudiante'],
+                'nombre' => $est['nombre'],
+                'apellido' => $est['apellido'],
+                'email' => $est['email'],
+                'ci' => $est['ci'],
+                'fecha_nacimiento' => $est['fecha_nacimiento'],
+                'rude' => $est['rude'],
             ];
 
-            $registrador = Registrador::firstOrCreate(
-                ['ci' => $registradorData['ci']],
-                $registradorData
-            );
-            Log::debug($registrador);
-            
-
-            // Obtener el ID del formulario actual desde el request
-            $idFormularioActual = $request->input('id_formulario_actual');
-
-            // 2. Crear formulario
-            // Si es 0, crear uno nuevo
-            if ($idFormularioActual == 0) {
-                $formulario = Formulario::create([
-                    'id_registrador_registrador' => $registrador->id_registrador,
-                    'id_usuario' => $user->id,
-                    'id_ue_ue' => $user->id_ue_ue,
-                    'id_convocatoria_convocatoria' => $validated['id_convocatoria']
-                ]);                
+            // Buscar o crear estudiante
+            if (empty($est['id_estudiante'])) {
+                $estudiante = Estudiante::where('ci', $est['ci'])->first();
+                if (!$estudiante) {
+                    $estudiante = Estudiante::create($estudianteData);
+                }
             } else {
-                // Si no, buscar el formulario existente
-                $formulario = Formulario::find($idFormularioActual);
-                //validar que exista
-                if (!$formulario) {
-                    return response()->json(['error' => 'Formulario no encontrado.'], 404);
+                $estudiante = Estudiante::find($est['id_estudiante']);
+                if (!$estudiante) {
+                    continue;
                 }
             }
-            Log::debug($formulario);
-    
-            // 3. Crear estudiantes y asociarlos al formulario
-            foreach ($request->estudiantes as $est) {
-                // Separar los campos del estudiante
-                $estudianteData = [
-                    'id_estudiante' => $est['id_estudiante'],
-                    'nombre' => $est['nombre'],
-                    'apellido' => $est['apellido'],
-                    'email' => $est['email'],
-                    'ci' => $est['ci'],
-                    'fecha_nacimiento' => $est['fecha_nacimiento'],
-                    'rude' => $est['rude'],
-                ];
 
-                // Buscamos o Creamos Estudiante
-                if (empty($est['id_estudiante'])) {
-                    // No hay id_estudiante. Entonces buscar por CI
-                    $estudiante = Estudiante::where('ci', $est['ci'])->first();
-                    if (!$estudiante) {
-                        // No se encontró por CI, crear uno nuevo
-                        $estudiante = Estudiante::create($estudianteData);
-                    }
-                } else {
-                    // Hay id_estudiante, entonces buscar por id.
-                    $estudiante = Estudiante::find($est['id_estudiante']);
-                    if (!$estudiante) {
-                        continue; //Si no hay id, pasamos al siguiente estudiante en la lista para isncribir.
-                    }
-                }
+            Log::debug($estudiante);
 
-                Log::debug($estudiante);
+            $relacion = AreaTieneCategorium::where('id_area_area', $est['idAarea'])
+                ->where('id_categoria_categoria', $est['idCategoria'])
+                ->first();
 
-                //Buscamos la combinación de idArea e idCategoria en la tabla "area_tiene_categoria"
-                $relacion = AreaTieneCategorium::where('id_area_area', $est['idAarea'])
-                    ->where('id_categoria_categoria', $est['idCategoria'])
-                    ->first();
+            if (!$relacion) {
+                continue;
+            }
 
-                if (!$relacion) {
-                    continue; //Si no existe esa Area-Categoria, pasamos al siguiente estudiante para inscribir.
-                }
+            $yaInscrito = EstudianteEstaInscrito::where([
+                'id_estudiante_estudiante' => $estudiante->id_estudiante,
+                'id_formulario_formulario' => $formulario->id_formulario,
+                'id_inscrito_en' => $relacion->id
+            ])->exists();
 
-                //Vemos si el estudiante ya está inscrito en esa Area-Categoria
-                $yaInscrito = EstudianteEstaInscrito::where([
+            if (!$yaInscrito) {
+                EstudianteEstaInscrito::create([
                     'id_estudiante_estudiante' => $estudiante->id_estudiante,
                     'id_formulario_formulario' => $formulario->id_formulario,
-                    'id_inscrito_en' => $relacion->id
-                ])->exists();
-                //Sólo inscribimos si no está inscrito.
-                if (!$yaInscrito) {
-                    EstudianteEstaInscrito::create([
-                        'id_estudiante_estudiante' => $estudiante->id_estudiante,
-                        'id_formulario_formulario' => $formulario->id_formulario,
-                        'id_inscrito_en' => $relacion->id,
-                        'team' => $est['team']
-                    ]);
-                }
+                    'id_inscrito_en' => $relacion->id,
+                    'team' => $est['team']
+                ]);
+
+                // Agregar al array para frontend
+                $estudiantesRegistrados[] = [
+                    'id_estudiante' => $estudiante->id_estudiante,
+                    'nombre' => $estudiante->nombre,
+                    'apellido' => $estudiante->apellido,
+                    'email' => $estudiante->email,
+                    'ci' => $estudiante->ci,
+                    'fecha_nac' => $estudiante->fecha_nacimiento,
+                    'rude' => $estudiante->rude,
+                    'id_area' => $relacion->id_area_area,
+                    'nombre_area' => optional($relacion->area)->nombre_area ?? '',
+                    'id_categoria' => $relacion->id_categoria_categoria,
+                    'nombre_categoria' => optional($relacion->categorium)->nombre_categoria ?? '',
+                    'id_equipo' => $est['team']
+                ];
             }
-
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Formulario y estudiantes registrados correctamente.'
-            ], 201);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al guardar el formulario',
-                'error' => $e->getMessage()
-            ], 500);
         }
-    }
 
-    #Editar, tanto datos personales como la inscripción de un estudiante
-    public function editarEstudiante(Request $request){
+        DB::commit();
+
+        return response()->json([
+            'message' => 'Formulario y estudiantes registrados correctamente.',
+            'id_formulario' => $formulario->id_formulario,
+            'estudiantes' => $estudiantesRegistrados
+        ], 201);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'message' => 'Error al guardar el formulario',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
+    #ANTIGUO EDITAR
+    public function editarEstudianteANTIGUO(Request $request){
         $validated = $request->validate([
             'id_formulario' => 'required|integer|exists:formulario,id_formulario',
     
@@ -164,7 +174,7 @@ class InscripcionController extends Controller{
             'nuevo.fecha_nacimiento' => 'required|date',
             'nuevo.idArea' => 'required|integer',
             'nuevo.idCategoria' => 'required|integer',
-            'nuevo.team' => 'required|integer|min:0',
+            //'nuevo.team' => 'required|integer|min:0',
         ]);
     
         // Paso 1: Buscar la relación actual (área + categoría)
@@ -241,14 +251,74 @@ class InscripcionController extends Controller{
             'message' => 'Inscripción y datos del estudiante actualizados correctamente.'
         ]);
     }
+    #NUEVO EDITAR ESTUDIANTE
+    public function editarEstudiante(Request $request){
+        $validated = $request->validate([
+            'id_formulario' => 'required|integer|exists:formulario,id_formulario',
 
+            'anterior.id_estudiante' => 'required|integer|exists:estudiante,id_estudiante',
+
+            'nuevo.nombre' => 'required|string',
+            'nuevo.apellido' => 'required|string',
+            'nuevo.email' => 'required|email',
+            'nuevo.ci' => 'required|integer',
+            'nuevo.rude' => 'required|integer',
+            'nuevo.fecha_nacimiento' => 'required|date',
+        ]);
+
+        // Paso 1: Buscar el estudiante actual
+        $estudiante = Estudiante::find($validated['anterior']['id_estudiante']);
+
+        if (!$estudiante) {
+            return response()->json([
+                'message' => 'Estudiante no encontrado.'
+            ], 404);
+        }
+
+        // Paso 2: Verificar duplicidad de CI si fue cambiado
+        if ($validated['nuevo']['ci'] != $estudiante->ci) {
+            $ciDuplicado = Estudiante::where('ci', $validated['nuevo']['ci'])->exists();
+            if ($ciDuplicado) {
+                return response()->json([
+                    'message' => 'El CI ingresado ya está registrado en otro estudiante.'
+                ], 422);
+            }
+        }
+
+        // Paso 3: Verificar duplicidad de RUDE si fue cambiado
+        if ($validated['nuevo']['rude'] != $estudiante->rude) {
+            $rudeDuplicado = Estudiante::where('rude', $validated['nuevo']['rude'])->exists();
+            if ($rudeDuplicado) {
+                return response()->json([
+                    'message' => 'El RUDE ingresado ya está registrado en otro estudiante.'
+                ], 422);
+            }
+        }
+
+        // Paso 4: Actualizar los datos permitidos
+        $estudiante->update([
+            'nombre' => $validated['nuevo']['nombre'],
+            'apellido' => $validated['nuevo']['apellido'],
+            'email' => $validated['nuevo']['email'],
+            'ci' => $validated['nuevo']['ci'],
+            'rude' => $validated['nuevo']['rude'],
+            'fecha_nacimiento' => $validated['nuevo']['fecha_nacimiento'],
+        ]);
+
+        return response()->json([
+            'message' => 'Datos del estudiante actualizados correctamente.'
+        ]);
+    }
+
+    #ANTIGUO ELIMIANAR
     #Elimina un registro de inscripción de un estudiante. Si el estudiante ya no tiene formularios a su nombre, también lo elimina.
-    public function eliminarInscripcion(Request $request){
+    public function eliminarInscripcionANTIGUO(Request $request){
         $validated = $request->validate([
             'id_formulario' => 'required|exists:formulario,id_formulario',
             'id_estudiante' => 'required|exists:estudiante,id_estudiante',
             'idArea' => 'required|integer',
-            'idCategoria' => 'required|integer'
+            'idCategoria' => 'required|integer',
+            'idEquipo' => 'required|integer',
         ]);
 
         // Paso 1: Buscar la combinación área + categoría
@@ -294,6 +364,61 @@ class InscripcionController extends Controller{
             'message' => 'Inscripción eliminada correctamente.'
         ]);
     }
+    #Nueva función para eliminar a todo el equipo
+    public function eliminarInscripcion(Request $request){
+        $validated = $request->validate([
+            'id_formulario' => 'required|exists:formulario,id_formulario',
+            'id_estudiante' => 'required|exists:estudiante,id_estudiante',
+            'idArea' => 'required|integer',
+            'idCategoria' => 'required|integer',
+            'idEquipo' => 'required|integer',
+        ]);
+
+        // Paso 1: Buscar la relación área + categoría
+        $relacion = AreaTieneCategorium::where('id_area_area', $validated['idArea'])
+            ->where('id_categoria_categoria', $validated['idCategoria'])
+            ->first();
+
+        if (!$relacion) {
+            return response()->json([
+                'message' => 'No existe una relación entre esa área y esa categoría.'
+            ], 422);
+        }
+
+        // Paso 2: Eliminar TODAS las inscripciones del mismo equipo
+        $inscripcionesAEliminar = EstudianteEstaInscrito::where([
+            'id_formulario_formulario' => $validated['id_formulario'],
+            'id_inscrito_en' => $relacion->id,
+            'team' => $validated['idEquipo']
+        ])->get();
+
+        // Guardar IDs de estudiantes antes de eliminar
+        $idsEstudiantes = $inscripcionesAEliminar->pluck('id_estudiante_estudiante')->toArray();
+
+        // Eliminar las inscripciones
+        EstudianteEstaInscrito::whereIn('id_estudiante_estudiante', $idsEstudiantes)
+            ->where('id_formulario_formulario', $validated['id_formulario'])
+            ->where('id_inscrito_en', $relacion->id)
+            ->where('team', $validated['idEquipo'])
+            ->delete();
+
+        // Paso 3: Verificar cuáles estudiantes ya no tienen inscripciones y eliminarlos
+        foreach ($idsEstudiantes as $idEstudiante) {
+            $aunTiene = EstudianteEstaInscrito::where('id_estudiante_estudiante', $idEstudiante)->exists();
+            if (!$aunTiene) {
+                Estudiante::find($idEstudiante)?->delete();
+            }
+        }
+
+        return response()->json([
+            'message' => 'Inscripción del equipo eliminada correctamente.',
+            'equipo_eliminado' => $validated['idEquipo'],
+            'estudiantes_eliminados' => $idsEstudiantes,
+        ]);
+    }
+
+
+
     #Recupera formularios llenados por un usuario
     public function recuperarFormularios(Request $request, $id_convocatoria){
         $user = $request->user();
@@ -342,6 +467,26 @@ class InscripcionController extends Controller{
         ]);
     }
 
+    #Calcular precio total de un formulario
+    public function calcularTotalPorEquipo($idFormulario)
+{
+    // Detalles por grupo (como antes)
+    $detalles = DB::table('estudiante_esta_inscrito as ei')
+        ->join('area_tiene_categoria as ac', 'ei.id_inscrito_en', '=', 'ac.id')
+        ->select('ei.id_inscrito_en', 'ei.team', 'ac.precio')
+        ->where('ei.id_formulario_formulario', $idFormulario)
+        ->groupBy('ei.id_inscrito_en', 'ei.team', 'ac.precio')
+        ->get();
+
+    // Calcular monto total del formulario, sumando una vez por grupo
+    $montoTotal = $detalles->sum('precio');
+
+    return response()->json([
+        'detalles_por_grupo' => $detalles,
+        'monto_total' => $montoTotal
+    ]);
+}
+
 
     public function eliminarFormulario(Request $request, $id){
         $user = $request->user(); // Usuario autenticado
@@ -381,8 +526,9 @@ class InscripcionController extends Controller{
 
     #Esto te dá el nro del team que te corresponde.
     public function obtenerSiguienteTeam(Request $request){
-        $idArea = $request->input('idArea');
-        $idCategoria = $request->input('idCategoria');
+        $idArea = $request->query('id_area');
+        $idCategoria = $request->query('id_categoria');
+
 
         // Validación básica (opcional pero recomendado)
         if (!$idArea || !$idCategoria) {
@@ -418,12 +564,12 @@ class InscripcionController extends Controller{
 
     #Esto te dá cuantos participantes deben haber en esa area-categoria
     public function obtenerNroParticipantes(Request $request){
-        $idArea = $request->input('idArea');
-        $idCategoria = $request->input('idCategoria');
+        $idArea = $request->query('id_area'); // ✅ con snake_case
+        $idCategoria = $request->query('id_categoria');
 
         if (!$idArea || !$idCategoria) {
             return response()->json([
-                'error' => 'Faltan idArea o idCategoria.'
+                'error' => 'Faltan id_area o id_categoria.'
             ], 422);
         }
 
@@ -439,7 +585,10 @@ class InscripcionController extends Controller{
         }
 
         return response()->json([
-            'nro_participantes' => $nroParticipantes
+            'cantidad' => (int)$nroParticipantes
         ]);
     }
+
+
+    
 }
