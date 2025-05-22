@@ -189,53 +189,6 @@ const Home = () => {
                 >
                   Reclamos
                 </button>
-                {esAdmin && (
-                  <>
-                    <h5 className="title-bar">Logeado</h5>
-                    <button
-                      className="btn vertical-btn btn-help"
-                      onClick={handleNavigateCrearUE}
-                    >
-                      Crear UE
-                    </button>
-                    <button
-                      className="btn vertical-btn btn-help"
-                      onClick={handleNavigateCrearCuentas}
-                    >
-                      Crear Cuentas
-                    </button>
-                    <button
-                      className="btn vertical-btn btn-help"
-                      onClick={handleNavigateConfiguracionConvocatoria}
-                    >
-                      Configuración Convocatoria
-                    </button>
-                    <button
-                      className="btn vertical-btn btn-help"
-                      onClick={handleNavigateEventos}
-                    >
-                      Crear Eventos
-                    </button>
-                    <button
-                      className="btn vertical-btn btn-help"
-                      onClick={handleNavigateConfiguracionCuentas}
-                    >
-                      Configuración Cuentas
-                    </button>
-                    <button
-                      className="btn vertical-btn btn-help"
-                      onClick={handleNavigateInscritosOficiales}
-                    >
-                      Inscritos Oficiales
-                    </button>
-                    <button
-                      className="btn vertical-btn btn-help"
-                      onClick={handleNavigateGestionComprobantes}
-                    >
-                      Gestion de comprobantes
-                    </button>
-                  </>
-                )}
               </div>
             </div>
           </div>
