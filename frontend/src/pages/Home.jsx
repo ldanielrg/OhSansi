@@ -70,35 +70,8 @@ const Home = () => {
     e.preventDefault();
     navigate("/preguntasfrecuentes");
   };
-  const handleNavigateConfiguracionConvocatoria = (e) => {
-    e.preventDefault();
-    navigate("/configuracion-convocatoria");
-  };
-  const handleNavigateConfiguracionEventos = (e) => {
-    e.preventDefault();
-    navigate("/configuracioneventos");
-  };
-  const handleNavigateCrearUE = (e) => {
-    e.preventDefault();
-    navigate("/crear-ue");
-  };
-  const handleNavigateCrearCuentas = (e) => {
-    e.preventDefault();
-    navigate("/crear-cuentas");
-  };
-  const handleNavigateConfiguracionCuentas = (e) => {
-    e.preventDefault();
-    navigate("/configuracion-cuentas");
-  };
-  const handleNavigateInscritosOficiales = (e) => {
-    e.preventDefault();
-    navigate("/inscritos-oficiales");
-  };
-  const handleNavigateGestionComprobantes = (e) => {
-    e.preventDefault();
-    navigate("/gestion-comprobantes");
-  };
-  handleNavigateConfiguracionCuentas;
+  
+  
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -193,66 +166,7 @@ const Home = () => {
                 >
                   Reclamos
                 </button>
-                {(esAdmin || esDocente || esDirector) && (
-                  <>
-                  <h5 className="title-bar">Logueado</h5>
-                  {esAdmin && (
-                    <button
-                      className="btn vertical-btn btn-help"
-                      onClick={handleNavigateCrearUE}
-                    >
-                      Crear UE
-                    </button>
-                  )}
-                  {(esAdmin || esDirector) && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateCrearCuentas}
-                  >
-                    Crear Cuentas
-                  </button>
-                  )}
-                  
-                  {esAdmin && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateConfiguracionConvocatoria}
-                    >
-                      Configuración Convocatoria
-                    </button>
-                  )}
-                  {esAdmin && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateEventos}
-                    >
-                      Crear Eventos
-                    </button>
-                  )}
-                  {esAdmin && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateConfiguracionCuentas}
-                    >
-                      Configuración Cuentas
-                    </button>
-                  )}
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateInscritosOficiales}
-                  >
-                    Inscritos Oficiales
-                  </button>
-                  {esAdmin && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateGestionComprobantes}
-                  >
-                    Gestion de comprobantes
-                  </button>
-                  )}
-                </>
-                )}
+                
 
               </div>
             </div>
