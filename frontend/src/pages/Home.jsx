@@ -16,6 +16,9 @@ const Home = () => {
   const navigate = useNavigate();
   const { roles } = useAuth();
   const esAdmin = roles?.includes("Admin");
+  const esDocente = roles.includes('Docente');
+  const esDirector = roles.includes('Director');
+
 
   const handleNavigateReclamos = (e) => {
     e.preventDefault();
@@ -180,51 +183,64 @@ const Home = () => {
                 >
                   Reclamos
                 </button>
-                {esAdmin && (
+                {(esAdmin || esDocente || esDirector) && (
                   <>
-                  <h5 className="title-bar">Logeado</h5>
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateCrearUE}
-                  >
-                    Crear UE
-                  </button>
-                  <button
+                  <h5 className="title-bar">Logueado</h5>
+                  {esAdmin && (
+                    <button
+                      className="btn vertical-btn btn-help"
+                      onClick={handleNavigateCrearUE}
+                    >
+                      Crear UE
+                    </button>
+                  )}
+                  {(esAdmin || esDirector) && (
+                    <button
                     className="btn vertical-btn btn-help"
                     onClick={handleNavigateCrearCuentas}
                   >
                     Crear Cuentas
                   </button>
-                  <button
+                  )}
+                  
+                  {esAdmin && (
+                    <button
                     className="btn vertical-btn btn-help"
                     onClick={handleNavigateConfiguracionConvocatoria}
-                  >
-                    Configuración Convocatoria
-                  </button>
-                  <button
+                    >
+                      Configuración Convocatoria
+                    </button>
+                  )}
+                  {esAdmin && (
+                    <button
                     className="btn vertical-btn btn-help"
                     onClick={handleNavigateEventos}
-                  >
-                    Crear Eventos
-                  </button>
-                  <button
+                    >
+                      Crear Eventos
+                    </button>
+                  )}
+                  {esAdmin && (
+                    <button
                     className="btn vertical-btn btn-help"
                     onClick={handleNavigateConfiguracionCuentas}
-                  >
-                    Configuración Cuentas
-                  </button>
+                    >
+                      Configuración Cuentas
+                    </button>
+                  )}
                   <button
                     className="btn vertical-btn btn-help"
                     onClick={handleNavigateInscritosOficiales}
                   >
                     Inscritos Oficiales
                   </button>
-                  <button
+                  {esAdmin && (
+                    <button
                     className="btn vertical-btn btn-help"
                     onClick={handleNavigateGestionComprobantes}
                   >
                     Gestion de comprobantes
                   </button>
+                  )}
                 </>
                 )}
 
