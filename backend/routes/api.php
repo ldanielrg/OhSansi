@@ -83,6 +83,7 @@ Route::middleware('auth:sanctum')->post('/crear-cuenta', [CuentaController::clas
 Route::middleware('auth:sanctum')->get('/recuperar-formularios/{id_convocatoria}', [InscripcionController::class, 'recuperarFormularios']);
 Route::middleware('auth:sanctum')->delete('/formulario-eliminar/{id}', [InscripcionController::class, 'eliminarFormulario']); 
 Route::middleware('auth:sanctum')->get('/formulario-detalles/{id_formulario}', [InscripcionController::class, 'mostrarFormulario']);
+Route::middleware('auth:sanctum')->get('/formulario-detalles-orden-pago/{id_formulario}', [InscripcionController::class, 'mostrarFormulario2']);
 Route::middleware('auth:sanctum')->post('/inscripcion', [InscripcionController::class, 'inscribirEstudiantes']); 
 Route::post('/editar-registro-estudiante', [InscripcionController::class, 'editarEstudiante']);
 Route::delete('/eliminar-registro-estudiante', [InscripcionController::class, 'eliminarInscripcion']);
@@ -101,7 +102,7 @@ Route::middleware('auth:sanctum')->group(function () {
 //ORDEN DE PAGO FORMULARIO
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/orden-pago/{id_formulario}', [OrdenPagoController::class, 'mostrarPorFormulario']);
+    Route::get('/orden-pago/{id_formulario}', [InscripcionController::class, 'calcularTotalPorEquipo']);
     Route::post('/orden-pago', [OrdenPagoController::class, 'crear']); // AGREGUE YO, PARA INSERTAR DATOS EN BD
 });
 
