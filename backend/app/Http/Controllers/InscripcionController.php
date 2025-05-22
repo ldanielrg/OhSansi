@@ -205,6 +205,8 @@ class InscripcionController extends Controller{
                 return $est['idAarea'] . '-' . $est['idCategoria'] . '-' . $est['team'];
             });
 
+            
+
             foreach ($grupos as $grupo) {
                 $estPrimero = $grupo->first();
 
@@ -212,7 +214,20 @@ class InscripcionController extends Controller{
                     ->where('id_categoria_categoria', $estPrimero['idCategoria'])
                     ->first();
 
-                if (!$relacion) continue;
+                if (!$relacion) {
+                    return response()->json([
+                        'message' => "La combinación área + categoría no existe: Área {$estPrimero['idAarea']}, Categoría {$estPrimero['idCategoria']}"
+                    ], 422);
+                }
+
+                $cantidadIntegrantes = count($grupo);
+                $nroParticipantes = $relacion->nro_participantes;
+
+                if ($cantidadIntegrantes !== $nroParticipantes) {
+                    return response()->json([
+                        'message' => "El grupo para área {$relacion->id_area_area} y categoría {$relacion->id_categoria_categoria} debe tener exactamente {$nroParticipantes} integrantes, pero tiene {$cantidadIntegrantes}."
+                    ], 422);
+                }
 
                 // 🔢 Obtener siguiente número de equipo para esta combinación
                 $ultimoTeam = EstudianteEstaInscrito::where('id_inscrito_en', $relacion->id)->max('team');
