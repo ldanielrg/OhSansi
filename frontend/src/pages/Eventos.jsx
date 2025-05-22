@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "../styles/Eventos.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../context/AuthContext";
 
 const Eventos = () => {
   const [convocatorias, setConvocatorias] = useState([]);
@@ -14,7 +15,8 @@ const Eventos = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
- 
+  const { roles } = useAuth();
+  const esAdmin = roles?.includes("Admin");
   // Cargar convocatorias al inicio
   useEffect(() => {
     const fetchConvocatorias = async () => {
@@ -84,7 +86,7 @@ const Eventos = () => {
     if (!selectedEvent) return;
 
     try {
-      + await api.delete(`/eventos/${selectedEvent.id_evento}`);
+      +(await api.delete(`/eventos/${selectedEvent.id_evento}`));
       toast.success("Evento eliminado exitosamente.");
       setEvents((prev) =>
         prev.filter((e) => e.id_evento !== selectedEvent.id_evento)
@@ -156,34 +158,36 @@ const Eventos = () => {
           <p>Selecciona una convocatoria para ver sus eventos.</p>
         )}
 
-        <div className="eventos-acciones d-flex justify-content-between align-items-center">
-          <div className="acciones-left d-flex gap-2">
-            <button
-              className="btn-primary"
-              onClick={handleCrearEvento}
-              disabled={!idConvocatoriaSeleccionada}
-            >
-              Crear
-            </button>
-            <button
-              className="btn-primary"
-              onClick={handleEditarEvento}
-              disabled={!selectedEvent}
-            >
-              Editar
-            </button>
-          </div>
+        {esAdmin && (
+          <div className="eventos-acciones d-flex justify-content-between align-items-center">
+            <div className="acciones-left d-flex gap-2">
+              <button
+                className="btn-primary"
+                onClick={handleCrearEvento}
+                disabled={!idConvocatoriaSeleccionada}
+              >
+                Crear
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleEditarEvento}
+                disabled={!selectedEvent}
+              >
+                Editar
+              </button>
+            </div>
 
-          <div className="acciones-right">
-            <button
-              className="btn-primary"
-              onClick={handleEliminarEvento}
-              disabled={!selectedEvent}
-            >
-              Eliminar
-            </button>
+            <div className="acciones-right">
+              <button
+                className="btn-primary"
+                onClick={handleEliminarEvento}
+                disabled={!selectedEvent}
+              >
+                Eliminar
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Modal de eliminación */}
         {showDeleteModal && (

@@ -15,6 +15,7 @@ const Logueado = () => {
   const handleNavigateEventos = () => navigate('/eventos');
   const handleNavigateConfiguracionCuentas = () => navigate('/configuracion-cuentas');
   const handleNavigateInscritosOficiales = () => navigate('/inscritos-oficiales');
+  const   handleNavigateGestionComprobantes= () => navigate('/gestion-comprobantes');
 
   return (
     <div className="config-page">
@@ -58,6 +59,12 @@ const Logueado = () => {
                 onClick={handleNavigateInscritosOficiales}
               >
                 Inscritos Oficiales
+              </button>
+              <button
+                className="btn-news vertical-btn"
+                onClick={handleNavigateGestionComprobantes}
+              >
+                Gestion de comprobantes
               </button>
             </div>
           </div>
