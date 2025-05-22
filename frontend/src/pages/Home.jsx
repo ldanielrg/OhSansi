@@ -20,12 +20,16 @@ const Home = () => {
   const { roles } = useAuth();
   const esAdmin = roles?.includes("Admin");
   const location = useLocation();
+  const esDocente = roles.includes('Docente');
+  const esDirector = roles.includes('Director');
   useEffect(() => {
     if (location.state?.showWelcomeToast) {
       toast.success("¡Bienvenido al sistema!");
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
+
+
   const handleNavigateReclamos = (e) => {
     e.preventDefault();
     navigate("/reclamos");
@@ -189,6 +193,67 @@ const Home = () => {
                 >
                   Reclamos
                 </button>
+                {(esAdmin || esDocente || esDirector) && (
+                  <>
+                  <h5 className="title-bar">Logueado</h5>
+                  {esAdmin && (
+                    <button
+                      className="btn vertical-btn btn-help"
+                      onClick={handleNavigateCrearUE}
+                    >
+                      Crear UE
+                    </button>
+                  )}
+                  {(esAdmin || esDirector) && (
+                    <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateCrearCuentas}
+                  >
+                    Crear Cuentas
+                  </button>
+                  )}
+                  
+                  {esAdmin && (
+                    <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateConfiguracionConvocatoria}
+                    >
+                      Configuración Convocatoria
+                    </button>
+                  )}
+                  {esAdmin && (
+                    <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateEventos}
+                    >
+                      Crear Eventos
+                    </button>
+                  )}
+                  {esAdmin && (
+                    <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateConfiguracionCuentas}
+                    >
+                      Configuración Cuentas
+                    </button>
+                  )}
+                  <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateInscritosOficiales}
+                  >
+                    Inscritos Oficiales
+                  </button>
+                  {esAdmin && (
+                    <button
+                    className="btn vertical-btn btn-help"
+                    onClick={handleNavigateGestionComprobantes}
+                  >
+                    Gestion de comprobantes
+                  </button>
+                  )}
+                </>
+                )}
+
               </div>
             </div>
           </div>
