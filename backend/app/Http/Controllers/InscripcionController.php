@@ -467,6 +467,26 @@ class InscripcionController extends Controller{
         ]);
     }
 
+    #Calcular precio total de un formulario
+    public function calcularTotalPorEquipo($idFormulario)
+{
+    // Detalles por grupo (como antes)
+    $detalles = DB::table('estudiante_esta_inscrito as ei')
+        ->join('area_tiene_categoria as ac', 'ei.id_inscrito_en', '=', 'ac.id')
+        ->select('ei.id_inscrito_en', 'ei.team', 'ac.precio')
+        ->where('ei.id_formulario_formulario', $idFormulario)
+        ->groupBy('ei.id_inscrito_en', 'ei.team', 'ac.precio')
+        ->get();
+
+    // Calcular monto total del formulario, sumando una vez por grupo
+    $montoTotal = $detalles->sum('precio');
+
+    return response()->json([
+        'detalles_por_grupo' => $detalles,
+        'monto_total' => $montoTotal
+    ]);
+}
+
 
     public function eliminarFormulario(Request $request, $id){
         $user = $request->user(); // Usuario autenticado
@@ -544,29 +564,31 @@ class InscripcionController extends Controller{
 
     #Esto te dá cuantos participantes deben haber en esa area-categoria
     public function obtenerNroParticipantes(Request $request){
-    $idArea = $request->query('id_area'); // ✅ con snake_case
-    $idCategoria = $request->query('id_categoria');
+        $idArea = $request->query('id_area'); // ✅ con snake_case
+        $idCategoria = $request->query('id_categoria');
 
-    if (!$idArea || !$idCategoria) {
+        if (!$idArea || !$idCategoria) {
+            return response()->json([
+                'error' => 'Faltan id_area o id_categoria.'
+            ], 422);
+        }
+
+        $nroParticipantes = DB::table('area_tiene_categoria')
+            ->where('id_area_area', $idArea)
+            ->where('id_categoria_categoria', $idCategoria)
+            ->value('nro_participantes');
+
+        if (is_null($nroParticipantes)) {
+            return response()->json([
+                'error' => 'No se encontró esa combinación Area-Categoria O el valor es NULL'
+            ], 404);
+        }
+
         return response()->json([
-            'error' => 'Faltan id_area o id_categoria.'
-        ], 422);
+            'cantidad' => (int)$nroParticipantes
+        ]);
     }
 
-    $nroParticipantes = DB::table('area_tiene_categoria')
-        ->where('id_area_area', $idArea)
-        ->where('id_categoria_categoria', $idCategoria)
-        ->value('nro_participantes');
 
-    if (is_null($nroParticipantes)) {
-        return response()->json([
-            'error' => 'No se encontró esa combinación Area-Categoria O el valor es NULL'
-        ], 404);
-    }
-
-    return response()->json([
-        'cantidad' => (int)$nroParticipantes
-    ]);
-}
-
+    
 }
