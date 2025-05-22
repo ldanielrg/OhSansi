@@ -2,6 +2,8 @@
 import React from "react";
 import "../styles/Home.css";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Card from "../components/Card";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Importa estilo por defecto
@@ -10,13 +12,20 @@ import imageOlimpics from "/src/assets/hd/olimpiadas.jpg";
 import imageInscripcion from "/src/assets/hd/inscripciones.jpg";
 import imageDiscipline from "/src/assets/hd/disciplinas.jpg";
 import imageEvents from "/src/assets/hd/eventos.jpg";
+import { toast } from "react-toastify";
 
 const Home = () => {
   // Hook para navegar
   const navigate = useNavigate();
   const { roles } = useAuth();
   const esAdmin = roles?.includes("Admin");
-
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state?.showWelcomeToast) {
+      toast.success("¡Bienvenido al sistema!");
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
   const handleNavigateReclamos = (e) => {
     e.preventDefault();
     navigate("/reclamos");
@@ -85,7 +94,7 @@ const Home = () => {
     e.preventDefault();
     navigate("/gestion-comprobantes");
   };
-  handleNavigateConfiguracionCuentas
+  handleNavigateConfiguracionCuentas;
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -182,52 +191,51 @@ const Home = () => {
                 </button>
                 {esAdmin && (
                   <>
-                  <h5 className="title-bar">Logeado</h5>
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateCrearUE}
-                  >
-                    Crear UE
-                  </button>
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateCrearCuentas}
-                  >
-                    Crear Cuentas
-                  </button>
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateConfiguracionConvocatoria}
-                  >
-                    Configuración Convocatoria
-                  </button>
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateEventos}
-                  >
-                    Crear Eventos
-                  </button>
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateConfiguracionCuentas}
-                  >
-                    Configuración Cuentas
-                  </button>
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateInscritosOficiales}
-                  >
-                    Inscritos Oficiales
-                  </button>
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateGestionComprobantes}
-                  >
-                    Gestion de comprobantes
-                  </button>
-                </>
+                    <h5 className="title-bar">Logeado</h5>
+                    <button
+                      className="btn vertical-btn btn-help"
+                      onClick={handleNavigateCrearUE}
+                    >
+                      Crear UE
+                    </button>
+                    <button
+                      className="btn vertical-btn btn-help"
+                      onClick={handleNavigateCrearCuentas}
+                    >
+                      Crear Cuentas
+                    </button>
+                    <button
+                      className="btn vertical-btn btn-help"
+                      onClick={handleNavigateConfiguracionConvocatoria}
+                    >
+                      Configuración Convocatoria
+                    </button>
+                    <button
+                      className="btn vertical-btn btn-help"
+                      onClick={handleNavigateEventos}
+                    >
+                      Crear Eventos
+                    </button>
+                    <button
+                      className="btn vertical-btn btn-help"
+                      onClick={handleNavigateConfiguracionCuentas}
+                    >
+                      Configuración Cuentas
+                    </button>
+                    <button
+                      className="btn vertical-btn btn-help"
+                      onClick={handleNavigateInscritosOficiales}
+                    >
+                      Inscritos Oficiales
+                    </button>
+                    <button
+                      className="btn vertical-btn btn-help"
+                      onClick={handleNavigateGestionComprobantes}
+                    >
+                      Gestion de comprobantes
+                    </button>
+                  </>
                 )}
-
               </div>
             </div>
           </div>
