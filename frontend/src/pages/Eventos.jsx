@@ -19,7 +19,7 @@ const Eventos = () => {
   useEffect(() => {
     const fetchConvocatorias = async () => {
       try {
-        const response = await api.get("/convocatorias");
+        const response = await api.get("/convocatorias-activas");
         setConvocatorias(response.data);
       } catch (error) {
         console.error("Error al cargar convocatorias:", error);
