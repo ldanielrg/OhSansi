@@ -129,8 +129,11 @@ const Inscripciones = () => {
               <BsFileEarmarkText className='iconos-crud-formularios icono-orden-pago-formulario' />
             )}
           </button>
-          <p className='label-botones-crud-forms'>Pago</p>
+          <p className='label-botones-crud-forms'>
+            {row.pagado ? 'Pagado' : 'Pago'}
+          </p>
         </div>
+
       </div>
     );
   }

@@ -105,7 +105,7 @@
     transition: width 1500ms;
 }
 .boton-deshabilitado {
-  opacity: 0.5;
+  opacity: 0.1;
   cursor: not-allowed;
 }
 
