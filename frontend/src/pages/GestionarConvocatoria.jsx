@@ -173,35 +173,40 @@ export default function GestionarConvocatoria() {
 
   const handleAssignAreaCat = async () => {
     if (!selArea || !selCat || !precio || !participantes) {
-      alert("Por favor completa todos los campos.");
-      return;
+      return toast.warn("Por favor completa todos los campos.");
     }
 
-    const datos = {
-      id_area: selArea,
-      id_categoria: selCat,
-      precio: precio,
-      participantes: participantes,
+    const payload = {
+      id_area: Number(selArea),
+      id_categoria: Number(selCat),
+      precio: parseFloat(precio),
+      nro_participantes:
+        participantes === "Individual" ? 1 :
+        participantes === "Duo" ? 2 :
+        participantes === "Trio" ? 3 :
+        participantes === "Cuarteto" ? 4 : 0,
     };
-    if (!selArea || !selCat) return toast.warn("Selecciona área y categoría.");
+
     try {
-      await api.post(`/asignar-area-categoria`, {
-        id_area: Number(selArea),
-        id_categoria: Number(selCat),
-        precio: 0,
-        activo: true,
-      });
-      toast.success("Área asignada a categoría");
+      await api.post('/asignar-area-categoria', payload);
+      toast.success("Área asignada a categoría correctamente.");
       loadAll();
+      // Limpia campos
+      setPrecio("");
+      setParticipantes("");
     } catch (err) {
-      if (err.response?.status === 409) {
+      if (err.response?.status === 422) {
+        console.error("Errores de validación:", err.response.data.errors);
+        toast.error("Campos inválidos. Revisa los datos ingresados.");
+      } else if (err.response?.status === 409) {
         toast.warn("Ya existe esa asignación.");
       } else {
         console.error(err);
-        toast.error("Error asignando área→categoría");
+        toast.error("Error asignando área→categoría.");
       }
     }
   };
+
 
   const handleAssignGradosCat = async () => {
     if (!selCat || !selGrIni)
