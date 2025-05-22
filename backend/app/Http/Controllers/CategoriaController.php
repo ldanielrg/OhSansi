@@ -17,7 +17,7 @@ class CategoriaController extends Controller{
         ]);
 
         $categorias = Categorium::where('id_convocatoria_convocatoria', $validated['id_convocatoria'])
-            // ->where('activo', true)
+            ->where('activo', true)
             ->with(['gradoInicial', 'gradoFinal'])
             ->get();
 
@@ -225,6 +225,26 @@ class CategoriaController extends Controller{
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function toggleActivo($id){
+        $categoria = Categorium::find($id);
+    
+        if (!$categoria) {
+            return response()->json([
+                'message' => 'Categoria no encontrada.'
+            ], 404);
+        }
+    
+        // Cambiar estado activo al valor contrario
+        $categoria->activo = !$categoria->activo;
+        $categoria->save();
+    
+        return response()->json([
+            'message' => 'Estado de categoria actualizado.',
+            'id_convocatoria' => $categoria->id,
+            'nuevo_estado' => $categoria->activo
+        ]);
     }
 
 }

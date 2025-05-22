@@ -14,7 +14,7 @@ class AreaController extends Controller{
     #Obtiene todas la areas de una convocatoria id
     public function obtenerAreasPorConvocatoria($idConvocatoria){
         $areas = Area::where('id_convocatoria_convocatoria', $idConvocatoria)
-            //->where('activo', true) //si solo quiero activas
+            ->where('activo', true)
             ->get();
 
         return response()->json($areas);
@@ -246,5 +246,23 @@ class AreaController extends Controller{
         }
     }
     
-
+    public function toggleActivo($id){
+        $area = Area::find($id);
+    
+        if (!$area) {
+            return response()->json([
+                'message' => 'Convocatoria no encontrada.'
+            ], 404);
+        }
+    
+        // Cambiar estado activo al valor contrario
+        $area->activo = !$area->activo;
+        $area->save();
+    
+        return response()->json([
+            'message' => 'Estado de area actualizado.',
+            'id_convocatoria' => $area->id,
+            'nuevo_estado' => $area->activo
+        ]);
+    }
 }
