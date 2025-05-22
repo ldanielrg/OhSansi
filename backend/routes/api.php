@@ -67,7 +67,7 @@ Route::get('/convocatoria-areas-categorias-grados/{id_convocatoria}', [Convocato
     Route::post('/grado-crear', [GradoController::class, 'store']);
 //Departamentos/Municipios
 Route::get('/departamentos', [DepartamentoController::class, 'index']);
-Route::get('/municipios/{id_depart}', [MunicipioController::class, 'porDepartamento']);
+Route::get('/municipios/{id_departamento}', [MunicipioController::class, 'porDepartamento']);
 Route::get('/municipios', [MunicipioController::class, 'sinDepartamento']);
 //Unidades Educativas
 Route::post('/unidad-educativa', [UnidadEducativaController::class, 'store']);

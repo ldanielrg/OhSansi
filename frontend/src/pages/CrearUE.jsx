@@ -11,20 +11,19 @@ const CrearUE = () => {
   const initialForm = {
     id: null,
     nombre: '',
-    rue: '',
+    rue: null,
     departamento_id: '',
     municipio_id: ''
   };
-  
+
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [departamentos, setDepartamentos] = useState([]);
   const [municipios, setMunicipios] = useState([]);
-  //TABLA Y EDICION
-  const [unidadesEducativas, setUnidadesEducativas] = useState([]); //AGREGUE PARA LA TABLA
-  const [selectedUEs, setSelectedUEs] = useState([]); //AGREGUE PARA LA TABLA
-  const [editIndex, setEditIndex] = useState(null); //AGREGUE PARA LA TABLA
-  const [modoEdicion, setModoEdicion] = useState(false); //AGREGUE PARA LA TABLA
+  const [unidadesEducativas, setUnidadesEducativas] = useState([]);
+  const [selectedUEs, setSelectedUEs] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
+  const [modoEdicion, setModoEdicion] = useState(false);
 
   // Columnas de la tabla
   const columns = [
@@ -34,7 +33,7 @@ const CrearUE = () => {
     { name: 'Municipio', selector: row => row.municipio_nombre || '—' },
   ];
 
-    useEffect(() => {
+  useEffect(() => {
     const cargarDatos = async () => {
       try {
         const [departamentosRes, unidadesRes] = await Promise.all([
@@ -42,7 +41,16 @@ const CrearUE = () => {
           api.get('/unidades-educativas')
         ]);
         setDepartamentos(departamentosRes.data);
-        setUnidadesEducativas(unidadesRes.data);
+        // Mapear para usar nombres consistentes
+        setUnidadesEducativas(unidadesRes.data.map(ue => ({
+          id: ue.id_ue,
+          nombre: ue.nombre_ue,
+          rue: ue.rue,
+          departamento_id: ue.departamento_id,
+          municipio_id: ue.municipio_id,
+          departamento_nombre: ue.departamento_nombre,
+          municipio_nombre: ue.municipio_nombre,
+        })));
       } catch (error) {
         console.error('Error al cargar datos iniciales:', error);
       }
@@ -50,7 +58,6 @@ const CrearUE = () => {
 
     cargarDatos();
   }, []);
-
 
   const handleDepartamentoChange = async (selected) => {
     const id = selected?.value || '';
@@ -61,33 +68,40 @@ const CrearUE = () => {
       setMunicipios(res.data);
     } catch (error) {
       console.error('Error al cargar municipios:', error);
+      setMunicipios([]);
     }
   };
 
+  const handleMunicipioChange = (selected) => {
+    setForm({ ...form, municipio_id: selected?.value || '' });
+  };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setForm(prevForm => ({
+      ...prevForm,
+      [name]: name === 'rue' ? (value === '' ? null : Number(value)) : value
+    }));
   };
-  
 
   const validateForm = () => {
     const newErrors = {};
 
+    // Validar nombre
     if (!form.nombre.trim()) {
       newErrors.nombre = 'Este campo es obligatorio.';
-    } else if (!form.nombre.startsWith('Unidad Educativa')) {
-      newErrors.nombre = 'Debe comenzar con "Unidad Educativa".';
-    } else if (!/^Unidad Educativa\s[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜñÑ.,-]{1,87}$/.test(form.nombre)) {
+    } else if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜñÑ.,-]{1,87}$/.test(form.nombre)) {
       newErrors.nombre = 'Después de "Unidad Educativa", Debe Ingresar el nombre de la Unidad Educativa.';
     } else if (form.nombre.length > 100) {
       newErrors.nombre = 'Máximo 100 caracteres permitidos.';
     }
-    
 
-    if (!form.rue.trim()) {
+    // Validar rue numérico
+    if (form.rue === null || form.rue === undefined || form.rue === '') {
       newErrors.rue = 'Este campo es obligatorio.';
-    } else if (!/^\d{1,8}$/.test(form.rue)) {
-      newErrors.rue = 'Solo números, máximo 8 dígitos.';
+    } else if (!Number.isInteger(form.rue) || form.rue < 0 || form.rue.toString().length > 8) {
+      newErrors.rue = 'Solo números enteros positivos, máximo 8 dígitos.';
     }
 
     if (!form.departamento_id) {
@@ -109,19 +123,39 @@ const CrearUE = () => {
       ? `/unidad-educativa/${form.id}`
       : '/unidad-educativa';
 
+    // Preparar payload con nombres backend
+    const payload = {
+      id_ue: form.id,
+      nombre_ue: form.nombre,
+      rue: form.rue,
+      departamento_id: form.departamento_id,
+      municipio_id: form.municipio_id
+    };
+
     try {
       const res = modoEdicion
-        ? await api.put(endpoint, form)
-        : await api.post(endpoint, form);
+        ? await api.put(endpoint, payload)
+        : await api.post(endpoint, payload);
 
       const data = res.data;
 
+      // Mapear respuesta para frontend
+      const ueMapeada = {
+        id: data.id_ue,
+        nombre: data.nombre_ue,
+        rue: data.rue,
+        departamento_id: data.departamento_id,
+        municipio_id: data.municipio_id,
+        departamento_nombre: data.departamento_nombre,
+        municipio_nombre: data.municipio_nombre,
+      };
+
       if (modoEdicion) {
         const nuevasUEs = [...unidadesEducativas];
-        nuevasUEs[editIndex] = data;
+        nuevasUEs[editIndex] = ueMapeada;
         setUnidadesEducativas(nuevasUEs);
       } else {
-        setUnidadesEducativas(prev => [...prev, data]);
+        setUnidadesEducativas(prev => [...prev, ueMapeada]);
       }
 
       alert(`✅ Unidad Educativa ${modoEdicion ? 'actualizada' : 'creada'} con éxito.`);
@@ -144,8 +178,7 @@ const CrearUE = () => {
     }
   };
 
-
-  //PARA EDITAR
+  // Para editar
   const handleEditar = async () => {
     if (selectedUEs.length !== 1) {
       alert('Debes seleccionar exactamente una Unidad Educativa para editar.');
@@ -170,13 +203,13 @@ const CrearUE = () => {
       setMunicipios(res.data);
     } catch (error) {
       console.error('Error al cargar municipios para edición:', error);
+      setMunicipios([]);
     }
 
     document.getElementById('formulario-ue')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-
-  //FUNCION PARA ELIMINAR
+  // Función para eliminar
   const handleEliminar = async () => {
     if (selectedUEs.length !== 1) {
       alert('Debes seleccionar exactamente una Unidad Educativa para eliminar.');
@@ -200,17 +233,16 @@ const CrearUE = () => {
     }
   };
 
-
   const customStyles = {
     headCells: {
       style: {
-        backgroundColor: '#f0f8ff',  // color claro de fondo opcional (puedes quitarlo)
-        color: '#3498db',            // 🔵 texto azul
+        backgroundColor: '#f0f8ff',
+        color: '#3498db',
         fontWeight: 'bold',
         fontSize: '14px',
         textAlign: 'center',
-        paddingLeft: '0px',          // 🔧 elimina margen a la izquierda
-        paddingRight: '0px',         // 🔧 elimina margen a la derecha
+        paddingLeft: '0px',
+        paddingRight: '0px',
         margin: 0,
       },
     },
@@ -218,7 +250,7 @@ const CrearUE = () => {
       style: {
         backgroundColor: '#eaf4fe',
         borderBottom: '1px solid #ccc',
-        padding: 0,                 // 🔧 importante para que cubra bien el scroll
+        padding: 0,
         margin: 0,
       },
     },
@@ -229,52 +261,52 @@ const CrearUE = () => {
       },
     },
   };
-  
 
   return (
     <div className="crear-ue-container" id="formulario-ue">
       <div className="titulo-box">Crear Unidad Educativa</div>
 
       <div className="form-row">
-      <div className="form-group">
-      <label>Nombre de Unidad Educativa</label>
-      <input
-        type="text"
-        name="nombre"
-        value={form.nombre}
-        onChange={handleChange}
-        placeholder="Ej: Unidad Educativa San Pedro"
-        className={`form-input ${
-          errors.nombre
-            ? 'input-error'
-            : form.nombre.startsWith('Unidad Educativa') && form.nombre.trim()
-            ? 'input-valid'
-            : ''
-        }`}
-      />
-        {errors.nombre && <span className="error-text">{errors.nombre}</span>}
-      </div>
+        <div className="form-group">
+          <label>Nombre de Unidad Educativa</label>
+          <input
+            type="text"
+            name="nombre"
+            value={form.nombre}
+            onChange={handleChange}
+            placeholder="Ej: Unidad Educativa San Pedro"
+            className={`form-input ${
+              errors.nombre
+                ? 'input-error'
+                : form.nombre.startsWith('Unidad Educativa') && form.nombre.trim()
+                ? 'input-valid'
+                : ''
+            }`}
+          />
+          {errors.nombre && <span className="error-text">{errors.nombre}</span>}
+        </div>
 
-      <div className="form-group">
-        <label>RUE</label>
-        <input
-          type="text"
-          name="rue"
-          value={form.rue}
-          onChange={handleChange}
-          placeholder="Ej: 30302014"
-          className={`form-input ${
-          errors.rue
-            ? 'input-error'
-            : /^\d{1,8}$/.test(form.rue) && form.rue.trim()
-            ? 'input-valid'
-            : ''
-        }`}
+        <div className="form-group">
+          <label>RUE</label>
+          <input
+            type="number"
+            name="rue"
+            value={form.rue !== null && form.rue !== undefined ? form.rue : ''}
+            onChange={handleChange}
+            placeholder="Ej: 30302014"
+            min="0"
+            max="99999999"
+            className={`form-input ${
+              errors.rue
+                ? 'input-error'
+                : Number.isInteger(form.rue) && form.rue !== null
+                ? 'input-valid'
+                : ''
+            }`}
           />
           {errors.rue && <span className="error-text">{errors.rue}</span>}
         </div>
       </div>
-
 
       <div className="form-row">
         <div className="form-group select-con-espacio">
@@ -283,12 +315,13 @@ const CrearUE = () => {
             className="limitar-opciones"
             classNamePrefix="react-select"
             options={departamentos.map(dep => ({ value: dep.id, label: dep.nombre }))}
-            value={departamentos.find(dep => dep.id === form.departamento_id)
-              ? {
-                  value: form.departamento_id,
-                  label: departamentos.find(dep => dep.id === form.departamento_id)?.nombre
-                }
-              : null
+            value={
+              departamentos.find(dep => dep.id === form.departamento_id)
+                ? {
+                    value: form.departamento_id,
+                    label: departamentos.find(dep => dep.id === form.departamento_id)?.nombre
+                  }
+                : null
             }
             onChange={handleDepartamentoChange}
             placeholder="Selecciona un departamento"
@@ -302,12 +335,13 @@ const CrearUE = () => {
             className="limitar-opciones"
             classNamePrefix="react-select"
             options={municipios.map(mun => ({ value: mun.id, label: mun.nombre }))}
-            value={municipios.find(mun => mun.id === form.municipio_id)
-              ? {
-                  value: form.municipio_id,
-                  label: municipios.find(mun => mun.id === form.municipio_id)?.nombre
-                }
-              : null
+            value={
+              municipios.find(mun => mun.id === form.municipio_id)
+                ? {
+                    value: form.municipio_id,
+                    label: municipios.find(mun => mun.id === form.municipio_id)?.nombre
+                  }
+                : null
             }
             onChange={handleMunicipioChange}
             placeholder="Selecciona un municipio"
@@ -321,7 +355,6 @@ const CrearUE = () => {
         <button
           className="btn-cancelar"
           onClick={() => {
-            //setForm({ nombre: '', rue: '', departamento_id: '', municipio_id: '' });
             setForm(initialForm);
             setErrors({});
             navigate(-1);
@@ -331,31 +364,36 @@ const CrearUE = () => {
         </button>
 
         <button className="btn-guardar" onClick={handleSubmit}>
-          Añadir
+          {modoEdicion ? 'Actualizar' : 'Añadir'}
         </button>
       </div>
-    <div className="tabla-ue-box">
-      <h3 className="titulo-tabla-ue">Unidades Educativas Agregadas</h3>
+
+      <div className="tabla-ue-box">
+        <h3 className="titulo-tabla-ue">Unidades Educativas Agregadas</h3>
 
         <DataTable
           columns={columns}
           data={unidadesEducativas}
           selectableRows
-          selectableRowSingle
-          selectableRowsNoSelectAll 
+          selectableRowsSingle
+          selectableRowsNoSelectAll
           onSelectedRowsChange={({ selectedRows }) => setSelectedUEs(selectedRows)}
           pagination={false}
           responsive
           fixedHeader
-          fixedHeaderScrollHeight='300px'
+          fixedHeaderScrollHeight="300px"
           customStyles={customStyles}
         />
-   
-      <div className="form-buttons">
-        <button className="btn-editar" onClick={handleEditar}>Editar</button>
-        <button className="btn-eliminar" onClick={handleEliminar}>Eliminar</button>
+
+        <div className="form-buttons">
+          <button className="btn-editar" onClick={handleEditar}>
+            Editar
+          </button>
+          <button className="btn-eliminar" onClick={handleEliminar}>
+            Eliminar
+          </button>
+        </div>
       </div>
-    </div>
     </div>
   );
 };

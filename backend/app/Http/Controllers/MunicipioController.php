@@ -13,7 +13,7 @@ class MunicipioController extends Controller
             ->select('id_municipio as id', 'nombre_municipio as nombre')
             ->get();
         */
-        $municipios = Municipio::where('id_depart', $id_depart)
+        $municipios = Municipio::where('id_departamento_departamento', $id_depart)
             ->select('id_municipio as id', 'nombre_municipio as nombre')
             ->get();
 
