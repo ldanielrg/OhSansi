@@ -300,6 +300,7 @@ const handleConvocatoriaChangeManual = (id) => {
                   data={formularios}
                   noDataComponent='Aún no se han registrado formularios.'
                   customStyles={customStyles}
+                  responsive
                 />
               )}
             </>
