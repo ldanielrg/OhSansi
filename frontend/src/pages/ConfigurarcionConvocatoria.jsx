@@ -3,36 +3,43 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/ConfiguracionConvocatoria.css";
 import { ToastContainer, toast } from "react-toastify";
+import { BallTriangle } from "react-loader-spinner";
 
 const ConfiguracionConvocatoria = () => {
   const [convocatorias, setConvocatorias] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [loadingEstadoIds, setLoadingEstadoIds] = useState([]); // estados en carga por ID
   const navigate = useNavigate();
-
+  const [cargandoConvocatorias, setCargandoConvocatorias] = useState(false);
+  const [cargandoGlobal, setCargandoGlobal] = useState(false);
+  
   useEffect(() => {
     fetchAll();
   }, []);
 
   const fetchAll = async () => {
-    try {
-      const { data } = await api.get("/convocatorias");
-      setConvocatorias(
-        data.map((c) => ({
-          ...c,
-          fecha_inicio: c.fecha_inicio.split("T")[0],
-          fecha_final: c.fecha_final.split("T")[0],
-        }))
-      );
-    } catch {
-      toast.error("No se pudieron cargar las convocatorias.");
-    }
-  };
+  setCargandoConvocatorias(true);
+  try {
+    const { data } = await api.get("/convocatorias");
+    setConvocatorias(
+      data.map((c) => ({
+        ...c,
+        fecha_inicio: c.fecha_inicio.split("T")[0],
+        fecha_final: c.fecha_final.split("T")[0],
+      }))
+    );
+  } catch {
+    toast.error("No se pudieron cargar las convocatorias.");
+  } finally {
+    setCargandoConvocatorias(false);
+  }
+};
 
-  const handleCrear  = () => navigate("/crear-configuracion-convocatoria");
+  const handleCrear = () => navigate("/crear-configuracion-convocatoria");
   const handleEditar = () => {
-    const convocatoria = convocatorias.find(c => c.id_convocatoria === selectedId);
-    if (selectedId && convocatoria.activo) {
+    const convocatoria = convocatorias.find((c) => c.id_convocatoria === selectedId);
+    if (selectedId && convocatoria?.activo) {
       navigate(`/editar-configuracion-convocatoria/${selectedId}`);
     } else {
       toast.warn("Sólo puedes editar convocatorias activas.");
@@ -55,24 +62,80 @@ const ConfiguracionConvocatoria = () => {
 
   const toggleActivo = async (e, id) => {
     e.stopPropagation();
+    if (cargandoGlobal) return; // evita doble click mientras carga
+
+    setCargandoGlobal(true); // activa spinner global
     try {
       await api.put(`/convocatoria-estado/${id}`);
       toast.success("Estado actualizado.");
       fetchAll();
     } catch {
       toast.error("Error al cambiar estado.");
+    } finally {
+      setCargandoGlobal(false); // desactiva spinner
     }
   };
 
   return (
     <div className="config-page">
+      {cargandoGlobal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(255,255,255,0.7)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <BallTriangle
+            height={80}
+            width={80}
+            radius={5}
+            color="#003366"
+            ariaLabel="loading"
+            visible={true}
+          />
+        </div>
+      )}
       <div className="config-container">
         <div className="config-card">
           <div className="config-card-header">Convocatorias</div>
-          <div className="config-card-body">
-            {convocatorias.length === 0 ? (
-              <p>No hay convocatorias.</p>
-            ) : (
+          <div className="config-card-body" style={{ position: "relative", minHeight: "150px" }}>
+  {cargandoConvocatorias ? (
+    <div
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(255,255,255,0.85)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10,
+        borderRadius: "12px",
+      }}
+    >
+      <BallTriangle
+        height={60}
+        width={60}
+        radius={5}
+        color="#003366"
+        ariaLabel="loading"
+        visible={true}
+      />
+    </div>
+  ) : (
+    convocatorias.length === 0 ? (
+      <p>No hay convocatorias.</p>
+    ) : (
               <table className="tabla-config">
                 <thead>
                   <tr>
@@ -84,29 +147,52 @@ const ConfiguracionConvocatoria = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {convocatorias.map((c) => (
-                    <tr
-                      key={c.id_convocatoria}
-                      className={selectedId === c.id_convocatoria ? "fila-seleccionada" : ""}
-                      onClick={() => setSelectedId(c.id_convocatoria)}
-                    >
-                      <td>{c.nombre_convocatoria}</td>
-                      <td>{c.descripcion}</td>
-                      <td>{c.fecha_inicio}</td>
-                      <td>{c.fecha_final}</td>
-                      <td>
-                        <button
-                          className={`estado-badge ${c.activo ? "activo" : "inactivo"}`}
-                          onClick={(e) => toggleActivo(e, c.id_convocatoria)}
-                        >
-                          {c.activo ? "Activo" : "Inactivo"}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {convocatorias.map((c) => {
+                    const isLoading = loadingEstadoIds.includes(c.id_convocatoria);
+                    return (
+                      <tr
+                        key={c.id_convocatoria}
+                        className={selectedId === c.id_convocatoria ? "fila-seleccionada" : ""}
+                        onClick={() => setSelectedId(c.id_convocatoria)}
+                      >
+                        <td>{c.nombre_convocatoria}</td>
+                        <td>{c.descripcion}</td>
+                        <td>{c.fecha_inicio}</td>
+                        <td>{c.fecha_final}</td>
+                        <td>
+                          <button
+                            className={`estado-badge ${c.activo ? "activo" : "inactivo"} ${
+                              isLoading ? "loading" : ""
+                            }`}
+                            onClick={(e) => toggleActivo(e, c.id_convocatoria)}
+                            disabled={isLoading}
+                            style={{ position: "relative" }}
+                          >
+                            {isLoading ? (
+                              <BallTriangle
+                                height={24}
+                                width={24}
+                                radius={5}
+                                color="#fff"
+                                ariaLabel="loading"
+                                visible={true}
+                                wrapperStyle={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
+                              />
+                            ) : (
+                              c.activo ? "Activo" : "Inactivo"
+                            )}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
+    )
             )}
+              
+  
+
 
             <div className="acciones-container">
               <div className="acciones-left">

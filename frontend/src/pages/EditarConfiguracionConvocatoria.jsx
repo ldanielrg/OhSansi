@@ -3,10 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/CrearConfiguracionConvocatoria.css";
 import { ToastContainer, toast } from "react-toastify";
-
+import { BallTriangle } from "react-loader-spinner";
 export default function EditarConfiguracionConvocatoria() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [cargando, setCargando] = useState(false);
   const [form, setForm] = useState({
     nombre: "",
     descripcion: "",
@@ -16,27 +17,30 @@ export default function EditarConfiguracionConvocatoria() {
 
   useEffect(() => {
     const cargarDatos = async () => {
-      try {
-        const { data } = await api.get(`/convocatoria-detalle/${id}`);
-        const conv = data[0]; // tomas el primer elemento, de un array
+    setCargando(true);
+    try {
+      const { data } = await api.get(`/convocatoria-detalle/${id}`);
+      const conv = data[0]; 
 
-        if (conv) {
-          setForm({
-            nombre: conv.nombre_convocatoria,
-            descripcion: conv.descripcion,
-            inicio: conv.fecha_inicio?.split("T")[0] || "",
-            fin: conv.fecha_final?.split("T")[0] || "",
-          });
-        } else {
-          toast.error("No se encontró la convocatoria.");
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error("Error cargando datos.");
+      if (conv) {
+        setForm({
+          nombre: conv.nombre_convocatoria,
+          descripcion: conv.descripcion,
+          inicio: conv.fecha_inicio?.split("T")[0] || "",
+          fin: conv.fecha_final?.split("T")[0] || "",
+        });
+      } else {
+        toast.error("No se encontró la convocatoria.");
       }
-    };
-    cargarDatos();
-  }, [id]);
+    } catch (err) {
+      console.error(err);
+      toast.error("Error cargando datos.");
+    } finally {
+      setCargando(false);
+    }
+  };
+  cargarDatos();
+}, [id]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

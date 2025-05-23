@@ -158,3 +158,17 @@
   .acciones-left, .acciones-right { width: 100%; justify-content: center; }
   .btn-crear, .btn-editar, .btn-eliminar { width: 100%; }
 }
+/* Loader sobre el botón */
+.estado-badge.loading {
+  color: transparent !important;
+  pointer-events: none;
+  position: relative;
+}
+
+/* Efecto brillo al pasar el cursor */
+.estado-badge.activo:hover,
+.estado-badge.inactivo:hover {
+  box-shadow: 0 0 12px 3px rgba(0, 51, 102, 0.7);
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
