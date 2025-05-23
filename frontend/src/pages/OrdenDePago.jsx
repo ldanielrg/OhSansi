@@ -43,6 +43,15 @@ const OrdenDePago = () => {
         { name: "Id equipo", selector: (row) => row.id_equipo }
     ];
 
+    const customStyles = {
+        pagination: {
+            style: {
+            backgroundColor: '#ffff',
+            padding: '0px',
+            }
+        }
+    };
+
     useEffect(() => {
         const cargarDatos = async () => {
             if (parseInt(id) === 0) {
@@ -312,6 +321,7 @@ const OrdenDePago = () => {
                             data={rowData}
                             pagination
                             noDataComponent="No hay estudiantes registrados."
+                            customStyles={customStyles}
                             
                         />
                         <section className="seccion-botones-orden"> 
@@ -331,6 +341,7 @@ const OrdenDePago = () => {
                             value={codigoManual}
                             onChange={(e) => setCodigoManual(e.target.value)}
                             usarEvento={true}
+                            
                         />
 
                             <p>Sube la foto de tu recibo</p>
