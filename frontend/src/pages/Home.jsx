@@ -20,15 +20,14 @@ const Home = () => {
   const { roles } = useAuth();
   const esAdmin = roles?.includes("Admin");
   const location = useLocation();
-  const esDocente = roles.includes('Docente');
-  const esDirector = roles.includes('Director');
+  const esDocente = roles.includes("Docente");
+  const esDirector = roles.includes("Director");
   useEffect(() => {
     if (location.state?.showWelcomeToast) {
       toast.success("¡Bienvenido al sistema!");
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
-
 
   const handleNavigateReclamos = (e) => {
     e.preventDefault();
@@ -70,8 +69,10 @@ const Home = () => {
     e.preventDefault();
     navigate("/preguntasfrecuentes");
   };
-  
-  
+  const handleNavigateInscritosOficiales = (e) => {
+    e.preventDefault();
+    navigate("/inscritos-oficiales");
+  };
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -91,8 +92,8 @@ const Home = () => {
             <div className="col-md-6">
               <Card
                 image={imageInscripcion}
-                buttonText="Inscripciones"
-                onClick={handleNavigateInscripciones}
+                buttonText="Inscritos Oficiales"
+                onClick={handleNavigateInscritosOficiales}
               />
             </div>
             <div className="col-md-6">
@@ -166,8 +167,6 @@ const Home = () => {
                 >
                   Reclamos
                 </button>
-                
-
               </div>
             </div>
           </div>

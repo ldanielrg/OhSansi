@@ -1,43 +1,82 @@
-// src/pages/Ver.jsx
-import React from 'react';
-import '../styles/Ver.css';
+import React, { useState, useEffect } from "react";
+import api from "../api/axios"; // asumo que usas axios configurado
+import { toast } from "react-toastify";
+import "../styles/Ver.css"; // luego agregamos este CSS
 
 const Ver = () => {
+  const [convocatorias, setConvocatorias] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
+  const [expandedIds, setExpandedIds] = useState([]); // IDs convocatorias desplegadas
+
+  useEffect(() => {
+    const cargarConvocatorias = async () => {
+      try {
+        const { data } = await api.get("/convocatorias"); // endpoint para listar convocatorias
+        setConvocatorias(data);
+      } catch (error) {
+        toast.error("Error cargando convocatorias.");
+        console.error(error);
+      }
+    };
+    cargarConvocatorias();
+  }, []);
+
+  // Filtrar convocatorias según texto búsqueda (case insensitive)
+  const convocatoriasFiltradas = convocatorias.filter((conv) =>
+    conv.nombre_convocatoria.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  // Toggle para expandir/contraer detalles
+  const toggleExpand = (id) => {
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
   return (
-    <div className="ver-page">
-      <div className="ver-container">
-        <h1>Acerca de las Olimpiadas Científicas Escolares</h1>
-        <p>
-          La <strong>Olimpiada Científica Escolar</strong> es una iniciativa de la 
-          <strong> Universidad Mayor de San Simón (UMSS)</strong> destinada a despertar 
-          y fortalecer el interés por la ciencia y la tecnología en estudiantes 
-          en transición de primaria a secundaria.
-        </p>
-        <p>
-          Aprovechamos la inclinación natural de los niños por los juegos y los retos 
-          para fomentar el pensamiento científico. Así como el deporte promueve la 
-          actividad física, las Olimpiadas Cientificas Escolares busca que los estudiantes descubran su pasión 
-          por el conocimiento y construyan habilidades que trasciendan la competencia.
-        </p>
-        <h2>Áreas de competencia</h2>
-        <ul>
-          <li>Astronomía y Astrofísica</li>
-          <li>Biología</li>
-          <li>Física</li>
-          <li>Informática</li>
-          <li>Química</li>
-          <li>Geografía</li>
-          <li>Ciencias de la Vida</li>
-          <li>Matemática</li>
-        </ul>
-        <h2>Objetivos</h2>
-        <ul>
-          <li>Estimular y promover el estudio de las ciencias.</li>
-          <li>Desarrollar la creatividad y el pensamiento crítico.</li>
-          <li>Mejorar la calidad de la educación básica con recursos elaborados por investigadores.</li>
-          <li>Acercar la Universidad Mayor de San Simón a los niveles de enseñanza básica y media.</li>
-          <li>Fomentar la inclusión social a través del acceso al conocimiento científico.</li>
-        </ul>
+    <div className="ver-page container">
+      <h2 className="ver-title">Olimpiadas Científicas Escolares</h2>
+
+      <input
+        type="text"
+        placeholder="Buscar convocatoria por nombre..."
+        className="buscador-convocatoria"
+        value={busqueda}
+        onChange={(e) => setBusqueda(e.target.value)}
+      />
+
+      <div className="cards-grid">
+        {convocatoriasFiltradas.length === 0 && (
+          <p className="sin-resultados">No se encontraron convocatorias.</p>
+        )}
+
+        {convocatoriasFiltradas.map((conv) => (
+          <div key={conv.id_convocatoria} className="card-ver">
+            <h3 className="card-nombre">{conv.nombre_convocatoria}</h3>
+            <button
+              className="btn-ver-mas"
+              onClick={() => toggleExpand(conv.id_convocatoria)}
+            >
+              {expandedIds.includes(conv.id_convocatoria)
+                ? "Ver menos"
+                : "Ver más"}
+            </button>
+
+            {expandedIds.includes(conv.id_convocatoria) && (
+              <div className="card-detalles">
+                <p className="descripcion">{conv.descripcion}</p>
+                <p>
+                  <strong>Fecha inicio:</strong>{" "}
+                  {conv.fecha_inicio?.split("T")[0] || "Sin fecha"}
+                </p>
+                <p>
+                  <strong>Fecha fin:</strong>{" "}
+                  {conv.fecha_final?.split("T")[0] || "Sin fecha"}
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
