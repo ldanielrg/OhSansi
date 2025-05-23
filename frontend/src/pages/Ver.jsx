@@ -13,7 +13,8 @@ const Ver = () => {
 
   useEffect(() => {
     setCargando(true);
-    api.get("/convocatorias")
+    api
+      .get("/convocatorias")
       .then(({ data }) => setConvocatorias(data))
       .catch((err) => {
         console.error(err);
@@ -32,45 +33,74 @@ const Ver = () => {
     conv.nombre_convocatoria.toLowerCase().includes(busqueda.toLowerCase())
   );
 
+  if (cargando) {
   return (
-    <div className="inscritos-page">
-      <div className="inscritos-container">
-        <h2 className="inscritos-header">Olimpiadas Científicas Escolares</h2>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "60vh",
+      }}
+    >
+      <BallTriangle
+        height={100}
+        width={100}
+        radius={5}
+        color="#003366"
+        ariaLabel="loading"
+        visible={true}
+      />
+    </div>
+  );
+}
 
-        <div className="search-container">
-          <FaSearch className="search-icon" />
-          <input
-            type="text"
-            placeholder="Buscar convocatoria por nombre..."
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value.slice(0, 70))}
-          />
-        </div>
+  return (
+  <div className="inscritos-page">
+    <div className="inscritos-container">
+      <h2 className="inscritos-header">Olimpiadas Científicas Escolares</h2>
 
-        {cargando ? (
-          <div className="spinner-wrapper">
-            <BallTriangle
-              height={80}
-              width={80}
-              radius={5}
-              color="#003366"
-              ariaLabel="loading"
-              visible={true}
-            />
-          </div>
-        ) : convocatoriasFiltradas.length === 0 ? (
-          <p className="sin-resultados">No se encontraron convocatorias.</p>
-        ) : (
-          <div className="cards-grid">
-            {convocatoriasFiltradas.map((conv) => (
-              <div key={conv.id_convocatoria} className="card-ver">
-                <h3 className="card-nombre">{conv.nombre_convocatoria}</h3>
+      <div className="search-container">
+        <FaSearch className="search-icon" />
+        <input
+          type="text"
+          placeholder="Buscar convocatoria por nombre..."
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value.slice(0, 70))}
+        />
+      </div>
+
+      {convocatoriasFiltradas.length === 0 && !cargando && (
+        <p className="sin-resultados">No se encontraron convocatorias.</p>
+      )}
+
+      <div className="cards-grid">
+        {convocatoriasFiltradas.map((conv) => (
+          <div key={conv.id_convocatoria} className="card-ver">
+            <h3 className="card-nombre">{conv.nombre_convocatoria}</h3>
+
+            {cargando ? (
+              <div className="card-loader">
+                <BallTriangle
+                  height={60}
+                  width={60}
+                  radius={5}
+                  color="#003366"
+                  ariaLabel="loading"
+                  visible={true}
+                />
+              </div>
+            ) : (
+              <>
                 <button
                   className="btn-ver-mas"
                   onClick={() => toggleExpand(conv.id_convocatoria)}
                 >
-                  {expandedIds.includes(conv.id_convocatoria) ? "Ver menos" : "Ver más"}
+                  {expandedIds.includes(conv.id_convocatoria)
+                    ? "Ver menos"
+                    : "Ver más"}
                 </button>
+
                 {expandedIds.includes(conv.id_convocatoria) && (
                   <div className="card-detalles">
                     <p className="descripcion">{conv.descripcion}</p>
@@ -84,13 +114,15 @@ const Ver = () => {
                     </p>
                   </div>
                 )}
-              </div>
-            ))}
+              </>
+            )}
           </div>
-        )}
+        ))}
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Ver;

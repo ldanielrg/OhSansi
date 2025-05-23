@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Caja from "../components/Caja";
 import "../styles/login.css";
-
+import { BallTriangle } from "react-loader-spinner";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import RegistroForm from "../components/RegistroForm";
@@ -14,12 +14,17 @@ import "react-toastify/dist/ReactToastify.css";
 const Login2 = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const location = useLocation();
+  const [cargando, setCargando] = useState(false);
+
   const handleLogin = async (e) => {
     e.preventDefault();
+    setCargando(true); // activar loader
     const res = await login(email, password);
+    setCargando(false); // desactivar loader
 
     if (res.success) {
       navigate("/", { state: { showWelcomeToast: true } });
@@ -64,7 +69,7 @@ const Login2 = () => {
         />
       </div>
       <div className="d-grid mt-4">
-        <button type="submit" className="btn btn-primary btn-lg">
+        <button type="submit" className="btn btn-primary btn-lg" disabled={cargando}>
           Ingresar
         </button>
       </div>
@@ -83,6 +88,34 @@ const Login2 = () => {
         draggable
         theme="light"
       />
+
+      {/* Overlay loader que bloquea toda la pantalla */}
+      {cargando && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(255,255,255,0.6)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <BallTriangle
+            height={100}
+            width={100}
+            radius={5}
+            color="#003366"
+            ariaLabel="loading"
+            visible={true}
+          />
+        </div>
+      )}
+
       <div className="login-page container d-flex align-items-center justify-content-center min-vh-100">
         <div className="row w-100 justify-content-center">
           <div className="col-lg-5 col-md-7 col-sm-9 col-11">
