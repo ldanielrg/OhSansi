@@ -542,6 +542,7 @@ const handleEditar = async () => {
           area,
           categoria,
           email,
+          team,
         ] = fila;
 
         let fechaNac = fechaNacOriginal;
@@ -552,7 +553,7 @@ const handleEditar = async () => {
         }
 
         if (
-          !nombre || !apellido || !ci || !fechaNac || !rude || !area || !categoria
+          !nombre || !apellido || !ci || !fechaNac || !rude || !area || !categoria || !team
         ) {
           return toast.error(`Error en fila ${i + 14}: Algún campo vacío.`);
         }
@@ -560,12 +561,13 @@ const handleEditar = async () => {
         nuevosEstudiantes.push({
           nombre,
           apellido,
-          ci: ci.toString(),
+          ci: ci,
           fechaNac,
-          rude: rude.toString(),
+          rude: rude,
           nombre_area: area,
           nombre_categoria: categoria,
           email: email || "",
+          team: team,
         });
       }
 
@@ -716,7 +718,7 @@ const actualizarFormulario = (index, campo, valor) => {
         </div>
         <div className="contenedor-archivo-excel">
           <a
-            href="/public/plantillas/FormatoParaSubirLista.xlsx"
+            href="/plantillas/FormatoParaSubirLista.xlsx"
             download="FormatoParaSubirLista.xlsx"
             className="boton-descargar-excel"
           >
