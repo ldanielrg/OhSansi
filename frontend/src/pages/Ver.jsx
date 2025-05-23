@@ -1,43 +1,93 @@
-// src/pages/Ver.jsx
-import React from 'react';
-import '../styles/Ver.css';
+import React, { useState, useEffect } from "react";
+import api from "../api/axios";
+import { BallTriangle } from "react-loader-spinner";
+import { FaSearch } from "react-icons/fa";
+import "../styles/Ver.css";
+import { toast } from "react-toastify";
 
 const Ver = () => {
+  const [convocatorias, setConvocatorias] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
+  const [expandedIds, setExpandedIds] = useState([]);
+  const [cargando, setCargando] = useState(false);
+
+  useEffect(() => {
+    setCargando(true);
+    api.get("/convocatorias")
+      .then(({ data }) => setConvocatorias(data))
+      .catch((err) => {
+        console.error(err);
+        toast.error("Error cargando convocatorias.");
+      })
+      .finally(() => setCargando(false));
+  }, []);
+
+  const toggleExpand = (id) => {
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const convocatoriasFiltradas = convocatorias.filter((conv) =>
+    conv.nombre_convocatoria.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   return (
-    <div className="ver-page">
-      <div className="ver-container">
-        <h1>Acerca de las Olimpiadas Científicas Escolares</h1>
-        <p>
-          La <strong>Olimpiada Científica Escolar</strong> es una iniciativa de la 
-          <strong> Universidad Mayor de San Simón (UMSS)</strong> destinada a despertar 
-          y fortalecer el interés por la ciencia y la tecnología en estudiantes 
-          en transición de primaria a secundaria.
-        </p>
-        <p>
-          Aprovechamos la inclinación natural de los niños por los juegos y los retos 
-          para fomentar el pensamiento científico. Así como el deporte promueve la 
-          actividad física, las Olimpiadas Cientificas Escolares busca que los estudiantes descubran su pasión 
-          por el conocimiento y construyan habilidades que trasciendan la competencia.
-        </p>
-        <h2>Áreas de competencia</h2>
-        <ul>
-          <li>Astronomía y Astrofísica</li>
-          <li>Biología</li>
-          <li>Física</li>
-          <li>Informática</li>
-          <li>Química</li>
-          <li>Geografía</li>
-          <li>Ciencias de la Vida</li>
-          <li>Matemática</li>
-        </ul>
-        <h2>Objetivos</h2>
-        <ul>
-          <li>Estimular y promover el estudio de las ciencias.</li>
-          <li>Desarrollar la creatividad y el pensamiento crítico.</li>
-          <li>Mejorar la calidad de la educación básica con recursos elaborados por investigadores.</li>
-          <li>Acercar la Universidad Mayor de San Simón a los niveles de enseñanza básica y media.</li>
-          <li>Fomentar la inclusión social a través del acceso al conocimiento científico.</li>
-        </ul>
+    <div className="inscritos-page">
+      <div className="inscritos-container">
+        <h2 className="inscritos-header">Olimpiadas Científicas Escolares</h2>
+
+        <div className="search-container">
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Buscar convocatoria por nombre..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value.slice(0, 70))}
+          />
+        </div>
+
+        {cargando ? (
+          <div className="spinner-wrapper">
+            <BallTriangle
+              height={80}
+              width={80}
+              radius={5}
+              color="#003366"
+              ariaLabel="loading"
+              visible={true}
+            />
+          </div>
+        ) : convocatoriasFiltradas.length === 0 ? (
+          <p className="sin-resultados">No se encontraron convocatorias.</p>
+        ) : (
+          <div className="cards-grid">
+            {convocatoriasFiltradas.map((conv) => (
+              <div key={conv.id_convocatoria} className="card-ver">
+                <h3 className="card-nombre">{conv.nombre_convocatoria}</h3>
+                <button
+                  className="btn-ver-mas"
+                  onClick={() => toggleExpand(conv.id_convocatoria)}
+                >
+                  {expandedIds.includes(conv.id_convocatoria) ? "Ver menos" : "Ver más"}
+                </button>
+                {expandedIds.includes(conv.id_convocatoria) && (
+                  <div className="card-detalles">
+                    <p className="descripcion">{conv.descripcion}</p>
+                    <p>
+                      <strong>Fecha inicio:</strong>{" "}
+                      {conv.fecha_inicio?.split("T")[0] || "Sin fecha"}
+                    </p>
+                    <p>
+                      <strong>Fecha fin:</strong>{" "}
+                      {conv.fecha_final?.split("T")[0] || "Sin fecha"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

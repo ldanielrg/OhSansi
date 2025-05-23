@@ -2,6 +2,8 @@
 import React from "react";
 import "../styles/Home.css";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Card from "../components/Card";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css"; // Importa estilo por defecto
@@ -10,15 +12,22 @@ import imageOlimpics from "/src/assets/hd/olimpiadas.jpg";
 import imageInscripcion from "/src/assets/hd/inscripciones.jpg";
 import imageDiscipline from "/src/assets/hd/disciplinas.jpg";
 import imageEvents from "/src/assets/hd/eventos.jpg";
+import { toast } from "react-toastify";
 
 const Home = () => {
   // Hook para navegar
   const navigate = useNavigate();
   const { roles } = useAuth();
   const esAdmin = roles?.includes("Admin");
-  const esDocente = roles.includes('Docente');
-  const esDirector = roles.includes('Director');
-
+  const location = useLocation();
+  const esDocente = roles.includes("Docente");
+  const esDirector = roles.includes("Director");
+  useEffect(() => {
+    if (location.state?.showWelcomeToast) {
+      toast.success("¡Bienvenido al sistema!");
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleNavigateReclamos = (e) => {
     e.preventDefault();
@@ -60,35 +69,10 @@ const Home = () => {
     e.preventDefault();
     navigate("/preguntasfrecuentes");
   };
-  const handleNavigateConfiguracionConvocatoria = (e) => {
-    e.preventDefault();
-    navigate("/configuracion-convocatoria");
-  };
-  const handleNavigateConfiguracionEventos = (e) => {
-    e.preventDefault();
-    navigate("/configuracioneventos");
-  };
-  const handleNavigateCrearUE = (e) => {
-    e.preventDefault();
-    navigate("/crear-ue");
-  };
-  const handleNavigateCrearCuentas = (e) => {
-    e.preventDefault();
-    navigate("/crear-cuentas");
-  };
-  const handleNavigateConfiguracionCuentas = (e) => {
-    e.preventDefault();
-    navigate("/configuracion-cuentas");
-  };
   const handleNavigateInscritosOficiales = (e) => {
     e.preventDefault();
     navigate("/inscritos-oficiales");
   };
-  const handleNavigateGestionComprobantes = (e) => {
-    e.preventDefault();
-    navigate("/gestion-comprobantes");
-  };
-  handleNavigateConfiguracionCuentas
   return (
     <div className="home-container container-fluid">
       <div className="row">
@@ -108,8 +92,8 @@ const Home = () => {
             <div className="col-md-6">
               <Card
                 image={imageInscripcion}
-                buttonText="Inscripciones"
-                onClick={handleNavigateInscripciones}
+                buttonText="Inscritos Oficiales"
+                onClick={handleNavigateInscritosOficiales}
               />
             </div>
             <div className="col-md-6">
@@ -183,67 +167,6 @@ const Home = () => {
                 >
                   Reclamos
                 </button>
-                {(esAdmin || esDocente || esDirector) && (
-                  <>
-                  <h5 className="title-bar">Logueado</h5>
-                  {esAdmin && (
-                    <button
-                      className="btn vertical-btn btn-help"
-                      onClick={handleNavigateCrearUE}
-                    >
-                      Crear UE
-                    </button>
-                  )}
-                  {(esAdmin || esDirector) && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateCrearCuentas}
-                  >
-                    Crear Cuentas
-                  </button>
-                  )}
-                  
-                  {esAdmin && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateConfiguracionConvocatoria}
-                    >
-                      Configuración Convocatoria
-                    </button>
-                  )}
-                  {esAdmin && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateEventos}
-                    >
-                      Crear Eventos
-                    </button>
-                  )}
-                  {esAdmin && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateConfiguracionCuentas}
-                    >
-                      Configuración Cuentas
-                    </button>
-                  )}
-                  <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateInscritosOficiales}
-                  >
-                    Inscritos Oficiales
-                  </button>
-                  {esAdmin && (
-                    <button
-                    className="btn vertical-btn btn-help"
-                    onClick={handleNavigateGestionComprobantes}
-                  >
-                    Gestion de comprobantes
-                  </button>
-                  )}
-                </>
-                )}
-
               </div>
             </div>
           </div>
