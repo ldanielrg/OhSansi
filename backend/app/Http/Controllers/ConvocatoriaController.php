@@ -111,6 +111,7 @@ class ConvocatoriaController extends Controller
             $datosAntes
         );
 
+        
         return response()->json(null, 204);
     }
 
@@ -165,7 +166,7 @@ class ConvocatoriaController extends Controller
                 'area.nombre_area as nombre_area',
                 'categoria.nombre_categoria as nombre_categoria',
                 'grado_ini.nombre_grado as nombre_grado_ini',
-                'grado_fin.nombre_grado as nombre_grado_fin'
+                'grado_fin.nombre_grado as nombre_grado_fin',
             )
             ->get();
 

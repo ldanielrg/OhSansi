@@ -30,14 +30,14 @@ class UnidadEducativaController extends Controller
     public function store(Request $request){
         // Validación de campos
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'rue' => 'required|string|max:100',
+            'nombre_ue' => 'required|string|max:255',
+            'rue' => 'required|max:100',
             'departamento_id' => 'required|integer',
             'municipio_id' => 'required|integer',
         ]);
 
         // Verificar si ya existe un colegio con ese RUE
-        $existe = UnidadEducativa::where('rue_ue', $request->rue)->exists();
+        $existe = UnidadEducativa::where('rue', $request->rue)->exists();
 
         if ($existe) {
             return response()->json([
@@ -47,23 +47,34 @@ class UnidadEducativaController extends Controller
 
         // Crear el nuevo colegio, INGRESANDO A LA BD
         $nuevaUE = UnidadEducativa::create([
-            'nombre_ue' => $request->nombre,
+            'nombre_ue' => $request->nombre_ue,
             'rue' => $request->rue,
             'id_departamento' => $request->departamento_id,
             'id_municipio' => $request->municipio_id
         ]);
 
-        return response()->json([
-            'message' => 'Unidad Educativa registrada exitosamente.',
-            'data' => $nuevaUE
-        ], 201); // 201 Created
+        // Cargar relaciones para devolver nombres en la respuesta
+        $nuevaUE->load(['departamento', 'municipio']);
+
+        // Mapear igual que en index para consistencia
+        $resultado = [
+            'id_ue' => $nuevaUE->id_ue,
+            'nombre_ue' => $nuevaUE->nombre_ue,
+            'rue' => $nuevaUE->rue,
+            'departamento_id' => $nuevaUE->id_departamento,
+            'departamento_nombre' => $nuevaUE->departamento->nombre_departamento ?? '—',
+            'municipio_id' => $nuevaUE->id_municipio,
+            'municipio_nombre' => $nuevaUE->municipio->nombre_municipio ?? '—',
+        ];
+
+        return response()->json($resultado, 201); // 201 Created
     }
 
     // EDITAR/ACTUALIZACION DE UE
     public function update(Request $request, $id){
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'rue' => 'required|string|max:100',
+            'nombre_ue' => 'required|string|max:255',
+            'rue' => 'required|max:100',
             'departamento_id' => 'required|integer',
             'municipio_id' => 'required|integer',
         ]);
@@ -71,13 +82,27 @@ class UnidadEducativaController extends Controller
         $ue = UnidadEducativa::findOrFail($id);
 
         $ue->update([
-            'nombre_ue' => $request->nombre,
+            'nombre_ue' => $request->nombre_ue,
             'rue' => $request->rue,
             'id_departamento' => $request->departamento_id,
             'id_municipio' => $request->municipio_id
         ]);
 
-        return response()->json($ue); // Devuelve la UE actualizada
+        // Cargar relaciones para devolver nombres en la respuesta
+        $ue->load(['departamento', 'municipio']);
+
+        // Mapear igual que en index para consistencia
+        $resultado = [
+            'id_ue' => $ue->id_ue,
+            'nombre_ue' => $ue->nombre_ue,
+            'rue' => $ue->rue,
+            'departamento_id' => $ue->id_departamento,
+            'departamento_nombre' => $ue->departamento->nombre_departamento ?? '—',
+            'municipio_id' => $ue->id_municipio,
+            'municipio_nombre' => $ue->municipio->nombre_municipio ?? '—',
+        ];
+
+        return response()->json($resultado); // Devuelve la UE actualizada
     }
 
     // ELIMINAR UNIDAD EDUCATIVA

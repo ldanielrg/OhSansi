@@ -1,136 +1,98 @@
-// src/pages/Disciplinas.jsx
-import React from "react";
-import Card from "../components/Card";
-import "../styles/Disciplinas.css";
-
-const disciplinas = [
-  { id: 1, title: "Astronomía", img: "/images/astronomia.jpg" },
-  { id: 2, title: "Biología", img: "/images/biologia.jpg" },
-  { id: 3, title: "Física", img: "/images/fisica.jpg" },
-  { id: 4, title: "Informática", img: "/images/informatica.jpg" },
-  { id: 5, title: "Química", img: "/images/quimica.jpg" },
-  { id: 6, title: "Geografía", img: "/images/geografia.jpg" },
-  { id: 7, title: "Ciencias de la Vida", img: "/images/cienciasvida.jpg" },
-  { id: 8, title: "Matemática", img: "/images/matematica.jpg" },
-];
+import React, { useState, useEffect } from "react";
+import api from "../api/axios";
+import DataTable from "react-data-table-component";
+import { BallTriangle } from "react-loader-spinner";
+import "../styles/InscritosOficiales.css";
 
 const Disciplinas = () => {
+  const [convocatorias, setConvocatorias] = useState([]);
+  const [idConv, setIdConv] = useState("");
+  const [data, setData] = useState([]);
+  const [cargando, setCargando] = useState(false);
+
+  useEffect(() => {
+    api.get("/convocatorias")
+      .then((res) => setConvocatorias(res.data))
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (!idConv) {
+      setData([]);
+      return;
+    }
+
+    setCargando(true);
+    api.get(`/disciplinas/${idConv}`) // Ajusta el endpoint según tu API
+      .then((res) => {
+        setData(res.data || []);
+      })
+      .catch((err) => {
+        console.error(err);
+        setData([]);
+      })
+      .finally(() => setCargando(false));
+  }, [idConv]);
+
+  const columns = [
+    { name: "Área", selector: (row) => row.area, sortable: true },
+    { name: "Categoría", selector: (row) => row.categoria, sortable: true },
+    { name: "Grados", selector: (row) => row.grados, sortable: true },
+    { name: "Participantes", selector: (row) => row.participantes, sortable: true },
+    { name: "Precio", selector: (row) => row.precio, sortable: true, right: true },
+  ];
+
   return (
-    <div className="disciplinas-page">
-      <h1 className="disciplinas-title">Olimpiadas Científicas Escolares</h1>
-      <div className="row row-cols-1 row-cols-md-3 g-4">
-        <div className="col-md-4">
-          <Card
-            image="/src/assets/hd/fondofisica.jpg"
-            description=""
-            buttonText="Física"
-            buttonIcon={
-              <img
-                src="/src/assets/hd/fisica.png"
-                alt="icon"
-                className="btn-icon"
-              />
-            }
-          />
+    <div className="inscritos-page">
+      <div className="inscritos-container">
+        <h2 className="inscritos-header">Disciplinas por Convocatoria</h2>
+
+        <div className="selector-conv">
+          <select
+            className="form-select"
+            value={idConv}
+            onChange={(e) => setIdConv(e.target.value)}
+          >
+            <option value="">-- Selecciona convocatoria --</option>
+            {convocatorias.map((c) => (
+              <option key={c.id_convocatoria} value={c.id_convocatoria}>
+                {c.nombre_convocatoria}
+              </option>
+            ))}
+          </select>
         </div>
-        <div className="col-md-4">
-          <Card
-            image="/src/assets/hd/fondobiologia.jpg"
-            description=""
-            buttonText="Biología"
-            buttonIcon={
-              <img
-                src="/src/assets/hd/Biologia.png"
-                alt="icon"
-                className="btn-icon"
-              />
-            }
+
+        {cargando ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "60vh",
+            }}
+          >
+            <BallTriangle
+              height={100}
+              width={100}
+              radius={5}
+              color="#003366"
+              ariaLabel="ball-triangle-loading"
+              visible={true}
+            />
+          </div>
+        ) : (
+          <DataTable
+            className="tabla-inscritos"
+            columns={columns}
+            data={data}
+            pagination
+            paginationRowsPerPageOptions={[10, 25, 50]}
+            highlightOnHover
+            pointerOnHover
+            persistTableHead
+            noDataComponent="No hay datos para mostrar"
           />
-        </div>
-        <div className="col-md-4">
-          <Card
-            image="/src/assets/hd/fondomatematica.jpg"
-            description=""
-            buttonText="Matemática"
-            buttonIcon={
-              <img
-                src="/src/assets/hd/matematica.png"
-                alt="icon"
-                className="btn-icon"
-              />
-            }
-          />
-        </div>
-        <div className="col-md-4">
-          <Card
-            image="/src/assets/hd/fondoquimica.jpg"
-            description=""
-            buttonText="Química"
-            buttonIcon={
-              <img
-                src="/src/assets/hd/Quimica.png"
-                alt="icon"
-                className="btn-icon"
-              />
-            }
-          />
-        </div>
-        <div className="col-md-4">
-          <Card
-            image="/src/assets/hd/fondoinformatica.jpg"
-            description=""
-            buttonText="Informática"
-            buttonIcon={
-              <img
-                src="/src/assets/hd/informatica.png"
-                alt="icon"
-                className="btn-icon"
-              />
-            }
-          />
-        </div>
-        <div className="col-md-4">
-          <Card
-            image="/src/assets/hd/fondoastrofis.jpg"
-            description=""
-            buttonText="Astronomía y Astrofísica"
-            buttonIcon={
-              <img
-                src="/src/assets/hd/astro.png"
-                alt="icon"
-                className="btn-icon"
-              />
-            }
-          />
-        </div>
-        <div className="col-md-4">
-          <Card
-            image="/src/assets/hd/fondogeografia.jpg"
-            description=""
-            buttonText="Geografía"
-            buttonIcon={
-              <img
-                src="/src/assets/hd/geografia.png"
-                alt="icon"
-                className="btn-icon"
-              />
-            }
-          />
-        </div>
-        <div className="col-md-4">
-          <Card
-            image="/src/assets/hd/fondoambiente.jpg"
-            description=""
-            buttonText="Medio Ambiente"
-            buttonIcon={
-              <img
-                src="/src/assets/hd/ambiente.png"
-                alt="icon"
-                className="btn-icon"
-              />
-            }
-          />
-        </div>
+        )}
       </div>
     </div>
   );

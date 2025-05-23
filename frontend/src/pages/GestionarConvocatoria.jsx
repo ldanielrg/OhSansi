@@ -173,40 +173,35 @@ export default function GestionarConvocatoria() {
 
   const handleAssignAreaCat = async () => {
     if (!selArea || !selCat || !precio || !participantes) {
-      return toast.warn("Por favor completa todos los campos.");
+      alert("Por favor completa todos los campos.");
+      return;
     }
 
-    const payload = {
-      id_area: Number(selArea),
-      id_categoria: Number(selCat),
-      precio: parseFloat(precio),
-      nro_participantes:
-        participantes === "Individual" ? 1 :
-        participantes === "Duo" ? 2 :
-        participantes === "Trio" ? 3 :
-        participantes === "Cuarteto" ? 4 : 0,
+    const datos = {
+      id_area: selArea,
+      id_categoria: selCat,
+      precio: precio,
+      participantes: participantes,
     };
-
+    if (!selArea || !selCat) return toast.warn("Selecciona área y categoría.");
     try {
-      await api.post('/asignar-area-categoria', payload);
-      toast.success("Área asignada a categoría correctamente.");
+      await api.post(`/asignar-area-categoria`, {
+        id_area: Number(selArea),
+        id_categoria: Number(selCat),
+        precio: 0,
+        activo: true,
+      });
+      toast.success("Área asignada a categoría");
       loadAll();
-      // Limpia campos
-      setPrecio("");
-      setParticipantes("");
     } catch (err) {
-      if (err.response?.status === 422) {
-        console.error("Errores de validación:", err.response.data.errors);
-        toast.error("Campos inválidos. Revisa los datos ingresados.");
-      } else if (err.response?.status === 409) {
+      if (err.response?.status === 409) {
         toast.warn("Ya existe esa asignación.");
       } else {
         console.error(err);
-        toast.error("Error asignando área→categoría.");
+        toast.error("Error asignando área→categoría");
       }
     }
   };
-
 
   const handleAssignGradosCat = async () => {
     if (!selCat || !selGrIni)
@@ -493,6 +488,8 @@ export default function GestionarConvocatoria() {
                     <th>Área</th>
                     <th>Categoría</th>
                     <th>Grados</th>
+                    <th>Precio</th> {/* Nueva columna */}
+                    <th>Participantes</th> {/* Nueva columna */}
                     <th>Limpiar</th>
                   </tr>
                 </thead>
@@ -508,9 +505,8 @@ export default function GestionarConvocatoria() {
                           setSelGrFin(
                             c.grado_final_id != null
                               ? String(c.grado_final_id)
-                              : String(c.grado_inicial_id) // si no hay grado_final, usamos el inicial
+                              : String(c.grado_inicial_id)
                           );
-                          // guardamos la selección para el resaltado
                           setSelectedAssign({
                             area: a.id_area,
                             categoria: c.id_categoria,
@@ -532,6 +528,8 @@ export default function GestionarConvocatoria() {
                             ? `${c.grado_inicial_nombre} – ${c.grado_final_nombre}`
                             : c.grado_inicial_nombre}
                         </td>
+                        <td>100</td> {/* Precio estático */}
+                        <td>Individual</td> {/* Participantes estático */}
                         <td>
                           <button
                             onClick={() =>

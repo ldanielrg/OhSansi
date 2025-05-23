@@ -1,30 +1,119 @@
-/* src/styles/Ver.css*/
+/* Estilos Ver.jsx */
+
 .ver-page {
-  padding: 40px 20px;
-  background-color: #f0f4f8;
+  padding: 2rem 1rem;
   min-height: 100vh;
+  background-color: #f9f9f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.ver-container {
-  max-width: 800px;
-  margin: 0 auto;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 30px;
-}
-.ver-container h1,
-.ver-container h2 {
+
+.ver-title {
+  text-align: center;
+  font-size: 2rem;
   color: #003366;
-  margin-bottom: 16px;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
 }
-.ver-container p,
-.ver-container li {
-  color: #333333;
-  line-height: 1.6;
-  margin-bottom: 12px;
+
+.buscador-convocatoria {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 2rem auto;
+  padding: 10px 15px;
+  border-radius: 12px;
+  border: 2px solid #003366;
+  font-size: 1rem;
+  color: #003366;
 }
-.ver-container ul {
-  list-style-type: disc;
-  padding-left: 20px;
-  margin-bottom: 20px;
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Card */
+.card-ver {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.card-ver:hover {
+  box-shadow: 3px 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.card-nombre {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #003366;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.btn-ver-mas {
+  background-color: #003366;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  margin-bottom: 1rem;
+  width: 120px;
+}
+
+.btn-ver-mas:hover {
+  background-color: #001d40;
+  
+}
+
+.card-detalles {
+  width: 100%;
+  color: #003366;
+  font-size: 1rem;
+  border-top: 1px solid #ccc;
+  padding-top: 1rem;
+  text-align: left;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.descripcion {
+  margin-bottom: 0.8rem;
+}
+
+/* Mensaje sin resultados */
+.sin-resultados {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #777;
+  grid-column: 1/-1; /* ocupa toda la fila */
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .btn-ver-mas {
+    width: 100%;
+  }
+  .card-ver {
+    padding: 1rem;
+  }
 }
