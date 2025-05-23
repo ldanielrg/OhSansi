@@ -24,6 +24,16 @@ class CategoriaController extends Controller{
         return response()->json($categorias);
     }
 
+    public function obtenerCategoriasPorConvocatoriaS($id){
+
+            $categorias = Categorium::where('id_convocatoria_convocatoria', $id)
+                ->where('activo', true)
+                ->with(['gradoInicial', 'gradoFinal'])
+                ->get();
+
+            return response()->json($categorias);
+    }
+
     public function porArea($id_area)    {
         $resultado = AreaTieneCategorium::with('categorium')
         ->where('id_area_area', $id_area)

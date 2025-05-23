@@ -267,7 +267,8 @@ class InscripcionController extends Controller{
                             'apellido' => $estudiante->apellido,
                             'email' => $estudiante->email,
                             'ci' => $estudiante->ci,
-                            'fecha_nac' => $estudiante->fecha_nacimiento,
+                            //'fecha_nac' => $estudiante->fecha_nacimiento,
+                             'fecha_nac' => $estudiante->fecha_nacimiento ? $estudiante->fecha_nacimiento->format('Y-m-d') : null,
                             'rude' => $estudiante->rude,
                             'id_area' => $relacion->id_area_area,
                             'nombre_area' => optional($relacion->area)->nombre_area ?? '',
@@ -586,7 +587,10 @@ class InscripcionController extends Controller{
                 'apellido' => $inscripcion->estudiante->apellido ?? '',
                 'email' => $inscripcion->estudiante->email ?? '',
                 'ci' => $inscripcion->estudiante->ci ?? '',
-                'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento ?? '',
+                //'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento ?? '',
+                'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento
+                ? $inscripcion->estudiante->fecha_nacimiento->format('Y-m-d')
+                : '',
                 'rude' => $inscripcion->estudiante->rude ?? '',
 
                 'idAarea' => $inscrito->area->id_area ?? '',
