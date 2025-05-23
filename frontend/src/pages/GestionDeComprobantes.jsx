@@ -257,14 +257,17 @@ const GestionDeComprobantes = () => {
   return (
     <div className="contenedor-gestion-comprobantes">
       <Caja>
-        <h2>Gestión de Comprobantes (Pendientes)</h2>
-        <DataTable
-          columns={columnas}
-          data={comprobantes}
-          pagination
-          highlightOnHover
-          noDataComponent="No hay comprobantes pendientes."
-        />
+        <div className="contenedor-gestion-comprobantes-div">
+        <h2>Gestión de Comprobantes</h2>
+          <DataTable
+            columns={columnas}
+            data={comprobantes}
+            pagination
+            highlightOnHover
+            noDataComponent="No hay comprobantes pendientes."
+            responsive
+          />
+        </div>
       </Caja>
     </div>
   );
