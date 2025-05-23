@@ -41,13 +41,18 @@ class ComprobanteController extends Controller
         DB::beginTransaction();
 
         try {
-            // Guardar imagen en disco
+            // Guardar imagen en carpeta public/comprobantes
             $imagen = $request->file('imagen');
             $filename = 'comprobante_' . time() . '.' . $imagen->getClientOriginalExtension();
-            //$path = $imagen->storeAs('public/comprobantes', $filename);
-            $path = $imagen->storeAs('comprobantes', $filename); // sin "public/"
-            //$rutaPublica = Storage::url($path); // Genera: /storage/comprobantes/...
-            $rutaPublica = '../../comprobantes/' . $filename;
+
+            $destinationPath = public_path('comprobantes');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            $imagen->move($destinationPath, $filename);
+
+            $rutaPublica = '/comprobantes/' . $filename;
 
             // Crear el comprobante con estado = false
             $comprobante = Comprobante::create([
@@ -96,6 +101,7 @@ class ComprobanteController extends Controller
         }
     }
 
+
     public function verificarCodigo($codigo)
     {
         $comprobante = Comprobante::where('codigo', $codigo)
@@ -110,16 +116,18 @@ class ComprobanteController extends Controller
 
     // ComprobanteController.php
     public function comprobantesPendientes()
-{
-    $pendientes = Comprobante::where('estado', false)->get();
+    {
+        $pendientes = Comprobante::where('estado', false)->get();
 
-    foreach ($pendientes as $c) {
-         Log::info("Comprobante pendiente:", $c->toArray());
-        $c->imagen = asset($c->imagen); // esto convierte '/storage/...' en 'http://localhost:8000/storage/...'
+        foreach ($pendientes as $c) {
+            Log::info("Comprobante pendiente:", $c->toArray());
+            // Convierte '/comprobantes/nombre.jpg' a 'http://tu-dominio.com/comprobantes/nombre.jpg'
+            $c->imagen = asset($c->imagen);
+        }
+
+        return response()->json($pendientes);
     }
 
-    return response()->json($pendientes);
-}
 
     public function actualizarEstado($id, Request $request)
     {
