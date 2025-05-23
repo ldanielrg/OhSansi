@@ -53,6 +53,7 @@ Route::get('/convocatoria-areas-categorias-grados/{id_convocatoria}', [Convocato
    
     //Para CRUD Categorias
     Route::get('/categorias', [CategoriaController::class, 'obtenerCategoriasPorConvocatoria']);
+    Route::get('/categoriasC/{id_convocatoria}', [CategoriaController::class, 'obtenerCategoriasPorConvocatoriaS']);
     Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
     Route::get('/categorias-grados/{id_convocatoria}', [CategoriaController::class, 'categoriasConGradosPorConvocatoria']);//Obtiene Categorias y Grados "todos"
     //Route::delete('/categoria-eliminar/{id_categoria}', [CategoriaController::class, 'destroy']);
