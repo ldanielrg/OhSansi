@@ -1,69 +1,147 @@
-/* src/styles/Disciplinas.css */
+/* src/styles/Disciplinas.css (basado en InscritosOficiales.css) */
 
-.disciplinas-page {
-    padding: 40px 20px;
-    background-color: #ffffff;
-    min-height: 100vh;
-  }
-  
-  .disciplinas-title {
-    text-align: center;
-    color: #003366;
-    margin-bottom: 32px;
-  }
-  
-  /* Grid de 3 columnas */
-  .disciplinas-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-  
-  /* Estilos para cada card dentro del grid */
-  .disciplinas-grid > .card {
-    display: flex;
+.inscritos-page {
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.inscritos-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 20px 0;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 2rem 1.5rem;
+}
+
+.inscritos-header {
+  background-color: #003366;
+  color: #fff;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.8rem;
+  padding: 1rem 1.5rem;
+  margin: -2rem -1.5rem 1.5rem;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.selector-conv {
+  margin-bottom: 1rem;
+}
+
+.selector-conv .form-select {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #003366;
+  border-radius: 12px;
+  background: #fff;
+  color: #003366;
+  font-size: 1rem;
+}
+
+/* Ajusta search-container si necesitas búsquedas */
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filters-container .form-select {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px;
+  border: 2px solid #003366;
+  border-radius: 12px;
+  background: #fff;
+  color: #003366;
+}
+
+.filters-container .reset-btn {
+  align-self: flex-start;
+  margin-top: 0;
+  min-width: 140px;
+  border-radius: 12px;
+}
+
+.btn-primary {
+  background-color: #003366;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #001d40;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* DataTable estilo */
+
+.tabla-inscritos .rdt_Table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  border: 1px solid #003366;
+}
+
+.tabla-inscritos .rdt_Table th,
+.tabla-inscritos .rdt_Table td {
+  border: 1px solid #003366;
+  padding: 0.8rem;
+  text-align: center;
+}
+
+.tabla-inscritos .rdt_Table th {
+  background-color: #003366;
+  color: #fff;
+}
+
+.tabla-inscritos .rdt_Table td {
+  background-color: #fff;
+  color: #003366;
+}
+
+.tabla-inscritos .rdt_Table tr:hover {
+  background-color: #e6f0ff;
+  cursor: pointer;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .selector-conv,
+  .search-container,
+  .filters-container {
     flex-direction: column;
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
-  
-  /* Imagen de la disciplina */
-  .disciplinas-grid .card img {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-  }
-  
-  /* Título dentro de la card */
-  .disciplinas-grid .card-title {
-    font-size: 1.1rem;
-    color: #333333;
-    margin: 12px;
-    flex-grow: 1;
-  }
-  
-  /* Icono de navegación al final */
-  .disciplinas-grid .card-btn {
-    align-self: flex-end;
-    margin: 0 12px 12px;
-    background: none;
-    border: none;
+
+  .inscritos-header {
     font-size: 1.5rem;
-    color: #003366;
-    cursor: pointer;
-    transition: color 0.3s;
   }
-  
-  .disciplinas-grid .card-btn:hover {
-    color: #002a5c;
+
+  .btn-primary {
+    width: 100%;
   }
-  @media (max-width: 768px) {
-    .disciplinas-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+
+  .tabla-inscritos .rdt_Table th,
+  .tabla-inscritos .rdt_Table td {
+    font-size: 0.9rem;
+    padding: 0.6rem;
   }
-    
+}
