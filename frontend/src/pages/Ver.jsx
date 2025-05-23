@@ -48,16 +48,16 @@ const Ver = () => {
         </div>
 
         {cargando ? (
-          <div className="spinner-wrapper">
-            <BallTriangle
-              height={80}
-              width={80}
-              radius={5}
-              color="#003366"
-              ariaLabel="loading"
-              visible={true}
-            />
-          </div>
+          <div className="loader-overlay">
+      <BallTriangle
+        height={100}
+        width={100}
+        radius={5}
+        color="#003366"
+        ariaLabel="ball-triangle-loading"
+        visible={true}
+      />
+    </div>
         ) : convocatoriasFiltradas.length === 0 ? (
           <p className="sin-resultados">No se encontraron convocatorias.</p>
         ) : (
