@@ -67,6 +67,7 @@
   }
 }
 
+
 /* Navbar y demás no cambian, pero asegúrate que no haya width fijos */
 .custom-navbar {
   padding: 5px;
@@ -127,4 +128,26 @@
 
 .me-2:hover {
   border-bottom: 2px solid #FFFFFF;
+}
+.navbar a{
+  font-size: 16px;
+}
+.navbar-nav span{
+  font-size: 16px;
+}
+@media (max-width: 434px) {
+  .navbar a{
+    font-size: 13px;
+  }
+  .navbar-nav span{
+  font-size: 13px;
+}
+}
+@media (max-width: 363px) {
+  .navbar a{
+    font-size: 12px;
+  }
+  .navbar-nav span{
+  font-size: 12px;
+}
 }
