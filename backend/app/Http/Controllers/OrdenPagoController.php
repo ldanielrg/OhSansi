@@ -74,11 +74,19 @@ class OrdenPagoController extends Controller
         if (!$formulario || $formulario->id_usuario !== $request->user()->id) {
             return response()->json(['error' => 'No autorizado o formulario no encontrado.'], 403);
         }
+        $detalles = DB::table('estudiante_esta_inscrito as ei')
+                    ->join('area_tiene_categoria as ac', 'ei.id_inscrito_en', '=', 'ac.id')
+                    ->select('ei.id_inscrito_en', 'ei.team', 'ac.precio')
+                    ->where('ei.id_formulario_formulario', $validated['id_formulario_formulario'])
+                    ->groupBy('ei.id_inscrito_en', 'ei.team', 'ac.precio')
+                    ->get();
 
+                // Calcular monto total del formulario, sumando una vez por grupo
+                $montoTotal = $detalles->sum('precio');
         $orden = OrdenPago::create([
             'fecha_emision' => $validated['fecha_emision'],
             'fecha_vencimiento' => $validated['fecha_vencimiento'],
-            'monto_total' => 0,
+            'monto_total' => $montoTotal,
             'estado' => false,
             'id_formulario_formulario' => $validated['id_formulario_formulario'],
         ]);

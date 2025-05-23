@@ -10,6 +10,8 @@ use App\Models\Comprobante;
 use App\Models\OrdenPago;
 use App\Models\Formulario;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\File;
+
 
 class ComprobanteController extends Controller
 {
@@ -45,7 +47,7 @@ class ComprobanteController extends Controller
             //$path = $imagen->storeAs('public/comprobantes', $filename);
             $path = $imagen->storeAs('comprobantes', $filename); // sin "public/"
             //$rutaPublica = Storage::url($path); // Genera: /storage/comprobantes/...
-            $rutaPublica = '/storage/comprobantes/' . $filename;
+            $rutaPublica = '../../comprobantes/' . $filename;
 
             // Crear el comprobante con estado = false
             $comprobante = Comprobante::create([
