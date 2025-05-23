@@ -61,7 +61,7 @@ const Inscripciones = () => {
   useEffect(() => {
     const obtenerConvocatorias = async () => {
       try {
-        const res = await api.get('/convocatorias');
+        const res = await api.get('/convocatorias-activas');
         setConvocatorias(res.data.filter(c => c.activo));
       } catch (error) {
         console.error('Error al obtener convocatorias:', error);
