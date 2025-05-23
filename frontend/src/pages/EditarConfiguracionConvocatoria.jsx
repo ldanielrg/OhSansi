@@ -17,30 +17,30 @@ export default function EditarConfiguracionConvocatoria() {
 
   useEffect(() => {
     const cargarDatos = async () => {
-    setCargando(true);
-    try {
-      const { data } = await api.get(`/convocatoria-detalle/${id}`);
-      const conv = data[0]; 
+      setCargando(true);
+      try {
+        const { data } = await api.get(`/convocatoria-detalle/${id}`);
+        const conv = data[0];
 
-      if (conv) {
-        setForm({
-          nombre: conv.nombre_convocatoria,
-          descripcion: conv.descripcion,
-          inicio: conv.fecha_inicio?.split("T")[0] || "",
-          fin: conv.fecha_final?.split("T")[0] || "",
-        });
-      } else {
-        toast.error("No se encontró la convocatoria.");
+        if (conv) {
+          setForm({
+            nombre: conv.nombre_convocatoria,
+            descripcion: conv.descripcion,
+            inicio: conv.fecha_inicio?.split("T")[0] || "",
+            fin: conv.fecha_final?.split("T")[0] || "",
+          });
+        } else {
+          toast.error("No se encontró la convocatoria.");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Error cargando datos.");
+      } finally {
+        setCargando(false);
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Error cargando datos.");
-    } finally {
-      setCargando(false);
-    }
-  };
-  cargarDatos();
-}, [id]);
+    };
+    cargarDatos();
+  }, [id]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -75,72 +75,93 @@ export default function EditarConfiguracionConvocatoria() {
       <div className="crear-config-container">
         <div className="crear-config-card">
           <div className="crear-config-header">Editar Convocatoria</div>
-          <form className="crear-config-body" onSubmit={handleGuardar}>
-            <div className="form-row">
-              <label>Nombre</label>
-              <input
-                type="text"
-                name="nombre"
-                value={form.nombre}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-row">
-              <label>Descripción</label>
-              <textarea
-                name="descripcion"
-                className="fixed-desc"
-                value={form.descripcion}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-row">
-              <label>Fecha Inicio</label>
-              <input
-                type="date"
-                name="inicio"
-                value={form.inicio}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-row">
-              <label>Fecha Fin</label>
-              <input
-                type="date"
-                name="fin"
-                value={form.fin}
-                onChange={handleChange}
-                required
-              />
-            </div>
 
-            <div className="acciones-crear">
-              <div className="acciones-izquierda">
-                <button type="submit" className="btn-crear">
-                  Guardar cambios
-                </button>
-                <button
-                  type="button"
-                  className="btn-gestionar"
-                  onClick={irGestionar}
-                >
-                  Gestionar convocatoria
-                </button>
-              </div>
-              <div className="acciones-derecha">
-                <button
-                  type="button"
-                  className="btn-eliminar"
-                  onClick={handleSalir}
-                >
-                  Salir
-                </button>
-              </div>
+          {cargando ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "250px",
+              }}
+            >
+              <BallTriangle
+                height={80}
+                width={80}
+                radius={5}
+                color="#003366"
+                ariaLabel="loading"
+                visible={true}
+              />
             </div>
-          </form>
+          ) : (
+            <form className="crear-config-body" onSubmit={handleGuardar}>
+              <div className="form-row">
+                <label>Nombre</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={form.nombre}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="form-row">
+                <label>Descripción</label>
+                <textarea
+                  name="descripcion"
+                  className="fixed-desc"
+                  value={form.descripcion}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="form-row">
+                <label>Fecha Inicio</label>
+                <input
+                  type="date"
+                  name="inicio"
+                  value={form.inicio}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="form-row">
+                <label>Fecha Fin</label>
+                <input
+                  type="date"
+                  name="fin"
+                  value={form.fin}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="acciones-crear">
+                <div className="acciones-izquierda">
+                  <button type="submit" className="btn-crear">
+                    Guardar cambios
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-gestionar"
+                    onClick={irGestionar}
+                  >
+                    Gestionar convocatoria
+                  </button>
+                </div>
+                <div className="acciones-derecha">
+                  <button
+                    type="button"
+                    className="btn-eliminar"
+                    onClick={handleSalir}
+                  >
+                    Salir
+                  </button>
+                </div>
+              </div>
+            </form>
+          )}
         </div>
       </div>
       <ToastContainer position="bottom-right" autoClose={3000} />
