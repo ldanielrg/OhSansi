@@ -1,14 +1,16 @@
-// src/pages/GestionarConvocatoria.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/GestionarConvocatoria.css";
 import { ToastContainer, toast } from "react-toastify";
+import { BallTriangle } from "react-loader-spinner";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function GestionarConvocatoria() {
   const { id_convocatoria } = useParams();
   const navigate = useNavigate();
+
+  const [cargando, setCargando] = useState(false);
 
   const [convName, setConvName] = useState("");
   const [precio, setPrecio] = useState("");
@@ -18,16 +20,14 @@ export default function GestionarConvocatoria() {
   const [areas, setAreas] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [grados, setGrados] = useState([]);
-  const [asignaciones, setAsignaciones] = useState([]); // área→categoría→grados
-  const [selectedAssign, setSelectedAssign] = useState({
-    area: null,
-    categoria: null,
-  });
+  const [asignaciones, setAsignaciones] = useState([]);
+  const [selectedAssign, setSelectedAssign] = useState({ area: null, categoria: null });
+
   // Formularios in situ
   const [newArea, setNewArea] = useState("");
-  const [editArea, setEditArea] = useState({ id: "", nombre_area: "" });
+  const [editArea, setEditArea] = useState({ id: null, nombre_area: "" });
   const [newCat, setNewCat] = useState("");
-  const [editCat, setEditCat] = useState({ id: "", nombre_categoria: "" });
+  const [editCat, setEditCat] = useState({ id: null, nombre_categoria: "" });
 
   // Selects para asignar
   const [selArea, setSelArea] = useState("");
@@ -37,12 +37,11 @@ export default function GestionarConvocatoria() {
 
   const loadAll = useCallback(async () => {
     if (!id_convocatoria) return;
+    setCargando(true);
     try {
-      // Convocatoria
       const det = await api.get(`/convocatoria-detalle/${id_convocatoria}`);
       setConvName(det.data[0]?.nombre_convocatoria || "");
 
-      // Áreas, categorías, grados
       const [arRes, catRes, grRes, acgRes] = await Promise.all([
         api.get(`/areas/${id_convocatoria}`),
         api.get(`/categorias`, { params: { id_convocatoria } }),
@@ -56,19 +55,20 @@ export default function GestionarConvocatoria() {
     } catch (err) {
       console.error(err);
       toast.error("Error cargando datos iniciales.");
+    } finally {
+      setCargando(false);
     }
   }, [id_convocatoria]);
 
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
+  // --- Manejo Áreas ---
   const handleCreateArea = async () => {
     if (!newArea.trim()) return toast.warn("Escribe un nombre de área.");
     try {
-      await api.post(`/convocatoria/${id_convocatoria}/area`, {
-        nombre: newArea.trim(),
-      });
-
+      await api.post(`/convocatoria/${id_convocatoria}/area`, { nombre: newArea.trim() });
       toast.success("Área creada");
       setNewArea("");
       loadAll();
@@ -83,12 +83,12 @@ export default function GestionarConvocatoria() {
     try {
       await api.post(`/area-editar`, {
         id_area: editArea.id,
-        nombre_area: newArea.trim(), //usa el input
+        nombre_area: newArea.trim(),
         activo: editArea.activo,
       });
       toast.success("Área actualizada");
       setEditArea({ id: null, nombre_area: "" });
-      setNewArea(""); // limpia el input
+      setNewArea("");
       loadAll();
     } catch (err) {
       console.error(err);
@@ -98,24 +98,21 @@ export default function GestionarConvocatoria() {
 
   const handleDeleteArea = async (id) => {
     if (!window.confirm("¿Eliminar esta área?")) return;
-
     try {
       await api.delete(`/area-eliminar/${id}`);
       toast.error("Área eliminada");
-
-      // Si el área eliminada estaba seleccionada para editar, limpiar
       if (editArea.id === id) {
         setEditArea({ id: null, nombre_area: "" });
         setNewArea("");
       }
-
-      loadAll(); // recargar lista de áreas
+      loadAll();
     } catch (err) {
       console.error(err);
       toast.error("Error al eliminar área.");
     }
   };
 
+  // --- Manejo Categorías ---
   const handleCreateCat = async () => {
     if (!newCat.trim()) return toast.warn("Escribe un nombre de categoría.");
     try {
@@ -134,16 +131,14 @@ export default function GestionarConvocatoria() {
 
   const handleUpdateCat = async () => {
     if (!editCat.id) return;
-
     try {
       await api.post(`/categoria-editar`, {
         id_categoria: editCat.id,
-        nombre_categoria: newCat.trim(), //input actualizado
+        nombre_categoria: newCat.trim(),
       });
-
       toast.success("Categoría actualizada");
       setEditCat({ id: null, nombre_categoria: "" });
-      setNewCat(""); // limpia input
+      setNewCat("");
       loadAll();
     } catch (err) {
       console.error(err);
@@ -153,17 +148,13 @@ export default function GestionarConvocatoria() {
 
   const handleDeleteCat = async (id) => {
     if (!window.confirm("¿Eliminar esta categoría?")) return;
-
     try {
       await api.delete(`/categoria-eliminar/${id}`);
       toast.error("Categoría eliminada");
-
-      // Limpia si era la seleccionada
       if (editCat.id === id) {
         setEditCat({ id: null, nombre_categoria: "" });
         setNewCat("");
       }
-
       loadAll();
     } catch (err) {
       console.error(err);
@@ -171,27 +162,22 @@ export default function GestionarConvocatoria() {
     }
   };
 
+  // --- Asignar Área → Categoría ---
   const handleAssignAreaCat = async () => {
     if (!selArea || !selCat || !precio || !participantes) {
-      alert("Por favor completa todos los campos.");
-      return;
+      return toast.warn("Por favor completa todos los campos.");
     }
-
-    const datos = {
-      id_area: selArea,
-      id_categoria: selCat,
-      precio: precio,
-      participantes: participantes,
-    };
-    if (!selArea || !selCat) return toast.warn("Selecciona área y categoría.");
     try {
       await api.post(`/asignar-area-categoria`, {
         id_area: Number(selArea),
         id_categoria: Number(selCat),
-        precio: 0,
+        precio: Number(precio),
+        participantes,
         activo: true,
       });
       toast.success("Área asignada a categoría");
+      setPrecio("");
+      setParticipantes("");
       loadAll();
     } catch (err) {
       if (err.response?.status === 409) {
@@ -203,10 +189,30 @@ export default function GestionarConvocatoria() {
     }
   };
 
+  const handleUpdateAssignAreaCat = async () => {
+    if (!selArea || !selCat) return toast.warn("Selecciona área y categoría.");
+    try {
+      await api.post(`/asignar-area-categoria`, {
+        id_area: Number(selArea),
+        id_categoria: Number(selCat),
+        precio: Number(precio),
+        participantes,
+        activo: true,
+      });
+      toast.success("Asignación actualizada");
+      setPrecio("");
+      setParticipantes("");
+      loadAll();
+    } catch (err) {
+      console.error(err);
+      toast.error("Error guardando edición");
+    }
+  };
+
+  // --- Asignar Grados → Categoría ---
   const handleAssignGradosCat = async () => {
     if (!selCat || !selGrIni)
       return toast.warn("Selecciona categoría y grado inicial.");
-
     try {
       await api.post(`/asignar-grados-categoria`, {
         id_categoria: Number(selCat),
@@ -214,7 +220,7 @@ export default function GestionarConvocatoria() {
         grado_final_id: selGrFin ? Number(selGrFin) : null,
       });
       toast.success("Grados asignados a categoría");
-      loadAll(); // recargar lista
+      loadAll();
     } catch (err) {
       if (err.response?.status === 409) {
         toast.warn("Ya se asignaron los grados a esta categoría.");
@@ -225,23 +231,6 @@ export default function GestionarConvocatoria() {
     }
   };
 
-  const handleUpdateAssignAreaCat = async () => {
-    if (!selArea || !selCat) return toast.warn("Selecciona área y categoría.");
-    try {
-      // mismo endpoint si tu backend hace upsert
-      await api.post(`/asignar-area-categoria`, {
-        id_area: Number(selArea),
-        id_categoria: Number(selCat),
-        precio: 0,
-        activo: true,
-      });
-      toast.success("Asignación actualizada");
-      loadAll();
-    } catch (err) {
-      console.error(err);
-      toast.error("Error guardando edición");
-    }
-  };
   const handleUpdateAssignGradosCat = async () => {
     if (!selCat || !selGrIni)
       return toast.warn("Selecciona categoría y grado inicial.");
@@ -259,9 +248,9 @@ export default function GestionarConvocatoria() {
     }
   };
 
+  // --- Limpiar grados ---
   const handleClearGrades = async (id_categoria, id_area) => {
     if (!window.confirm("¿Eliminar la relación y limpiar grados?")) return;
-
     try {
       await api.delete("/eliminar-area-categoria", {
         data: {
@@ -269,9 +258,8 @@ export default function GestionarConvocatoria() {
           id_categoria,
         },
       });
-
       toast.success("Relación eliminada y grados limpiados.");
-      loadAll(); //Refresca la tabla
+      loadAll();
     } catch (err) {
       console.error(err);
       toast.error("Error al limpiar.");
@@ -286,271 +274,271 @@ export default function GestionarConvocatoria() {
             Gestionar Convocatoria: <strong>{convName}</strong>
           </div>
           <div className="gest-body">
-            <div className="subcard">
-              <h4>Áreas</h4>
-              <div className="subrow">
-                <input
-                  placeholder="Nueva área"
-                  value={newArea}
-                  onChange={(e) => setNewArea(e.target.value)}
+            {cargando ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minHeight: "250px",
+                }}
+              >
+                <BallTriangle
+                  height={80}
+                  width={80}
+                  radius={5}
+                  color="#003366"
+                  ariaLabel="loading"
+                  visible={true}
                 />
-                <button onClick={handleCreateArea}>Crear</button>
-                <button onClick={handleUpdateArea} disabled={!editArea.id}>
-                  Guardar edición
-                </button>
               </div>
-              <table className="tabla-lista">
-                <tbody>
-                  {areas.map((a) => (
-                    <tr
-                      key={a.id_area}
-                      onClick={() => {
-                        setEditArea({
-                          id: a.id_area,
-                          nombre_area: a.nombre_area,
-                        });
-                        setNewArea(a.nombre_area); // Esto llena el input
-                      }}
-                      className={
-                        editArea.id === a.id_area ? "fila-seleccionada" : ""
-                      }
-                    >
-                      <td>{a.nombre_area}</td>
-                      <td>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation(); // Evita que al hacer clic en el botón se seleccione la fila
-                            handleDeleteArea(a.id_area);
+            ) : (
+              <>
+                <div className="subcard">
+                  <h4>Áreas</h4>
+                  <div className="subrow">
+                    <input
+                      placeholder="Nueva área"
+                      value={newArea}
+                      onChange={(e) => setNewArea(e.target.value)}
+                    />
+                    <button onClick={handleCreateArea}>Crear</button>
+                    <button onClick={handleUpdateArea} disabled={!editArea.id}>
+                      Guardar edición
+                    </button>
+                  </div>
+                  <table className="tabla-lista">
+                    <tbody>
+                      {areas.map((a) => (
+                        <tr
+                          key={a.id_area}
+                          onClick={() => {
+                            setEditArea({
+                              id: a.id_area,
+                              nombre_area: a.nombre_area,
+                            });
+                            setNewArea(a.nombre_area);
                           }}
+                          className={editArea.id === a.id_area ? "fila-seleccionada" : ""}
                         >
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                          <td>{a.nombre_area}</td>
+                          <td>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteArea(a.id_area);
+                              }}
+                            >
+                              Eliminar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
-            <div className="subcard">
-              <h4>Categorías</h4>
-              <div className="subrow">
-                <input
-                  placeholder="Nueva categoría"
-                  value={newCat}
-                  onChange={(e) => setNewCat(e.target.value)}
-                />
-                <button onClick={handleCreateCat}>Crear</button>
-                <button onClick={handleUpdateCat} disabled={!editCat.id}>
-                  Guardar edición
-                </button>
-              </div>
-              <table className="tabla-lista">
-                <tbody>
-                  {categorias.map((c) => (
-                    <tr
-                      key={c.id_categoria}
-                      onClick={() => {
-                        setEditCat({
-                          id: c.id_categoria,
-                          nombre_categoria: c.nombre_categoria,
-                        });
-                        setNewCat(c.nombre_categoria); // 👈 actualiza input
-                      }}
-                      className={
-                        editCat.id === c.id_categoria ? "fila-seleccionada" : ""
-                      }
-                    >
-                      <td>{c.nombre_categoria}</td>
-                      <td>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCat(c.id_categoria);
+                <div className="subcard">
+                  <h4>Categorías</h4>
+                  <div className="subrow">
+                    <input
+                      placeholder="Nueva categoría"
+                      value={newCat}
+                      onChange={(e) => setNewCat(e.target.value)}
+                    />
+                    <button onClick={handleCreateCat}>Crear</button>
+                    <button onClick={handleUpdateCat} disabled={!editCat.id}>
+                      Guardar edición
+                    </button>
+                  </div>
+                  <table className="tabla-lista">
+                    <tbody>
+                      {categorias.map((c) => (
+                        <tr
+                          key={c.id_categoria}
+                          onClick={() => {
+                            setEditCat({
+                              id: c.id_categoria,
+                              nombre_categoria: c.nombre_categoria,
+                            });
+                            setNewCat(c.nombre_categoria);
                           }}
+                          className={editCat.id === c.id_categoria ? "fila-seleccionada" : ""}
                         >
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                          <td>{c.nombre_categoria}</td>
+                          <td>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteCat(c.id_categoria);
+                              }}
+                            >
+                              Eliminar
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
-            <div className="subcard">
-              <h4>Asignar Área → Categoría</h4>
-              <div className="subrow">
-                <select
-                  value={selArea}
-                  onChange={(e) => setSelArea(e.target.value)}
-                >
-                  <option value="">Área</option>
-                  {areas.map((a) => (
-                    <option key={a.id_area} value={a.id_area}>
-                      {a.nombre_area}
-                    </option>
-                  ))}
-                </select>
+                <div className="subcard">
+                  <h4>Asignar Área → Categoría</h4>
+                  <div className="subrow">
+                    <select value={selArea} onChange={(e) => setSelArea(e.target.value)}>
+                      <option value="">Área</option>
+                      {areas.map((a) => (
+                        <option key={a.id_area} value={a.id_area}>
+                          {a.nombre_area}
+                        </option>
+                      ))}
+                    </select>
 
-                <select
-                  value={selCat}
-                  onChange={(e) => setSelCat(e.target.value)}
-                >
-                  <option value="">Categoría</option>
-                  {categorias.map((c) => (
-                    <option key={c.id_categoria} value={c.id_categoria}>
-                      {c.nombre_categoria}
-                    </option>
-                  ))}
-                </select>
+                    <select value={selCat} onChange={(e) => setSelCat(e.target.value)}>
+                      <option value="">Categoría</option>
+                      {categorias.map((c) => (
+                        <option key={c.id_categoria} value={c.id_categoria}>
+                          {c.nombre_categoria}
+                        </option>
+                      ))}
+                    </select>
 
-                <input
-                  type="number"
-                  placeholder="Precio"
-                  value={precio}
-                  onChange={(e) => setPrecio(e.target.value)}
-                  min="0"
-                />
+                    <input
+                      type="number"
+                      placeholder="Precio"
+                      value={precio}
+                      onChange={(e) => setPrecio(e.target.value)}
+                      min="0"
+                    />
 
-                <select
-                  value={participantes}
-                  onChange={(e) => setParticipantes(e.target.value)}
-                >
-                  <option value="">Participantes</option>
-                  <option value="Individual">Individual</option>
-                  <option value="Duo">Duo</option>
-                  <option value="Trio">Trío</option>
-                  <option value="Cuarteto">Cuarteto</option>
-                </select>
+                    <select
+                      value={participantes}
+                      onChange={(e) => setParticipantes(e.target.value)}
+                    >
+                      <option value="">Participantes</option>
+                      <option value="Individual">Individual</option>
+                      <option value="Duo">Duo</option>
+                      <option value="Trio">Trío</option>
+                      <option value="Cuarteto">Cuarteto</option>
+                    </select>
 
-                <button onClick={handleAssignAreaCat}>Asignar</button>
-                <button
-                  onClick={handleUpdateAssignAreaCat}
-                  disabled={!selArea || !selCat}
-                >
-                  Guardar edición
-                </button>
-              </div>
-            </div>
+                    <button onClick={handleAssignAreaCat}>Asignar</button>
+                    <button onClick={handleUpdateAssignAreaCat} disabled={!selArea || !selCat}>
+                      Guardar edición
+                    </button>
+                  </div>
+                </div>
 
-            <div className="subcard">
-              <h4>Asignar Grados → Categoría</h4>
-              <div className="subrow">
-                <select
-                  value={selCat}
-                  onChange={(e) => setSelCat(e.target.value)}
-                >
-                  <option value="">Categoría</option>
-                  {categorias.map((c) => (
-                    <option key={c.id_categoria} value={c.id_categoria}>
-                      {c.nombre_categoria}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={selGrIni}
-                  onChange={(e) => setSelGrIni(e.target.value)}
-                >
-                  <option value="">Grado Inicial</option>
-                  {grados.map((g) => (
-                    <option key={g.id_grado} value={g.id_grado}>
-                      {g.nombre_grado}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={selGrFin}
-                  onChange={(e) => setSelGrFin(e.target.value)}
-                >
-                  <option value="">Grado Final</option>
-                  {grados.map((g) => (
-                    <option key={g.id_grado} value={g.id_grado}>
-                      {g.nombre_grado}
-                    </option>
-                  ))}
-                </select>
-                <button onClick={handleAssignGradosCat}>Asignar</button>
-                <button
-                  onClick={handleUpdateAssignGradosCat}
-                  disabled={!selArea || !selCat}
-                >
-                  Guardar edición
-                </button>
-              </div>
-            </div>
+                <div className="subcard">
+                  <h4>Asignar Grados → Categoría</h4>
+                  <div className="subrow">
+                    <select value={selCat} onChange={(e) => setSelCat(e.target.value)}>
+                      <option value="">Categoría</option>
+                      {categorias.map((c) => (
+                        <option key={c.id_categoria} value={c.id_categoria}>
+                          {c.nombre_categoria}
+                        </option>
+                      ))}
+                    </select>
+                    <select value={selGrIni} onChange={(e) => setSelGrIni(e.target.value)}>
+                      <option value="">Grado Inicial</option>
+                      {grados.map((g) => (
+                        <option key={g.id_grado} value={g.id_grado}>
+                          {g.nombre_grado}
+                        </option>
+                      ))}
+                    </select>
+                    <select value={selGrFin} onChange={(e) => setSelGrFin(e.target.value)}>
+                      <option value="">Grado Final</option>
+                      {grados.map((g) => (
+                        <option key={g.id_grado} value={g.id_grado}>
+                          {g.nombre_grado}
+                        </option>
+                      ))}
+                    </select>
+                    <button onClick={handleAssignGradosCat}>Asignar</button>
+                    <button
+                      onClick={handleUpdateAssignGradosCat}
+                      disabled={!selArea || !selCat}
+                    >
+                      Guardar edición
+                    </button>
+                  </div>
+                </div>
 
-            <div className="subcard">
-              <h4>Asignaciones actuales</h4>
-              <table className="tabla-asign">
-                <thead>
-                  <tr>
-                    <th>Área</th>
-                    <th>Categoría</th>
-                    <th>Grados</th>
-                    <th>Precio</th> {/* Nueva columna */}
-                    <th>Participantes</th> {/* Nueva columna */}
-                    <th>Limpiar</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {asignaciones.map((a, i) =>
-                    (a.categorias || []).map((c, j) => (
-                      <tr
-                        key={`${i}-${j}`}
-                        onClick={() => {
-                          setSelArea(a.id_area);
-                          setSelCat(c.id_categoria);
-                          setSelGrIni(c.grado_inicial_id);
-                          setSelGrFin(
-                            c.grado_final_id != null
-                              ? String(c.grado_final_id)
-                              : String(c.grado_inicial_id)
-                          );
-                          setSelectedAssign({
-                            area: a.id_area,
-                            categoria: c.id_categoria,
-                          });
-                        }}
-                        className={
-                          selectedAssign.area === a.id_area &&
-                          selectedAssign.categoria === c.id_categoria
-                            ? "fila-seleccionada"
-                            : ""
-                        }
-                        style={{ cursor: "pointer" }}
-                      >
-                        <td>{a.nombre_area}</td>
-                        <td>{c.nombre_categoria}</td>
-                        <td>
-                          {c.grado_final_nombre &&
-                          c.grado_final_nombre !== c.grado_inicial_nombre
-                            ? `${c.grado_inicial_nombre} – ${c.grado_final_nombre}`
-                            : c.grado_inicial_nombre}
-                        </td>
-                        <td>100</td> {/* Precio estático */}
-                        <td>Individual</td> {/* Participantes estático */}
-                        <td>
-                          <button
-                            onClick={() =>
-                              handleClearGrades(c.id_categoria, a.id_area)
-                            }
-                          >
-                            Limpiar
-                          </button>
-                        </td>
+                <div className="subcard">
+                  <h4>Asignaciones actuales</h4>
+                  <table className="tabla-asign">
+                    <thead>
+                      <tr>
+                        <th>Área</th>
+                        <th>Categoría</th>
+                        <th>Grados</th>
+                        <th>Precio</th>
+                        <th>Participantes</th>
+                        <th>Limpiar</th>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    </thead>
+                    <tbody>
+                      {asignaciones.map((a, i) =>
+                        (a.categorias || []).map((c, j) => (
+                          <tr
+                            key={`${i}-${j}`}
+                            onClick={() => {
+                              setSelArea(a.id_area);
+                              setSelCat(c.id_categoria);
+                              setSelGrIni(c.grado_inicial_id);
+                              setSelGrFin(
+                                c.grado_final_id != null
+                                  ? String(c.grado_final_id)
+                                  : String(c.grado_inicial_id)
+                              );
+                              setSelectedAssign({
+                                area: a.id_area,
+                                categoria: c.id_categoria,
+                              });
+                            }}
+                            className={
+                              selectedAssign.area === a.id_area &&
+                              selectedAssign.categoria === c.id_categoria
+                                ? "fila-seleccionada"
+                                : ""
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            <td>{a.nombre_area}</td>
+                            <td>{c.nombre_categoria}</td>
+                            <td>
+                              {c.grado_final_nombre &&
+                              c.grado_final_nombre !== c.grado_inicial_nombre
+                                ? `${c.grado_inicial_nombre} – ${c.grado_final_nombre}`
+                                : c.grado_inicial_nombre}
+                            </td>
+                            <td>{c.precio ?? "N/A"}</td>
+                            <td>{c.participantes ?? "N/A"}</td>
+                            <td>
+                              <button
+                                onClick={() =>
+                                  handleClearGrades(c.id_categoria, a.id_area)
+                                }
+                              >
+                                Limpiar
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
 
-            <div className="acciones-ger">
-              <button className="btn-crear" onClick={() => navigate(-1)}>
-                Volver
-              </button>
-            </div>
+                <div className="acciones-ger">
+                  <button className="btn-crear" onClick={() => navigate(-1)}>
+                    Volver
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

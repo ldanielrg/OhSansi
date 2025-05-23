@@ -1,31 +1,39 @@
 import api from "../api/axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "../styles/Eventos.css"; 
+import "../styles/Eventos.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
+import { BallTriangle } from "react-loader-spinner";
 
 const Eventos = () => {
   const [convocatorias, setConvocatorias] = useState([]);
-  const [idConvocatoriaSeleccionada, setIdConvocatoriaSeleccionada] =
-    useState("");
+  const [idConvocatoriaSeleccionada, setIdConvocatoriaSeleccionada] = useState("");
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [cargandoConvocatorias, setCargandoConvocatorias] = useState(false);
+  const [cargandoEventos, setCargandoEventos] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const { roles } = useAuth();
   const esAdmin = roles?.includes("Admin");
+
   // Cargar convocatorias al inicio
   useEffect(() => {
     const fetchConvocatorias = async () => {
+      setCargandoConvocatorias(true);
       try {
         const response = await api.get("/convocatorias-activas");
         setConvocatorias(response.data);
       } catch (error) {
         console.error("Error al cargar convocatorias:", error);
         toast.error("No se pudieron cargar las convocatorias.");
+      } finally {
+        setCargandoConvocatorias(false);
       }
     };
 
@@ -46,6 +54,7 @@ const Eventos = () => {
     }
 
     const fetchEventos = async () => {
+      setCargandoEventos(true);
       try {
         const response = await api.get(
           `/convocatorias/${idConvocatoriaSeleccionada}/eventos`
@@ -55,6 +64,8 @@ const Eventos = () => {
       } catch (error) {
         console.error("Error al cargar eventos:", error);
         toast.error("No se pudieron cargar los eventos.");
+      } finally {
+        setCargandoEventos(false);
       }
     };
 
@@ -69,11 +80,9 @@ const Eventos = () => {
   };
 
   const handleEditarEvento = () => {
-    // Navegamos a /editar-evento/:id_evento
+    if (!selectedEvent) return;
     navigate(`/editar-evento/${selectedEvent.id_evento}`, {
-      state: {
-        idConvocatoria: idConvocatoriaSeleccionada,
-      },
+      state: { idConvocatoria: idConvocatoriaSeleccionada },
     });
   };
 
@@ -86,7 +95,7 @@ const Eventos = () => {
     if (!selectedEvent) return;
 
     try {
-      +(await api.delete(`/eventos/${selectedEvent.id_evento}`));
+      await api.delete(`/eventos/${selectedEvent.id_evento}`);
       toast.success("Evento eliminado exitosamente.");
       setEvents((prev) =>
         prev.filter((e) => e.id_evento !== selectedEvent.id_evento)
@@ -106,15 +115,48 @@ const Eventos = () => {
 
   return (
     <div className="eventos-page">
-      <div className="eventos-container">
+      <div
+        className="eventos-container"
+        style={{ position: "relative", minHeight: "400px" }}
+      >
         <div className="eventos-header">Eventos por Convocatoria</div>
 
+        {/* Spinner cargando convocatorias (overlay) */}
+        {cargandoConvocatorias && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(255,255,255,0.85)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 20,
+              borderRadius: "12px",
+            }}
+          >
+            <BallTriangle
+              height={80}
+              width={80}
+              radius={5}
+              color="#003366"
+              ariaLabel="loading"
+              visible={true}
+            />
+          </div>
+        )}
+
+        {/* Selector convocatorias */}
         <div className="mb-3">
           <label>Seleccionar convocatoria:</label>
           <select
             className="form-select"
             value={idConvocatoriaSeleccionada}
             onChange={(e) => setIdConvocatoriaSeleccionada(e.target.value)}
+            disabled={cargandoConvocatorias || cargandoEventos} // bloquear durante carga
           >
             <option value="">-- Selecciona una convocatoria --</option>
             {convocatorias.map((conv) => (
@@ -125,7 +167,27 @@ const Eventos = () => {
           </select>
         </div>
 
-        {events.length > 0 ? (
+        {/* Spinner cargando eventos (reemplaza tabla mientras carga) */}
+        {cargandoEventos ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "150px",
+              marginTop: "1rem",
+            }}
+          >
+            <BallTriangle
+              height={60}
+              width={60}
+              radius={5}
+              color="#003366"
+              ariaLabel="loading"
+              visible={true}
+            />
+          </div>
+        ) : events.length > 0 ? (
           <table className="tabla-eventos">
             <thead>
               <tr>
@@ -164,14 +226,14 @@ const Eventos = () => {
               <button
                 className="btn-primary"
                 onClick={handleCrearEvento}
-                disabled={!idConvocatoriaSeleccionada}
+                disabled={!idConvocatoriaSeleccionada || cargandoEventos}
               >
                 Crear
               </button>
               <button
                 className="btn-primary"
                 onClick={handleEditarEvento}
-                disabled={!selectedEvent}
+                disabled={!selectedEvent || cargandoEventos}
               >
                 Editar
               </button>
@@ -181,7 +243,7 @@ const Eventos = () => {
               <button
                 className="btn-primary"
                 onClick={handleEliminarEvento}
-                disabled={!selectedEvent}
+                disabled={!selectedEvent || cargandoEventos}
               >
                 Eliminar
               </button>
