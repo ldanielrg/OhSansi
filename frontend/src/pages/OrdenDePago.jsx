@@ -330,6 +330,7 @@ const OrdenDePago = () => {
                     </>
                 )}
                 </Caja>
+                {!cargando && (
                 <Caja titulo='Verificacion del pago'>
                     <div className="contenedor-verificar-pago">
                         <div className="contenedor-registro-form-pago">
@@ -385,6 +386,7 @@ const OrdenDePago = () => {
                     <p>Consulta esta seccion para saber si tu recibo ha sido registrado correctamente.</p>
                     </div>
                 </Caja>
+                )}
                 <BotonForm
                                 texto='Volver'
                                 onClick={() => navigate(`/inscripciones?convocatoria=${idConvocatoria || ''}`)}
