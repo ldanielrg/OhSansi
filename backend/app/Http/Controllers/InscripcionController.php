@@ -606,25 +606,6 @@ class InscripcionController extends Controller{
         ]);
     }
 
-    #Calcular precio total de un formulario
-    public function calcularTotalPorEquipo($idFormulario){
-        // Detalles por grupo (como antes)
-        $detalles = DB::table('estudiante_esta_inscrito as ei')
-            ->join('area_tiene_categoria as ac', 'ei.id_inscrito_en', '=', 'ac.id')
-            ->select('ei.id_inscrito_en', 'ei.team', 'ac.precio')
-            ->where('ei.id_formulario_formulario', $idFormulario)
-            ->groupBy('ei.id_inscrito_en', 'ei.team', 'ac.precio')
-            ->get();
-
-        // Calcular monto total del formulario, sumando una vez por grupo
-        $montoTotal = $detalles->sum('precio');
-
-        return response()->json([
-            'detalles_por_grupo' => $detalles,
-            'monto_total' => $montoTotal
-        ]);
-    }
-
 
     public function eliminarFormulario(Request $request, $id){
         $user = $request->user(); // Usuario autenticado

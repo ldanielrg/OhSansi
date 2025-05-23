@@ -109,7 +109,7 @@ const OrdenDePago = () => {
         formData.append("imagen", imagenRecibo);
         formData.append("id_orden_pago", orden.id_orden);
         formData.append("codigo_ocr", texto);
-
+        console.log("formdata", formData);
         // Paso 4: Enviar al backend
         await api.post("/guardar-comprobante", formData, {
             headers: { "Content-Type": "multipart/form-data" },

@@ -190,7 +190,7 @@ const handleOrdenPago = async (id_formulario) => {
         await api.post('/orden-pago', {
           fecha_emision: new Date().toISOString().split('T')[0],
           fecha_vencimiento: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0],
-          monto_total: 20,
+          //monto_total: 20,
           id_formulario_formulario: id_formulario
         });
         navigate(`/orden-de-pago/${id_formulario}?convocatoria=${convocatoriaSeleccionada}`);
