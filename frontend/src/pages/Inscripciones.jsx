@@ -142,14 +142,7 @@ const Inscripciones = () => {
   ];
 
   const customStyles = {
-    headCells: {
-      style: {
-        backgroundColor: '#E1F4FF',
-        color: 'black',
-        fontWeight: 'semibold',
-        fontSize: '14px',
-      },
-    },
+    
   };
 
   const eliminarFormulario = async (id_formulario) => {
@@ -299,7 +292,6 @@ const handleConvocatoriaChangeManual = (id) => {
                   columns={formularioColumns}
                   data={formularios}
                   noDataComponent='Aún no se han registrado formularios.'
-                  customStyles={customStyles}
                   responsive
                 />
               )}

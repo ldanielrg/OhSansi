@@ -61,6 +61,12 @@ const [contadorEquipos, setContadorEquipos] = useState(1); // para generar id_eq
 const [idEquipoEnEdicion, setIdEquipoEnEdicion] = useState(null);
 const [idEstudianteEnEdicion, setIdEstudianteEnEdicion] = useState(null);
 const [registrando, setRegistrando] = useState(false);
+const [loadingAreas, setLoadingAreas] = useState(false);
+const [loadingTabs, setLoadingTabs] = React.useState(false);
+
+
+
+
 
 
 
@@ -91,12 +97,15 @@ const columns = [
 useEffect(() => {
   const cargarAreas = async () => {
     if (!idConvocatoria) return;
+    setLoadingAreas(true);
     try {
       const res = await api.get(`/areas/${idConvocatoria}`);
       setAreas(res.data);
     } catch (error) {
       console.error("Error al obtener áreas:", error);
       toast.error("Error al obtener las áreas.");
+    }finally {
+      setLoadingAreas(false);
     }
   };
 
@@ -111,18 +120,30 @@ useEffect(() => {
     return;
   }
 
+  const controller = new AbortController();
+  const signal = controller.signal;
+
   const cargarCategorias = async () => {
     try {
-      const res = await api.get(`/categorias/${areaActual}`);
+      const res = await api.get(`/categorias/${areaActual}`, { signal });
       setCategorias(res.data);
     } catch (error) {
-      console.error("Error al obtener categorías:", error);
-      toast.error("Error al obtener las categorías.");
+      if (error.name === "CanceledError") {
+        // petición cancelada, no hacemos nada
+      } else {
+        console.error("Error al obtener categorías:", error);
+        toast.error("Error al obtener las categorías.");
+      }
     }
   };
 
   cargarCategorias();
+
+  return () => {
+    controller.abort(); // cancela petición anterior al cambiar area o desmontar
+  };
 }, [formIndexActivo, formulariosEquipo[formIndexActivo]?.area]);
+
 
 
 
@@ -188,38 +209,43 @@ useEffect(() => {
 
 
 
-  useEffect(() => {
-    const area = formulariosEquipo[formIndexActivo]?.area;
-    const categoria = formulariosEquipo[formIndexActivo]?.categoria;
+useEffect(() => {
+  const area = formulariosEquipo[formIndexActivo]?.area;
+  const categoria = formulariosEquipo[formIndexActivo]?.categoria;
 
-    // ⛔ Evita reiniciar si estás editando un estudiante
-    if (!area || !categoria || modoEdicion) return;
+  // ⛔ Evita reiniciar si estás editando un estudiante o faltan datos
+  if (!area || !categoria || modoEdicion) return;
 
-    const obtenerCantidadParticipantes = async () => {
-      try {
-        const res = await api.get(`/participantes`, {
-          params: {
-            id_area: area,
-            id_categoria: categoria
-          }
-        });
+  const obtenerCantidadParticipantes = async () => {
+    try {
+      setLoadingTabs(true); // Activar loader
 
-        const cantidad = parseInt(res.data?.cantidad || 1);
+      const res = await api.get(`/participantes`, {
+        params: {
+          id_area: area,
+          id_categoria: categoria
+        }
+      });
 
-        setNumParticipantes(cantidad);
-        setFormIndexActivo(0);
-        setFormulariosEquipo(
-          Array.from({ length: cantidad }, () => ({
-            nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area, categoria, email: ""
-          }))
-        );
-      } catch (error) {
-        toast.error("No se pudo obtener la cantidad de integrantes para esta categoría.");
-      }
-    };
+      const cantidad = parseInt(res.data?.cantidad || 1);
 
-    obtenerCantidadParticipantes();
-  }, [formulariosEquipo[formIndexActivo]?.categoria]);
+      setNumParticipantes(cantidad);
+      setFormIndexActivo(0);
+      setFormulariosEquipo(
+        Array.from({ length: cantidad }, () => ({
+          nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area, categoria, email: ""
+        }))
+      );
+
+    } catch (error) {
+      toast.error("No se pudo obtener la cantidad de integrantes para esta categoría.");
+    } finally {
+      setLoadingTabs(false); // Desactivar loader
+    }
+  };
+
+  obtenerCantidadParticipantes();
+}, [formulariosEquipo[formIndexActivo]?.categoria]);
 
 
 
@@ -257,6 +283,18 @@ const handleRegistrar = async () => {
       return toast.warn(`Fecha de nacimiento inválida en integrante ${i + 1}`);
     if (fechaNacimiento > hoy)
       return toast.warn(`La fecha no puede ser en el futuro (integrante ${i + 1})`);
+
+    // Cálculo de edad
+    const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    const m = hoy.getMonth() - fechaNacimiento.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+      // Si no ha cumplido años este año
+      edad--;
+    }
+
+    if (edad < 7)
+      return toast.warn(`La edad mínima requerida es 7 años (integrante ${i + 1})`);
+    
   }
 
   // ✅ Solo después de las validaciones
@@ -382,6 +420,21 @@ const handleRegistrar = async () => {
 
 
     toast.success("Estudiantes registrados correctamente en el sistema.");
+    setFormulariosEquipo(
+  Array.from({ length: numParticipantes }, () => ({
+    nombre: "",
+    apellido: "",
+    ci: "",
+    fechaNac: "",
+    rude: "",
+    area: "",
+    categoria: "",
+    email: "",
+    team: 0,
+  }))
+);
+setFormIndexActivo(0);
+
   } catch (error) {
     console.error("Error al registrar estudiantes en backend:", error);
     toast.error("Error al registrar estudiantes en el servidor.");
@@ -697,7 +750,7 @@ const actualizarFormulario = (index, campo, valor) => {
           className="caja-formulario-est"
         >
         <p>Escoge un Área y Categoria para inscribir</p>
-        <RegistroForm
+              <RegistroForm
                 label="Área"
                 name="area"
                 type="select"
@@ -706,33 +759,46 @@ const actualizarFormulario = (index, campo, valor) => {
                   actualizarFormulario(formIndexActivo, "area", e.target.value)
                 }
                 usarEvento={true}
-                options={[
-                  { value: "", label: "Seleccione una Área" },
-                  ...areas.map((area) => ({
-                    value: area.id_area,
-                    label: area.nombre_area,
-                  })),
-                ]}
-              />
-              <RegistroForm
-                label="Categoria"
-                name="categoria"
-                type="select"
-                value={formulariosEquipo[formIndexActivo].categoria}
-                onChange={(e) =>
-                  actualizarFormulario(formIndexActivo, "categoria", e.target.value)
+                options={
+                  loadingAreas
+                    ? [{ value: "", label: "Cargando áreas..." }]
+                    : [
+                        { value: "", label: "Seleccione una Área" },
+                        ...areas.map((area) => ({
+                          value: area.id_area,
+                          label: area.nombre_area,
+                        })),
+                      ]
                 }
-                usarEvento={true}
-                options={[
-                  { value: "", label: "Seleccione una Categoria" },
-                  ...categorias.map((cat) => ({
-                    value: cat.id_categoria,
-                    label: cat.nombre_categoria,
-                  })),
-                ]}
+                disabled={loadingAreas}
               />
+
+              <RegistroForm
+  label="Categoría"
+  name="categoria"
+  type="select"
+  value={formulariosEquipo[formIndexActivo].categoria}
+  onChange={(e) =>
+    actualizarFormulario(formIndexActivo, "categoria", e.target.value)
+  }
+  usarEvento={true}
+  options={[
+    { value: "", label: "Seleccione una Categoría" },
+    ...categorias.map((cat) => ({
+      value: cat.id_categoria,
+      label: cat.nombre_categoria,
+    })),
+  ]}
+/>
+
               
           <p>Se habilitarán uno o más formularios de inscripcion segun la categoria que has eligido:</p>
+          {loadingTabs ? (
+  <div style={{ padding: "1rem", textAlign: "center" }}>
+    <BallTriangle height={40} width={40} color="#003366" />
+  </div>
+) : (
+  <>
           <div className="tabs-participantes">
             {Array.from({ length: numParticipantes }, (_, index) => (
               <button
@@ -815,6 +881,8 @@ const actualizarFormulario = (index, campo, valor) => {
               />
             </section>
           </div>
+           </>
+)}
         </Caja>
 
 
@@ -857,28 +925,7 @@ const actualizarFormulario = (index, campo, valor) => {
   selectedRowsRef.current = mismoEquipo;
 }}
 
-            customStyles={{
-              pagination: {
-                style: {
-                  backgroundColor: "white"
-                },
-                pageButtonsStyle: {
-                  borderRadius: "50%",
-                  margin: "2px",
-                  cursor: "pointer",
-                  color: "#fff",
-                  fill: "#fff",
-                  backgroundColor: "#1A2D5A", // azul marino
-                  "&:hover": {
-                    backgroundColor: "#27467A", // más claro al pasar el mouse
-                  },
-                  "&:disabled": {
-                    color: "#888",
-                    backgroundColor: "#ccc",
-                  },
-                },
-              },
-            }}
+            
             noDataComponent="Aquí verás a los estudiantes que inscribiste."
             pagination
             responsive
