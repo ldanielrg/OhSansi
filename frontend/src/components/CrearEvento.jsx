@@ -1,75 +1,105 @@
-// src/pages/CrearEvento.jsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import api from '../api/axios';
-import RegistroForm from '../components/RegistroForm';
-import '../styles/CrearEvento.css';
-import { BsLayoutTextWindowReverse, BsCalendar3Event } from 'react-icons/bs';
-import { MdOutlineEventAvailable } from 'react-icons/md';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../api/axios";
+import RegistroForm from "../components/RegistroForm";
+import "../styles/CrearEvento.css";
+import { BsLayoutTextWindowReverse, BsCalendar3Event } from "react-icons/bs";
+import { MdOutlineEventAvailable } from "react-icons/md";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CrearEvento = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const { idConvocatoria } = location.state || {};
+  const [fechaInicioConvocatoria, setFechaInicioConvocatoria] = useState(null);
+
   useEffect(() => {
     if (!idConvocatoria) {
-      toast.error('Falta el ID de convocatoria. Regresa desde la lista de eventos.');
-      navigate('/eventos');
+      toast.error("Falta el ID de convocatoria. Regresa desde la lista de eventos.");
+      navigate("/eventos");
+    } else {
+      // Obtener fecha inicio convocatoria
+      api.get(`/convocatoria-detalle/${idConvocatoria}`)
+        .then(({ data }) => {
+          if (data && data[0] && data[0].fecha_inicio) {
+            setFechaInicioConvocatoria(data[0].fecha_inicio.split("T")[0]);
+          } else {
+            toast.error("No se pudo obtener la fecha de inicio de la convocatoria.");
+          }
+        })
+        .catch(() => {
+          toast.error("Error al obtener la convocatoria.");
+        });
     }
   }, [idConvocatoria, navigate]);
 
   const [formData, setFormData] = useState({
-    nombre: '',
-    fechaInicio: '',
-    fechaFin: '',
+    nombre: "",
+    fechaInicio: "",
+    fechaFin: "",
   });
+
+  const isFechaValida = (fechaEvento) => {
+    if (!fechaInicioConvocatoria) return true; // aún no cargó convocatoria
+
+    const inicio = new Date(fechaInicioConvocatoria);
+    const limite = new Date(inicio);
+    limite.setFullYear(limite.getFullYear() + 1);
+
+    const eventoDate = new Date(fechaEvento);
+
+    return eventoDate >= inicio && eventoDate <= limite;
+  };
 
   const handleGuardar = async (e) => {
     e.preventDefault();
     const { nombre, fechaInicio, fechaFin } = formData;
 
-    // Validaciones
     if (!nombre || !fechaInicio || !fechaFin) {
-      toast.warn('Por favor completa todos los campos.');
-      return;
-    }
-    if (new Date(fechaInicio) > new Date(fechaFin)) {
-      toast.warn('La fecha de inicio no puede ser posterior a la de fin.');
+      toast.warn("Por favor completa todos los campos.");
       return;
     }
 
-    // Preparamos el objeto tal como el backend lo espera
+    if (new Date(fechaInicio) > new Date(fechaFin)) {
+      toast.warn("La fecha de inicio no puede ser posterior a la de fin.");
+      return;
+    }
+
+    if (!isFechaValida(fechaInicio) || !isFechaValida(fechaFin)) {
+      toast.error(
+        "Las fechas del evento deben estar dentro de un año desde la fecha de inicio de la convocatoria."
+      );
+      return;
+    }
+
     const payload = {
-      id_convocatoria_convocatoria: idConvocatoria,  // clave exacta de la columna
-      nombre_evento: formData.nombre,
-      fecha_inicio: formData.fechaInicio,
-      fecha_final: formData.fechaFin,
+      id_convocatoria_convocatoria: idConvocatoria,
+      nombre_evento: nombre,
+      fecha_inicio: fechaInicio,
+      fecha_final: fechaFin,
     };
 
-    console.log('Payload a enviar:', payload);
-
     try {
-      api.post('/eventos', payload);
-      navigate('/eventos',{
+      await api.post("/eventos", payload);
+      toast.success("Evento creado exitosamente.");
+      navigate("/eventos", {
         state: {
-          message:'!Evento creado exitosamente.',
-          type: 'success',
-          idConvocatoria: idConvocatoria     // <-- esto es nuevo
-        }
+          message: "!Evento creado exitosamente.",
+          type: "success",
+          idConvocatoria: idConvocatoria,
+        },
       });
     } catch (error) {
-      console.error('Error al crear evento:', error);
-      // Si el backend devuelve un mensaje de error en response.data.message, lo mostramos
+      console.error("Error al crear evento:", error);
       const msg = error.response?.data?.message || error.message;
       toast.error(`Error: ${msg}`);
     }
   };
 
   const handleSalir = () => {
-    navigate('/eventos', { state: { message: 'Creación cancelada.', type: 'info' } });
+    navigate("/eventos", { state: { message: "Creación cancelada.", type: "info" } });
   };
 
   return (
@@ -119,7 +149,11 @@ const CrearEvento = () => {
                 <button type="submit" className="btn-custom-primary-aux">
                   Guardar
                 </button>
-                <button type="button" className="btn-custom-secondary-aux" onClick={handleSalir}>
+                <button
+                  type="button"
+                  className="btn-custom-secondary-aux"
+                  onClick={handleSalir}
+                >
                   Salir
                 </button>
               </div>
