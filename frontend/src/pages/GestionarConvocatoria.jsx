@@ -64,6 +64,14 @@ export default function GestionarConvocatoria() {
     loadAll();
   }, [loadAll]);
 
+  // Mapeo para participantes
+  const participantesMap = {
+    Individual: 1,
+    Duo: 2,
+    Trio: 3,
+    Cuarteto: 4,
+  };
+
   // --- Manejo Áreas ---
   const handleCreateArea = async () => {
     if (!newArea.trim()) return toast.warn("Escribe un nombre de área.");
@@ -167,12 +175,18 @@ export default function GestionarConvocatoria() {
     if (!selArea || !selCat || !precio || !participantes) {
       return toast.warn("Por favor completa todos los campos.");
     }
+
+    const participantesInt = participantesMap[participantes] || null;
+    if (!participantesInt) {
+      return toast.warn("Selecciona una modalidad válida.");
+    }
+
     try {
       await api.post(`/asignar-area-categoria`, {
         id_area: Number(selArea),
         id_categoria: Number(selCat),
         precio: Number(precio),
-        participantes,
+        participantes: participantesInt,
         activo: true,
       });
       toast.success("Área asignada a categoría");
@@ -191,12 +205,18 @@ export default function GestionarConvocatoria() {
 
   const handleUpdateAssignAreaCat = async () => {
     if (!selArea || !selCat) return toast.warn("Selecciona área y categoría.");
+
+    const participantesInt = participantesMap[participantes] || null;
+    if (!participantesInt) {
+      return toast.warn("Selecciona una modalidad válida.");
+    }
+
     try {
       await api.post(`/asignar-area-categoria`, {
         id_area: Number(selArea),
         id_categoria: Number(selCat),
         precio: Number(precio),
-        participantes,
+        participantes: participantesInt,
         activo: true,
       });
       toast.success("Asignación actualizada");
@@ -497,6 +517,12 @@ export default function GestionarConvocatoria() {
                                 area: a.id_area,
                                 categoria: c.id_categoria,
                               });
+                              setPrecio(c.precio ?? "");
+                              setParticipantes(
+                                Object.entries(participantesMap).find(
+                                  ([key, val]) => val === c.participantes
+                                )?.[0] || ""
+                              );
                             }}
                             className={
                               selectedAssign.area === a.id_area &&
@@ -515,7 +541,11 @@ export default function GestionarConvocatoria() {
                                 : c.grado_inicial_nombre}
                             </td>
                             <td>{c.precio ?? "N/A"}</td>
-                            <td>{c.participantes ?? "N/A"}</td>
+                            <td>
+                              {Object.entries(participantesMap).find(
+                                ([key, val]) => val === c.participantes
+                              )?.[0] || "N/A"}
+                            </td>
                             <td>
                               <button
                                 onClick={() =>
