@@ -1,0 +1,118 @@
+/* Página */
+.gestion-page {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Contenedor */
+.gestion-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Card */
+.gestion-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+/* Header */
+.gestion-header {
+  background-color: #003366;
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 1.5rem 2rem;
+}
+
+/* Body */
+.gestion-body {
+  padding: 2rem;
+  color: #003366;
+}
+
+/* Spinner */
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+}
+
+/* Form row */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.form-row label {
+  font-weight: 600;
+}
+.form-row .form-select {
+  padding: 0.6rem;
+  border: 1px solid #003366;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #003366;
+}
+
+/* Acciones */
+.acciones-ger {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+.btn-crear,
+.btn-eliminar {
+  padding: 0.6rem 1.2rem;
+  border-radius: 20px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-width: 140px;
+}
+.btn-crear {
+  background-color: #003366;
+  color: #fff;
+}
+.btn-crear:hover:not(:disabled) {
+  background-color: #001d40;
+}
+.btn-crear:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-eliminar {
+  background-color: #dc3545;
+  color: #fff;
+}
+.btn-eliminar:hover {
+  background-color: #a71d2a;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .gestion-header {
+    font-size: 1.4rem;
+    padding: 1rem;
+  }
+  .gestion-body {
+    padding: 1rem;
+  }
+  .acciones-ger {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn-crear,
+  .btn-eliminar {
+    width: 100%;
+  }
+}

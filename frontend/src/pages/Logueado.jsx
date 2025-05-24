@@ -53,7 +53,15 @@ const Logueado = () => {
                     className="btn-news vertical-btn"
                     onClick={handleNavigateConfiguracionConvocatoria}
                   >
-                    Configuración Convocatoria
+                    Creacion Convocatoria
+                  </button>
+                )}
+                {esAdmin && (
+                  <button
+                    className="btn-news vertical-btn"
+                    onClick={handleNavigateConfiguracionConvocatoria}
+                  >
+                    Gestion Convocatoria
                   </button>
                 )}
                 {esAdmin && (
