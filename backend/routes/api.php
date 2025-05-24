@@ -120,5 +120,7 @@ Route::post('/guardar-comprobante', [ComprobanteController::class, 'store']);
 Route::get('/verificar-codigo/{codigo}', [ComprobanteController::class, 'verificarCodigo']);
 Route::get('/comprobantes-pendientes', [ComprobanteController::class, 'comprobantesPendientes']);
 Route::patch('/comprobantes/{id}', [ComprobanteController::class, 'actualizarEstado']);
+Route::delete('/comprobantes/invalido/{id}', [ComprobanteController::class, 'EliminarComprobanteInvalido']);
+
 
 #Rutas sin proteger (sólo para pruebas)

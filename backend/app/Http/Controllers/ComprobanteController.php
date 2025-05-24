@@ -153,6 +153,35 @@ class ComprobanteController extends Controller
         return response()->json(['message' => 'Estado actualizado con éxito.']);
     }
 
+    //PARA ELIMINAR EL COMPROBANTE DE CODIGO DISTINTO A LA IMAGEN
+    public function EliminarComprobanteInvalido($id)
+    {
+        try {
+            $comprobante = Comprobante::findOrFail($id);
+
+            // Solo permitir eliminar comprobantes con estado = false (inválidos)
+            if ($comprobante->estado) {
+                return response()->json([
+                    'message' => 'No se puede eliminar un comprobante válido.'
+                ], 403);
+            }
+
+            // Eliminar archivo de imagen si existe
+            $rutaImagenFisica = public_path($comprobante->imagen);
+            if (file_exists($rutaImagenFisica)) {
+                unlink($rutaImagenFisica);
+            }
+
+            // Eliminar registro de base de datos
+            $comprobante->delete();
+
+            return response()->json(['message' => 'Comprobante inválido eliminado correctamente.'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al eliminar el comprobante.', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+
 }
 
 
