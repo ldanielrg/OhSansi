@@ -3,11 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/CrearConfiguracionConvocatoria.css";
 import { ToastContainer, toast } from "react-toastify";
-import { BallTriangle } from "react-loader-spinner";
+
 export default function EditarConfiguracionConvocatoria() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [cargando, setCargando] = useState(false);
   const [form, setForm] = useState({
     nombre: "",
     descripcion: "",
@@ -17,10 +16,9 @@ export default function EditarConfiguracionConvocatoria() {
 
   useEffect(() => {
     const cargarDatos = async () => {
-      setCargando(true);
       try {
         const { data } = await api.get(`/convocatoria-detalle/${id}`);
-        const conv = data[0];
+        const conv = data[0]; // tomas el primer elemento, de un array
 
         if (conv) {
           setForm({
@@ -35,8 +33,6 @@ export default function EditarConfiguracionConvocatoria() {
       } catch (err) {
         console.error(err);
         toast.error("Error cargando datos.");
-      } finally {
-        setCargando(false);
       }
     };
     cargarDatos();
@@ -48,6 +44,34 @@ export default function EditarConfiguracionConvocatoria() {
 
   const handleGuardar = async (e) => {
     e.preventDefault();
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Ignorar horas para comparar sólo fechas
+
+    const inicioDate = new Date(form.inicio);
+    const finDate = new Date(form.fin);
+
+    const unAnoDespues = new Date();
+    unAnoDespues.setFullYear(unAnoDespues.getFullYear() + 1);
+    unAnoDespues.setHours(23, 59, 59, 999);
+
+    
+
+    if (inicioDate > unAnoDespues) {
+      toast.warn("La fecha de inicio no puede ser más de 1 año desde hoy.");
+      return;
+    }
+
+    if (finDate < inicioDate) {
+      toast.warn("La fecha de fin no puede ser anterior a la fecha de inicio.");
+      return;
+    }
+
+    if (finDate > unAnoDespues) {
+      toast.warn("La fecha de fin no puede ser más de 1 año desde hoy.");
+      return;
+    }
+
     try {
       await api.post(`/convocatoria-editar/${id}`, {
         nombre_convocatoria: form.nombre,
@@ -75,93 +99,72 @@ export default function EditarConfiguracionConvocatoria() {
       <div className="crear-config-container">
         <div className="crear-config-card">
           <div className="crear-config-header">Editar Convocatoria</div>
-
-          {cargando ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "250px",
-              }}
-            >
-              <BallTriangle
-                height={80}
-                width={80}
-                radius={5}
-                color="#003366"
-                ariaLabel="loading"
-                visible={true}
+          <form className="crear-config-body" onSubmit={handleGuardar}>
+            <div className="form-row">
+              <label>Nombre</label>
+              <input
+                type="text"
+                name="nombre"
+                value={form.nombre}
+                onChange={handleChange}
+                required
               />
             </div>
-          ) : (
-            <form className="crear-config-body" onSubmit={handleGuardar}>
-              <div className="form-row">
-                <label>Nombre</label>
-                <input
-                  type="text"
-                  name="nombre"
-                  value={form.nombre}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label>Descripción</label>
-                <textarea
-                  name="descripcion"
-                  className="fixed-desc"
-                  value={form.descripcion}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label>Fecha Inicio</label>
-                <input
-                  type="date"
-                  name="inicio"
-                  value={form.inicio}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label>Fecha Fin</label>
-                <input
-                  type="date"
-                  name="fin"
-                  value={form.fin}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+            <div className="form-row">
+              <label>Descripción</label>
+              <textarea
+                name="descripcion"
+                className="fixed-desc"
+                value={form.descripcion}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-row">
+              <label>Fecha Inicio</label>
+              <input
+                type="date"
+                name="inicio"
+                value={form.inicio}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-row">
+              <label>Fecha Fin</label>
+              <input
+                type="date"
+                name="fin"
+                value={form.fin}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-              <div className="acciones-crear">
-                <div className="acciones-izquierda">
-                  <button type="submit" className="btn-crear">
-                    Guardar cambios
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-gestionar"
-                    onClick={irGestionar}
-                  >
-                    Gestionar convocatoria
-                  </button>
-                </div>
-                <div className="acciones-derecha">
-                  <button
-                    type="button"
-                    className="btn-eliminar"
-                    onClick={handleSalir}
-                  >
-                    Salir
-                  </button>
-                </div>
+            <div className="acciones-crear">
+              <div className="acciones-izquierda">
+                <button type="submit" className="btn-crear">
+                  Guardar cambios
+                </button>
+                <button
+                  type="button"
+                  className="btn-gestionar"
+                  onClick={irGestionar}
+                >
+                  Gestionar convocatoria
+                </button>
               </div>
-            </form>
-          )}
+              <div className="acciones-derecha">
+                <button
+                  type="button"
+                  className="btn-eliminar"
+                  onClick={handleSalir}
+                >
+                  Salir
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
       <ToastContainer position="bottom-right" autoClose={3000} />
