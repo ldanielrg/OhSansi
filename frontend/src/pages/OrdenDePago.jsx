@@ -14,6 +14,7 @@ import { useRef } from "react";
 import html2pdf from "html2pdf.js";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import Swal from "sweetalert2";
 
 
 const OrdenDePago = () => {
@@ -42,6 +43,15 @@ const OrdenDePago = () => {
         { name: "Precio (Bs)", selector: (row) => row.precio },
         { name: "Id equipo", selector: (row) => row.id_equipo }
     ];
+
+    const customStyles = {
+        pagination: {
+            style: {
+            backgroundColor: '#ffff',
+            padding: '0px',
+            }
+        }
+    };
 
     useEffect(() => {
         const cargarDatos = async () => {
@@ -80,66 +90,89 @@ const OrdenDePago = () => {
         cargarDatos();
     }, [id]);
 
-    const verificarPago = async () => {
-    if (!codigoManual || !imagenRecibo) {
-        alert("Debes ingresar el código y subir una imagen del recibo.");
-        return;
+
+
+const verificarPago = async () => {
+  // Validación previa obligatoria
+  if (!codigoManual || !imagenRecibo) {
+    alert("Debes ingresar el código y subir una imagen del recibo.");
+    return;
+  }
+
+  // Advertencia previa con SweetAlert
+  const confirmacion = await Swal.fire({
+    title: "Revisa los datos del recibo",
+    text: "Solo tienes un intento para verificar el recibo. ¿Deseas continuar?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, continuar",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33"      
+  });
+
+  if (!confirmacion.isConfirmed) {
+    // El usuario canceló la verificación
+    return;
+  }
+
+  // Si confirmó, continua con el proceso original
+  try {
+    // Paso 1: Verificar si ya fue validado anteriormente
+    const check = await api.get(`/verificar-codigo/${codigoManual}`);
+    if (check.data.verificado) {
+      alert("⚠️ Este comprobante ya fue verificado anteriormente.");
+      return;
     }
 
-    try {
-        // Paso 1: Verificar si ya fue validado anteriormente
-        const check = await api.get(`/verificar-codigo/${codigoManual}`);
-        if (check.data.verificado) {
-            alert("⚠️ Este comprobante ya fue verificado anteriormente.");
-            return;
-        }
+    // Paso 2: Ejecutar OCR
+    const imageUrl = URL.createObjectURL(imagenRecibo);
+    const result = await Tesseract.recognize(imageUrl, "spa", {
+      logger: (m) => console.log(m),
+    });
 
-        // Paso 2: Ejecutar OCR
-        const imageUrl = URL.createObjectURL(imagenRecibo);
-        const result = await Tesseract.recognize(imageUrl, "spa", {
-            logger: (m) => console.log(m),
-        });
+    const texto = result.data.text;
+    console.log("Texto OCR detectado:", texto);
 
-        const texto = result.data.text;
-        console.log("Texto OCR detectado:", texto);
+    // Paso 3: Preparar datos para guardar comprobante
+    const formData = new FormData();
+    formData.append("codigo", codigoManual);
+    formData.append("imagen", imagenRecibo);
+    formData.append("id_orden_pago", orden.id_orden);
+    formData.append("codigo_ocr", texto);
+    console.log("formdata", formData);
 
-        // Paso 3: Preparar datos para guardar comprobante
-        const formData = new FormData();
-        formData.append("codigo", codigoManual);
-        formData.append("imagen", imagenRecibo);
-        formData.append("id_orden_pago", orden.id_orden);
-        formData.append("codigo_ocr", texto);
-        console.log("formdata", formData);
-        // Paso 4: Enviar al backend
-        await api.post("/guardar-comprobante", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
+    // Paso 4: Enviar al backend
+    await api.post("/guardar-comprobante", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
-        // Paso 5: Mostrar resultado
-        if (texto.includes(codigoManual)) {
-            alert("✅ Código verificado con éxito. ¡Recibo válido!");
-        } else {
-            alert("❌ El código no coincide con el contenido del recibo.");
-        }
-
-        // Paso 6: Limpiar los campos del formulario
-        setCodigoManual("");
-        setImagenRecibo(null);
-        setTamanoImagen(null);
-        document.querySelector("input[type='file']").value = "";
-
-    } catch (err) {
-        console.error("Error al verificar o guardar comprobante:", err);
-
-        if (err.response?.status === 422) {
-            const errores = err.response.data.errors;
-            const mensaje = Object.values(errores).flat().join("\n");
-            alert(`❌ Error de validación:\n${mensaje}`);
-        } else {
-            alert("❌ Error al procesar el comprobante.");
-        }
+    // Paso 5: Mostrar resultado
+    if (texto.includes(codigoManual)) {
+      alert("✅ Código verificado con éxito. ¡Recibo válido!");
+    } else {
+      alert("❌ El código no coincide con el contenido del recibo.");
     }
+
+    // Paso 6: Limpiar los campos del formulario
+    setCodigoManual("");
+    setImagenRecibo(null);
+    setTamanoImagen(null);
+    document.querySelector("input[type='file']").value = "";
+
+  } catch (err) {
+    console.error("Error al verificar o guardar comprobante:", err);
+
+    if (err.response?.status === 422) {
+      const errores = err.response.data.errors;
+      const mensaje = Object.values(errores).flat().join("\n");
+      alert(`❌ Error de validación:\n${mensaje}`);
+    } else {
+      alert("❌ Error al procesar el comprobante.");
+    }
+  }
 };
+
 
 
 
@@ -312,6 +345,7 @@ const OrdenDePago = () => {
                             data={rowData}
                             pagination
                             noDataComponent="No hay estudiantes registrados."
+                            customStyles={customStyles}
                             
                         />
                         <section className="seccion-botones-orden"> 
@@ -320,6 +354,7 @@ const OrdenDePago = () => {
                     </>
                 )}
                 </Caja>
+                {!cargando && (
                 <Caja titulo='Verificacion del pago'>
                     <div className="contenedor-verificar-pago">
                         <div className="contenedor-registro-form-pago">
@@ -331,6 +366,7 @@ const OrdenDePago = () => {
                             value={codigoManual}
                             onChange={(e) => setCodigoManual(e.target.value)}
                             usarEvento={true}
+                            
                         />
 
                             <p>Sube la foto de tu recibo</p>
@@ -374,6 +410,7 @@ const OrdenDePago = () => {
                     <p>Consulta esta seccion para saber si tu recibo ha sido registrado correctamente.</p>
                     </div>
                 </Caja>
+                )}
                 <BotonForm
                                 texto='Volver'
                                 onClick={() => navigate(`/inscripciones?convocatoria=${idConvocatoria || ''}`)}

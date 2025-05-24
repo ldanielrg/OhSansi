@@ -15,25 +15,26 @@ const GestionDeComprobantes = () => {
   const [comprobantes, setComprobantes] = useState([]);
   const [loading, setLoading] = useState(true); // <-- estado para loading
 
+  // Extraemos fetchComprobantes para usar dentro y fuera de useEffect
+  const fetchComprobantes = async () => {
+    try {
+      setLoading(true); // activa loader
+      const response = await api.get("/comprobantes-pendientes");
+
+      const comprobantesFormateados = response.data.map(c => ({
+        ...c,
+        imagen: c.imagen
+      }));
+
+      setComprobantes(comprobantesFormateados);
+    } catch (error) {
+      console.error("❌ Error al cargar comprobantes:", error);
+    } finally {
+      setLoading(false); // desactiva loader cuando termina
+    }
+  };
+
   useEffect(() => {
-    const fetchComprobantes = async () => {
-      try {
-        setLoading(true); // activa loader
-        const response = await api.get("/comprobantes-pendientes");
-
-        const comprobantesFormateados = response.data.map(c => ({
-          ...c,
-          imagen: c.imagen
-        }));
-
-        setComprobantes(comprobantesFormateados);
-      } catch (error) {
-        console.error("❌ Error al cargar comprobantes:", error);
-      } finally {
-        setLoading(false); // desactiva loader cuando termina
-      }
-    };
-
     fetchComprobantes();
   }, []);
 
@@ -58,8 +59,28 @@ const GestionDeComprobantes = () => {
   };
 
   const handleEstadoChange = async (index, nuevoEstadoTexto) => {
-    const nuevoEstado = nuevoEstadoTexto === "Valido"; 
+    const nuevoEstado = nuevoEstadoTexto === "Valido";
 
+    if (nuevoEstado) {
+      // Confirmación antes de cambiar a "Válido"
+      const confirmacion = await Swal.fire({
+        title: "¿Estás seguro de marcar este comprobante como válido? Si lo haces ya no aparecerá en esta tabla y se guardará",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, confirmar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33" 
+      });
+
+      if (!confirmacion.isConfirmed) {
+        // Si cancela, recarga para revertir select
+        fetchComprobantes();
+        return;
+      }
+    }
+
+    // Actualización optimista local
     const copia = [...comprobantes];
     copia[index].estado = nuevoEstado;
     setComprobantes(copia);
@@ -80,6 +101,9 @@ const GestionDeComprobantes = () => {
           text: "El comprobante, la orden y el formulario fueron marcados como válidos."
         });
 
+        // Recarga para ocultar comprobante validado
+        fetchComprobantes();
+
       } catch (error) {
         console.error("❌ Error al actualizar estado en la BD:", error);
 
@@ -88,6 +112,9 @@ const GestionDeComprobantes = () => {
           title: "Error",
           text: "No se pudo actualizar el estado. Intenta nuevamente."
         });
+
+        // Revertir UI
+        fetchComprobantes();
       }
     }
   };
