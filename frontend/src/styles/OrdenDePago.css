@@ -34,26 +34,7 @@
   background-color: #ccc !important;
   color: #666 !important;
 }
-.rd-pagination button.rd-pagination__link {
-  background-color: #00796b;
-  color: white;
-  border-radius: 6px;
-  padding: 7px 15px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  margin: 0 4px;
-  transition: background-color 0.3s ease;
-}
 
-.rd-pagination button.rd-pagination__link:hover {
-  background-color: #004d40;
-}
-
-.rd-pagination button.rd-pagination__link.rd-pagination__link--active {
-  background-color: #ffff;
-  cursor: default;
-}
 
 
 
