@@ -136,4 +136,15 @@
   z-index: 9999;
 }
 
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Para centrar en toda la pantalla durante la carga de edición */
+  
+  background: rgba(255,255,255,0.7); /* opcional */
+  z-index: 999;
+}
+
+
   

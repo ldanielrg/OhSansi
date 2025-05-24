@@ -61,31 +61,65 @@ const CrearEvento = () => {
   const handleGuardar = async (e) => {
     e.preventDefault();
     const { nombre, fechaInicio, fechaFin } = formData;
-    if (!form.nombre.trim()) {
-      toast.warn("El nombre no puede estar vacío ni contener solo espacios.");
+
+    // 1. Validar nombre
+    const nombreTrim = nombre.trim();
+    if (!nombreTrim) {
+      toast.warn("El nombre no puede estar vacío o tener sólo espacios.");
       return;
     }
-    
-    if (!nombre || !fechaInicio || !fechaFin) {
-      toast.warn("Por favor completa todos los campos.");
+    if (nombre !== nombreTrim) {
+      toast.warn("El nombre no puede iniciar ni terminar con espacios.");
+      return;
+    }
+    if (nombreTrim.length > 100) {
+      toast.warn("El nombre no puede superar 100 caracteres.");
       return;
     }
 
+    
+    if (!fechaInicio || !fechaFin) {
+      toast.warn("Por favor completa todas las fechas.");
+      return;
+    }
+
+    
     if (new Date(fechaInicio) > new Date(fechaFin)) {
       toast.warn("La fecha de inicio no puede ser posterior a la de fin.");
       return;
     }
 
-    if (!isFechaValida(fechaInicio) || !isFechaValida(fechaFin)) {
+    
+    const inicioConv = new Date(fechaInicioConvocatoria);
+    const limite = new Date(inicioConv);
+    limite.setFullYear(limite.getFullYear() + 1);
+
+    const validaDentroDeUnAnio = (fechaStr) => {
+      const d = new Date(fechaStr);
+      return d >= inicioConv && d <= limite;
+    };
+
+    if (!validaDentroDeUnAnio(fechaInicio)) {
       toast.error(
-        "Las fechas del evento deben estar dentro de un año desde la fecha de inicio de la convocatoria."
+        `La fecha de inicio del evento debe estar entre ${fechaInicioConvocatoria} y ${limite
+          .toISOString()
+          .slice(0, 10)}.`
+      );
+      return;
+    }
+    if (!validaDentroDeUnAnio(fechaFin)) {
+      toast.error(
+        `La fecha de fin del evento debe estar entre ${fechaInicioConvocatoria} y ${limite
+          .toISOString()
+          .slice(0, 10)}.`
       );
       return;
     }
 
+    // 5. Enviar payload
     const payload = {
       id_convocatoria_convocatoria: idConvocatoria,
-      nombre_evento: nombre,
+      nombre_evento: nombreTrim,
       fecha_inicio: fechaInicio,
       fecha_final: fechaFin,
     };
@@ -97,7 +131,7 @@ const CrearEvento = () => {
         state: {
           message: "!Evento creado exitosamente.",
           type: "success",
-          idConvocatoria: idConvocatoria,
+          idConvocatoria,
         },
       });
     } catch (error) {

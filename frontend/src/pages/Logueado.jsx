@@ -55,7 +55,7 @@ const Logueado = () => {
                     className="btn-news vertical-btn"
                     onClick={handleNavigateConfiguracionConvocatoria}
                   >
-                    Creacion Convocatoria
+                    Gestion Convocatoria
                   </button>
                 )}
                 {esAdmin && (
@@ -63,7 +63,7 @@ const Logueado = () => {
                     className="btn-news vertical-btn"
                     onClick={handleNavigateConfiguracionAreaCategoria}
                   >
-                    Gestion Convocatoria
+                    Gestion Area,Categoria
                   </button>
                 )}
                 {esAdmin && (

@@ -40,6 +40,12 @@ export default function GestionarConvocatoria() {
     setCargando(true);
     try {
       const det = await api.get(`/convocatoria-detalle/${id_convocatoria}`);
+      const conv = det.data[0];
+      if (conv && conv.activo === false) {
+        toast.error("No puedes gestionar una convocatoria inactiva.");
+        navigate("/configuracion-convocatoria");
+        return;
+      }
       setConvName(det.data[0]?.nombre_convocatoria || "");
 
       const [arRes, catRes, grRes, acgRes] = await Promise.all([
