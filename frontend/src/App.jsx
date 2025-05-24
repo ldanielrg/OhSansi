@@ -87,7 +87,7 @@ function App() {
      
       <Route path="/configuracion-cuentas" element={<Layout><ConfiguracionCuentas /></Layout>}/>
       
-
+      <Route path="/inscritos-oficiales" element={<Layout><InscritosOficiales/></Layout>}/>
       {/* Rutas protegidas solo para Admin/Director/Adm.Inscripción */}
       <Route element={<ProtectedRoute allowedRoles={['Admin', 'Director', 'Docente','Adm. Inscripcion']} />}>
           <Route path="/crear-cuentas" element={<Layout><CrearCuentas /></Layout>} />
@@ -97,7 +97,7 @@ function App() {
           <Route path="/editar-configuracion-convocatoria/:id" element={<Layout><EditarConfigurarConvocatoria /></Layout>}/>
           <Route path="/configuracion-convocatoria" element={<Layout><ConfiguracionConvocatoria/></Layout>}/>
           <Route path="/configuracion-convocatoria/gestionar/:id_convocatoria" element={<Layout><GestionarConvocatoria/></Layout>}/>
-          <Route path="/inscritos-oficiales" element={<Layout><InscritosOficiales/></Layout>}/>
+          
           <Route path="/logueado" element={<Layout><Logueado/></Layout>}/>
           <Route path="/gestion-comprobantes" element={<Layout><GestionDeComprobantes /></Layout>} />
       </Route>
