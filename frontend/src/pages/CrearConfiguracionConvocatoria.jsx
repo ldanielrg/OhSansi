@@ -25,11 +25,22 @@ export default function CrearConfiguracionConvocatoria() {
     const inicioDate = new Date(form.inicio);
     const finDate = new Date(form.fin);
 
-    const unAnoDespues = new Date();
+    // Fecha límite mínima: hoy - 1 año
+    const limiteInicio = new Date(hoy);
+    limiteInicio.setFullYear(limiteInicio.getFullYear() - 1);
+
+    // Fecha límite máxima: hoy + 1 año
+    const unAnoDespues = new Date(hoy);
     unAnoDespues.setFullYear(unAnoDespues.getFullYear() + 1);
     unAnoDespues.setHours(23, 59, 59, 999);
 
-    
+    // Validar que la fecha inicio no sea menor a un año atrás
+    if (inicioDate < limiteInicio) {
+      toast.warn(
+        "La fecha de inicio no puede ser anterior a un año atrás desde hoy."
+      );
+      return;
+    }
 
     // Validar que la fecha inicio no supere 1 año desde hoy
     if (inicioDate > unAnoDespues) {
