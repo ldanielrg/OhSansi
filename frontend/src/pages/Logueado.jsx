@@ -23,6 +23,8 @@ const Logueado = () => {
   const handleNavigateGestionComprobantes = () =>
     navigate("/gestion-comprobantes");
 
+  const handleNavigateConfiguracionAreaCategoria = () =>
+    navigate("/gestion-area-categoria");
   return (
     <div className="config-page">
       <div className="config-container">
@@ -59,7 +61,7 @@ const Logueado = () => {
                 {esAdmin && (
                   <button
                     className="btn-news vertical-btn"
-                    onClick={handleNavigateConfiguracionConvocatoria}
+                    onClick={handleNavigateConfiguracionAreaCategoria}
                   >
                     Gestion Convocatoria
                   </button>
