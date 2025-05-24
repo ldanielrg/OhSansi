@@ -17,16 +17,21 @@ const CrearEvento = () => {
 
   useEffect(() => {
     if (!idConvocatoria) {
-      toast.error("Falta el ID de convocatoria. Regresa desde la lista de eventos.");
+      toast.error(
+        "Falta el ID de convocatoria. Regresa desde la lista de eventos."
+      );
       navigate("/eventos");
     } else {
       // Obtener fecha inicio convocatoria
-      api.get(`/convocatoria-detalle/${idConvocatoria}`)
+      api
+        .get(`/convocatoria-detalle/${idConvocatoria}`)
         .then(({ data }) => {
           if (data && data[0] && data[0].fecha_inicio) {
             setFechaInicioConvocatoria(data[0].fecha_inicio.split("T")[0]);
           } else {
-            toast.error("No se pudo obtener la fecha de inicio de la convocatoria.");
+            toast.error(
+              "No se pudo obtener la fecha de inicio de la convocatoria."
+            );
           }
         })
         .catch(() => {
@@ -56,7 +61,11 @@ const CrearEvento = () => {
   const handleGuardar = async (e) => {
     e.preventDefault();
     const { nombre, fechaInicio, fechaFin } = formData;
-
+    if (!form.nombre.trim()) {
+      toast.warn("El nombre no puede estar vacío ni contener solo espacios.");
+      return;
+    }
+    
     if (!nombre || !fechaInicio || !fechaFin) {
       toast.warn("Por favor completa todos los campos.");
       return;
@@ -99,7 +108,9 @@ const CrearEvento = () => {
   };
 
   const handleSalir = () => {
-    navigate("/eventos", { state: { message: "Creación cancelada.", type: "info" } });
+    navigate("/eventos", {
+      state: { message: "Creación cancelada.", type: "info" },
+    });
   };
 
   return (
