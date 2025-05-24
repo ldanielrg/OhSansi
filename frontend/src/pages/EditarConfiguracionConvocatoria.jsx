@@ -4,10 +4,12 @@ import api from "../api/axios";
 import "../styles/CrearConfiguracionConvocatoria.css";
 import { ToastContainer, toast } from "react-toastify";
 import { BallTriangle } from "react-loader-spinner";
+
 export default function EditarConfiguracionConvocatoria() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [cargando, setCargando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const [form, setForm] = useState({
     nombre: "",
     descripcion: "",
@@ -47,20 +49,71 @@ export default function EditarConfiguracionConvocatoria() {
   };
 
   const handleGuardar = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post(`/convocatoria-editar/${id}`, {
-        nombre_convocatoria: form.nombre,
-        descripcion: form.descripcion,
-        fecha_inicio: form.inicio,
-        fecha_final: form.fin,
-        activo: true,
-      });
-      toast.success("Convocatoria actualizada.");
-    } catch {
-      toast.error("Error al actualizar.");
-    }
-  };
+  e.preventDefault();
+
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const inicioDate = new Date(form.inicio);
+  const finDate = new Date(form.fin);
+
+  // La fecha inicio no puede ser anterior a hoy menos 1 año (es decir, hace un año o más atrás)
+  const limiteInicio = new Date(hoy);
+  limiteInicio.setFullYear(limiteInicio.getFullYear() - 1);
+
+  if (inicioDate < limiteInicio) {
+    toast.warn(
+      "La fecha de inicio no puede ser anterior a un año atrás desde hoy."
+    );
+    return;
+  }
+
+  // La fecha inicio no puede ser posterior a un año desde hoy (máximo 1 año en el futuro)
+  const limiteFinInicio = new Date(hoy);
+  limiteFinInicio.setFullYear(limiteFinInicio.getFullYear() + 1);
+
+  if (inicioDate > limiteFinInicio) {
+    toast.warn(
+      "La fecha de inicio no puede ser mayor a un año desde hoy."
+    );
+    return;
+  }
+
+  // La fecha fin no puede estar a más de 1 año antes o después de la fecha inicio
+  const unAnoAntesInicio = new Date(inicioDate);
+  unAnoAntesInicio.setFullYear(unAnoAntesInicio.getFullYear() - 1);
+
+  const unAnoDespuesInicio = new Date(inicioDate);
+  unAnoDespuesInicio.setFullYear(unAnoDespuesInicio.getFullYear() + 1);
+
+  if (finDate < unAnoAntesInicio || finDate > unAnoDespuesInicio) {
+    toast.warn(
+      "La fecha de fin debe estar dentro de 1 año antes o 1 año después de la fecha de inicio."
+    );
+    return;
+  }
+
+  // Fecha inicio no puede ser mayor que fecha fin
+  if (inicioDate > finDate) {
+    toast.warn("La fecha de inicio no puede ser posterior a la fecha de fin.");
+    return;
+  }
+
+  // Si pasa todas las validaciones, envías el formulario
+  try {
+    await api.post(`/convocatoria-editar/${id}`, {
+      nombre_convocatoria: form.nombre,
+      descripcion: form.descripcion,
+      fecha_inicio: form.inicio,
+      fecha_final: form.fin,
+      activo: true,
+    });
+    toast.success("Convocatoria actualizada.");
+  } catch {
+    toast.error("Error al actualizar.");
+  }
+};
+
 
   const irGestionar = () => {
     navigate(`/configuracion-convocatoria/gestionar/${id}`);
@@ -104,6 +157,7 @@ export default function EditarConfiguracionConvocatoria() {
                   value={form.nombre}
                   onChange={handleChange}
                   required
+                  disabled={guardando}
                 />
               </div>
               <div className="form-row">
@@ -114,6 +168,7 @@ export default function EditarConfiguracionConvocatoria() {
                   value={form.descripcion}
                   onChange={handleChange}
                   required
+                  disabled={guardando}
                 />
               </div>
               <div className="form-row">
@@ -124,6 +179,7 @@ export default function EditarConfiguracionConvocatoria() {
                   value={form.inicio}
                   onChange={handleChange}
                   required
+                  disabled={guardando}
                 />
               </div>
               <div className="form-row">
@@ -134,18 +190,31 @@ export default function EditarConfiguracionConvocatoria() {
                   value={form.fin}
                   onChange={handleChange}
                   required
+                  disabled={guardando}
                 />
               </div>
 
               <div className="acciones-crear">
                 <div className="acciones-izquierda">
-                  <button type="submit" className="btn-crear">
-                    Guardar cambios
+                  <button type="submit" className="btn-crear" disabled={guardando}>
+                    {guardando ? (
+                      <BallTriangle
+                        height={20}
+                        width={20}
+                        radius={5}
+                        color="#fff"
+                        ariaLabel="guardando-cargando"
+                        visible={true}
+                      />
+                    ) : (
+                      "Guardar cambios"
+                    )}
                   </button>
                   <button
                     type="button"
                     className="btn-gestionar"
                     onClick={irGestionar}
+                    disabled={guardando}
                   >
                     Gestionar convocatoria
                   </button>
@@ -155,6 +224,7 @@ export default function EditarConfiguracionConvocatoria() {
                     type="button"
                     className="btn-eliminar"
                     onClick={handleSalir}
+                    disabled={guardando}
                   >
                     Salir
                   </button>

@@ -172,3 +172,120 @@
   transition: box-shadow 0.3s ease;
   cursor: pointer;
 }
+/* Tabla */
+.tabla-config {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+/* Celdas y encabezados */
+.tabla-config th,
+.tabla-config td {
+  border: 1px solid #003366;
+  padding: 0.75rem;
+  text-align: left;
+  /* Por defecto el texto se ajusta */
+  white-space: normal;
+}
+
+/* Solo para las columnas con datos que quieres forzar nowrap (ej: fechas, números) */
+.tabla-config td.fecha,
+.tabla-config th.fecha {
+  white-space: nowrap;
+}
+
+/* Hover y fila seleccionada */
+.tabla-config tbody tr:hover,
+.tabla-config tbody tr.fila-seleccionada {
+  background-color: #e6f0ff;
+  cursor: pointer;
+}
+
+/* Acciones responsive */
+.acciones-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  flex-wrap: wrap; /* permite que los botones se muevan a la siguiente línea */
+  gap: 1rem;
+}
+
+.acciones-left,
+.acciones-right {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Botones */
+.btn-crear,
+.btn-editar,
+.btn-eliminar {
+  background-color: #003366;
+  color: #ffffff;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  min-width: 140px;
+  text-align: center;
+}
+
+.btn-eliminar {
+  background-color: #dc3545;
+}
+
+.btn-crear:hover,
+.btn-editar:hover:not(:disabled) {
+  background-color: #001d40;
+}
+
+.btn-eliminar:hover:not(:disabled) {
+  background-color: #a71d2a;
+}
+
+.btn-editar:disabled,
+.btn-eliminar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .config-card-body {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  
+  .tabla-config {
+    min-width: 600px;
+  }
+
+  .tabla-config th,
+  .tabla-config td {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+
+  .acciones-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .acciones-left,
+  .acciones-right {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .btn-crear,
+  .btn-editar,
+  .btn-eliminar {
+    width: 100%;
+    min-width: auto;
+  }
+}

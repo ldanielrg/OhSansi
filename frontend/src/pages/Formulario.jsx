@@ -274,10 +274,10 @@ const handleRegistrar = async () => {
       return toast.warn(`Nombre inválido en integrante ${i + 1}`);
     if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
       return toast.warn(`Nombre con caracteres inválidos en integrante ${i + 1}`);
-    if (!/\d{1,16}/.test(rude))
-      return toast.warn(`RUDE inválido en integrante ${i + 1}`);
-    if (!/\d{1,8}/.test(ci))
-      return toast.warn(`CI inválido en integrante ${i + 1}`);
+    if (!/^\d{8,10}$/.test(rude))
+  return toast.warn(`El RUDE debe tener entre 8 y 10 digitos, en el integrante${i + 1}`);
+    if (!/^\d{7,8}$/.test(ci))
+  return toast.warn(`El CI debe tener entre 7 y 8 digitos, en el integrante ${i + 1}`);
 
     const fechaNacimiento = new Date(fechaNac);
     const hoy = new Date();
@@ -446,7 +446,6 @@ setFormIndexActivo(0);
   }
 
   // Reset
-  toast.success(`Equipo registrado correctamente.`);
   setContadorEquipos((prev) => prev + 1);
   setFormulariosEquipo(Array.from({ length: numParticipantes }, () => ({
     nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area: "", categoria: "", email: ""
