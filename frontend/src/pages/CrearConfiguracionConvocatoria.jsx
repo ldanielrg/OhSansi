@@ -18,6 +18,37 @@ export default function CrearConfiguracionConvocatoria() {
 
   const handleCrear = async (e) => {
     e.preventDefault();
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Para comparar sólo fecha sin horas
+
+    const inicioDate = new Date(form.inicio);
+    const finDate = new Date(form.fin);
+
+    const unAnoDespues = new Date();
+    unAnoDespues.setFullYear(unAnoDespues.getFullYear() + 1);
+    unAnoDespues.setHours(23, 59, 59, 999);
+
+    
+
+    // Validar que la fecha inicio no supere 1 año desde hoy
+    if (inicioDate > unAnoDespues) {
+      toast.warn("La fecha de inicio no puede ser más de 1 año desde hoy.");
+      return;
+    }
+
+    // Validar que fecha fin sea igual o posterior a fecha inicio
+    if (finDate < inicioDate) {
+      toast.warn("La fecha de fin no puede ser anterior a la fecha de inicio.");
+      return;
+    }
+
+    // Validar que fecha fin no sea mayor a 1 año desde hoy
+    if (finDate > unAnoDespues) {
+      toast.warn("La fecha de fin no puede ser más de 1 año desde hoy.");
+      return;
+    }
+
     try {
       const res = await api.post("/convocatoria-crear", {
         nombre_convocatoria: form.nombre,
@@ -25,7 +56,6 @@ export default function CrearConfiguracionConvocatoria() {
         fecha_inicio: form.inicio,
         fecha_final: form.fin,
       });
-      const newId = res.data.id_convocatoria; // <-- Asume que viene aquí
       toast.success("Convocatoria creada.");
       navigate(`/configuracion-convocatoria`);
     } catch {
@@ -90,7 +120,6 @@ export default function CrearConfiguracionConvocatoria() {
                 <button type="submit" className="btn-crear">
                   Crear
                 </button>
-              
               </div>
               <div className="acciones-derecha">
                 <button
