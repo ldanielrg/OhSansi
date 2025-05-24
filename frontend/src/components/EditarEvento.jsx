@@ -1,4 +1,3 @@
-// src/pages/EditarEvento.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
@@ -15,21 +14,19 @@ const EditarEvento = () => {
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [cargando, setCargando] = useState(true);
+  const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
 
-  // 1️⃣ Cargar datos del evento desde el backend
   useEffect(() => {
     const fetchEvento = async () => {
       setCargando(true);
       setError("");
       try {
         const response = await api.get(`/eventos/${id}`);
-        // La API devuelve un array con un objeto [{ ... }]
         const data = Array.isArray(response.data)
           ? response.data[0]
           : response.data;
         setNombre(data.nombre_evento);
-        // Quita la parte "T..." dejando solo "YYYY-MM-DD"
         setFechaInicio(data.fecha_inicio.split("T")[0]);
         setFechaFin(data.fecha_final.split("T")[0]);
       } catch (err) {
@@ -42,31 +39,59 @@ const EditarEvento = () => {
     fetchEvento();
   }, [id]);
 
-  // 2️⃣ Función para enviar los cambios al backend
   const handleGuardar = async (e) => {
     e.preventDefault();
 
-    // Validaciones básicas
     if (!nombre || !fechaInicio || !fechaFin) {
       toast.warn("Por favor completa todos los campos.");
       return;
     }
-    if (new Date(fechaInicio) > new Date(fechaFin)) {
+
+    const inicioDate = new Date(fechaInicio);
+    const finDate = new Date(fechaFin);
+
+    if (inicioDate > finDate) {
       toast.warn(
         "La fecha de inicio no puede ser posterior a la fecha de fin."
       );
       return;
     }
 
-    const payload = {
-      id_evento: parseInt(id, 10),
-      nombre_evento: nombre,
-      fecha_inicio: fechaInicio,
-      fecha_final: fechaFin,
-    };
+    // Validación: fecha inicio dentro de ±1 año de fecha fin
+    const limiteInicioMin = new Date(finDate);
+    limiteInicioMin.setFullYear(limiteInicioMin.getFullYear() - 1);
+    const limiteInicioMax = new Date(finDate);
+    limiteInicioMax.setFullYear(limiteInicioMax.getFullYear() + 1);
 
+    if (inicioDate < limiteInicioMin || inicioDate > limiteInicioMax) {
+      toast.warn(
+        "La fecha de inicio debe estar dentro de un año antes o después de la fecha de fin."
+      );
+      return;
+    }
+
+    // Validación: fecha fin dentro de ±1 año de fecha inicio
+    const limiteFinMin = new Date(inicioDate);
+    limiteFinMin.setFullYear(limiteFinMin.getFullYear() - 1);
+    const limiteFinMax = new Date(inicioDate);
+    limiteFinMax.setFullYear(limiteFinMax.getFullYear() + 1);
+
+    if (finDate < limiteFinMin || finDate > limiteFinMax) {
+      toast.warn(
+        "La fecha de fin debe estar dentro de un año antes o después de la fecha de inicio."
+      );
+      return;
+    }
+
+    setGuardando(true);
     try {
-      await api.put(`/eventos/${id}`, payload);
+      await api.put(`/eventos/${id}`, {
+        id_evento: parseInt(id, 10),
+        nombre_evento: nombre,
+        fecha_inicio: fechaInicio,
+        fecha_final: fechaFin,
+      });
+      toast.success("Evento editado exitosamente.");
       navigate("/eventos", {
         state: { message: "Evento editado exitosamente.", type: "success" },
       });
@@ -74,8 +99,9 @@ const EditarEvento = () => {
       console.error("Error al actualizar evento:", err);
       const msg =
         err.response?.data?.message || "Error al actualizar el evento.";
-      // aquí sí mostramos el toast de error
       toast.error(msg);
+    } finally {
+      setGuardando(false);
     }
   };
 
@@ -92,7 +118,7 @@ const EditarEvento = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "60vh" /* Empuja el spinner hacia abajo */,
+          height: "60vh",
         }}
       >
         <BallTriangle
@@ -106,6 +132,7 @@ const EditarEvento = () => {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="container mt-4">
@@ -117,7 +144,6 @@ const EditarEvento = () => {
     );
   }
 
-  // 4️⃣ Formulario de edición
   return (
     <div className="editar-evento-page">
       <div className="editar-evento-container">
@@ -125,7 +151,6 @@ const EditarEvento = () => {
           <div className="editar-evento-header">Editar Evento</div>
           <div className="card-body">
             <form onSubmit={handleGuardar}>
-              {/* Nombre del Evento */}
               <div className="mb-3">
                 <label htmlFor="nombreEvento" className="form-label">
                   Nombre del Evento
@@ -137,10 +162,10 @@ const EditarEvento = () => {
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   required
+                  disabled={guardando}
                 />
               </div>
 
-              {/* Fecha de Inicio */}
               <div className="mb-3">
                 <label htmlFor="fechaInicio" className="form-label">
                   Fecha de Inicio
@@ -152,10 +177,10 @@ const EditarEvento = () => {
                   value={fechaInicio}
                   onChange={(e) => setFechaInicio(e.target.value)}
                   required
+                  disabled={guardando}
                 />
               </div>
 
-              {/* Fecha de Fin */}
               <div className="mb-3">
                 <label htmlFor="fechaFin" className="form-label">
                   Fecha de Fin
@@ -167,18 +192,34 @@ const EditarEvento = () => {
                   value={fechaFin}
                   onChange={(e) => setFechaFin(e.target.value)}
                   required
+                  disabled={guardando}
                 />
               </div>
 
-              {/* Botones */}
               <div className="d-flex justify-content-end gap-2 mt-4">
-                <button type="submit" className="btn-custom-primary-aux">
-                  Guardar Cambios
+                <button
+                  type="submit"
+                  className="btn-custom-primary-aux"
+                  disabled={guardando}
+                >
+                  {guardando ? (
+                    <BallTriangle
+                      height={20}
+                      width={20}
+                      radius={5}
+                      color="#fff"
+                      ariaLabel="guardando-cargando"
+                      visible={true}
+                    />
+                  ) : (
+                    "Guardar Cambios"
+                  )}
                 </button>
                 <button
                   type="button"
                   className="btn-custom-secondary-aux"
                   onClick={handleSalir}
+                  disabled={guardando}
                 >
                   Salir Sin Guardar
                 </button>
