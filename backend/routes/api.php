@@ -53,6 +53,7 @@ Route::get('/convocatoria-areas-categorias-grados/{id_convocatoria}', [Convocato
    
     //Para CRUD Categorias
     Route::get('/categorias', [CategoriaController::class, 'obtenerCategoriasPorConvocatoria']);
+    Route::get('/categoriasC/{id_convocatoria}', [CategoriaController::class, 'obtenerCategoriasPorConvocatoriaS']);
     Route::get('/categorias/{id_area}', [CategoriaController::class, 'porArea']);
     Route::get('/categorias-grados/{id_convocatoria}', [CategoriaController::class, 'categoriasConGradosPorConvocatoria']);//Obtiene Categorias y Grados "todos"
     //Route::delete('/categoria-eliminar/{id_categoria}', [CategoriaController::class, 'destroy']);
@@ -108,7 +109,8 @@ Route::middleware('auth:sanctum')->group(function () {
 //ORDEN DE PAGO FORMULARIO
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/orden-pago/{id_formulario}', [InscripcionController::class, 'calcularTotalPorEquipo']);
+    //Route::get('/orden-pago/{id_formulario}', [InscripcionController::class, 'calcularTotalPorEquipo']);
+    Route::get('/orden-pago/{id_formulario}', [OrdenPagoController::class, 'mostrarPorFormulario']);
     Route::post('/orden-pago', [OrdenPagoController::class, 'crear']); // AGREGUE YO, PARA INSERTAR DATOS EN BD
 });
 

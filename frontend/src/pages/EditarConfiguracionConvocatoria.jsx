@@ -9,6 +9,7 @@ export default function EditarConfiguracionConvocatoria() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [cargando, setCargando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const [form, setForm] = useState({
     nombre: "",
     descripcion: "",
@@ -156,6 +157,7 @@ export default function EditarConfiguracionConvocatoria() {
                   value={form.nombre}
                   onChange={handleChange}
                   required
+                  disabled={guardando}
                 />
               </div>
               <div className="form-row">
@@ -166,6 +168,7 @@ export default function EditarConfiguracionConvocatoria() {
                   value={form.descripcion}
                   onChange={handleChange}
                   required
+                  disabled={guardando}
                 />
               </div>
               <div className="form-row">
@@ -176,6 +179,7 @@ export default function EditarConfiguracionConvocatoria() {
                   value={form.inicio}
                   onChange={handleChange}
                   required
+                  disabled={guardando}
                 />
               </div>
               <div className="form-row">
@@ -186,18 +190,31 @@ export default function EditarConfiguracionConvocatoria() {
                   value={form.fin}
                   onChange={handleChange}
                   required
+                  disabled={guardando}
                 />
               </div>
 
               <div className="acciones-crear">
                 <div className="acciones-izquierda">
-                  <button type="submit" className="btn-crear">
-                    Guardar cambios
+                  <button type="submit" className="btn-crear" disabled={guardando}>
+                    {guardando ? (
+                      <BallTriangle
+                        height={20}
+                        width={20}
+                        radius={5}
+                        color="#fff"
+                        ariaLabel="guardando-cargando"
+                        visible={true}
+                      />
+                    ) : (
+                      "Guardar cambios"
+                    )}
                   </button>
                   <button
                     type="button"
                     className="btn-gestionar"
                     onClick={irGestionar}
+                    disabled={guardando}
                   >
                     Gestionar convocatoria
                   </button>
@@ -207,6 +224,7 @@ export default function EditarConfiguracionConvocatoria() {
                     type="button"
                     className="btn-eliminar"
                     onClick={handleSalir}
+                    disabled={guardando}
                   >
                     Salir
                   </button>

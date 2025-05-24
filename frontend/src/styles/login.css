@@ -1,5 +1,4 @@
 /* estilos/ChatTheme.css */
-
 /* Contenedor principal de formularios */
 .caja-body {
     padding: 20px;
@@ -38,7 +37,6 @@
     flex-direction: column;
     align-items: center;
     padding-top: 0;
-    background-color: #f0f4f8;       /* gris muy claro */
     min-height: 100vh;
   }
   

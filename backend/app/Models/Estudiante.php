@@ -33,7 +33,7 @@ class Estudiante extends Model
 
 	protected $casts = [
 		'id_estudiante' => 'int',
-		'fecha_nacimiento' => 'datetime'
+		'fecha_nacimiento' => 'date:Y-m-d'
 	];
 
 	protected $fillable = [

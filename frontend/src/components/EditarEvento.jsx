@@ -14,6 +14,7 @@ const EditarEvento = () => {
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [cargando, setCargando] = useState(true);
+  const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -132,6 +133,7 @@ const EditarEvento = () => {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="container mt-4">
@@ -161,6 +163,7 @@ const EditarEvento = () => {
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   required
+                  disabled={guardando}
                 />
               </div>
 
@@ -175,6 +178,7 @@ const EditarEvento = () => {
                   value={fechaInicio}
                   onChange={(e) => setFechaInicio(e.target.value)}
                   required
+                  disabled={guardando}
                 />
               </div>
 
@@ -189,17 +193,34 @@ const EditarEvento = () => {
                   value={fechaFin}
                   onChange={(e) => setFechaFin(e.target.value)}
                   required
+                  disabled={guardando}
                 />
               </div>
 
               <div className="d-flex justify-content-end gap-2 mt-4">
-                <button type="submit" className="btn-custom-primary-aux">
-                  Guardar Cambios
+                <button
+                  type="submit"
+                  className="btn-custom-primary-aux"
+                  disabled={guardando}
+                >
+                  {guardando ? (
+                    <BallTriangle
+                      height={20}
+                      width={20}
+                      radius={5}
+                      color="#fff"
+                      ariaLabel="guardando-cargando"
+                      visible={true}
+                    />
+                  ) : (
+                    "Guardar Cambios"
+                  )}
                 </button>
                 <button
                   type="button"
                   className="btn-custom-secondary-aux"
                   onClick={handleSalir}
+                  disabled={guardando}
                 >
                   Salir Sin Guardar
                 </button>
