@@ -109,7 +109,7 @@ const OrdenDePago = () => {
         formData.append("imagen", imagenRecibo);
         formData.append("id_orden_pago", orden.id_orden);
         formData.append("codigo_ocr", texto);
-
+        console.log("formdata", formData);
         // Paso 4: Enviar al backend
         await api.post("/guardar-comprobante", formData, {
             headers: { "Content-Type": "multipart/form-data" },
@@ -312,24 +312,7 @@ const OrdenDePago = () => {
                             data={rowData}
                             pagination
                             noDataComponent="No hay estudiantes registrados."
-                            customStyles={{
-                                pagination: {
-                                    style: { backgroundColor: "white" },
-                                    pageButtonsStyle: {
-                                        borderRadius: "50%",
-                                        margin: "2px",
-                                        cursor: "pointer",
-                                        color: "#fff",
-                                        fill: "#fff",
-                                        backgroundColor: "#1A2D5A",
-                                        "&:hover": { backgroundColor: "#27467A" },
-                                        "&:disabled": {
-                                            color: "#888",
-                                            backgroundColor: "#ccc",
-                                        },
-                                    },
-                                },
-                            }}
+                            
                         />
                         <section className="seccion-botones-orden"> 
 

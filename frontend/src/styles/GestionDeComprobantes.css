@@ -1,4 +1,9 @@
 .contenedor-gestion-comprobantes{
     display: flex;
     justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.contenedor-gestion-comprobantes-div h2{
+    text-align: center;
 }

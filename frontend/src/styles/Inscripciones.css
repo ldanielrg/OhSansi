@@ -105,10 +105,12 @@
     transition: width 1500ms;
 }
 .boton-deshabilitado {
-  opacity: 0.5;
+  opacity: 0.1;
   cursor: not-allowed;
 }
-
+.sc-fWnslk{
+    padding: 0;
+}
 
 .botones-inscripciones-convocatoria:hover::before {
     width: 250%;
@@ -153,5 +155,11 @@
 @media (max-width: 558px){
     .label-botones-crud-forms{
         font-size: 10px;
+    }
+}
+@media (max-width: 441px){
+    .iconos-crud-formularios{
+        font-size: 24px;
+        padding: 0;
     }
 }

@@ -47,6 +47,7 @@ const Formulario = () => {
   const selectedRowsRef = useRef([]);
   const [areas, setAreas] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [categoriasExcel, setCategoriasExcel] = useState([]);
   const [municipios, setMunicipios] = useState([]);
   const [ue, setUe] = useState([]);
   const [searchParams] = useSearchParams();
@@ -61,6 +62,12 @@ const [contadorEquipos, setContadorEquipos] = useState(1); // para generar id_eq
 const [idEquipoEnEdicion, setIdEquipoEnEdicion] = useState(null);
 const [idEstudianteEnEdicion, setIdEstudianteEnEdicion] = useState(null);
 const [registrando, setRegistrando] = useState(false);
+const [loadingAreas, setLoadingAreas] = useState(false);
+const [loadingTabs, setLoadingTabs] = React.useState(false);
+
+
+
+
 
 
 
@@ -91,12 +98,17 @@ const columns = [
 useEffect(() => {
   const cargarAreas = async () => {
     if (!idConvocatoria) return;
+    setLoadingAreas(true);
     try {
       const res = await api.get(`/areas/${idConvocatoria}`);
+      const res2 = await api.get(`/categoriasC/${idConvocatoria}`);
       setAreas(res.data);
+      setCategoriasExcel(res2.data);
     } catch (error) {
       console.error("Error al obtener áreas:", error);
       toast.error("Error al obtener las áreas.");
+    }finally {
+      setLoadingAreas(false);
     }
   };
 
@@ -111,18 +123,30 @@ useEffect(() => {
     return;
   }
 
+  const controller = new AbortController();
+  const signal = controller.signal;
+
   const cargarCategorias = async () => {
     try {
-      const res = await api.get(`/categorias/${areaActual}`);
+      const res = await api.get(`/categorias/${areaActual}`, { signal });
       setCategorias(res.data);
     } catch (error) {
-      console.error("Error al obtener categorías:", error);
-      toast.error("Error al obtener las categorías.");
+      if (error.name === "CanceledError") {
+        // petición cancelada, no hacemos nada
+      } else {
+        console.error("Error al obtener categorías:", error);
+        toast.error("Error al obtener las categorías.");
+      }
     }
   };
 
   cargarCategorias();
+
+  return () => {
+    controller.abort(); // cancela petición anterior al cambiar area o desmontar
+  };
 }, [formIndexActivo, formulariosEquipo[formIndexActivo]?.area]);
+
 
 
 
@@ -188,38 +212,43 @@ useEffect(() => {
 
 
 
-  useEffect(() => {
-    const area = formulariosEquipo[formIndexActivo]?.area;
-    const categoria = formulariosEquipo[formIndexActivo]?.categoria;
+useEffect(() => {
+  const area = formulariosEquipo[formIndexActivo]?.area;
+  const categoria = formulariosEquipo[formIndexActivo]?.categoria;
 
-    // ⛔ Evita reiniciar si estás editando un estudiante
-    if (!area || !categoria || modoEdicion) return;
+  // ⛔ Evita reiniciar si estás editando un estudiante o faltan datos
+  if (!area || !categoria || modoEdicion) return;
 
-    const obtenerCantidadParticipantes = async () => {
-      try {
-        const res = await api.get(`/participantes`, {
-          params: {
-            id_area: area,
-            id_categoria: categoria
-          }
-        });
+  const obtenerCantidadParticipantes = async () => {
+    try {
+      setLoadingTabs(true); // Activar loader
 
-        const cantidad = parseInt(res.data?.cantidad || 1);
+      const res = await api.get(`/participantes`, {
+        params: {
+          id_area: area,
+          id_categoria: categoria
+        }
+      });
 
-        setNumParticipantes(cantidad);
-        setFormIndexActivo(0);
-        setFormulariosEquipo(
-          Array.from({ length: cantidad }, () => ({
-            nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area, categoria, email: ""
-          }))
-        );
-      } catch (error) {
-        toast.error("No se pudo obtener la cantidad de integrantes para esta categoría.");
-      }
-    };
+      const cantidad = parseInt(res.data?.cantidad || 1);
 
-    obtenerCantidadParticipantes();
-  }, [formulariosEquipo[formIndexActivo]?.categoria]);
+      setNumParticipantes(cantidad);
+      setFormIndexActivo(0);
+      setFormulariosEquipo(
+        Array.from({ length: cantidad }, () => ({
+          nombre: "", apellido: "", ci: "", fechaNac: "", rude: "", area, categoria, email: ""
+        }))
+      );
+
+    } catch (error) {
+      toast.error("No se pudo obtener la cantidad de integrantes para esta categoría.");
+    } finally {
+      setLoadingTabs(false); // Desactivar loader
+    }
+  };
+
+  obtenerCantidadParticipantes();
+}, [formulariosEquipo[formIndexActivo]?.categoria]);
 
 
 
@@ -257,6 +286,18 @@ const handleRegistrar = async () => {
       return toast.warn(`Fecha de nacimiento inválida en integrante ${i + 1}`);
     if (fechaNacimiento > hoy)
       return toast.warn(`La fecha no puede ser en el futuro (integrante ${i + 1})`);
+
+    // Cálculo de edad
+    //const edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    //const m = hoy.getMonth() - fechaNacimiento.getMonth();
+    //if (m < 0 || (m === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+      // Si no ha cumplido años este año
+    //  edad--;
+    //}
+
+    //if (edad < 7)
+    //  return toast.warn(`La edad mínima requerida es 7 años (integrante ${i + 1})`);
+    
   }
 
   // ✅ Solo después de las validaciones
@@ -382,6 +423,21 @@ const handleRegistrar = async () => {
 
 
     toast.success("Estudiantes registrados correctamente en el sistema.");
+    setFormulariosEquipo(
+  Array.from({ length: numParticipantes }, () => ({
+    nombre: "",
+    apellido: "",
+    ci: "",
+    fechaNac: "",
+    rude: "",
+    area: "",
+    categoria: "",
+    email: "",
+    team: 0,
+  }))
+);
+setFormIndexActivo(0);
+
   } catch (error) {
     console.error("Error al registrar estudiantes en backend:", error);
     toast.error("Error al registrar estudiantes en el servidor.");
@@ -458,11 +514,14 @@ const handleEditar = async () => {
     setIdEquipoEnEdicion(idEquipo);
   };
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = async (e) => {
+    try {
       const data = new Uint8Array(e.target.result);
       setSelectedRows([]);
       selectedRowsRef.current = [];
@@ -472,11 +531,16 @@ const handleEditar = async () => {
       const worksheet = workbook.Sheets[worksheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-      const rows = jsonData.slice(13);
-      if (rows.length === 0)
-        return toast.error("El archivo no contiene datos válidos.");
+      const rows = jsonData.slice(13); // Saltar encabezados o filas que no interesan
+
+      if (rows.length === 0) {
+        toast.error("El archivo no contiene datos válidos.");
+        return;
+      }
 
       const nuevosEstudiantes = [];
+      const errores = [];
+
       for (let i = 0; i < rows.length; i++) {
         const fila = rows[i];
         const [
@@ -489,19 +553,21 @@ const handleEditar = async () => {
           area,
           categoria,
           email,
+          team,
         ] = fila;
+
+        if (
+          !nombre || !apellido || !ci || !fechaNacOriginal || !rude || !area || !categoria || !team
+        ) {
+          errores.push(`Fila ${i + 14}: Algún campo está vacío.`);
+          continue;
+        }
 
         let fechaNac = fechaNacOriginal;
         if (typeof fechaNac === "number") {
           const excelStartDate = new Date(1900, 0, 1);
           excelStartDate.setDate(excelStartDate.getDate() + fechaNac - 2);
           fechaNac = excelStartDate.toISOString().split("T")[0];
-        }
-
-        if (
-          !nombre || !apellido || !ci || !fechaNac || !rude || !area || !categoria
-        ) {
-          return toast.error(`Error en fila ${i + 14}: Algún campo vacío.`);
         }
 
         nuevosEstudiantes.push({
@@ -513,17 +579,85 @@ const handleEditar = async () => {
           nombre_area: area,
           nombre_categoria: categoria,
           email: email || "",
+          team: team.toString(),
         });
       }
 
-      if (nuevosEstudiantes.length > 0) {
-        setRowData((prev) => [...prev, ...nuevosEstudiantes]);
-        toast.success(`¡Se agregaron ${nuevosEstudiantes.length} estudiantes correctamente!`);
+      if (errores.length > 0) {
+        errores.forEach(err => toast.error(err));
+        return;
       }
-    };
-    reader.readAsArrayBuffer(file);
-    event.target.value = "";
+
+      // Mapear nombres a IDs
+      const estudiantesParaEnviar = [];
+      for (const est of nuevosEstudiantes) {
+        const areaObj = areas.find(a => a.nombre_area.trim().toLowerCase() === est.nombre_area.trim().toLowerCase());
+        const categoriaObj = categoriasExcel.find(c => c.nombre_categoria.trim().toLowerCase() === est.nombre_categoria.trim().toLowerCase());
+
+        if (!areaObj) {
+          errores.push(`Área no encontrada: "${est.nombre_area}" para ${est.nombre} ${est.apellido}`);
+          continue;
+        }
+        if (!categoriaObj) {
+          errores.push(`Categoría no encontrada: "${est.nombre_categoria}" para ${est.nombre} ${est.apellido}`);
+          continue;
+        }
+
+        estudiantesParaEnviar.push({
+          id_estudiante: null,
+          nombre: est.nombre,
+          apellido: est.apellido,
+          email: est.email,
+          ci: parseInt(est.ci),
+          fecha_nacimiento: est.fechaNac,
+          rude: parseInt(est.rude),
+          idAarea: areaObj.id_area,
+          idCategoria: categoriaObj.id_categoria,
+          team: parseInt(est.team),
+        });
+      }
+
+      if (errores.length > 0) {
+        errores.forEach(err => toast.error(err));
+        return;
+      }
+
+      if (estudiantesParaEnviar.length === 0) {
+        toast.error("No hay estudiantes válidos para enviar.");
+        return;
+      }
+
+      const datosEnviar = {
+        id_formulario_actual: parseInt(id),
+        id_convocatoria: idConvocatoria,
+        estudiantes: estudiantesParaEnviar,
+      };
+
+      // Enviar a backend
+      const res = await api.post("/inscripcion", datosEnviar);
+
+      if (res.data && res.data.estudiantes) {
+        const estudiantesNormalizados = res.data.estudiantes.map((est) => ({
+          ...est,
+          fechaNac: est.fecha_nac,
+        }));
+        setRowData((prev) => [...prev, ...estudiantesNormalizados]);
+        toast.success(`¡Se agregaron ${estudiantesNormalizados.length} estudiantes correctamente!`);
+      } else {
+        toast.error("Error: no se recibieron estudiantes del servidor.");
+      }
+    } catch (error) {
+      console.error("Error leyendo archivo o enviando datos:", error);
+      toast.error("Error al procesar el archivo o enviar datos.");
+    } finally {
+      event.target.value = ""; // Limpiar input para poder subir el mismo archivo después si se quiere
+    }
   };
+
+  reader.readAsArrayBuffer(file);
+};
+
+
 
 const handleEliminar = async () => {
   const seleccionActual = selectedRowsRef.current;
@@ -663,7 +797,7 @@ const actualizarFormulario = (index, campo, valor) => {
         </div>
         <div className="contenedor-archivo-excel">
           <a
-            href="/public/plantillas/FormatoParaSubirLista.xlsx"
+            href="/plantillas/FormatoParaSubirLista.xlsx"
             download="FormatoParaSubirLista.xlsx"
             className="boton-descargar-excel"
           >
@@ -697,7 +831,7 @@ const actualizarFormulario = (index, campo, valor) => {
           className="caja-formulario-est"
         >
         <p>Escoge un Área y Categoria para inscribir</p>
-        <RegistroForm
+              <RegistroForm
                 label="Área"
                 name="area"
                 type="select"
@@ -706,33 +840,46 @@ const actualizarFormulario = (index, campo, valor) => {
                   actualizarFormulario(formIndexActivo, "area", e.target.value)
                 }
                 usarEvento={true}
-                options={[
-                  { value: "", label: "Seleccione una Área" },
-                  ...areas.map((area) => ({
-                    value: area.id_area,
-                    label: area.nombre_area,
-                  })),
-                ]}
-              />
-              <RegistroForm
-                label="Categoria"
-                name="categoria"
-                type="select"
-                value={formulariosEquipo[formIndexActivo].categoria}
-                onChange={(e) =>
-                  actualizarFormulario(formIndexActivo, "categoria", e.target.value)
+                options={
+                  loadingAreas
+                    ? [{ value: "", label: "Cargando áreas..." }]
+                    : [
+                        { value: "", label: "Seleccione una Área" },
+                        ...areas.map((area) => ({
+                          value: area.id_area,
+                          label: area.nombre_area,
+                        })),
+                      ]
                 }
-                usarEvento={true}
-                options={[
-                  { value: "", label: "Seleccione una Categoria" },
-                  ...categorias.map((cat) => ({
-                    value: cat.id_categoria,
-                    label: cat.nombre_categoria,
-                  })),
-                ]}
+                disabled={loadingAreas}
               />
+
+              <RegistroForm
+  label="Categoría"
+  name="categoria"
+  type="select"
+  value={formulariosEquipo[formIndexActivo].categoria}
+  onChange={(e) =>
+    actualizarFormulario(formIndexActivo, "categoria", e.target.value)
+  }
+  usarEvento={true}
+  options={[
+    { value: "", label: "Seleccione una Categoría" },
+    ...categorias.map((cat) => ({
+      value: cat.id_categoria,
+      label: cat.nombre_categoria,
+    })),
+  ]}
+/>
+
               
           <p>Se habilitarán uno o más formularios de inscripcion segun la categoria que has eligido:</p>
+          {loadingTabs ? (
+  <div style={{ padding: "1rem", textAlign: "center" }}>
+    <BallTriangle height={40} width={40} color="#003366" />
+  </div>
+) : (
+  <>
           <div className="tabs-participantes">
             {Array.from({ length: numParticipantes }, (_, index) => (
               <button
@@ -815,6 +962,8 @@ const actualizarFormulario = (index, campo, valor) => {
               />
             </section>
           </div>
+           </>
+)}
         </Caja>
 
 
@@ -857,28 +1006,7 @@ const actualizarFormulario = (index, campo, valor) => {
   selectedRowsRef.current = mismoEquipo;
 }}
 
-            customStyles={{
-              pagination: {
-                style: {
-                  backgroundColor: "white"
-                },
-                pageButtonsStyle: {
-                  borderRadius: "50%",
-                  margin: "2px",
-                  cursor: "pointer",
-                  color: "#fff",
-                  fill: "#fff",
-                  backgroundColor: "#1A2D5A", // azul marino
-                  "&:hover": {
-                    backgroundColor: "#27467A", // más claro al pasar el mouse
-                  },
-                  "&:disabled": {
-                    color: "#888",
-                    backgroundColor: "#ccc",
-                  },
-                },
-              },
-            }}
+            
             noDataComponent="Aquí verás a los estudiantes que inscribiste."
             pagination
             responsive

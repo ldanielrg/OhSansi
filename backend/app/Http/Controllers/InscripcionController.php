@@ -267,7 +267,8 @@ class InscripcionController extends Controller{
                             'apellido' => $estudiante->apellido,
                             'email' => $estudiante->email,
                             'ci' => $estudiante->ci,
-                            'fecha_nac' => $estudiante->fecha_nacimiento,
+                            //'fecha_nac' => $estudiante->fecha_nacimiento,
+                             'fecha_nac' => $estudiante->fecha_nacimiento ? $estudiante->fecha_nacimiento->format('Y-m-d') : null,
                             'rude' => $estudiante->rude,
                             'id_area' => $relacion->id_area_area,
                             'nombre_area' => optional($relacion->area)->nombre_area ?? '',
@@ -586,7 +587,10 @@ class InscripcionController extends Controller{
                 'apellido' => $inscripcion->estudiante->apellido ?? '',
                 'email' => $inscripcion->estudiante->email ?? '',
                 'ci' => $inscripcion->estudiante->ci ?? '',
-                'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento ?? '',
+                //'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento ?? '',
+                'fecha_nacimiento' => $inscripcion->estudiante->fecha_nacimiento
+                ? $inscripcion->estudiante->fecha_nacimiento->format('Y-m-d')
+                : '',
                 'rude' => $inscripcion->estudiante->rude ?? '',
 
                 'idAarea' => $inscrito->area->id_area ?? '',
@@ -603,25 +607,6 @@ class InscripcionController extends Controller{
             'id_formulario' => $formulario->id_formulario,
             'id_convocatoria_convocatoria' => $formulario->id_convocatoria_convocatoria,
             'estudiantes' => $estudiantes
-        ]);
-    }
-
-    #Calcular precio total de un formulario
-    public function calcularTotalPorEquipo($idFormulario){
-        // Detalles por grupo (como antes)
-        $detalles = DB::table('estudiante_esta_inscrito as ei')
-            ->join('area_tiene_categoria as ac', 'ei.id_inscrito_en', '=', 'ac.id')
-            ->select('ei.id_inscrito_en', 'ei.team', 'ac.precio')
-            ->where('ei.id_formulario_formulario', $idFormulario)
-            ->groupBy('ei.id_inscrito_en', 'ei.team', 'ac.precio')
-            ->get();
-
-        // Calcular monto total del formulario, sumando una vez por grupo
-        $montoTotal = $detalles->sum('precio');
-
-        return response()->json([
-            'detalles_por_grupo' => $detalles,
-            'monto_total' => $montoTotal
         ]);
     }
 
