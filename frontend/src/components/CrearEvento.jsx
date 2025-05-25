@@ -68,6 +68,12 @@ const CrearEvento = () => {
       toast.warn("El nombre no puede estar vacío o tener sólo espacios.");
       return;
     }
+    const regex = /^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\s]*$/;
+    if (!regex.test(nombreTrim)) {
+      return toast.warn(
+        "El nombre debe comenzar con letra y solo contener letras y espacios."
+      );
+    }
     if (nombre !== nombreTrim) {
       toast.warn("El nombre no puede iniciar ni terminar con espacios.");
       return;
@@ -77,19 +83,16 @@ const CrearEvento = () => {
       return;
     }
 
-    
     if (!fechaInicio || !fechaFin) {
       toast.warn("Por favor completa todas las fechas.");
       return;
     }
 
-    
     if (new Date(fechaInicio) > new Date(fechaFin)) {
       toast.warn("La fecha de inicio no puede ser posterior a la de fin.");
       return;
     }
 
-    
     const inicioConv = new Date(fechaInicioConvocatoria);
     const limite = new Date(inicioConv);
     limite.setFullYear(limite.getFullYear() + 1);

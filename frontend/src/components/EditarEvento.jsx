@@ -38,7 +38,7 @@ const EditarEvento = () => {
         setFechaFin(data.fecha_final.split("T")[0]);
 
         // 2) Con el ID de convocatoria, traer su fecha de inicio
-        const idConv = data.id_convocatoria_convocatoria; 
+        const idConv = data.id_convocatoria_convocatoria;
         if (idConv) {
           const convRes = await api.get(`/convocatoria-detalle/${idConv}`);
           const conv = Array.isArray(convRes.data)
@@ -72,6 +72,12 @@ const EditarEvento = () => {
     if (nombre !== nombreTrim) {
       toast.warn("El nombre no puede iniciar o terminar con espacios.");
       return;
+    }
+    const regex = /^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\s]*$/;
+    if (!regex.test(nombreTrim)) {
+      return toast.warn(
+        "El nombre debe comenzar con letra y solo contener letras y espacios."
+      );
     }
     if (nombreTrim.length > 100) {
       toast.warn("El nombre no puede superar 100 caracteres.");
@@ -240,7 +246,7 @@ const EditarEvento = () => {
                   className="btn-custom-primary-aux"
                   disabled={guardando}
                 >
-                 {guardando ? "Guardando..." : "Guardar Cambios"}
+                  {guardando ? "Guardando..." : "Guardar Cambios"}
                 </button>
                 <button
                   type="button"
