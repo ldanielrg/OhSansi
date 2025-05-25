@@ -15,7 +15,7 @@ export default function GestionAreaCategoria() {
     const fetchConv = async () => {
       setLoading(true);
       try {
-        const { data } = await api.get("/convocatorias"); // o '/convocatorias-activas'
+        const { data } = await api.get("/convocatorias-activas"); // o '/convocatorias-activas'
         setConvocatorias(data);
       } catch (err) {
         console.error(err);
@@ -43,7 +43,7 @@ export default function GestionAreaCategoria() {
     <div className="gestion-page">
       <div className="gestion-container">
         <div className="gestion-card">
-          <div className="gestion-header">Gestión Convocatoria</div>
+          <div className="gestion-header">Gestión Area,Categoria</div>
           <div className="gestion-body">
             {loading ? (
               <div className="spinner-wrapper">
