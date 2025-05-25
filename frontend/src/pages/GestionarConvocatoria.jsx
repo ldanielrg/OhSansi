@@ -35,6 +35,13 @@ export default function GestionarConvocatoria() {
   const [selGrIni, setSelGrIni] = useState("");
   const [selGrFin, setSelGrFin] = useState("");
 
+  const participantesMap = {
+    Individual: 1,
+    Duo: 2,
+    Trio: 3,
+    Cuarteto: 4,
+  };
+
   const loadAll = useCallback(async () => {
     if (!id_convocatoria) return;
     setCargando(true);
@@ -173,12 +180,18 @@ export default function GestionarConvocatoria() {
     if (!selArea || !selCat || !precio || !participantes) {
       return toast.warn("Por favor completa todos los campos.");
     }
+
+    const participantesInt = participantesMap[participantes] || null;
+    if (!participantesInt) {
+      return toast.warn("Selecciona una modalidad válida.");
+    }
+
     try {
       await api.post(`/asignar-area-categoria`, {
         id_area: Number(selArea),
         id_categoria: Number(selCat),
         precio: Number(precio),
-        participantes,
+        participantes: participantesInt,
         activo: true,
       });
       toast.success("Área asignada a categoría");
@@ -272,6 +285,8 @@ export default function GestionarConvocatoria() {
     }
   };
 
+
+  
   return (
     <div className="gest-page">
       <div className="gest-container">

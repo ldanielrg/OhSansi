@@ -37,6 +37,7 @@
 
 
 
+
 @media (max-width: 1628px){
     .contenedor-fila-1-orden{
         grid-template-columns: repeat(3, 1fr);

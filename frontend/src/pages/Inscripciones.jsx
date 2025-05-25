@@ -141,9 +141,6 @@ const Inscripciones = () => {
 
   ];
 
-  const customStyles = {
-    
-  };
 
   const eliminarFormulario = async (id_formulario) => {
     const result = await Swal.fire({

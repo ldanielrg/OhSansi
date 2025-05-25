@@ -112,7 +112,6 @@ class AreaController extends Controller{
     }
 
 
-    //Para devolver areas, categorias y grados, relacionados.
     public function AreasConcategoriasConGradosPorConvocatoria($id_convocatoria){
         $relaciones = AreaTieneCategorium::with([
             'area',
@@ -141,6 +140,8 @@ class AreaController extends Controller{
                         'grado_inicial_nombre' => $categoria->gradoInicial ? $categoria->gradoInicial->nombre_grado : null,
                         'grado_final_id' => $categoria->grado_fin,
                         'grado_final_nombre' => $categoria->gradoFinal ? $categoria->gradoFinal->nombre_grado : null,
+                        'precio' => $item->precio,                      // <-- aquí agregas precio
+                        'participantes' => $item->nro_participantes,    // <-- aquí agregas participantes
                     ];
                 })->values()
             ];
@@ -149,13 +150,14 @@ class AreaController extends Controller{
         return response()->json($areas);
     }
 
+
     #Relaciona un área y una categoría.
     public function asignarAreaCategoria(Request $request){
         $validated = $request->validate([
             'id_area' => 'required|integer|exists:area,id_area',
             'id_categoria' => 'required|integer|exists:categoria,id_categoria',
             'precio' => 'nullable|numeric|min:0',
-            'nro_participantes' => 'integer|min:1',
+            'participantes' => 'integer|min:1',
             //'activo' => 'nullable|boolean'
         ]);
 
@@ -178,7 +180,7 @@ class AreaController extends Controller{
                 'id_area_area' => $validated['id_area'],
                 'id_categoria_categoria' => $validated['id_categoria'],
                 'precio' => $validated['precio'] ?? 0,
-                'nro_participantes' => $validated['nro_participantes'],
+                'nro_participantes' => $validated['participantes'],
                 //'activo' => $validated['activo'] ?? true,
                 'activo' => true, //por ahora le pondré por defecto true.
             ]);
