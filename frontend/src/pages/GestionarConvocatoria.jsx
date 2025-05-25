@@ -21,7 +21,10 @@ export default function GestionarConvocatoria() {
   const [categorias, setCategorias] = useState([]);
   const [grados, setGrados] = useState([]);
   const [asignaciones, setAsignaciones] = useState([]);
-  const [selectedAssign, setSelectedAssign] = useState({ area: null, categoria: null });
+  const [selectedAssign, setSelectedAssign] = useState({
+    area: null,
+    categoria: null,
+  });
 
   // Formularios in situ
   const [newArea, setNewArea] = useState("");
@@ -34,6 +37,14 @@ export default function GestionarConvocatoria() {
   const [selCat, setSelCat] = useState("");
   const [selGrIni, setSelGrIni] = useState("");
   const [selGrFin, setSelGrFin] = useState("");
+  const [showDeleteAreaModal, setShowDeleteAreaModal] = useState(false);
+  const [areaToDelete, setAreaToDelete] = useState(null);
+  const [cargandoDeleteArea, setCargandoDeleteArea] = useState(false);
+  const [cargandoArea, setCargandoArea] = useState(false);
+
+  const [cargandoCreateCat, setCargandoCreateCat] = useState(false);
+  const [cargandoUpdateCat, setCargandoUpdateCat] = useState(false);
+  const [deletingCatId, setDeletingCatId] = useState(null);
 
   const participantesMap = {
     Individual: 1,
@@ -79,15 +90,39 @@ export default function GestionarConvocatoria() {
 
   // --- Manejo Áreas ---
   const handleCreateArea = async () => {
-    if (!newArea.trim()) return toast.warn("Escribe un nombre de área.");
+    const nombreTrim = newArea.trim();
+
+    // Validaciones
+    if (!nombreTrim.startsWith(" ")) {
+      return toast.warn("El nombre no puede iniciar con espacios.");
+    }
+    if (!nombreTrim) {
+      return toast.warn("Escribe un nombre de área.");
+    }
+    if (nombreTrim.length > 30) {
+      return toast.warn("El nombre no puede exceder 30 caracteres.");
+    }
+    // Empieza con letra y solo letras/acentos y espacios en el resto
+    const regex = /^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\s]*$/;
+    if (!regex.test(nombreTrim)) {
+      return toast.warn(
+        "El nombre debe comenzar con letra y solo contener letras y espacios."
+      );
+    }
+
     try {
-      await api.post(`/convocatoria/${id_convocatoria}/area`, { nombre: newArea.trim() });
+      setCargandoArea(true);
+      await api.post(`/convocatoria/${id_convocatoria}/area`, {
+        nombre: nombreTrim,
+      });
       toast.success("Área creada");
       setNewArea("");
       loadAll();
     } catch (err) {
       console.error(err);
       toast.error("Error al crear área.");
+    } finally {
+      setCargandoArea(false);
     }
   };
 
@@ -110,7 +145,6 @@ export default function GestionarConvocatoria() {
   };
 
   const handleDeleteArea = async (id) => {
-    if (!window.confirm("¿Eliminar esta área?")) return;
     try {
       await api.delete(`/area-eliminar/${id}`);
       toast.error("Área eliminada");
@@ -127,10 +161,23 @@ export default function GestionarConvocatoria() {
 
   // --- Manejo Categorías ---
   const handleCreateCat = async () => {
-    if (!newCat.trim()) return toast.warn("Escribe un nombre de categoría.");
+    // 1) No permitir espacios al inicio
+    if (newCat.startsWith(" ")) {
+      return toast.warn("El nombre no puede iniciar con espacios.");
+    }
+    // 2) Trim y validación
+    const nombreTrim = newCat.trim();
+    if (!nombreTrim) {
+      return toast.warn("Escribe un nombre de categoría.");
+    }
+    if (nombreTrim.length > 30) {
+      return toast.warn("Máximo 30 caracteres.");
+    }
+
     try {
+      setCargandoCreateCat(true);
       await api.post(`/categoria-crear/${id_convocatoria}`, {
-        nombre_categoria: newCat.trim(),
+        nombre_categoria: nombreTrim,
         id_convocatoria: Number(id_convocatoria),
       });
       toast.success("Categoría creada");
@@ -139,15 +186,30 @@ export default function GestionarConvocatoria() {
     } catch (err) {
       console.error(err);
       toast.error("Error al crear categoría.");
+    } finally {
+      setCargandoCreateCat(false);
     }
   };
 
   const handleUpdateCat = async () => {
     if (!editCat.id) return;
+
+    if (newCat.startsWith(" ")) {
+      return toast.warn("El nombre no puede iniciar con espacios.");
+    }
+    const nombreTrim = newCat.trim();
+    if (!nombreTrim) {
+      return toast.warn("Escribe un nombre de categoría.");
+    }
+    if (nombreTrim.length > 30) {
+      return toast.warn("Máximo 30 caracteres.");
+    }
+
     try {
+      setCargandoUpdateCat(true);
       await api.post(`/categoria-editar`, {
         id_categoria: editCat.id,
-        nombre_categoria: newCat.trim(),
+        nombre_categoria: nombreTrim,
       });
       toast.success("Categoría actualizada");
       setEditCat({ id: null, nombre_categoria: "" });
@@ -156,11 +218,13 @@ export default function GestionarConvocatoria() {
     } catch (err) {
       console.error(err);
       toast.error("Error al editar categoría.");
+    } finally {
+      setCargandoUpdateCat(false);
     }
   };
 
   const handleDeleteCat = async (id) => {
-    if (!window.confirm("¿Eliminar esta categoría?")) return;
+    setDeletingCatId(id);
     try {
       await api.delete(`/categoria-eliminar/${id}`);
       toast.error("Categoría eliminada");
@@ -172,9 +236,10 @@ export default function GestionarConvocatoria() {
     } catch (err) {
       console.error(err);
       toast.error("Error al eliminar categoría.");
+    } finally {
+      setDeletingCatId(null);
     }
   };
-
   // --- Asignar Área → Categoría ---
   const handleAssignAreaCat = async () => {
     if (!selArea || !selCat || !precio || !participantes) {
@@ -285,8 +350,6 @@ export default function GestionarConvocatoria() {
     }
   };
 
-
-  
   return (
     <div className="gest-page">
       <div className="gest-container">
@@ -323,7 +386,19 @@ export default function GestionarConvocatoria() {
                       value={newArea}
                       onChange={(e) => setNewArea(e.target.value)}
                     />
-                    <button onClick={handleCreateArea}>Crear</button>
+                    <button
+                      onClick={handleCreateArea}
+                      disabled={cargandoArea}
+                      className="btn-crear-area"
+                    >
+                      {cargandoArea ? (
+                        <>
+                          <span style={{ marginLeft: 8 }}>Creando...</span>
+                        </>
+                      ) : (
+                        "Crear"
+                      )}
+                    </button>
                     <button onClick={handleUpdateArea} disabled={!editArea.id}>
                       Guardar edición
                     </button>
@@ -340,14 +415,18 @@ export default function GestionarConvocatoria() {
                             });
                             setNewArea(a.nombre_area);
                           }}
-                          className={editArea.id === a.id_area ? "fila-seleccionada" : ""}
+                          className={
+                            editArea.id === a.id_area ? "fila-seleccionada" : ""
+                          }
                         >
                           <td>{a.nombre_area}</td>
                           <td>
                             <button
+                              className="btn-eliminar-area"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleDeleteArea(a.id_area);
+                                setAreaToDelete(a.id_area);
+                                setShowDeleteAreaModal(true);
                               }}
                             >
                               Eliminar
@@ -358,7 +437,43 @@ export default function GestionarConvocatoria() {
                     </tbody>
                   </table>
                 </div>
-
+                {showDeleteAreaModal && (
+                  <div className="modal-container">
+                    <div className="modal-content">
+                      <p>¿Seguro que deseas eliminar esta área?</p>
+                      <div className="modal-buttons">
+                        <button
+                          className="btn-confirm"
+                          onClick={async () => {
+                            setCargandoDeleteArea(true);
+                            await handleDeleteArea(areaToDelete);
+                            setCargandoDeleteArea(false);
+                            setShowDeleteAreaModal(false);
+                            setAreaToDelete(null);
+                          }}
+                          disabled={cargandoDeleteArea}
+                        >
+                          {cargandoDeleteArea ? (
+                            <>
+                              <span style={{ marginLeft: 8 }}>
+                                Eliminando...
+                              </span>
+                            </>
+                          ) : (
+                            "Sí, eliminar"
+                          )}
+                        </button>
+                        <button
+                          className="btn-cancel"
+                          onClick={() => setShowDeleteAreaModal(false)}
+                          disabled={cargandoDeleteArea}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="subcard">
                   <h4>Categorías</h4>
                   <div className="subrow">
@@ -367,9 +482,31 @@ export default function GestionarConvocatoria() {
                       value={newCat}
                       onChange={(e) => setNewCat(e.target.value)}
                     />
-                    <button onClick={handleCreateCat}>Crear</button>
-                    <button onClick={handleUpdateCat} disabled={!editCat.id}>
-                      Guardar edición
+                    <button
+                      onClick={handleCreateCat}
+                      disabled={cargandoCreateCat}
+                      className="btn-crear-cat"
+                    >
+                      {cargandoCreateCat ? (
+                        <>
+                          <span style={{ marginLeft: 8 }}>Creando...</span>
+                        </>
+                      ) : (
+                        "Crear"
+                      )}
+                    </button>
+                    <button
+                      onClick={handleUpdateCat}
+                      disabled={!editCat.id || cargandoUpdateCat}
+                      className="btn-guardar-edicion-cat"
+                    >
+                      {cargandoUpdateCat ? (
+                        <>
+                          <span style={{ marginLeft: 8 }}>Actualizando...</span>
+                        </>
+                      ) : (
+                        "Guardar edición"
+                      )}
                     </button>
                   </div>
                   <table className="tabla-lista">
@@ -384,7 +521,11 @@ export default function GestionarConvocatoria() {
                             });
                             setNewCat(c.nombre_categoria);
                           }}
-                          className={editCat.id === c.id_categoria ? "fila-seleccionada" : ""}
+                          className={
+                            editCat.id === c.id_categoria
+                              ? "fila-seleccionada"
+                              : ""
+                          }
                         >
                           <td>{c.nombre_categoria}</td>
                           <td>
@@ -393,8 +534,18 @@ export default function GestionarConvocatoria() {
                                 e.stopPropagation();
                                 handleDeleteCat(c.id_categoria);
                               }}
+                              disabled={deletingCatId === c.id_categoria}
+                              className="btn-eliminar-cat"
                             >
-                              Eliminar
+                              {deletingCatId === c.id_categoria ? (
+                                <>
+                                  <span style={{ marginLeft: 8 }}>
+                                    Eliminando...
+                                  </span>
+                                </>
+                              ) : (
+                                "Eliminar"
+                              )}
                             </button>
                           </td>
                         </tr>
@@ -406,7 +557,10 @@ export default function GestionarConvocatoria() {
                 <div className="subcard">
                   <h4>Asignar Área → Categoría</h4>
                   <div className="subrow">
-                    <select value={selArea} onChange={(e) => setSelArea(e.target.value)}>
+                    <select
+                      value={selArea}
+                      onChange={(e) => setSelArea(e.target.value)}
+                    >
                       <option value="">Área</option>
                       {areas.map((a) => (
                         <option key={a.id_area} value={a.id_area}>
@@ -415,7 +569,10 @@ export default function GestionarConvocatoria() {
                       ))}
                     </select>
 
-                    <select value={selCat} onChange={(e) => setSelCat(e.target.value)}>
+                    <select
+                      value={selCat}
+                      onChange={(e) => setSelCat(e.target.value)}
+                    >
                       <option value="">Categoría</option>
                       {categorias.map((c) => (
                         <option key={c.id_categoria} value={c.id_categoria}>
@@ -444,7 +601,10 @@ export default function GestionarConvocatoria() {
                     </select>
 
                     <button onClick={handleAssignAreaCat}>Asignar</button>
-                    <button onClick={handleUpdateAssignAreaCat} disabled={!selArea || !selCat}>
+                    <button
+                      onClick={handleUpdateAssignAreaCat}
+                      disabled={!selArea || !selCat}
+                    >
                       Guardar edición
                     </button>
                   </div>
@@ -453,7 +613,10 @@ export default function GestionarConvocatoria() {
                 <div className="subcard">
                   <h4>Asignar Grados → Categoría</h4>
                   <div className="subrow">
-                    <select value={selCat} onChange={(e) => setSelCat(e.target.value)}>
+                    <select
+                      value={selCat}
+                      onChange={(e) => setSelCat(e.target.value)}
+                    >
                       <option value="">Categoría</option>
                       {categorias.map((c) => (
                         <option key={c.id_categoria} value={c.id_categoria}>
@@ -461,7 +624,10 @@ export default function GestionarConvocatoria() {
                         </option>
                       ))}
                     </select>
-                    <select value={selGrIni} onChange={(e) => setSelGrIni(e.target.value)}>
+                    <select
+                      value={selGrIni}
+                      onChange={(e) => setSelGrIni(e.target.value)}
+                    >
                       <option value="">Grado Inicial</option>
                       {grados.map((g) => (
                         <option key={g.id_grado} value={g.id_grado}>
@@ -469,7 +635,10 @@ export default function GestionarConvocatoria() {
                         </option>
                       ))}
                     </select>
-                    <select value={selGrFin} onChange={(e) => setSelGrFin(e.target.value)}>
+                    <select
+                      value={selGrFin}
+                      onChange={(e) => setSelGrFin(e.target.value)}
+                    >
                       <option value="">Grado Final</option>
                       {grados.map((g) => (
                         <option key={g.id_grado} value={g.id_grado}>
