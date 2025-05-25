@@ -52,6 +52,19 @@ export default function GestionarConvocatoria() {
 
   const [cargandoAssign, setCargandoAssign] = useState(false);
   const [cargandoAssignGrados, setCargandoAssignGrados] = useState(false);
+  const [editAssignGrados, setEditAssignGrados] = useState({ id: null });
+  const [cargandoCrearGrados, setCargandoCrearGrados] = useState(false);
+  const [cargandoEditarGrados, setCargandoEditarGrados] = useState(false);
+
+  const [showClearModal, setShowClearModal] = useState(false);
+  const [clearIds, setClearIds] = useState({
+    id_categoria: null,
+    id_area: null,
+  });
+  const [loadingClear, setLoadingClear] = useState(false);
+  // 1) Al inicio de tu componente
+  const [cargandoCreandoAssign, setCargandoCreandoAssign] = useState(false);
+  const [cargandoEditandoAssign, setCargandoEditandoAssign] = useState(false);
 
   const participantesMap = {
     Individual: 1,
@@ -320,13 +333,13 @@ export default function GestionarConvocatoria() {
     if (!selArea || !selCat || !precio || !participantes) {
       return toast.warn("Por favor completa todos los campos.");
     }
+
     const participantesInt = participantesMap[participantes] || null;
     if (!participantesInt) {
       return toast.warn("Selecciona una modalidad válida.");
     }
 
     try {
-      setCargandoAssign(true);
       await api.post(`/asignar-area-categoria`, {
         id_area: Number(selArea),
         id_categoria: Number(selCat),
@@ -345,8 +358,6 @@ export default function GestionarConvocatoria() {
         console.error(err);
         toast.error("Error asignando área→categoría");
       }
-    } finally {
-      setCargandoAssign(false);
     }
   };
 
@@ -374,9 +385,7 @@ export default function GestionarConvocatoria() {
   const handleAssignGradosCat = async () => {
     if (!selCat || !selGrIni)
       return toast.warn("Selecciona categoría y grado inicial.");
-
     try {
-      setCargandoAssignGrados(true);
       await api.post(`/asignar-grados-categoria`, {
         id_categoria: Number(selCat),
         grado_inicial_id: Number(selGrIni),
@@ -391,26 +400,23 @@ export default function GestionarConvocatoria() {
         console.error(err);
         toast.error("Error al asignar grados.");
       }
-    } finally {
-      setCargandoAssignGrados(false);
     }
   };
 
   const handleUpdateAssignGradosCat = async () => {
-    if (!editAssignGrados.id) return; // asume que guardas el id en editAssignGrados
+    if (!selCat || !selGrIni)
+      return toast.warn("Selecciona categoría y grado inicial.");
     try {
-      setCargandoAssignGrados(true);
-      await api.put(`/asignar-grados-categoria/${editAssignGrados.id}`, {
+      await api.post(`/asignar-grados-categoria`, {
         id_categoria: Number(selCat),
         grado_inicial_id: Number(selGrIni),
         grado_final_id: selGrFin ? Number(selGrFin) : null,
       });
-      toast.success("Asignación de grados actualizada");
+      toast.success("Edición guardada");
       loadAll();
-    } catch {
-      toast.error("Error al actualizar asignación de grados.");
-    } finally {
-      setCargandoAssignGrados(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Error guardando edición");
     }
   };
 
@@ -429,6 +435,25 @@ export default function GestionarConvocatoria() {
     } catch (err) {
       console.error(err);
       toast.error("Error al limpiar.");
+    }
+  };
+
+  const confirmClearGrades = async () => {
+    const { id_categoria, id_area } = clearIds;
+    setLoadingClear(true);
+    try {
+      await api.delete("/eliminar-area-categoria", {
+        data: { id_area, id_categoria },
+      });
+      toast.success("Relación eliminada y grados limpiados.");
+      loadAll();
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al limpiar.");
+    } finally {
+      setLoadingClear(false);
+      setShowClearModal(false);
+      setClearIds({ id_categoria: null, id_area: null });
     }
   };
 
@@ -719,19 +744,9 @@ export default function GestionarConvocatoria() {
                       <option value="Cuarteto">Cuarteto</option>
                     </select>
 
-                    <button
-                      onClick={handleAssignAreaCat}
-                      disabled={cargandoAssign}
-                      className="btn-crear-area"
-                    >
-                      {cargandoAssign ? "Asignando..." : "Asignar"}
-                    </button>
-                    <button
-                      onClick={handleUpdateAssignAreaCat}
-                      disabled={cargandoAssign || !selArea || !selCat}
-                      className="btn-guardar-edicion-area"
-                    >
-                      {cargandoAssign ? "Guardando..." : "Guardar edición"}
+                     <button onClick={handleAssignAreaCat}>Asignar</button>
+                    <button onClick={handleUpdateAssignAreaCat} disabled={!selArea || !selCat}>
+                      Guardar edición
                     </button>
                   </div>
                 </div>
@@ -772,21 +787,12 @@ export default function GestionarConvocatoria() {
                         </option>
                       ))}
                     </select>
-                    <button
-                      onClick={handleAssignGradosCat}
-                      disabled={cargandoAssignGrados}
-                      className="btn-crear-area"
-                    >
-                      {cargandoAssignGrados ? "Asignando..." : "Asignar"}
-                    </button>
+                    <button onClick={handleAssignGradosCat}>Asignar</button>
                     <button
                       onClick={handleUpdateAssignGradosCat}
-                      disabled={cargandoAssignGrados || !selCat || !selGrIni}
-                      className="btn-guardar-edicion-area"
+                      disabled={!selArea || !selCat}
                     >
-                      {cargandoAssignGrados
-                        ? "Guardando..."
-                        : "Guardar edición"}
+                      Guardar edición
                     </button>
                   </div>
                 </div>
@@ -843,12 +849,46 @@ export default function GestionarConvocatoria() {
                             <td>{c.participantes ?? "N/A"}</td>
                             <td>
                               <button
-                                onClick={() =>
-                                  handleClearGrades(c.id_categoria, a.id_area)
-                                }
+                                className="btn-eliminar-area"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setClearIds({
+                                    id_categoria: c.id_categoria,
+                                    id_area: a.id_area,
+                                  });
+                                  setShowClearModal(true);
+                                }}
+                                disabled={loadingClear}
                               >
-                                Limpiar
+                                {loadingClear ? "Limpiando..." : "Limpiar"}
                               </button>
+                              {showClearModal && (
+                                <div className="modal-container">
+                                  <div className="modal-content">
+                                    <p>
+                                      ¿Eliminar la relación y limpiar grados?
+                                    </p>
+                                    <div className="modal-buttons">
+                                      <button
+                                        className="btn-confirm"
+                                        onClick={confirmClearGrades}
+                                        disabled={loadingClear}
+                                      >
+                                        {loadingClear
+                                          ? "Limpiando..."
+                                          : "Sí, limpiar"}
+                                      </button>
+                                      <button
+                                        className="btn-cancel"
+                                        onClick={() => setShowClearModal(false)}
+                                        disabled={loadingClear}
+                                      >
+                                        Cancelar
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                             </td>
                           </tr>
                         ))
