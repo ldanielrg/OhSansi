@@ -28,7 +28,7 @@ class ComprobanteController extends Controller
 
         // Verificar si ya existe un comprobante verificado con el mismo código
         $comprobanteExistente = Comprobante::where('codigo', $validated['codigo'])
-            ->where('estado', true)
+            ->whereRaw('"activo" = true')
             ->first();
 
         if ($comprobanteExistente) {
@@ -59,7 +59,7 @@ class ComprobanteController extends Controller
                 'codigo' => $validated['codigo'],
                 'id_orden_pago' => $validated['id_orden_pago'],
                 'imagen' => $rutaPublica,
-                'estado' => false
+                'estado' => 'false'
             ]);
 
             // Validar coincidencia con OCR
@@ -68,17 +68,17 @@ class ComprobanteController extends Controller
                 str_contains($validated['codigo_ocr'], (string) $validated['codigo'])
             ) {
                 // Actualizar estado del comprobante
-                $comprobante->estado = true;
+                $comprobante->estado = 'true';
                 $comprobante->save();
 
                 // Actualizar estado de orden de pago
                 $orden = OrdenPago::findOrFail($validated['id_orden_pago']);
-                $orden->estado = true;
+                $orden->estado = 'true';
                 $orden->save();
 
                 // Actualizar estado de formulario
                 $formulario = Formulario::findOrFail($orden->id_formulario_formulario);
-                $formulario->pagado = true;
+                $formulario->pagado = 'true';
                 $formulario->save();
             }
 
@@ -150,7 +150,7 @@ class ComprobanteController extends Controller
                 'codigo' => $validated['codigo'],
                 'id_orden_pago' => $validated['id_orden_pago'],
                 'imagen' => $rutaPublica,
-                'estado' => false
+                'estado' => 'false'
             ]);
 
             // Validar coincidencia con OCR
@@ -196,7 +196,7 @@ class ComprobanteController extends Controller
     public function verificarCodigo($codigo)
     {
         $comprobante = Comprobante::where('codigo', $codigo)
-            ->where('estado', true)
+            ->whereRaw('"activo" = true')
             ->first();
 
         return response()->json([
@@ -208,7 +208,7 @@ class ComprobanteController extends Controller
     // ComprobanteController.php
     public function comprobantesPendientes()
     {
-        $pendientes = Comprobante::where('estado', false)->get();
+        $pendientes = Comprobante::whereRaw('"activo" = true')->get();
 
         foreach ($pendientes as $c) {
             Log::info("Comprobante pendiente:", $c->toArray());
@@ -233,11 +233,11 @@ class ComprobanteController extends Controller
         // Si lo marcaron como válido, actualizar también orden y formulario
         if ($validated['estado']) {
             $orden = OrdenPago::findOrFail($comprobante->id_orden_pago);
-            $orden->estado = true;
+            $orden->estado = 'true';
             $orden->save();
 
             $formulario = Formulario::findOrFail($orden->id_formulario_formulario);
-            $formulario->pagado = true;
+            $formulario->pagado = 'true';
             $formulario->save();
         }
 

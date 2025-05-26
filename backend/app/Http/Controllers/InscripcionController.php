@@ -200,7 +200,7 @@ class InscripcionController extends Controller{
 
             $estudiantesRegistrados = [];
 
-            // 👉 Agrupar por combinación de área + categoría + team recibido
+            //Agrupar por combinación de área + categoría + team recibido
             $grupos = collect($validated['estudiantes'])->groupBy(function ($est) {
                 return $est['idAarea'] . '-' . $est['idCategoria'] . '-' . $est['team'];
             });
@@ -229,7 +229,7 @@ class InscripcionController extends Controller{
                     ], 422);
                 }
 
-                // 🔢 Obtener siguiente número de equipo para esta combinación
+                //Obtener siguiente número de equipo para esta combinación
                 $ultimoTeam = EstudianteEstaInscrito::where('id_inscrito_en', $relacion->id)->max('team');
                 $nuevoTeam = $ultimoTeam ? $ultimoTeam + 1 : 1;
 
