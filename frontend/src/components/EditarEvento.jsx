@@ -10,9 +10,14 @@ const EditarEvento = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // estados de formulario
   const [nombre, setNombre] = useState("");
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
+  // fecha de inicio de la convocatoria
+  const [fechaInicioConvocatoria, setFechaInicioConvocatoria] = useState(null);
+
+  // flags de carga/guardado
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState("");
@@ -22,13 +27,29 @@ const EditarEvento = () => {
       setCargando(true);
       setError("");
       try {
+        // 1) Traer datos del evento
         const response = await api.get(`/eventos/${id}`);
         const data = Array.isArray(response.data)
           ? response.data[0]
           : response.data;
+
         setNombre(data.nombre_evento);
         setFechaInicio(data.fecha_inicio.split("T")[0]);
         setFechaFin(data.fecha_final.split("T")[0]);
+
+        // 2) Con el ID de convocatoria, traer su fecha de inicio
+        const idConv = data.id_convocatoria_convocatoria;
+        if (idConv) {
+          const convRes = await api.get(`/convocatoria-detalle/${idConv}`);
+          const conv = Array.isArray(convRes.data)
+            ? convRes.data[0]
+            : convRes.data;
+          if (conv && conv.fecha_inicio) {
+            setFechaInicioConvocatoria(conv.fecha_inicio.split("T")[0]);
+          } else {
+            toast.error("No se pudo obtener la fecha de la convocatoria.");
+          }
+        }
       } catch (err) {
         console.error("Error al cargar evento:", err);
         setError("No se pudo cargar el evento.");
@@ -40,71 +61,93 @@ const EditarEvento = () => {
   }, [id]);
 
   const handleGuardar = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!nombre || !fechaInicio || !fechaFin) {
-    toast.warn("Por favor completa todos los campos.");
-    return;
-  }
+    // 1) Validar nombre
+    const nombreTrim = nombre.trim();
+    if (!nombreTrim) {
+      toast.warn("El nombre no puede estar vacío o tener solo espacios.");
+      return;
+    }
+    if (nombre !== nombreTrim) {
+      toast.warn("El nombre no puede iniciar o terminar con espacios.");
+      return;
+    }
+    const regex = /^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\s]*$/;
+    if (!regex.test(nombreTrim)) {
+      return toast.warn(
+        "El nombre debe comenzar con letra y solo contener letras y espacios."
+      );
+    }
+    if (nombreTrim.length > 100) {
+      toast.warn("El nombre no puede superar 100 caracteres.");
+      return;
+    }
 
-  const inicioDate = new Date(fechaInicio);
-  const finDate = new Date(fechaFin);
+    // 2) Validar campos completos
+    if (!fechaInicio || !fechaFin) {
+      toast.warn("Por favor completa todas las fechas.");
+      return;
+    }
 
-  // Validar que fecha inicio no sea posterior a fecha fin
-  if (inicioDate > finDate) {
-    toast.warn("La fecha de inicio no puede ser posterior a la fecha de fin.");
-    return;
-  }
+    // 3) Inicio ≤ Fin
+    const inicioDate = new Date(fechaInicio);
+    const finDate = new Date(fechaFin);
+    if (inicioDate > finDate) {
+      toast.warn("La fecha de inicio no puede ser posterior a la de fin.");
+      return;
+    }
 
-  // Limites para fecha inicio: no puede alejarse más de 1 año de la fecha fin
-  const limiteInicioMin = new Date(finDate);
-  limiteInicioMin.setFullYear(limiteInicioMin.getFullYear() - 1);
+    // 4) Validar rango según convocatoria
+    if (!fechaInicioConvocatoria) {
+      toast.error("Aún no se cargó la fecha de la convocatoria.");
+      return;
+    }
+    const inicioConv = new Date(fechaInicioConvocatoria);
+    const limiteConv = new Date(inicioConv);
+    limiteConv.setFullYear(limiteConv.getFullYear() + 1);
 
-  const limiteInicioMax = new Date(finDate);
-  limiteInicioMax.setFullYear(limiteInicioMax.getFullYear() + 1);
+    const validaDentroDeUnAnio = (d) => d >= inicioConv && d <= limiteConv;
+    if (!validaDentroDeUnAnio(inicioDate)) {
+      toast.error(
+        `La fecha de inicio debe estar entre ${fechaInicioConvocatoria} y ${limiteConv
+          .toISOString()
+          .slice(0, 10)}.`
+      );
+      return;
+    }
+    if (!validaDentroDeUnAnio(finDate)) {
+      toast.error(
+        `La fecha de fin debe estar entre ${fechaInicioConvocatoria} y ${limiteConv
+          .toISOString()
+          .slice(0, 10)}.`
+      );
+      return;
+    }
 
-  if (inicioDate < limiteInicioMin || inicioDate > limiteInicioMax) {
-    toast.warn(
-      "La fecha de inicio debe estar dentro de un año antes o después de la fecha de fin."
-    );
-    return;
-  }
+    // 5) Envío al backend
+    const payload = {
+      id_evento: parseInt(id, 10),
+      nombre_evento: nombreTrim,
+      fecha_inicio: fechaInicio,
+      fecha_final: fechaFin,
+    };
 
-  // Limites para fecha fin: no puede alejarse más de 1 año de la fecha inicio
-  const limiteFinMin = new Date(inicioDate);
-  limiteFinMin.setFullYear(limiteFinMin.getFullYear() - 1);
-
-  const limiteFinMax = new Date(inicioDate);
-  limiteFinMax.setFullYear(limiteFinMax.getFullYear() + 1);
-
-  if (finDate < limiteFinMin || finDate > limiteFinMax) {
-    toast.warn(
-      "La fecha de fin debe estar dentro de un año antes o después de la fecha de inicio."
-    );
-    return;
-  }
-
-  // Continúa con la petición si todo está OK
-  const payload = {
-    id_evento: parseInt(id, 10),
-    nombre_evento: nombre,
-    fecha_inicio: fechaInicio,
-    fecha_final: fechaFin,
+    try {
+      setGuardando(true);
+      await api.put(`/eventos/${id}`, payload);
+      navigate("/eventos", {
+        state: { message: "Evento editado exitosamente.", type: "success" },
+      });
+    } catch (err) {
+      console.error("Error al actualizar evento:", err);
+      const msg =
+        err.response?.data?.message || "Error al actualizar el evento.";
+      toast.error(msg);
+    } finally {
+      setGuardando(false);
+    }
   };
-
-  try {
-    await api.put(`/eventos/${id}`, payload);
-    navigate("/eventos", {
-      state: { message: "Evento editado exitosamente.", type: "success" },
-    });
-  } catch (err) {
-    console.error("Error al actualizar evento:", err);
-    const msg =
-      err.response?.data?.message || "Error al actualizar el evento.";
-    toast.error(msg);
-  }
-};
-
 
   const handleSalir = () => {
     navigate("/eventos", {
@@ -203,18 +246,7 @@ const EditarEvento = () => {
                   className="btn-custom-primary-aux"
                   disabled={guardando}
                 >
-                  {guardando ? (
-                    <BallTriangle
-                      height={20}
-                      width={20}
-                      radius={5}
-                      color="#fff"
-                      ariaLabel="guardando-cargando"
-                      visible={true}
-                    />
-                  ) : (
-                    "Guardar Cambios"
-                  )}
+                  {guardando ? "Guardando..." : "Guardar Cambios"}
                 </button>
                 <button
                   type="button"

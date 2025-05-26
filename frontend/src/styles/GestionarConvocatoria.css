@@ -82,6 +82,7 @@
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
+    cursor: pointer;
   }
   .tabla-lista th,
   .tabla-lista td,
@@ -125,7 +126,76 @@
   }
   .tabla-asign tbody tr.fila-seleccionada {
     background-color: #cce4ff;   /* color de fondo */
+    
   }
   .tabla-asign tbody tr.fila-seleccionada td {
     color: #003366;             /* opcional: color de texto */
   }
+
+  /* Botón “Eliminar” estilizado */
+.btn-eliminar-area {
+  background-color: #003366;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+.btn-eliminar-area:hover {
+  background-color: #c0392b;
+}
+
+/* Overlay del modal */
+.modal-container {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+/* Caja del modal */
+.modal-content {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Botones dentro del modal */
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 16px;
+}
+
+.btn-confirm {
+  background-color: #003366;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-confirm:hover {
+  background-color: #2c3e50;
+}
+
+.btn-cancel {
+  background-color: #bdc3c7;
+  color: #2c3e50;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-cancel:hover {
+  background-color: #95a5a6;
+}
