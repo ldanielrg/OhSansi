@@ -17,7 +17,7 @@ class CategoriaController extends Controller{
         ]);
 
         $categorias = Categorium::where('id_convocatoria_convocatoria', $validated['id_convocatoria'])
-            ->where('activo', true)
+            ->whereRaw('"activo" = true')
             ->with(['gradoInicial', 'gradoFinal'])
             ->get();
 

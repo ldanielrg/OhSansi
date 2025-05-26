@@ -14,7 +14,7 @@ class AreaController extends Controller{
     #Obtiene todas la areas de una convocatoria id
     public function obtenerAreasPorConvocatoria($idConvocatoria){
         $areas = Area::where('id_convocatoria_convocatoria', $idConvocatoria)
-            ->where('activo', true)
+            ->whereRaw('"activo" = true')
             ->get();
 
         return response()->json($areas);
@@ -75,7 +75,7 @@ class AreaController extends Controller{
         $validated = $request->validate([
             'id_area' => 'required|integer|exists:area,id_area',
             'nombre_area' => 'required|string|max:255',
-            'activo' => 'nullable|boolean',
+            //'activo' => 'nullable|boolean',
         ]);
 
         $area = Area::find($validated['id_area']);
