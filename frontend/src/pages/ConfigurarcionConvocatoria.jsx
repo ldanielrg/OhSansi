@@ -13,32 +13,34 @@ const ConfiguracionConvocatoria = () => {
   const navigate = useNavigate();
   const [cargandoConvocatorias, setCargandoConvocatorias] = useState(false);
   const [cargandoGlobal, setCargandoGlobal] = useState(false);
-  
+  const [cargandoDelete, setCargandoDelete] = useState(false);
   useEffect(() => {
     fetchAll();
   }, []);
 
   const fetchAll = async () => {
-  setCargandoConvocatorias(true);
-  try {
-    const { data } = await api.get("/convocatorias");
-    setConvocatorias(
-      data.map((c) => ({
-        ...c,
-        fecha_inicio: c.fecha_inicio.split("T")[0],
-        fecha_final: c.fecha_final.split("T")[0],
-      }))
-    );
-  } catch {
-    toast.error("No se pudieron cargar las convocatorias.");
-  } finally {
-    setCargandoConvocatorias(false);
-  }
-};
+    setCargandoConvocatorias(true);
+    try {
+      const { data } = await api.get("/convocatorias");
+      setConvocatorias(
+        data.map((c) => ({
+          ...c,
+          fecha_inicio: c.fecha_inicio.split("T")[0],
+          fecha_final: c.fecha_final.split("T")[0],
+        }))
+      );
+    } catch {
+      toast.error("No se pudieron cargar las convocatorias.");
+    } finally {
+      setCargandoConvocatorias(false);
+    }
+  };
 
   const handleCrear = () => navigate("/crear-configuracion-convocatoria");
   const handleEditar = () => {
-    const convocatoria = convocatorias.find((c) => c.id_convocatoria === selectedId);
+    const convocatoria = convocatorias.find(
+      (c) => c.id_convocatoria === selectedId
+    );
     if (selectedId && convocatoria?.activo) {
       navigate(`/editar-configuracion-convocatoria/${selectedId}`);
     } else {
@@ -48,14 +50,17 @@ const ConfiguracionConvocatoria = () => {
   const promptDelete = () => selectedId && setShowDeleteModal(true);
 
   const confirmDelete = async () => {
+    setCargandoDelete(true);
     try {
       await api.delete(`/convocatoria-eliminar/${selectedId}`);
-      toast.error("Convocatoria eliminada.");
+      toast.error("Estado actualizado");
       setShowDeleteModal(false);
       setSelectedId(null);
       fetchAll();
     } catch {
-      toast.error("No se pudo eliminar.");
+      toast.error("No se pudo cambiar Estado.");
+    } finally {
+      setCargandoDelete(false);
     }
   };
   const cancelDelete = () => setShowDeleteModal(false);
@@ -106,36 +111,38 @@ const ConfiguracionConvocatoria = () => {
       <div className="config-container">
         <div className="config-card">
           <div className="config-card-header">Convocatorias</div>
-          <div className="config-card-body" style={{ position: "relative", minHeight: "150px" }}>
-  {cargandoConvocatorias ? (
-    <div
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(255,255,255,0.85)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 10,
-        borderRadius: "12px",
-      }}
-    >
-      <BallTriangle
-        height={60}
-        width={60}
-        radius={5}
-        color="#003366"
-        ariaLabel="loading"
-        visible={true}
-      />
-    </div>
-  ) : (
-    convocatorias.length === 0 ? (
-      <p>No hay convocatorias.</p>
-    ) : (
+          <div
+            className="config-card-body"
+            style={{ position: "relative", minHeight: "150px" }}
+          >
+            {cargandoConvocatorias ? (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "rgba(255,255,255,0.85)",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  zIndex: 10,
+                  borderRadius: "12px",
+                }}
+              >
+                <BallTriangle
+                  height={60}
+                  width={60}
+                  radius={5}
+                  color="#003366"
+                  ariaLabel="loading"
+                  visible={true}
+                />
+              </div>
+            ) : convocatorias.length === 0 ? (
+              <p>No hay convocatorias.</p>
+            ) : (
               <table className="tabla-config">
                 <thead>
                   <tr>
@@ -148,11 +155,17 @@ const ConfiguracionConvocatoria = () => {
                 </thead>
                 <tbody>
                   {convocatorias.map((c) => {
-                    const isLoading = loadingEstadoIds.includes(c.id_convocatoria);
+                    const isLoading = loadingEstadoIds.includes(
+                      c.id_convocatoria
+                    );
                     return (
                       <tr
                         key={c.id_convocatoria}
-                        className={selectedId === c.id_convocatoria ? "fila-seleccionada" : ""}
+                        className={
+                          selectedId === c.id_convocatoria
+                            ? "fila-seleccionada"
+                            : ""
+                        }
                         onClick={() => setSelectedId(c.id_convocatoria)}
                       >
                         <td>{c.nombre_convocatoria}</td>
@@ -161,9 +174,9 @@ const ConfiguracionConvocatoria = () => {
                         <td>{c.fecha_final}</td>
                         <td>
                           <button
-                            className={`estado-badge ${c.activo ? "activo" : "inactivo"} ${
-                              isLoading ? "loading" : ""
-                            }`}
+                            className={`estado-badge ${
+                              c.activo ? "activo" : "inactivo"
+                            } ${isLoading ? "loading" : ""}`}
                             onClick={(e) => toggleActivo(e, c.id_convocatoria)}
                             disabled={isLoading}
                             style={{ position: "relative" }}
@@ -176,10 +189,17 @@ const ConfiguracionConvocatoria = () => {
                                 color="#fff"
                                 ariaLabel="loading"
                                 visible={true}
-                                wrapperStyle={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
+                                wrapperStyle={{
+                                  position: "absolute",
+                                  top: "50%",
+                                  left: "50%",
+                                  transform: "translate(-50%, -50%)",
+                                }}
                               />
+                            ) : c.activo ? (
+                              "Activo"
                             ) : (
-                              c.activo ? "Activo" : "Inactivo"
+                              "Inactivo"
                             )}
                           </button>
                         </td>
@@ -188,11 +208,7 @@ const ConfiguracionConvocatoria = () => {
                   })}
                 </tbody>
               </table>
-    )
             )}
-              
-  
-
 
             <div className="acciones-container">
               <div className="acciones-left">
@@ -209,11 +225,11 @@ const ConfiguracionConvocatoria = () => {
               </div>
               <div className="acciones-right">
                 <button
-                  className="btn-eliminar"
+                  className="btn-crear"
                   onClick={promptDelete}
                   disabled={!selectedId}
                 >
-                  Eliminar Convocatoria
+                  Cambiar Estado
                 </button>
               </div>
             </div>
@@ -221,12 +237,26 @@ const ConfiguracionConvocatoria = () => {
             {showDeleteModal && (
               <div className="modal-container">
                 <div className="modal-content">
-                  <p>¿Eliminar convocatoria seleccionada?</p>
+                  <p>¿Cambiar estado de convocatoria?</p>
                   <div className="modal-buttons">
-                    <button className="btn-crear" onClick={confirmDelete}>
-                      Sí, eliminar
+                    <button
+                      className="btn-crear"
+                      onClick={confirmDelete}
+                      disabled={cargandoDelete}
+                    >
+                      {cargandoDelete ? (
+                        <>
+                          <span style={{ marginLeft: 8 }}>Cambiando...</span>
+                        </>
+                      ) : (
+                        "Sí, Cambiar"
+                      )}
                     </button>
-                    <button className="btn-eliminar" onClick={cancelDelete}>
+                    <button
+                      className="btn-eliminar"
+                      onClick={cancelDelete}
+                      disabled={cargandoDelete}
+                    >
                       Cancelar
                     </button>
                   </div>

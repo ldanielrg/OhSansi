@@ -23,8 +23,13 @@ export default function EditarConfiguracionConvocatoria() {
       try {
         const { data } = await api.get(`/convocatoria-detalle/${id}`);
         const conv = data[0];
-
+        if (!conv.activo) {
+        toast.error("No puedes editar una convocatoria inactiva.");
+        navigate("/configuracion-convocatoria");
+        return;
+      }
         if (conv) {
+          
           setForm({
             nombre: conv.nombre_convocatoria,
             descripcion: conv.descripcion,
@@ -45,105 +50,114 @@ export default function EditarConfiguracionConvocatoria() {
   }, [id]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (value.startsWith(" ")) {
+      toast.warn("No puede comenzar con espacios.");
+      return;
+    }
+    if (name === "nombre" && value.length > 80) {
+      toast.warn("El nombre no puede superar 80 caracteres.");
+      return;
+    }
+    if (name === "descripcion" && value.length > 500) {
+      toast.warn("La descripción no puede superar 500 caracteres.");
+      return;
+    }
+    setForm({ ...form, [name]: value });
   };
 
   const handleGuardar = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    if (!form.nombre.trim()) {
+      toast.warn("El nombre no puede estar vacío o contener solo espacios.");
+      return;
+    }
+    if (!form.descripcion.trim()) {
+      toast.warn(
+        "La descripción no puede estar vacía o contener solo espacios."
+      );
+      return;
+    }
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const inicioDate = new Date(form.inicio);
+    const finDate = new Date(form.fin);
 
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
+    // Validación fechas ±1 año
+    const limiteInicio = new Date(hoy);
+    limiteInicio.setFullYear(limiteInicio.getFullYear() - 1);
+    if (inicioDate < limiteInicio) {
+      toast.warn(
+        "La fecha de inicio no puede ser anterior a un año atrás desde hoy."
+      );
+      return;
+    }
+    const limiteFinHoy = new Date(hoy);
+    limiteFinHoy.setFullYear(limiteFinHoy.getFullYear() + 1);
+    if (inicioDate > limiteFinHoy) {
+      toast.warn("La fecha de inicio no puede ser más de un año desde hoy.");
+      return;
+    }
+    const minFin = new Date(inicioDate);
+    minFin.setFullYear(minFin.getFullYear() - 1);
+    const maxFin = new Date(inicioDate);
+    maxFin.setFullYear(maxFin.getFullYear() + 1);
+    if (finDate < minFin || finDate > maxFin) {
+      toast.warn(
+        "La fecha de fin debe estar dentro de un año antes o después de la fecha de inicio."
+      );
+      return;
+    }
+    if (inicioDate > finDate) {
+      toast.warn("La fecha de inicio no puede ser posterior a la de fin.");
+      return;
+    }
 
-  const inicioDate = new Date(form.inicio);
-  const finDate = new Date(form.fin);
+    setGuardando(true);
+    try {
+      await api.post(`/convocatoria-editar/${id}`, {
+        nombre_convocatoria: form.nombre.trim(),
+        descripcion: form.descripcion.trim(),
+        fecha_inicio: form.inicio,
+        fecha_final: form.fin,
+        activo: true,
+      });
+      toast.success("Convocatoria actualizada.");
+    } catch {
+      toast.error("Error al actualizar.");
+    } finally {
+      setGuardando(false);
+    }
+  };
 
-  // La fecha inicio no puede ser anterior a hoy menos 1 año (es decir, hace un año o más atrás)
-  const limiteInicio = new Date(hoy);
-  limiteInicio.setFullYear(limiteInicio.getFullYear() - 1);
-
-  if (inicioDate < limiteInicio) {
-    toast.warn(
-      "La fecha de inicio no puede ser anterior a un año atrás desde hoy."
-    );
-    return;
-  }
-
-  // La fecha inicio no puede ser posterior a un año desde hoy (máximo 1 año en el futuro)
-  const limiteFinInicio = new Date(hoy);
-  limiteFinInicio.setFullYear(limiteFinInicio.getFullYear() + 1);
-
-  if (inicioDate > limiteFinInicio) {
-    toast.warn(
-      "La fecha de inicio no puede ser mayor a un año desde hoy."
-    );
-    return;
-  }
-
-  // La fecha fin no puede estar a más de 1 año antes o después de la fecha inicio
-  const unAnoAntesInicio = new Date(inicioDate);
-  unAnoAntesInicio.setFullYear(unAnoAntesInicio.getFullYear() - 1);
-
-  const unAnoDespuesInicio = new Date(inicioDate);
-  unAnoDespuesInicio.setFullYear(unAnoDespuesInicio.getFullYear() + 1);
-
-  if (finDate < unAnoAntesInicio || finDate > unAnoDespuesInicio) {
-    toast.warn(
-      "La fecha de fin debe estar dentro de 1 año antes o 1 año después de la fecha de inicio."
-    );
-    return;
-  }
-
-  // Fecha inicio no puede ser mayor que fecha fin
-  if (inicioDate > finDate) {
-    toast.warn("La fecha de inicio no puede ser posterior a la fecha de fin.");
-    return;
-  }
-
-  // Si pasa todas las validaciones, envías el formulario
-  try {
-    await api.post(`/convocatoria-editar/${id}`, {
-      nombre_convocatoria: form.nombre,
-      descripcion: form.descripcion,
-      fecha_inicio: form.inicio,
-      fecha_final: form.fin,
-      activo: true,
-    });
-    toast.success("Convocatoria actualizada.");
-  } catch {
-    toast.error("Error al actualizar.");
-  }
-};
-
-
-  const irGestionar = () => {
+  const irGestionar = () =>
     navigate(`/configuracion-convocatoria/gestionar/${id}`);
-  };
-
-  const handleSalir = () => {
-    navigate("/configuracion-convocatoria");
-  };
+  const handleSalir = () => navigate("/configuracion-convocatoria");
 
   return (
     <div className="crear-config-page">
+      {guardando && (
+              <div className="overlay-spinner">
+                <BallTriangle
+                  height={80}
+                  width={80}
+                  radius={5}
+                  color="#003366"
+                  ariaLabel="guardando-spinner"
+                  visible={true}
+                />
+              </div>
+            )}
       <div className="crear-config-container">
         <div className="crear-config-card">
           <div className="crear-config-header">Editar Convocatoria</div>
-
           {cargando ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "250px",
-              }}
-            >
+            <div className="spinner-container">
               <BallTriangle
                 height={80}
                 width={80}
                 radius={5}
                 color="#003366"
-                ariaLabel="loading"
                 visible={true}
               />
             </div>
@@ -193,22 +207,14 @@ export default function EditarConfiguracionConvocatoria() {
                   disabled={guardando}
                 />
               </div>
-
               <div className="acciones-crear">
                 <div className="acciones-izquierda">
-                  <button type="submit" className="btn-crear" disabled={guardando}>
-                    {guardando ? (
-                      <BallTriangle
-                        height={20}
-                        width={20}
-                        radius={5}
-                        color="#fff"
-                        ariaLabel="guardando-cargando"
-                        visible={true}
-                      />
-                    ) : (
-                      "Guardar cambios"
-                    )}
+                  <button
+                    type="submit"
+                    className="btn-crear"
+                    disabled={guardando}
+                  >
+                    {guardando ? "Guardando…" : "Guardar cambios"}
                   </button>
                   <button
                     type="button"

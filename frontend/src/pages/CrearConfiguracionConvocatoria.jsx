@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import "../styles/CrearConfiguracionConvocatoria.css";
 import { ToastContainer, toast } from "react-toastify";
+import { BallTriangle } from "react-loader-spinner";  
 
 export default function CrearConfiguracionConvocatoria() {
   const [form, setForm] = useState({
@@ -12,65 +13,86 @@ export default function CrearConfiguracionConvocatoria() {
     fin: "",
   });
   const navigate = useNavigate();
+  const [guardando, setGuardando] = useState(false);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    if (value.startsWith(" ")) {
+      toast.warn("No puede comenzar con espacios.");
+      return;
+    }
+    if (name === "nombre" && value.length > 80) {
+      toast.warn("El nombre no puede superar 80 caracteres.");
+      return;
+    }
+    if (name === "descripcion" && value.length > 500) {
+      toast.warn("La descripción no puede superar 500 caracteres.");
+      return;
+    }
+
+    setForm({ ...form, [name]: value });
+  };
 
   const handleCrear = async (e) => {
     e.preventDefault();
 
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0); // Para comparar sólo fecha sin horas
+    if (!form.nombre.trim()) {
+      toast.warn("El nombre no puede estar vacío o contener solo espacios.");
+      return;
+    }
+    if (!form.descripcion.trim()) {
+      toast.warn(
+        "La descripción no puede estar vacía o contener solo espacios."
+      );
+      return;
+    }
 
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
     const inicioDate = new Date(form.inicio);
     const finDate = new Date(form.fin);
 
-    // Fecha límite mínima: hoy - 1 año
     const limiteInicio = new Date(hoy);
     limiteInicio.setFullYear(limiteInicio.getFullYear() - 1);
 
-    // Fecha límite máxima: hoy + 1 año
     const unAnoDespues = new Date(hoy);
     unAnoDespues.setFullYear(unAnoDespues.getFullYear() + 1);
     unAnoDespues.setHours(23, 59, 59, 999);
 
-    // Validar que la fecha inicio no sea menor a un año atrás
     if (inicioDate < limiteInicio) {
       toast.warn(
         "La fecha de inicio no puede ser anterior a un año atrás desde hoy."
       );
       return;
     }
-
-    // Validar que la fecha inicio no supere 1 año desde hoy
     if (inicioDate > unAnoDespues) {
       toast.warn("La fecha de inicio no puede ser más de 1 año desde hoy.");
       return;
     }
-
-    // Validar que fecha fin sea igual o posterior a fecha inicio
     if (finDate < inicioDate) {
       toast.warn("La fecha de fin no puede ser anterior a la fecha de inicio.");
       return;
     }
-
-    // Validar que fecha fin no sea mayor a 1 año desde hoy
     if (finDate > unAnoDespues) {
       toast.warn("La fecha de fin no puede ser más de 1 año desde hoy.");
       return;
     }
 
+    setGuardando(true);
     try {
-      const res = await api.post("/convocatoria-crear", {
-        nombre_convocatoria: form.nombre,
-        descripcion: form.descripcion,
+      await api.post("/convocatoria-crear", {
+        nombre_convocatoria: form.nombre.trim(),
+        descripcion: form.descripcion.trim(),
         fecha_inicio: form.inicio,
         fecha_final: form.fin,
       });
       toast.success("Convocatoria creada.");
-      navigate(`/configuracion-convocatoria`);
+      navigate("/configuracion-convocatoria");
     } catch {
       toast.error("Error al crear convocatoria.");
+    } finally {
+      setGuardando(false);
     }
   };
 
@@ -81,6 +103,20 @@ export default function CrearConfiguracionConvocatoria() {
 
   return (
     <div className="crear-config-page">
+      {/* Overlay spinner de toda la página */}
+      {guardando && (
+        <div className="overlay-spinner">
+          <BallTriangle
+            height={80}
+            width={80}
+            radius={5}
+            color="#003366"
+            ariaLabel="guardando-spinner"
+            visible={true}
+          />
+        </div>
+      )}
+
       <div className="crear-config-container">
         <div className="crear-config-card">
           <div className="crear-config-header">Crear Convocatoria</div>
@@ -93,6 +129,7 @@ export default function CrearConfiguracionConvocatoria() {
                 value={form.nombre}
                 onChange={handleChange}
                 required
+                disabled={guardando}
               />
             </div>
             <div className="form-row">
@@ -103,6 +140,7 @@ export default function CrearConfiguracionConvocatoria() {
                 value={form.descripcion}
                 onChange={handleChange}
                 required
+                disabled={guardando}
               />
             </div>
             <div className="form-row">
@@ -113,6 +151,7 @@ export default function CrearConfiguracionConvocatoria() {
                 value={form.inicio}
                 onChange={handleChange}
                 required
+                disabled={guardando}
               />
             </div>
             <div className="form-row">
@@ -123,13 +162,18 @@ export default function CrearConfiguracionConvocatoria() {
                 value={form.fin}
                 onChange={handleChange}
                 required
+                disabled={guardando}
               />
             </div>
 
             <div className="acciones-crear">
               <div className="acciones-izquierda">
-                <button type="submit" className="btn-crear">
-                  Crear
+                <button
+                  type="submit"
+                  className="btn-crear"
+                  disabled={guardando}
+                >
+                  {guardando ? "Guardando…" : "Crear"}
                 </button>
               </div>
               <div className="acciones-derecha">
@@ -137,6 +181,7 @@ export default function CrearConfiguracionConvocatoria() {
                   type="button"
                   className="btn-eliminar"
                   onClick={handleSalir}
+                  disabled={guardando}
                 >
                   Salir
                 </button>
@@ -145,6 +190,7 @@ export default function CrearConfiguracionConvocatoria() {
           </form>
         </div>
       </div>
+
       <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );

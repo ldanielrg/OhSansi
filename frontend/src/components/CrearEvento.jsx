@@ -17,16 +17,21 @@ const CrearEvento = () => {
 
   useEffect(() => {
     if (!idConvocatoria) {
-      toast.error("Falta el ID de convocatoria. Regresa desde la lista de eventos.");
+      toast.error(
+        "Falta el ID de convocatoria. Regresa desde la lista de eventos."
+      );
       navigate("/eventos");
     } else {
       // Obtener fecha inicio convocatoria
-      api.get(`/convocatoria-detalle/${idConvocatoria}`)
+      api
+        .get(`/convocatoria-detalle/${idConvocatoria}`)
         .then(({ data }) => {
           if (data && data[0] && data[0].fecha_inicio) {
             setFechaInicioConvocatoria(data[0].fecha_inicio.split("T")[0]);
           } else {
-            toast.error("No se pudo obtener la fecha de inicio de la convocatoria.");
+            toast.error(
+              "No se pudo obtener la fecha de inicio de la convocatoria."
+            );
           }
         })
         .catch(() => {
@@ -57,8 +62,29 @@ const CrearEvento = () => {
     e.preventDefault();
     const { nombre, fechaInicio, fechaFin } = formData;
 
-    if (!nombre || !fechaInicio || !fechaFin) {
-      toast.warn("Por favor completa todos los campos.");
+    // 1. Validar nombre
+    const nombreTrim = nombre.trim();
+    if (!nombreTrim) {
+      toast.warn("El nombre no puede estar vacío o tener sólo espacios.");
+      return;
+    }
+    const regex = /^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\s]*$/;
+    if (!regex.test(nombreTrim)) {
+      return toast.warn(
+        "El nombre debe comenzar con letra y solo contener letras y espacios."
+      );
+    }
+    if (nombre !== nombreTrim) {
+      toast.warn("El nombre no puede iniciar ni terminar con espacios.");
+      return;
+    }
+    if (nombreTrim.length > 100) {
+      toast.warn("El nombre no puede superar 100 caracteres.");
+      return;
+    }
+
+    if (!fechaInicio || !fechaFin) {
+      toast.warn("Por favor completa todas las fechas.");
       return;
     }
 
@@ -67,16 +93,36 @@ const CrearEvento = () => {
       return;
     }
 
-    if (!isFechaValida(fechaInicio) || !isFechaValida(fechaFin)) {
+    const inicioConv = new Date(fechaInicioConvocatoria);
+    const limite = new Date(inicioConv);
+    limite.setFullYear(limite.getFullYear() + 1);
+
+    const validaDentroDeUnAnio = (fechaStr) => {
+      const d = new Date(fechaStr);
+      return d >= inicioConv && d <= limite;
+    };
+
+    if (!validaDentroDeUnAnio(fechaInicio)) {
       toast.error(
-        "Las fechas del evento deben estar dentro de un año desde la fecha de inicio de la convocatoria."
+        `La fecha de inicio del evento debe estar entre ${fechaInicioConvocatoria} y ${limite
+          .toISOString()
+          .slice(0, 10)}.`
+      );
+      return;
+    }
+    if (!validaDentroDeUnAnio(fechaFin)) {
+      toast.error(
+        `La fecha de fin del evento debe estar entre ${fechaInicioConvocatoria} y ${limite
+          .toISOString()
+          .slice(0, 10)}.`
       );
       return;
     }
 
+    // 5. Enviar payload
     const payload = {
       id_convocatoria_convocatoria: idConvocatoria,
-      nombre_evento: nombre,
+      nombre_evento: nombreTrim,
       fecha_inicio: fechaInicio,
       fecha_final: fechaFin,
     };
@@ -88,7 +134,7 @@ const CrearEvento = () => {
         state: {
           message: "!Evento creado exitosamente.",
           type: "success",
-          idConvocatoria: idConvocatoria,
+          idConvocatoria,
         },
       });
     } catch (error) {
@@ -99,7 +145,9 @@ const CrearEvento = () => {
   };
 
   const handleSalir = () => {
-    navigate("/eventos", { state: { message: "Creación cancelada.", type: "info" } });
+    navigate("/eventos", {
+      state: { message: "Creación cancelada.", type: "info" },
+    });
   };
 
   return (

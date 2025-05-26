@@ -65,18 +65,7 @@
     font-size: 0.95rem;
   }
   
-  .form-control {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #ffffff;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  }
+
   
   .form-control:focus {
     outline: none;
@@ -93,7 +82,7 @@
     padding-top: 1.5rem;
     border-top: 1px solid #eee;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 1rem;
   }
   
