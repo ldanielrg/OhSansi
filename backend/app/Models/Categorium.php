@@ -32,7 +32,7 @@ class Categorium extends Model
 
 	protected $casts = [
 		'id_categoria' => 'int',
-		'activo' => 'boolean',
+		'activo' => 'bool',
 	];
 
 	protected $fillable = [

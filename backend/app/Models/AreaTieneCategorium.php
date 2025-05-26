@@ -31,7 +31,7 @@ class AreaTieneCategorium extends Model
 		'id_categoria_categoria' => 'int',
 		'id_area_area' => 'int',
 		'precio' => 'decimal:2',
-        'activo' => 'boolean',
+        'activo' => 'bool',
         'nro_participantes' => 'integer',
 	];
 	
