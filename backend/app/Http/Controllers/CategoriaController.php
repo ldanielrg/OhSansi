@@ -103,7 +103,7 @@ class CategoriaController extends Controller{
             'grado_ini' => null, //$validated['grado_ini'],
             'grado_fin' => null, //$validated['grado_fin'],
             //'activo' => $validated['activo'] ?? true,
-            'activo' => true,
+            'activo' => 'true',
             'id_convocatoria_convocatoria' => $id_convocatoria
         ]);
 

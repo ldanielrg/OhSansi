@@ -61,7 +61,7 @@ class AreaController extends Controller{
         $area = Area::create([
             'nombre_area' => $validated['nombre'],
             'id_convocatoria_convocatoria' => $id_convocatoria,
-            'activo' => filter_var(true, FILTER_VALIDATE_BOOLEAN)
+            'activo' => (bool) true,
         ]);
 
         return response()->json([
