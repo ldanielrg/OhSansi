@@ -24,7 +24,7 @@ class ConvocatoriaController extends Controller
     }
     #Obtiene todas las convocatorias ACTIVAS
     public function indexActivas(){
-        $convocatorias = Convocatoria::where('activo', true)->get();
+        $convocatorias = Convocatoria::whereRaw('"activo" = true')->get();
 
         return response()->json($convocatorias);
     }
