@@ -39,7 +39,7 @@ class Formulario extends Model
 		'id_ue_ue' => 'int',
 		'id_convocatoria_convocatoria' => 'int',
 		'id_usuario' => 'int',
-		'activo' => 'boolean',
+		'activo' => 'bool',
 	];
 
 	protected $fillable = [

@@ -38,7 +38,7 @@ class Convocatoria extends Model
 		'precio' => 'int',
 		'fecha_inicio' => 'date:Y-m-d',
 		'fecha_final' => 'date:Y-m-d',
-		'activo' => 'boolean',
+		'activo' => 'bool',
 	];
 
 	protected $fillable = [

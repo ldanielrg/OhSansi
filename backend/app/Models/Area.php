@@ -32,7 +32,7 @@ class Area extends Model
 
 	protected $casts = [
 		'id_area' => 'int',
-		'activo' => 'boolean',
+		'activo' => 'bool',
 		'id_convocatoria_convocatoria' => 'int'
 	];
 

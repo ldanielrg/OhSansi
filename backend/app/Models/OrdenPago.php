@@ -30,7 +30,7 @@ class OrdenPago extends Model
 		'fecha_emision' => 'datetime',
 		'fecha_vencimiento' => 'datetime',
 		'monto_total' => 'int',
-		'estado' => 'boolean',
+		'estado' => 'bool',
 		'id_formulario_formulario' => 'int',
 		'codigo' => 'string',
 	];
