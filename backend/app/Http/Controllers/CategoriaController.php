@@ -27,7 +27,7 @@ class CategoriaController extends Controller{
     public function obtenerCategoriasPorConvocatoriaS($id){
 
             $categorias = Categorium::where('id_convocatoria_convocatoria', $id)
-                ->where('activo', true)
+                ->whereRaw('"activo" = true')
                 ->with(['gradoInicial', 'gradoFinal'])
                 ->get();
 
@@ -102,7 +102,6 @@ class CategoriaController extends Controller{
             'descripcion' => $validated['descripcion'] ?? null,
             'grado_ini' => null, //$validated['grado_ini'],
             'grado_fin' => null, //$validated['grado_fin'],
-            //'activo' => $validated['activo'] ?? true,
             'activo' => 'true',
             'id_convocatoria_convocatoria' => $id_convocatoria
         ]);
@@ -139,7 +138,7 @@ class CategoriaController extends Controller{
             'descripcion' => $validated['descripcion'] ?? null,
             //'grado_ini' => $validated['grado_ini'],
             //'grado_fin' => $validated['grado_fin'],
-            'activo' => true //$validated['activo'] ?? true
+            'activo' => 'true',
         ]);
 
         return response()->json([

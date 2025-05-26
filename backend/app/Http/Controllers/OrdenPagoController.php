@@ -87,7 +87,7 @@ class OrdenPagoController extends Controller
             'fecha_emision' => $validated['fecha_emision'],
             'fecha_vencimiento' => $validated['fecha_vencimiento'],
             'monto_total' => $montoTotal,
-            'estado' => false,
+            'estado' => 'false',
             'id_formulario_formulario' => $validated['id_formulario_formulario'],
         ]);
 

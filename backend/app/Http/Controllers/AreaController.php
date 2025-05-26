@@ -37,7 +37,7 @@ class AreaController extends Controller{
         $area = Area::create([
             'nombre_area' => $validated['nombre'],
             'id_convocatoria_convocatoria' => $validated['id_convocatoria'], //AGREGUE YO
-            'activo' => true // por ahora siempre se crea activo.
+            'activo' => 'true',
         ]);
 
         return response()->json([
@@ -61,7 +61,7 @@ class AreaController extends Controller{
         $area = Area::create([
             'nombre_area' => $validated['nombre'],
             'id_convocatoria_convocatoria' => $id_convocatoria,
-            'activo' => (bool) true,
+            'activo' => 'true',
         ]);
 
         return response()->json([
@@ -81,10 +81,6 @@ class AreaController extends Controller{
         $area = Area::find($validated['id_area']);
 
         $area->nombre_area = $validated['nombre_area'];
-
-        if (isset($validated['activo'])) {
-            $area->activo = $validated['activo'];
-        }
 
         $area->save();
 
@@ -182,7 +178,7 @@ class AreaController extends Controller{
                 'precio' => $validated['precio'] ?? 0,
                 'nro_participantes' => $validated['participantes'],
                 //'activo' => $validated['activo'] ?? true,
-                'activo' => true, //por ahora le pondré por defecto true.
+                'activo' => 'true',
             ]);
 
             DB::commit();
