@@ -38,7 +38,7 @@ class ConvocatoriaController extends Controller
             ], 404);
         }
     
-        if ($convocatoria->activo == 1) {
+        if ($convocatoria->activo == 'true') {
             $convocatoria->activo = 'false';
         } else {
             $convocatoria->activo = 'true';
