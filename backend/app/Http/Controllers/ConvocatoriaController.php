@@ -38,12 +38,19 @@ class ConvocatoriaController extends Controller
             ], 404);
         }
     
-        if ($convocatoria->activo === true) {
-            $convocatoria->activo = 'false';
+        Log::debug($convocatoria);
+        Log::debug($convocatoria->activo);
+        if ($convocatoria->activo == 1) {
+            $convocatoria->update(['activo' => '0']);
+            $convocatoria->save();
+            Log::debug('Supuestamente lo cambio a false');
+            Log::debug($convocatoria->activo);
         } else {
-            $convocatoria->activo = 'true';
+            $convocatoria->update(['activo' => '1']);
+            $convocatoria->save();
+            Log::debug('Supuestamente lo cambio a true');
         }
-        $convocatoria->save();
+        
     
         return response()->json([
             'message' => 'Estado de convocatoria actualizado.',
@@ -78,7 +85,7 @@ class ConvocatoriaController extends Controller
             'descripcion' => $request->input('descripcion'),
             'fecha_inicio' => $request->input('fecha_inicio'),
             'fecha_final' => $request->input('fecha_final'),
-            'activo' => true
+            'activo' => 'true'
         ]);
 
         return response()->json([

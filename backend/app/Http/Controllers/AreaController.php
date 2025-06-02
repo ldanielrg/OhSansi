@@ -197,6 +197,47 @@ class AreaController extends Controller{
         }
     }
 
+    public function asignarAreaCategoriaEdicion(Request $request){
+        $validated = $request->validate([
+            'id_area' => 'required|integer|exists:area,id_area',
+            'id_categoria' => 'required|integer|exists:categoria,id_categoria',
+            'precio' => 'nullable|numeric|min:0',
+            'participantes' => 'integer|min:1',
+            //'activo' => 'nullable|boolean'
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Verificar si ya existe la relación
+            $relacionExistente = AreaTieneCategorium::where('id_area_area', $validated['id_area'])
+                ->where('id_categoria_categoria', $validated['id_categoria'])
+                ->first();
+
+            // Crear nueva relación
+            $relacionExistente->update([
+                'id_area_area' => $validated['id_area'],
+                'id_categoria_categoria' => $validated['id_categoria'],
+                'precio' => $validated['precio'] ?? 0,
+                'nro_participantes' => $validated['participantes'],
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Área y categoría asignadas correctamente.'
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Error al asignar área a categoría.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     #Elimna la relación de un área y una categoría.
     public function eliminarAsignacionAreaCategoria(Request $request){
         $validated = $request->validate([
@@ -253,10 +294,13 @@ class AreaController extends Controller{
             ], 404);
         }
     
-        // Cambiar estado activo al valor contrario
-        $area->activo = !$area->activo;
-        $area->save();
-    
+        if ($area->activo == 1) {
+            $area->update(['activo' => '0']);
+            $area->save();
+        } else {
+            $area->update(['activo' => '1']);
+            $area->save();
+        }
         return response()->json([
             'message' => 'Estado de area actualizado.',
             'id_convocatoria' => $area->id,

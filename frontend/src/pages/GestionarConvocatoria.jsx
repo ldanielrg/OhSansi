@@ -363,12 +363,16 @@ export default function GestionarConvocatoria() {
 
   const handleUpdateAssignAreaCat = async () => {
     if (!selArea || !selCat) return toast.warn("Selecciona área y categoría.");
+    const participantesInt = participantesMap[participantes] || null;
+    if (!participantesInt) {
+      return toast.warn("Selecciona una modalidad válida.");
+    }
     try {
-      await api.post(`/asignar-area-categoria`, {
+      await api.post(`/asignar-area-categoria-edicion`, {
         id_area: Number(selArea),
         id_categoria: Number(selCat),
         precio: Number(precio),
-        participantes,
+        participantes: participantesInt,
         activo: true,
       });
       toast.success("Asignación actualizada");
@@ -407,7 +411,7 @@ export default function GestionarConvocatoria() {
     if (!selCat || !selGrIni)
       return toast.warn("Selecciona categoría y grado inicial.");
     try {
-      await api.post(`/asignar-grados-categoria`, {
+      await api.post(`/asignar-grados-categoria-edicion`, {
         id_categoria: Number(selCat),
         grado_inicial_id: Number(selGrIni),
         grado_final_id: selGrFin ? Number(selGrFin) : null,
@@ -790,7 +794,7 @@ export default function GestionarConvocatoria() {
                     <button onClick={handleAssignGradosCat}>Asignar</button>
                     <button
                       onClick={handleUpdateAssignGradosCat}
-                      disabled={!selArea || !selCat}
+                      //disabled={!selArea || !selCat}
                     >
                       Guardar edición
                     </button>
