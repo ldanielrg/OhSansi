@@ -38,8 +38,11 @@ class ConvocatoriaController extends Controller
             ], 404);
         }
     
-        // Cambiar estado activo al valor contrario
-        $convocatoria->activo = !$convocatoria->activo;
+        if ($convocatoria->activo == 1) {
+            $convocatoria->activo = 'false';
+        } else {
+            $convocatoria->activo = 'true';
+        }
         $convocatoria->save();
     
         return response()->json([
