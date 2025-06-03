@@ -136,22 +136,14 @@ class ComprobanteController extends Controller
             $imagen = $request->file('imagen');
             $filename = 'comprobante_' . time() . '.' . $imagen->getClientOriginalExtension();
             Log::debug($filename);
-            $destinationPath = public_path('comprobantes');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-
-            $imagen->move($destinationPath, $filename);
-
-            $rutaPublica = '/comprobantes/' . $filename;
-            Log::debug($rutaPublica);
-            // Crear el comprobante con estado = false
+            $path = $imagen->storeAs('comprobantes', $filename, 'public');  // Guarda en storage/app/public/comprobantes
+            $rutaPublica = '/storage/' . $path;
+            // Crear el comprobante
             $comprobante = Comprobante::create([
                 'codigo' => $validated['codigo'],
                 'id_orden_pago' => $validated['id_orden_pago'],
                 'imagen' => $rutaPublica,
-                'estado' => 'false'
-            ]);
+                'estado' => '0',]);
             Log::debug($comprobante);
             // Validar coincidencia con OCR
             if (
@@ -159,18 +151,18 @@ class ComprobanteController extends Controller
                 str_contains($validated['codigo_ocr'], (string) $validated['codigo'])
             ) {
                 // Actualizar estado del comprobante
-                $comprobante->estado = true;
+                $comprobante->update(['estado' => '1']);
                 $comprobante->save();
 
                 // Actualizar estado de orden de pago
                 $orden = OrdenPago::findOrFail($validated['id_orden_pago']);
-                $orden->estado = true;
+                $orden->update(['estado' => '1']);
                 $orden->save();
 
                 // Actualizar estado de formulario
                 $formulario = Formulario::findOrFail($orden->id_formulario_formulario);
-                $formulario->pagado = true;
-                $formulario->save();
+                $formulario->update(['pagado' => '1']);
+                $formulario->save();   
             }
 
             DB::commit();
