@@ -28,7 +28,7 @@ class ComprobanteController extends Controller
 
         // Verificar si ya existe un comprobante verificado con el mismo código
         $comprobanteExistente = Comprobante::where('codigo', $validated['codigo'])
-            ->whereRaw('"activo" = true')
+            ->whereRaw('"estado" = true')
             ->first();
 
         if ($comprobanteExistente) {
@@ -44,12 +44,12 @@ class ComprobanteController extends Controller
             // Guardar imagen en carpeta public/comprobantes
             $imagen = $request->file('imagen');
             $filename = 'comprobante_' . time() . '.' . $imagen->getClientOriginalExtension();
-
+            Log::debug($filename);
             $destinationPath = public_path('comprobantes');
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
-
+            Log::debug($destinationPath);
             $imagen->move($destinationPath, $filename);
 
             $rutaPublica = '/comprobantes/' . $filename;
@@ -135,7 +135,7 @@ class ComprobanteController extends Controller
             // Guardar imagen en carpeta public/comprobantes
             $imagen = $request->file('imagen');
             $filename = 'comprobante_' . time() . '.' . $imagen->getClientOriginalExtension();
-
+            Log::debug($filename);
             $destinationPath = public_path('comprobantes');
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
@@ -144,7 +144,7 @@ class ComprobanteController extends Controller
             $imagen->move($destinationPath, $filename);
 
             $rutaPublica = '/comprobantes/' . $filename;
-
+            Log::debug($rutaPublica);
             // Crear el comprobante con estado = false
             $comprobante = Comprobante::create([
                 'codigo' => $validated['codigo'],
@@ -152,7 +152,7 @@ class ComprobanteController extends Controller
                 'imagen' => $rutaPublica,
                 'estado' => 'false'
             ]);
-
+            Log::debug($comprobante);
             // Validar coincidencia con OCR
             if (
                 !empty($validated['codigo_ocr']) &&
@@ -196,7 +196,7 @@ class ComprobanteController extends Controller
     public function verificarCodigo($codigo)
     {
         $comprobante = Comprobante::where('codigo', $codigo)
-            ->whereRaw('"activo" = true')
+            ->whereRaw('"estado" = true')
             ->first();
 
         return response()->json([
@@ -208,7 +208,7 @@ class ComprobanteController extends Controller
     // ComprobanteController.php
     public function comprobantesPendientes()
     {
-        $pendientes = Comprobante::whereRaw('"activo" = true')->get();
+        $pendientes = Comprobante::whereRaw('"estado" = false')->get();
 
         foreach ($pendientes as $c) {
             Log::info("Comprobante pendiente:", $c->toArray());
@@ -227,8 +227,14 @@ class ComprobanteController extends Controller
         ]);
 
         $comprobante = Comprobante::findOrFail($id);
-        $comprobante->estado = $validated['estado'];
-        $comprobante->save();
+        $aux = $validated['estado'];
+        if ($aux == 1) {
+            $comprobante->update(['estado' => '1']);
+            $comprobante->save();
+        } else {
+            $comprobante->update(['estado' => '0']);
+            $comprobante->save();
+        }
 
         // Si lo marcaron como válido, actualizar también orden y formulario
         if ($validated['estado']) {
