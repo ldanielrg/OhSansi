@@ -48,6 +48,7 @@ Route::get('/convocatoria-areas-categorias-grados/{id_convocatoria}', [Convocato
     Route::delete('/area-eliminar/{id_area}', [AreaController::class, 'toggleActivo']);
     Route::get('/areas-categorias-grados/{id_convocatoria}', [AreaController::class, 'AreasConcategoriasConGradosPorConvocatoria']);
     Route::post('/asignar-area-categoria', [AreaController::class, 'asignarAreaCategoria']);
+    Route::post('/asignar-area-categoria-edicion', [AreaController::class, 'asignarAreaCategoriaEdicion']);
     Route::delete('/eliminar-area-categoria', [AreaController::class, 'eliminarAsignacionAreaCategoria']);
     //Route::post('/asignacionAreaCategoriaGrado', [AreaController::class, 'asignarAreaCategoriaGrado']);
    
@@ -61,6 +62,7 @@ Route::get('/convocatoria-areas-categorias-grados/{id_convocatoria}', [Convocato
     Route::post('/categoria-crear/{id_convocatoria}', [CategoriaController::class, 'store']);
     Route::post('/categoria-editar', [CategoriaController::class, 'update']);
     Route::post('/asignar-grados-categoria', [CategoriaController::class, 'asignarGradosCategoria']);
+    Route::post('/asignar-grados-categoria-edicion', [CategoriaController::class, 'asignarGradosCategoriaEdicion']);
     Route::post('/limpiar-grados-categoria', [CategoriaController::class, 'limpiarGradosCategoria']);
     //Para CRUD Grados
     Route::get('/grados', [GradoController::class, 'todo']);

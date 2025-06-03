@@ -206,6 +206,42 @@ class CategoriaController extends Controller{
         }
     }
 
+    public function asignarGradosCategoriaEdicion(Request $request){
+        $validated = $request->validate([
+            'id_categoria' => 'required|integer|exists:categoria,id_categoria',
+            'grado_inicial_id' => 'required|integer|exists:grado,id_grado',
+            'grado_final_id' => 'required|integer|exists:grado,id_grado',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Buscar la categoría
+            $categoria = Categorium::findOrFail($validated['id_categoria']);
+
+        
+
+            // Actualizar los grados inicial y final
+            $categoria->grado_ini = $validated['grado_inicial_id'];
+            $categoria->grado_fin = $validated['grado_final_id'];
+            $categoria->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Grados asignados a la categoría correctamente.'
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Error al asignar grados a categoría.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function limpiarGradosCategoria(Request $request){
         $validated = $request->validate([
             'id_categoria' => 'required|integer|exists:categoria,id_categoria',
@@ -246,8 +282,13 @@ class CategoriaController extends Controller{
         }
     
         // Cambiar estado activo al valor contrario
-        $categoria->activo = !$categoria->activo;
-        $categoria->save();
+        if ($categoria->activo == 1) {
+            $categoria->update(['activo' => '0']);
+            $categoria->save();
+        } else {
+            $categoria->update(['activo' => '1']);
+            $categoria->save();
+        }
     
         return response()->json([
             'message' => 'Estado de categoria actualizado.',
