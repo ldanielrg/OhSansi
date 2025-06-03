@@ -9,7 +9,7 @@ use App\Models\EstudianteEstaInscrito;
 use App\Models\AreaTieneCategorium;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;;
+use Illuminate\Support\Facades\Log;
 
 class InscripcionController extends Controller{
     #Inscribir estudiantes (sólo inscripción)
