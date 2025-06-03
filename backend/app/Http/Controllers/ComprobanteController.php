@@ -187,7 +187,7 @@ class ComprobanteController extends Controller
             Log::error("Error al guardar comprobante: " . $e->getMessage());
             return response()->json([
                 'message' => 'Error interno al procesar el comprobante.',
-                'error' => 'Excepción no controlada.'
+                'error' => $e->getMessage(),  // Muestra el error real
             ], 500);
         }
     }
