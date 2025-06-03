@@ -45,6 +45,7 @@ const Formulario = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [toggleClearSelected, setToggleClearSelected] = useState(false);
   const selectedRowsRef = useRef([]);
+  const [EstudianteSeleccionado, setEstudianteSeleccionado] = useState([]);
   const [areas, setAreas] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [categoriasExcel, setCategoriasExcel] = useState([]);
@@ -463,22 +464,22 @@ setFormIndexActivo(0);
 
 
 const handleEditar = async () => {
-  const seleccionActual = selectedRowsRef.current;
-
-  if (seleccionActual.length === 0) {
-    return toast.warn("Por favor selecciona un equipo para editar.");
+  //const seleccionActual = selectedRowsRef.current;
+  console.log(EstudianteSeleccionado)
+  if (EstudianteSeleccionado.length !== 1) {
+    return toast.warn("Por favor selecciona un estudiante");
   }
 
-  const idEquipo = seleccionActual[0]?.id_equipo;
-  const mismosEquipos = seleccionActual.every(est => est.id_equipo === idEquipo);
+  const idEquipo = EstudianteSeleccionado[0].id_equipo;
+  //const mismosEquipos = seleccionActual.every(est => est.id_equipo === idEquipo);
 
-  if (!mismosEquipos) {
-    return toast.warn("Solo puedes editar estudiantes del mismo equipo.");
-  }
+  //if (!mismosEquipos) {
+  //  return toast.warn("Solo puedes editar estudiantes del mismo equipo.");
+  //}
 
   const result = await MySwal.fire({
-    title: '¿Editar equipo?',
-    text: "Podrás editar a todos los estudiantes del grupo al que pertenece el seleccionado",
+    title: '¿Editar estudiante?',
+    text: "Podrás editar cualquier campo del estudiante menos el areay categoria",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
@@ -489,7 +490,7 @@ const handleEditar = async () => {
 
   if (!result.isConfirmed) return;
 
-  const estudiante = seleccionActual[0];
+  const estudiante = EstudianteSeleccionado[0];
 
   setFormulariosEquipo([{
     nombre: estudiante.nombre,
@@ -659,22 +660,28 @@ const handleFileUpload = async (event) => {
 
 
 const handleEliminar = async () => {
-  const seleccionActual = selectedRowsRef.current;
+  //const seleccionActual = selectedRowsRef.current;
 
-  if (seleccionActual.length === 0) {
+  if (EstudianteSeleccionado.length !== 1) {
     return toast.warn("Por favor selecciona un estudiante para eliminar.");
   }
 
-  const estudianteBase = seleccionActual[0];
-  const idEquipo = estudianteBase.id_equipo;
-
+  const estudianteBase = EstudianteSeleccionado[0];
+  const idEquipo = EstudianteSeleccionado[0].id_equipo;
+  const idCategoria = estudianteBase.id_categoria
   if (!idEquipo || !estudianteBase.id_area || !estudianteBase.id_categoria) {
     toast.error("Faltan datos necesarios para eliminar el equipo.");
-    console.warn("Datos faltantes:", estudianteBase);
+    console.log("Datos faltantes:", estudianteBase);
+    console.log(!idEquipo);
+    console.log( !estudianteBase.id_area);
+    console.log(!estudianteBase.id_categoria);
     return;
   }
 
-  const estudiantesAEliminar = rowData.filter(est => est.id_equipo === idEquipo);
+  //const estudiantesAEliminar = rowData.filter(est => est.id_equipo === idEquipo);
+  const estudiantesAEliminar = rowData.filter(est => 
+      est.id_equipo === idEquipo && est.id_categoria === idCategoria
+  );
 
   const result = await MySwal.fire({
     title: '¿Eliminar equipo?',
@@ -709,7 +716,7 @@ const handleEliminar = async () => {
     });
 
     // Actualizar tabla local
-    setRowData((prev) => prev.filter(est => est.id_equipo !== idEquipo));
+    setRowData((prev) => prev.filter(est => est.id_equipo !== idEquipo || est.id_categoria !== idCategoria));
     setSelectedRows([]);
     selectedRowsRef.current = [];
     setToggleClearSelected(prev => !prev);
@@ -986,24 +993,10 @@ const actualizarFormulario = (index, campo, valor) => {
             columns={columns}
             data={rowData}
             selectableRows
+            selectableRowsSingle
             selectableRowsNoSelectAll
             clearSelectedRows={toggleClearSelected}
-            onSelectedRowsChange={({ selectedRows }) => {
-  if (selectedRows.length === 0) {
-    setSelectedRows([]);
-    selectedRowsRef.current = [];
-    return;
-  }
-
-  const primerSeleccionado = selectedRows[0];
-  const idEquipo = primerSeleccionado.id_equipo;
-
-  // Obtener todos los estudiantes del mismo equipo
-  const mismoEquipo = rowData.filter(est => est.id_equipo === idEquipo);
-
-  setSelectedRows(mismoEquipo);
-  selectedRowsRef.current = mismoEquipo;
-}}
+            onSelectedRowsChange={({ selectedRows }) => setEstudianteSeleccionado(selectedRows)}
 
             
             noDataComponent="Aquí verás a los estudiantes que inscribiste."
