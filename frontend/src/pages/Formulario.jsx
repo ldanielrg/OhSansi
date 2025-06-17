@@ -459,10 +459,6 @@ setFormIndexActivo(0);
   setIdEquipoEnEdicion(null);
 };
 
-
-
-
-
 const handleEditar = async () => {
   //const seleccionActual = selectedRowsRef.current;
   console.log(EstudianteSeleccionado)
@@ -512,7 +508,7 @@ const handleEditar = async () => {
 
     setModoEdicion(true);
     setIdEquipoEnEdicion(idEquipo);
-  };
+};
 
 const handleFileUpload = async (event) => {
   const file = event.target.files[0];
@@ -657,8 +653,6 @@ const handleFileUpload = async (event) => {
   reader.readAsArrayBuffer(file);
 };
 
-
-
 const handleEliminar = async () => {
   //const seleccionActual = selectedRowsRef.current;
 
@@ -740,13 +734,10 @@ const resetEdicion = () => {
   setToggleClearSelected(prev => !prev);
 };
 
-
-
 const handleGuardarFormulario = async () => {
   toast.info("Todos los estudiantes ya han sido registrados.");
   navigate(`/inscripciones?convocatoria=${idConvocatoria}`);
 };
-
 
 const actualizarFormulario = (index, campo, valor) => {
   setFormulariosEquipo((prev) => {
@@ -803,7 +794,7 @@ const actualizarFormulario = (index, campo, valor) => {
         </div>
         <div className="contenedor-archivo-excel">
           <a
-            href="/plantillas/FormatoParaSubirLista.xlsx"
+            href="/Plantillas/FormatoParaSubirLista.xlsx"
             download="FormatoParaSubirLista.xlsx"
             className="boton-descargar-excel"
           >
