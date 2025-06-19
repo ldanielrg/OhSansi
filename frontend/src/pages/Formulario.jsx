@@ -151,7 +151,7 @@ useEffect(() => {
 
 
 
-  useEffect(() => {
+useEffect(() => {
   const formularioId = parseInt(id);
   if (isNaN(formularioId)) {
     toast.error("ID de formulario inválido.");
@@ -257,9 +257,9 @@ useEffect(() => {
 
   
 
-  const opcionesFiltradasUE = ue
-    .filter((item) => item.municipio_id === parseInt(formData.municipio))
-    .map((item) => ({ value: item.id_ue, label: item.nombre_ue }));
+const opcionesFiltradasUE = ue
+  .filter((item) => item.municipio_id === parseInt(formData.municipio))
+  .map((item) => ({ value: item.id_ue, label: item.nombre_ue }));
 
 
 
@@ -318,8 +318,16 @@ const handleRegistrar = async () => {
       idEquipo = res.data.siguiente_team;
     } catch (error) {
       console.error("Error al obtener el número de equipo:", error);
-      toast.error("No se pudo obtener el número de equipo.");
-      setRegistrando(false); // ← necesario aquí también
+
+      // Extraer mensaje más específico del backend
+      if (error.response && error.response.data) {
+        const backendMessage = error.response.data.message || 'Error desconocido del servidor.';
+        toast.error(backendMessage);
+      } else {
+        toast.error("No se pudo obtener el número de equipo (error de red o del servidor).");
+      }
+
+      setRegistrando(false);
       return;
     }
   } else {
@@ -359,10 +367,8 @@ const handleRegistrar = async () => {
   };
 
   try {
-    console.log("ESTO VA ANTES DE MODO EDICIÓN")
     if (modoEdicion) {
       const estudiante = formulariosEquipo[0];
-      console.log("ENTRANDO A MI IF")
       const payload = {
         id_formulario: parseInt(id),
         anterior: {
@@ -390,11 +396,29 @@ const handleRegistrar = async () => {
         ));
       } catch (error) {
         console.error('Error al editar estudiante:', error);
-        toast.error(error.response?.data?.message || 'Error al actualizar el estudiante.');
+
+        // Manejo de errores con más contexto del backend
+        if (error.response && error.response.data) {
+          const data = error.response.data;
+
+          if (data.errors) {
+            // Laravel suele devolver errores de validación aquí (422)
+            const firstError = Object.values(data.errors)[0][0];
+            toast.error(firstError);
+          } else if (data.message) {
+            // Mensajes generales del backend (por ejemplo: abort(403, 'No autorizado'))
+            toast.error(data.message);
+          } else {
+            toast.error('Error inesperado al actualizar el estudiante.');
+          }
+        } else {
+          toast.error('Error de red o del servidor.');
+        }
       } finally {
         setRegistrando(false);
         resetEdicion();
       }
+
 
       return;
     }
@@ -406,10 +430,10 @@ const handleRegistrar = async () => {
     }
 
     if (res.data.estudiantes) {
-  const estudiantesNormalizados = res.data.estudiantes.map(est => ({
-    ...est,
-    fechaNac: est.fecha_nac // 👈 transforma correctamente aquí
-  }));
+      const estudiantesNormalizados = res.data.estudiantes.map(est => ({
+        ...est,
+        fechaNac: est.fecha_nac // 👈 transforma correctamente aquí
+    }));
 
   setRowData((prev) => {
     if (modoEdicion && idEquipoEnEdicion !== null) {
@@ -439,12 +463,29 @@ const handleRegistrar = async () => {
 );
 setFormIndexActivo(0);
 
-  } catch (error) {
+  }catch (error) {
     console.error("Error al registrar estudiantes en backend:", error);
-    toast.error("Error al registrar estudiantes en el servidor.");
+
+    if (error.response && error.response.data) {
+      const data = error.response.data;
+
+      if (data.errors) {
+        // Laravel: errores de validación
+        const firstError = Object.values(data.errors)[0][0];
+        toast.error(firstError);
+      } else if (data.message) {
+        // Laravel: mensajes personalizados
+        toast.error(data.message);
+      } else {
+        toast.error("Error inesperado al registrar estudiantes.");
+      }
+    } else {
+      toast.error("Error de red o del servidor al registrar estudiantes.");
+    }
   } finally {
     setRegistrando(false); // ✅ Siempre se reinicia
   }
+
 
   // Reset
   setContadorEquipos((prev) => prev + 1);
