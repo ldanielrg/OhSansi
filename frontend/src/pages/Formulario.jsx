@@ -275,8 +275,8 @@ const handleRegistrar = async () => {
       return toast.warn(`Nombre inválido en integrante ${i + 1}`);
     if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre))
       return toast.warn(`Nombre con caracteres inválidos en integrante ${i + 1}`);
-    if (!/^\d{8,10}$/.test(rude))
-  return toast.warn(`El RUDE debe tener entre 8 y 10 digitos, en el integrante${i + 1}`);
+    if (!/^\d{8,9}$/.test(rude))
+  return toast.warn(`El RUDE debe tener entre 8 y 9 digitos, en el integrante${i + 1}`);
     if (!/^\d{7,8}$/.test(ci))
   return toast.warn(`El CI debe tener entre 7 y 8 digitos, en el integrante ${i + 1}`);
 
